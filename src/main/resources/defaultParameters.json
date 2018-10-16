@@ -1,0 +1,43 @@
+{
+  "comment" : [
+    "This is the current list of Fairfax publications, with their default parameters.",
+  ],
+  "mets-file-defaults" : {
+    "comment" : [
+      "These are the defaults for the mets.xml file."
+    ],
+    "dmdSec" : {
+      "ID" : "ie-dmd"
+    }
+  },
+  "publications" : {
+    "Ag Trader" : {
+      "file-mask-example" : "AGTSHP-20151026-001.pdf",
+      "file-mask" : "value",
+      "filename-identifier" : "AGTSHP",
+      "dcterms:available" : "10",
+      "dc:coverage" : "26"
+    },
+    "Auckland City Harbour News" : {
+      "file-mask-example" : "AHNED1-20150805-001.pdf",
+      "file-mask" : "value",
+      "filename-identifier" : "AHNED1",
+      "dcterms:available" : "8",
+      "dc:coverage" : "5"
+    },
+    "Dominion-Post" : {
+      "attribute-one" : "value",
+      "attribute-two" : "value"
+    },
+    "The Bay Chronicle" : {
+      "file-mask-example" : "BCRED1-20160428-001.pdf",
+      "filename-identifier" : "BCRED1",
+      "dcterms:available" : "4",
+      "dc:coverage" : "28"
+    },
+    "publication-two" : {
+      "attribute-one" : "value",
+      "attribute-two" : "value"
+    }
+  }
+}
