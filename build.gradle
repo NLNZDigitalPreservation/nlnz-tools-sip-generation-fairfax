@@ -1,0 +1,24 @@
+buildscript {
+    repositories {
+        mavenLocal()
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'nz.govt.natlib.tools.sip.generation:nznl-tools-sip-generation-plugin:1.0.0-SNAPSHOT'
+    }
+}
+
+group 'nz.govt.natlib.tools.sip.generation.fairfax'
+description = 'National Library SIP Generation for Fairfax files.'
+
+project.ext {
+    vendor = "New Zealand National Library"
+    versionNumber = "1.0.0-SNAPSHOT"
+}
+
+apply plugin: 'base'
+
+setVersion(project.versionNumber)
+
+configurations {
+}
