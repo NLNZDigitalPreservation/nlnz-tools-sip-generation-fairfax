@@ -1,5 +1,7 @@
 # National Library of New Zealand Tools SIP Generation for Fairfax files
 
+Tools for building Fairfax-based SIPs for ingestion into the Rosetta archive system.
+
 ## Synopsis
 
 This repository contains classes used to build Fairfax-based SIPs for ingestion into the Rosetta archive system.
@@ -15,7 +17,7 @@ At this time there is no important information to impart.
 ## Requirements
 
 - A set of Fairfax files for ingestion
-- The nznl-tools-sip-generation plugin
+- The nlnz-tools-sip-generation-gradle-plugin
 
 ## Usage
 
