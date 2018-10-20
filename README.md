@@ -29,6 +29,19 @@ Parameters and their usage.
 
 Running the tool.
 
+#### Updating the default fairfax import parameters JSON file
+From time to time the spreadsheet that defines how the Fairfax files are ingested will changed based on new information.
+When this happens, the json file found at `core/src/main/resources/default-fairfax-import-parameters.json` needs
+updating to reflect the changes in the source spreadsheet. First, export the original spreadsheet in `.csv` format
+with the file separator as `|` and save it, replacing `core/src/main/resources/default-fairfax-import-spreadsheet.csv`.
+
+The task `updateDefaultFairfaxImportParameters` then updates that JSON file.
+```
+gradle updateDefaultFairfaxImportParameters -PfairfaxSpreadsheetImportFilename="core/src/main/resources/default-fairfax-import-spreadsheet.csv"
+```
+
+Changes should then be checked in and a new version of this jar built.
+
 ## Contributors
 
 See git commits to see who contributors are. Issues are tracked through the git repository issue tracker.

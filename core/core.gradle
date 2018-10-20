@@ -1,3 +1,23 @@
+import groovy.json.JsonBuilder
+import groovy.json.JsonOutput
+import nz.govt.natlib.tools.sip.generation.SipGenerationException
+import nz.govt.natlib.tools.sip.generation.parameters.Spreadsheet
+import nz.govt.natlib.tools.sip.generation.parameters.SpreadsheetImporter
+import nz.govt.natlib.m11n.tools.gradle.BuildException
+import nz.govt.natlib.m11n.tools.gradle.ProjectHelper
+
+buildscript {
+    repositories {
+        mavenLocal()
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'nz.govt.natlib.m11n.tools:nlnz-m11n-tools-automation-plugin:1.0.0-SNAPSHOT'
+        classpath 'nz.govt.natlib.m11n.tools:nlnz-m11n-tools-gradle-plugin:1.0.0-SNAPSHOT'
+        classpath 'nz.govt.natlib.tools.sip.generation:nlnz-tools-sip-generation-gradle-plugin:1.0.0-SNAPSHOT'
+    }
+}
+
 plugins {
     // required for jacoco test coverage checks
     id 'com.github.kt3k.coveralls' version '2.6.3'
@@ -17,6 +37,14 @@ project.ext {
             'method'     : 0.0, // currently at 0.0%
             'class'      : 0.0  // currently at 0.0%
     ]
+
+    // Command-line variables used for specific tasks
+    // Task updateDefaultFairfaxImportParameters
+    doUpdateDefaultFairfaxImportParameters = ProjectHelper.hasAnyTasks(project, [ "updateDefaultFairfaxImportParameters" ])
+    fairfaxSpreadsheetImportFilenameValue = project.hasProperty('fairfaxSpreadsheetImportFilename') ?
+            project.fairfaxSpreadsheetImportFilename : null
+    fairfaxSpreadsheetExportFilenameValue = project.hasProperty('fairfaxSpreadsheetExportFilename') ?
+            project.fairfaxSpreadsheetExportFilename : "core/src/main/resources/default-fairfax-import-parameters.json"
 }
 
 apply plugin: 'groovy'
@@ -65,6 +93,41 @@ task jarSources(type: Jar, dependsOn: classes) {
     includeEmptyDirs = false
 
     from sourceSets.main.allSource
+}
+
+task updateDefaultFairfaxImportParameters() {
+    File spreadsheetImportFile
+    if (project.doUpdateDefaultFairfaxImportParameters) {
+        if (project.fairfaxSpreadsheetImportFilenameValue == null) {
+            throw new BuildException("fairfaxSpreadsheetImportFilename=${project.fairfaxSpreadsheetImportFilenameValue} must be set when calling task 'updateDefaultFairfaxImportParameters'.")
+        } else {
+            spreadsheetImportFile = new File((String) project.fairfaxSpreadsheetImportFilenameValue)
+        }
+        if (!spreadsheetImportFile.exists()) {
+            throw new BuildException("File=${spreadsheetImportFile.getCanonicalPath()} must exist.")
+        }
+        if (!spreadsheetImportFile.isFile()) {
+            throw new BuildException("File=${spreadsheetImportFile.getCanonicalPath()} must be a file.")
+        }
+    }
+    doLast {
+        File spreadsheetExportFile = new File(project.fairfaxSpreadsheetExportFilenameValue)
+        logger.info("Writing spreadsheet-import-file=${spreadsheetImportFile.getCanonicalPath()} to spreadsheet-export-file=${spreadsheetExportFile.getCanonicalPath()}")
+        boolean allowDuplicateIds = true
+        boolean allowRowsWithoutIds = true
+        Spreadsheet spreadsheet = SpreadsheetImporter.extractSpreadsheet(spreadsheetImportFile, "MMSID", "|", allowDuplicateIds, allowRowsWithoutIds)
+        logger.info("spreadsheet values imported:")
+        spreadsheet.rows.each { Map<String, String> spreadsheetLine ->
+            StringBuilder line = new StringBuilder()
+            spreadsheetLine.each { String key, String value ->
+                line.append("${key}:${value}|")
+            }
+            logger.info(line.toString())
+        }
+        JsonBuilder jsonBuilder = new JsonBuilder()
+
+        spreadsheetExportFile.write(JsonOutput.prettyPrint(spreadsheet.asJsonString()))
+    }
 }
 
 //tasks.withType(FindBugs) {

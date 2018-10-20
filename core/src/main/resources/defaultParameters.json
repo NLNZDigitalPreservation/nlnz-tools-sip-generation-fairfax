@@ -2,6 +2,10 @@
   "comment" : [
     "This is the current list of Fairfax publications, with their default parameters.",
   ],
+  "mets-file-globals" : {
+    "comment" : "These are global defaults",
+    "filename-finder-patterns" : [ "**/*.pdf" ]
+  },
   "mets-file-defaults" : {
     "comment" : [
       "These are the defaults for the mets.xml file."
