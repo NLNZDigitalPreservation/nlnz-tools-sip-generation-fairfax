@@ -1,6 +1,5 @@
 import groovy.json.JsonBuilder
 import groovy.json.JsonOutput
-import nz.govt.natlib.tools.sip.generation.fairfax.FairfaxSpreadsheet
 import nz.govt.natlib.tools.sip.generation.parameters.Spreadsheet
 import nz.govt.natlib.tools.sip.generation.parameters.SpreadsheetImporter
 import nz.govt.natlib.m11n.tools.gradle.BuildException
@@ -115,7 +114,8 @@ task updateDefaultFairfaxImportParameters() {
         logger.info("Writing spreadsheet-import-file=${spreadsheetImportFile.getCanonicalPath()} to spreadsheet-export-file=${spreadsheetExportFile.getCanonicalPath()}")
         boolean allowDuplicateIds = true
         boolean allowRowsWithoutIds = true
-        Spreadsheet spreadsheet = SpreadsheetImporter.extractSpreadsheet(spreadsheetImportFile, "MMSID", FairfaxSpreadsheet.DEFAULT_FIELD_SEPARATOR, allowDuplicateIds, allowRowsWithoutIds)
+        // TODO Make the separator configurable
+        Spreadsheet spreadsheet = SpreadsheetImporter.extractSpreadsheet(spreadsheetImportFile, "MMSID", "|", allowDuplicateIds, allowRowsWithoutIds)
         logger.info("spreadsheet values imported:")
         spreadsheet.rows.each { Map<String, String> spreadsheetLine ->
             StringBuilder line = new StringBuilder()
