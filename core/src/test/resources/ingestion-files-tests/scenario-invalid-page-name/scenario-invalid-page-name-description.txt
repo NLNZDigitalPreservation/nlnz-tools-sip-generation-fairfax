@@ -1,0 +1,12 @@
+# Based on https://docs.cucumber.io/
+#
+@tag
+Feature: Nonstandard source file scenarios are handled
+
+   Nonstandard source file scenarios are handled.
+
+   Scenario: The file name of a page does not conform with the accepted naming convention
+     Given The PDF file name does not conform with the accepted naming convention
+     When the publication issue is processed
+     Then the SIP is generated
+     And the SIP is tagged as needing manual intervention

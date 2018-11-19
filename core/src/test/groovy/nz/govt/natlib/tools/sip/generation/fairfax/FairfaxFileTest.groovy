@@ -25,16 +25,18 @@ class FairfaxFileTest {
 
     @Test
     void createsCorrectlyWithLetterSequence() {
-        String originalFilename = "Test_Prefix-20181022-B024.pdf"
+        String originalFilename = "TSTED1-20181022-B024.pdf"
         when(mockFile.getName()).thenReturn(originalFilename)
 
         FairfaxFile testFairfaxFile = new FairfaxFile(mockFile)
 
         assertThat("Filename extracted correctly", testFairfaxFile.filename, is(originalFilename))
-        assertThat("Prefix parsed correctly", testFairfaxFile.prefix, is("Test_Prefix"))
-        Calendar calendar = new GregorianCalendar(2018, 9, 22)
-        assertNotNull("Date extracted", testFairfaxFile.date)
-        assertThat("Date parsed correctly", testFairfaxFile.date, is(calendar.getTime()))
+        assertThat("Name parsed correctly", testFairfaxFile.name, is("TST"))
+        assertThat("Edition parsed correctly", testFairfaxFile.edition, is("ED1"))
+        assertNotNull("Year extracted", testFairfaxFile.dateYear)
+        assertThat("dateYear parsed correctly", testFairfaxFile.dateYear, is(new Integer(2018)))
+        assertThat("dateMonthOfYear parsed correctly", testFairfaxFile.dateMonthOfYear, is(new Integer(10)))
+        assertThat("dateDayOfMonth parsed correctly", testFairfaxFile.dateDayOfMonth, is(new Integer(22)))
         assertThat("Prefix parsed correctly", testFairfaxFile.sequenceLetter, is("B"))
         assertThat("Prefix parsed correctly", testFairfaxFile.sequenceNumberString, is("024"))
         assertThat("Prefix parsed correctly", testFairfaxFile.sequenceNumber, is(24))
@@ -43,16 +45,17 @@ class FairfaxFileTest {
 
     @Test
     void createsCorrectlyWithNumberOnlySequence() {
-        String originalFilename = "Test_Prefix-20181022-024.pdf"
+        String originalFilename = "t20ABC-20181022-024.pdf"
         when(mockFile.getName()).thenReturn(originalFilename)
 
         FairfaxFile testFairfaxFile = new FairfaxFile(mockFile)
 
         assertThat("filename extracted correctly", testFairfaxFile.filename, is(originalFilename))
-        assertThat("prefix parsed correctly", testFairfaxFile.prefix, is("Test_Prefix"))
-        Calendar calendar = new GregorianCalendar(2018, 9, 22)
-        assertNotNull("date extracted", testFairfaxFile.date)
-        assertThat("date parsed correctly", testFairfaxFile.date, is(calendar.getTime()))
+        assertThat("Name parsed correctly", testFairfaxFile.name, is("t20"))
+        assertThat("Edition parsed correctly", testFairfaxFile.edition, is("ABC"))
+        assertThat("dateYear parsed correctly", testFairfaxFile.dateYear, is(new Integer(2018)))
+        assertThat("dateMonthOfYear parsed correctly", testFairfaxFile.dateMonthOfYear, is(new Integer(10)))
+        assertThat("dateDayOfMonth parsed correctly", testFairfaxFile.dateDayOfMonth, is(new Integer(22)))
         assertThat("sequenceLetter parsed correctly", testFairfaxFile.sequenceLetter, is(""))
         assertThat("sequenceNumber parsed correctly", testFairfaxFile.sequenceNumber, is(24))
         assertTrue("FairfaxFile is valid", testFairfaxFile.isValid())
@@ -71,8 +74,8 @@ class FairfaxFileTest {
 
     @Test
     void matchesWhenSamePrefixAndDate() {
-        String filename1 = "Test_Prefix-20181022-023.pdf"
-        String filename2 = "Test_Prefix-20181022-001.pdf"
+        String filename1 = "Mixy2k-20181022-023.pdf"
+        String filename2 = "Mixy2k-20181022-001.pdf"
         when(mockFile1.getName()).thenReturn(filename1)
         when(mockFile2.getName()).thenReturn(filename2)
 
@@ -84,8 +87,8 @@ class FairfaxFileTest {
 
     @Test
     void doesNotMatchWhenSamePrefixButDifferentDate() {
-        String filename1 = "Test_Prefix-20181022-023.pdf"
-        String filename2 = "Test_Prefix-20181021-023.pdf"
+        String filename1 = "123456-20181022-023.pdf"
+        String filename2 = "123456-20181021-023.pdf"
         when(mockFile1.getName()).thenReturn(filename1)
         when(mockFile2.getName()).thenReturn(filename2)
 
@@ -97,8 +100,8 @@ class FairfaxFileTest {
 
     @Test
     void doesNotMatchWhenDifferentPrefix() {
-        String filename1 = "Test_Prefix1-20181022-023.pdf"
-        String filename2 = "Test_Prefix2-20181022-023.pdf"
+        String filename1 = "NAMed1-20181022-023.pdf"
+        String filename2 = "NAMed2-20181022-023.pdf"
         when(mockFile1.getName()).thenReturn(filename1)
         when(mockFile2.getName()).thenReturn(filename2)
 
@@ -110,9 +113,9 @@ class FairfaxFileTest {
 
     @Test
     void sortsCorrectlyWithSameDateButDifferentSequenceNumbers() {
-        String filename1 = "Test_Prefix-20181022-023.pdf"
-        String filename2 = "Test_Prefix-20181022-022.pdf"
-        String filename3 = "Test_Prefix-20181022-021.pdf"
+        String filename1 = "NAMed1-20181022-023.pdf"
+        String filename2 = "NAMed1-20181022-022.pdf"
+        String filename3 = "NAMed1-20181022-021.pdf"
         when(mockFile1.getName()).thenReturn(filename1)
         when(mockFile2.getName()).thenReturn(filename2)
         when(mockFile3.getName()).thenReturn(filename3)
@@ -127,9 +130,9 @@ class FairfaxFileTest {
 
     @Test
     void sortsCorrectlyWithDifferentDates() {
-        String filename1 = "Test_Prefix-20181023-021.pdf"
-        String filename2 = "Test_Prefix-20181022-022.pdf"
-        String filename3 = "Test_Prefix-20181021-023.pdf"
+        String filename1 = "NAMed1-20181023-021.pdf"
+        String filename2 = "NAMed1-20181022-022.pdf"
+        String filename3 = "NAMed1-20181021-023.pdf"
         when(mockFile1.getName()).thenReturn(filename1)
         when(mockFile2.getName()).thenReturn(filename2)
         when(mockFile3.getName()).thenReturn(filename3)
@@ -144,9 +147,9 @@ class FairfaxFileTest {
 
     @Test
     void sortsCorrectlyWithSameDateAndSequenceStringButDifferentNumbers() {
-        String filename1 = "Test_Prefix-20181022-C023.pdf"
-        String filename2 = "Test_Prefix-20181022-C022.pdf"
-        String filename3 = "Test_Prefix-20181022-C021.pdf"
+        String filename1 = "NAMed1-20181022-C023.pdf"
+        String filename2 = "NAMed1-20181022-C022.pdf"
+        String filename3 = "NAMed1-20181022-C021.pdf"
         when(mockFile1.getName()).thenReturn(filename1)
         when(mockFile2.getName()).thenReturn(filename2)
         when(mockFile3.getName()).thenReturn(filename3)
@@ -161,9 +164,9 @@ class FairfaxFileTest {
 
     @Test
     void sortsCorrectlyWithSameDateAndDifferentSequenceStringButDifferentNumbers() {
-        String filename1 = "Test_Prefix-20181022-M023.pdf"
-        String filename2 = "Test_Prefix-20181022-C022.pdf"
-        String filename3 = "Test_Prefix-20181022-A021.pdf"
+        String filename1 = "NAMed1-20181022-M023.pdf"
+        String filename2 = "NAMed1-20181022-C022.pdf"
+        String filename3 = "NAMed1-20181022-A021.pdf"
         when(mockFile1.getName()).thenReturn(filename1)
         when(mockFile2.getName()).thenReturn(filename2)
         when(mockFile3.getName()).thenReturn(filename3)

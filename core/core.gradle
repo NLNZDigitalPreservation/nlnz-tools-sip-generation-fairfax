@@ -1,6 +1,6 @@
 import groovy.json.JsonBuilder
 import groovy.json.JsonOutput
-import nz.govt.natlib.tools.sip.generation.SipGenerationException
+import nz.govt.natlib.tools.sip.generation.fairfax.FairfaxSpreadsheet
 import nz.govt.natlib.tools.sip.generation.parameters.Spreadsheet
 import nz.govt.natlib.tools.sip.generation.parameters.SpreadsheetImporter
 import nz.govt.natlib.m11n.tools.gradle.BuildException
@@ -12,9 +12,9 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'nz.govt.natlib.m11n.tools:nlnz-m11n-tools-automation-plugin:1.0.0-SNAPSHOT'
-        classpath 'nz.govt.natlib.m11n.tools:nlnz-m11n-tools-gradle-plugin:1.0.0-SNAPSHOT'
-        classpath 'nz.govt.natlib.tools.sip.generation:nlnz-tools-sip-generation-gradle-plugin:1.0.0-SNAPSHOT'
+        classpath 'nz.govt.natlib.m11n.tools:automation-plugin:1.0.0-SNAPSHOT'
+        classpath 'nz.govt.natlib.m11n.tools:gradle-plugin:1.0.0-SNAPSHOT'
+        classpath 'nz.govt.natlib.tools:sip-generation-gradle-plugin:1.0.0-SNAPSHOT'
     }
 }
 
@@ -44,7 +44,7 @@ project.ext {
     fairfaxSpreadsheetImportFilenameValue = project.hasProperty('fairfaxSpreadsheetImportFilename') ?
             project.fairfaxSpreadsheetImportFilename : null
     fairfaxSpreadsheetExportFilenameValue = project.hasProperty('fairfaxSpreadsheetExportFilename') ?
-            project.fairfaxSpreadsheetExportFilename : "core/src/main/resources/default-fairfax-import-parameters.json"
+            project.fairfaxSpreadsheetExportFilename : "core/src/main/resources/nz/govt/natlib/tools/sip/generation/fairfax/default-fairfax-import-parameters.json"
 }
 
 apply plugin: 'groovy'
@@ -60,9 +60,10 @@ apply plugin: 'pmd' // source code analyzer
 setVersion(project.ext.versionNumber)
 
 dependencies {
-    // We use the latest groovy 2.x version for building this library
-    // compile 'org.codehaus.groovy:groovy-all:2.4.+'
+    // localGroovy (which is currently 2.4.x) is used. Groovy 2.5.x supports JsonGenerator and other new functionality
+    // but causes issues with downstream builds, so alternatives provided by Groovy 2.4.x are used.
     compile localGroovy()
+    //compile 'org.codehaus.groovy:groovy-all:2.5.4'
 
     // Use the latest version
     compile "com.google.guava:guava:+"
@@ -72,7 +73,7 @@ dependencies {
 
     compileOnly 'org.slf4j:slf4j-api:1.7.+'
 
-    compile 'nz.govt.natlib.tools.sip.generation:nlnz-tools-sip-generation-core:1.0.0-SNAPSHOT'
+    compile 'nz.govt.natlib.tools:sip-generation-core:1.0.0-SNAPSHOT'
     // latest version
     testCompile 'junit:junit:4.12'
 
@@ -81,7 +82,6 @@ dependencies {
 
     // use sl4j logging for tests
     testCompile 'org.slf4j:slf4j-log4j12:1.7.+'
-
 }
 
 jar {
@@ -115,7 +115,7 @@ task updateDefaultFairfaxImportParameters() {
         logger.info("Writing spreadsheet-import-file=${spreadsheetImportFile.getCanonicalPath()} to spreadsheet-export-file=${spreadsheetExportFile.getCanonicalPath()}")
         boolean allowDuplicateIds = true
         boolean allowRowsWithoutIds = true
-        Spreadsheet spreadsheet = SpreadsheetImporter.extractSpreadsheet(spreadsheetImportFile, "MMSID", "|", allowDuplicateIds, allowRowsWithoutIds)
+        Spreadsheet spreadsheet = SpreadsheetImporter.extractSpreadsheet(spreadsheetImportFile, "MMSID", FairfaxSpreadsheet.DEFAULT_FIELD_SEPARATOR, allowDuplicateIds, allowRowsWithoutIds)
         logger.info("spreadsheet values imported:")
         spreadsheet.rows.each { Map<String, String> spreadsheetLine ->
             StringBuilder line = new StringBuilder()

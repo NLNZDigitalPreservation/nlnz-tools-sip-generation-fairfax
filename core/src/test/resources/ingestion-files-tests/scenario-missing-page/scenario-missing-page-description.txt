@@ -1,0 +1,12 @@
+# Based on https://docs.cucumber.io/
+#
+@tag
+Feature: Nonstandard source file scenarios are handled
+
+   Nonstandard source file scenarios are handled.
+
+   Scenario: The publication issue is missing a page
+     Given The publication issue has most of its pages
+     And the evidence indicates that a page is missing
+     When the publication issue is verified
+     Then a notification email indicating an empty file is sent to a designated contact

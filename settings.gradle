@@ -1,4 +1,4 @@
-rootProject.name = 'nlnz-tools-sip-generation-fairfax'
+rootProject.name = 'sip-generation-fairfax'
 include ":core", ":gradle-plugin"
 
 // Correctly refer to the children build files

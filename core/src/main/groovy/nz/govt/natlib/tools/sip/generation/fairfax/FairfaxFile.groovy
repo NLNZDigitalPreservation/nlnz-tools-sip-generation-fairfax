@@ -2,21 +2,28 @@ package nz.govt.natlib.tools.sip.generation.fairfax
 
 import groovy.transform.Canonical
 import groovy.transform.Sortable
+import groovy.transform.ToString
+import nz.govt.natlib.tools.sip.Sip
+import nz.govt.natlib.tools.sip.SipFileWrapperFactory
 
-import java.text.DateFormat
-import java.text.SimpleDateFormat
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import java.util.regex.Matcher
 
 @Canonical
-@Sortable(includes = ['prefix', 'date', 'sequenceLetter', 'sequenceNumber'])
+@Sortable(includes = ['name', 'edition', 'dateYear', 'dateMonthOfYear', 'dateDayOfMonth', 'sequenceLetter', 'sequenceNumber'])
+@ToString(includeNames=true, includePackage=false, excludes=[ ])
 class FairfaxFile {
-    static String REGEX_PATTERN = "(?<prefix>\\w+)-(?<date>\\d{8})-(?<sequenceLetter>[A-Za-z]{0,2})(?<sequenceNumber>\\d{1,4})\\.pdf"
-    static DateFormat DATE_FORMAT = new SimpleDateFormat("yyyyMMdd")
+    static String REGEX_PATTERN = "(?<name>[a-zA-Z0-9]{3})(?<edition>[a-zA-Z0-9]{3})-(?<date>\\d{8})-(?<sequenceLetter>[A-Za-z]{0,2})(?<sequenceNumber>\\d{1,4})\\.pdf"
+    static final DateTimeFormatter LOCAL_DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyyMMdd")
 
     File file
     String filename
-    String prefix
-    Date date
+    String name
+    String edition
+    Integer dateYear
+    Integer dateMonthOfYear
+    Integer dateDayOfMonth
     String sequenceLetter
     String sequenceNumberString
     Integer sequenceNumber
@@ -26,14 +33,22 @@ class FairfaxFile {
         populate()
     }
 
+    Sip.FileWrapper generateFileWrapper() {
+        return SipFileWrapperFactory.generate(this.file)
+    }
+
     private populate() {
         this.filename = file.getName()
         // TODO Maybe the pattern comes from a resource or properties file?
         Matcher matcher = filename =~ /${REGEX_PATTERN}/
         if (matcher.matches()) {
-            this.prefix = matcher.group('prefix')
+            this.name = matcher.group('name')
+            this.edition = matcher.group('edition')
             String dateString = matcher.group('date')
-            this.date = DATE_FORMAT.parse(dateString)
+            LocalDate localDate = LocalDate.parse(dateString, LOCAL_DATE_TIME_FORMATTER)
+            this.dateYear = localDate.year
+            this.dateMonthOfYear = localDate.monthValue
+            this.dateDayOfMonth = localDate.dayOfMonth
             this.sequenceLetter = matcher.group('sequenceLetter')
             this.sequenceNumberString = matcher.group('sequenceNumber')
             this.sequenceNumber = Integer.parseInt(sequenceNumberString)
@@ -41,22 +56,21 @@ class FairfaxFile {
     }
 
     boolean isValid() {
-        return this.file != null && this.prefix != null && this.date != null && this.sequenceNumber != null
+        return this.file != null && this.name != null && this.edition != null && this.dateYear != null &&
+                this.dateMonthOfYear != null && this.dateDayOfMonth != null && this.sequenceNumber != null
     }
 
     boolean matches(FairfaxFile fairfaxFile) {
-        return this.matches(fairfaxFile.prefix, fairfaxFile.date)
+        return this.matches(fairfaxFile.name, fairfaxFile.edition, fairfaxFile.dateYear, fairfaxFile.dateMonthOfYear,
+            fairfaxFile.dateDayOfMonth)
     }
 
-    boolean matches(String prefix, Date comparisonDate) {
+    boolean matches(String comparisonName, String comparisonEdition, Integer comparisonYear,
+                    Integer comparisonMonthOfYear, Integer comparisonDayOfMonth) {
         if (isValid()) {
-            if (this.prefix == prefix) {
-                Calendar calendar1 = Calendar.getInstance()
-                Calendar calendar2 = Calendar.getInstance()
-                calendar1.setTime(this.date)
-                calendar2.setTime(comparisonDate)
-                return (calendar1.get(Calendar.YEAR) == calendar2.get(Calendar.YEAR)) &&
-                        (calendar1.get(Calendar.DAY_OF_YEAR) == calendar2.get(Calendar.DAY_OF_YEAR))
+            if (this.name == comparisonName && this.edition == comparisonEdition) {
+                return (this.dateYear == comparisonYear && this.dateMonthOfYear == comparisonMonthOfYear &&
+                        this.dateDayOfMonth == comparisonDayOfMonth)
             } else {
                 return false
             }

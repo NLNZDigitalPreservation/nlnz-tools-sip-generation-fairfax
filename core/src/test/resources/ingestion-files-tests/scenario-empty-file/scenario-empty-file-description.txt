@@ -1,0 +1,12 @@
+# Based on https://docs.cucumber.io/
+#
+@tag
+Feature: Nonstandard source file scenarios are handled
+
+   Nonstandard source file scenarios are handled.
+
+   Scenario: The PDF file is empty (a zero size file)
+     Given The file exists
+     And the file size is zero
+     When the publication issue is verified
+     Then a notification email indicating an empty file is sent to a designated contact
