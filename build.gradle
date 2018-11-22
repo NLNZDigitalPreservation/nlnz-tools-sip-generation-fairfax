@@ -6,7 +6,7 @@ allprojects {
 }
 
 subprojects {
-    group 'nz.govt.natlib.tools.sip.generation.fairfax'
+    group 'nz.govt.natlib.tools'
     description = 'National Library SIP Generation for Fairfax files.'
 
     project.ext {

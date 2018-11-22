@@ -1,0 +1,15 @@
+# Based on https://docs.cucumber.io/
+#
+@tag
+Feature: Nonstandard source file scenarios are handled
+
+   Nonstandard source file scenarios are handled.
+
+   Scenario: The publication issue has TAB PDF files
+     Given The publication issue has one or more TAB PDF files
+     When the publication issue is processed
+     Then the TAB PDF files are included with the main publication
+     And a separate publication for the TAB by itself with a SIP
+     And a 856 record in the separate TAB publication points to the main publication
+     And cataloguing is notified by email so they can create a catalog entry if desired
+     And the separate publication for the TAB by itself is tagged for manual intervention

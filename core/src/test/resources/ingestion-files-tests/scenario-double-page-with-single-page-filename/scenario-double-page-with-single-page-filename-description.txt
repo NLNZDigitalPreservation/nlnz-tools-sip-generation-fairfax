@@ -1,0 +1,13 @@
+# Based on https://docs.cucumber.io/
+#
+@tag
+Feature: Nonstandard source file scenarios are handled
+
+   Nonstandard source file scenarios are handled.
+
+   Scenario: The file contains a double page and the filename itself contains one page numbers
+     Given The file itself is a double page PDF
+     And the filename contains a single page number
+     When the PDF file is processed
+     Then the page is tagged as a double
+     And the page count is incremented by two

@@ -1,0 +1,11 @@
+# Based on https://docs.cucumber.io/
+#
+@tag
+Feature: Nonstandard source file scenarios are handled
+
+   Nonstandard source file scenarios are handled.
+
+   Scenario: The PDF file is invalid
+     Given The file is an invalid PDF
+     When the publication issue is verified
+     Then a notification email indicating an invalid PDF file is sent to a designated contact

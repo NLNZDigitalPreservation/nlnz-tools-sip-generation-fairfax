@@ -1,0 +1,13 @@
+# Based on https://docs.cucumber.io/
+#
+@tag
+Feature: Nonstandard source file scenarios are handled
+
+   Nonstandard source file scenarios are handled.
+
+   Scenario: The same publication has multiple editions for the same day
+     Given The publication has more than one issue for the same day
+     And the different issues are for the same region
+     When the publication issue is processed
+     Then the SIP metadata is set with an indicator that this is an edition
+     And the publication issues SIP are tagged for manual intervention

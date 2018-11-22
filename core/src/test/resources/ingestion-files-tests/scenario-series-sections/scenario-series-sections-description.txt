@@ -1,0 +1,12 @@
+# Based on https://docs.cucumber.io/
+#
+@tag
+Feature: Standard source file scenarios are handled
+
+   Standard source file scenarios are handled.
+
+   Scenario: The publication issue has multiple PDF pages indicated by a letter prefixing the page number
+     Given The publication has PDF pages with filenames that have a alpha-prefix before the page number
+     When the publication issue is processed
+     Then the SIP metadata has the PDF pages ordered alphabetically by section
+     And each section is ordered by page number

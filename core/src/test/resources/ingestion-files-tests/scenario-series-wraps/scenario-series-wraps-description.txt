@@ -1,0 +1,12 @@
+# Based on https://docs.cucumber.io/
+#
+@tag
+Feature: Nonstandard source file scenarios are handled
+
+   Nonstandard source file scenarios are handled.
+
+   Scenario: The publication issue has a PDF files that wrap around the regular publication
+     Given The publication issue has one or more wrap PDF files
+     When the publication issue is processed
+     Then the wrap PDF files are included with the main publication
+     And the wrap PDF files are ordered as they would be seen in the printed publication
