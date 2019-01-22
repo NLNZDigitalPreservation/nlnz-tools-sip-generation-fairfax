@@ -2,16 +2,25 @@ package nz.govt.natlib.tools.sip.generation.fairfax
 
 import groovy.util.logging.Slf4j
 import groovy.util.slurpersupport.GPathResult
+import nz.govt.natlib.tools.sip.Sip
+import nz.govt.natlib.tools.sip.SipFileWrapperFactory
 import nz.govt.natlib.tools.sip.extraction.SipXmlExtractor
 import nz.govt.natlib.tools.sip.files.FilesFinder
+import nz.govt.natlib.tools.sip.generation.SipXmlGenerator
 import nz.govt.natlib.tools.sip.generation.parameters.Spreadsheet
+import nz.govt.natlib.tools.sip.state.SipProcessingFailure
+import nz.govt.natlib.tools.sip.state.SipProcessingFailureReason
+import nz.govt.natlib.tools.sip.state.SipProcessingFailureReasonType
+import nz.govt.natlib.tools.sip.state.SipProcessingState
 
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
 
 import static org.hamcrest.core.Is.is
+import static org.junit.Assert.assertFalse
 import static org.junit.Assert.assertThat
+import static org.junit.Assert.assertTrue
 
 /**
  * Useful methods for use across different unit tests.
@@ -192,5 +201,80 @@ class TestHelper {
         //        LocalDate.of(2015, 7, 29),
         //        LocalTime.of(0, 0, 0, 0))))
 
+    }
+
+    static void assertExpectedFailureReason(SipProcessingState sipProcessingState, SipProcessingFailureReasonType type) {
+        assertFalse("SipProcessingState is successful", sipProcessingState.isSuccessful())
+        assertTrue("SipProcessingState has failures", sipProcessingState.failures.size() > 0)
+        SipProcessingFailure firstFailure = sipProcessingState.failures.first()
+        assertTrue("SipProcessingFailure has reasons", firstFailure.reasons.size() > 0)
+        SipProcessingFailureReason firstFailureReason = firstFailure.reasons.first()
+        assertThat("SipProcessingState firstFailureReason type is ${type}", firstFailureReason.reasonType, is(type))
+    }
+
+    static String processCollectedFiles(SipProcessingState sipProcessingState, FairfaxSpreadsheet fairfaxSpreadsheet,
+                                      List<File> filesForProcessing, int expectedNumberOfFilesProcessed) {
+        String sipAsXml
+        println("STARTING processFiles")
+
+        Map<FairfaxFileGroupKey, FairfaxFileGroup> fairfaxFileGroupMap = [ : ]
+        filesForProcessing.each { File rawFile ->
+            FairfaxFile fairfaxFile = new FairfaxFile(rawFile)
+            println("Processing fairfaxFile=${fairfaxFile}")
+            if (fairfaxFile.isValid()) {
+                FairfaxFileGroupKey fairfaxFileKey = FairfaxFileGroupKey.fromFairfaxFile(fairfaxFile)
+                println("fairfaxFileKey=${fairfaxFileKey}")
+                FairfaxFileGroup fairfaxFileGroup = fairfaxFileGroupMap.get(fairfaxFileKey)
+                if (fairfaxFileGroup == null) {
+                    fairfaxFileGroup = new FairfaxFileGroup(fairfaxFileKey)
+                    fairfaxFileGroupMap.put(fairfaxFileKey, fairfaxFileGroup)
+                }
+                fairfaxFileGroup.addFile(fairfaxFile)
+            } else {
+                println("FairfaxFile=${fairfaxFile} is NOT valid.")
+            }
+        }
+        // Find the publication (ultimately the MMSID) associated with this set of files.
+        println("FINDING publication associated with the files")
+        Integer filesProcessed = 0
+        boolean allowZeroRatio = true
+        fairfaxFileGroupMap.each { FairfaxFileGroupKey fairfaxFileGroupKey, FairfaxFileGroup fairfaxFileGroup ->
+            println("Checking fairfaxFileGroupKey=${fairfaxFileGroupKey}, fairfaxFileGroup=${fairfaxFileGroup}")
+            FairfaxFileGroupMatcher fairfaxFileGroupMatcher = new FairfaxFileGroupMatcher(sipProcessingState)
+            FairfaxFileGroupMatch fairfaxFileGroupMatch = fairfaxFileGroupMatcher.mostLikelyMatch(fairfaxFileGroup,
+                    fairfaxSpreadsheet, allowZeroRatio)
+            if (fairfaxFileGroupMatch != null) {
+                println("Will process fairfaxFileGroup=${fairfaxFileGroup} according to sip=${fairfaxFileGroupMatch.sip}")
+                List<FairfaxFile> fairfaxFiles = fairfaxFileGroup.files.sort()
+                List<Sip.FileWrapper> fileWrappers = fairfaxFiles.collect() { FairfaxFile fairfaxFile ->
+                    SipFileWrapperFactory.generate(fairfaxFile.file, true, true)
+                }
+                int sequenceNumber = 1
+                fileWrappers.each { Sip.FileWrapper fileWrapper ->
+                    String label = String.format("%03d", sequenceNumber)
+                    fileWrapper.label = label
+                    sequenceNumber += 1
+                    filesProcessed += 1
+                }
+                Sip testSip = fairfaxFileGroupMatch.sip.clone()
+                testSip.fileWrappers = fileWrappers
+                sipProcessingState.setComplete(true)
+                println("\n* * * SipProcessingState:")
+                println(sipProcessingState.toString())
+                SipXmlGenerator sipXmlGenerator = new SipXmlGenerator(testSip)
+                sipAsXml = sipXmlGenerator.getSipAsXml()
+                println("\n* * *   S I P   * * *")
+                println(sipAsXml)
+                println("\n* * *   E N D   O F   S I P   * * *")
+            } else {
+                sipProcessingState.setComplete(true)
+                // We can't process the files
+                throw new RuntimeException("Unable to process fairfaxFileGroup=${fairfaxFileGroup}: No matching sip")
+            }
+            println("ENDING processing")
+        }
+        assertThat("${expectedNumberOfFilesProcessed} files should have been processed", filesProcessed,
+                is(expectedNumberOfFilesProcessed))
+        return sipAsXml
     }
 }

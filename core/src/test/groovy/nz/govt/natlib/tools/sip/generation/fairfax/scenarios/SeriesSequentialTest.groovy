@@ -1,12 +1,13 @@
-package nz.govt.natlib.tools.sip.generation.fairfax
+package nz.govt.natlib.tools.sip.generation.fairfax.scenarios
 
 import groovy.util.logging.Slf4j
-import nz.govt.natlib.tools.sip.Sip
-import nz.govt.natlib.tools.sip.SipFileWrapperFactory
 import nz.govt.natlib.tools.sip.extraction.SipXmlExtractor
 import nz.govt.natlib.tools.sip.files.FilesFinder
-import nz.govt.natlib.tools.sip.generation.SipXmlGenerator
+import nz.govt.natlib.tools.sip.generation.fairfax.FairfaxSpreadsheet
+import nz.govt.natlib.tools.sip.generation.fairfax.TestHelper
 import nz.govt.natlib.tools.sip.generation.parameters.Spreadsheet
+import nz.govt.natlib.tools.sip.state.SipProcessingState
+import org.junit.Before
 import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -16,8 +17,6 @@ import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
 
-import static org.hamcrest.core.Is.is
-import static org.junit.Assert.assertThat
 import static org.junit.Assert.assertTrue
 
 /**
@@ -40,6 +39,13 @@ class SeriesSequentialTest {
 
     static final String RESOURCES_FOLDER = "ingestion-files-tests/scenario-series-sequential"
     static final String IMPORT_PARAMETERS_FILENAME = "test-fairfax-import-parameters.json"
+
+    SipProcessingState sipProcessingState
+
+    @Before
+    void setup() {
+        sipProcessingState = new SipProcessingState()
+    }
 
     /**
      * Note to developers: Ensure that this is exactly the same test as {@link #correctlyAssembleSipFromFiles()}, except
@@ -75,7 +81,11 @@ class SeriesSequentialTest {
             println("File for processing=${file.getCanonicalPath()}")
         }
 
-        processCollectedFiles(fairfaxSpreadsheet, filesForProcessing)
+        String sipAsXml = TestHelper.processCollectedFiles(sipProcessingState, fairfaxSpreadsheet, filesForProcessing,
+                10)
+        println("STARTING SIP validation")
+        sipConstructedCorrectly(sipAsXml)
+        println("ENDING SIP validation")
     }
 
     @Test
@@ -95,73 +105,20 @@ class SeriesSequentialTest {
             println("File for processing=${file.getCanonicalPath()}")
         }
 
-        processCollectedFiles(fairfaxSpreadsheet, filesForProcessing)
+        String sipAsXml = TestHelper.processCollectedFiles(sipProcessingState, fairfaxSpreadsheet, filesForProcessing,
+                10)
+        println("STARTING SIP validation")
+        sipConstructedCorrectly(sipAsXml)
+        println("ENDING SIP validation")
     }
 
-    void processCollectedFiles(FairfaxSpreadsheet fairfaxSpreadsheet, List<File> filesForProcessing) {
-        println("STARTING processFiles")
-
-        Map<FairfaxFileGroupKey, FairfaxFileGroup> fairfaxFileGroupMap = [:]
-        filesForProcessing.each { File rawFile ->
-            FairfaxFile fairfaxFile = new FairfaxFile(rawFile)
-            println("Processing fairfaxFile=${fairfaxFile}")
-            if (fairfaxFile.isValid()) {
-                FairfaxFileGroupKey fairfaxFileKey = FairfaxFileGroupKey.fromFairfaxFile(fairfaxFile)
-                println("fairfaxFileKey=${fairfaxFileKey}")
-                FairfaxFileGroup fairfaxFileGroup = fairfaxFileGroupMap.get(fairfaxFileKey)
-                if (fairfaxFileGroup == null) {
-                    fairfaxFileGroup = new FairfaxFileGroup(fairfaxFileKey)
-                    fairfaxFileGroupMap.put(fairfaxFileKey, fairfaxFileGroup)
-                }
-                fairfaxFileGroup.addFile(fairfaxFile)
-            } else {
-                println("FairfaxFile=${fairfaxFile} is NOT valid.")
-            }
-        }
-        // Find the publication (ultimately the MMSID) associated with this set of files.
-        println("FINDING publication associated with the files")
-        Integer filesProcessed = 0
-        boolean allowZeroRatio = true
-        fairfaxFileGroupMap.each { FairfaxFileGroupKey fairfaxFileGroupKey, FairfaxFileGroup fairfaxFileGroup ->
-            println("Checking fairfaxFileGroupKey=${fairfaxFileGroupKey}, fairfaxFileGroup=${fairfaxFileGroup}")
-            FairfaxFileGroupMatch fairfaxFileGroupMatch = FairfaxFileGroupMatcher.mostLikelyMatch(fairfaxFileGroup,
-                    fairfaxSpreadsheet, allowZeroRatio)
-            if (fairfaxFileGroupMatch != null) {
-                println("Will process fairfaxFileGroup=${fairfaxFileGroup} according to sip=${fairfaxFileGroupMatch.sip}")
-                List<FairfaxFile> fairfaxFiles = fairfaxFileGroup.files.sort()
-                List<Sip.FileWrapper> fileWrappers = fairfaxFiles.collect() { FairfaxFile fairfaxFile ->
-                    SipFileWrapperFactory.generate(fairfaxFile.file, true, true)
-                }
-                int sequenceNumber = 1
-                fileWrappers.each { Sip.FileWrapper fileWrapper ->
-                    String label = String.format("%03d", sequenceNumber)
-                    fileWrapper.label = label
-                    sequenceNumber += 1
-                    filesProcessed += 1
-                }
-                Sip testSip = fairfaxFileGroupMatch.sip.clone()
-                testSip.fileWrappers = fileWrappers
-                SipXmlGenerator sipXmlGenerator = new SipXmlGenerator(testSip)
-                String sipAsXml = sipXmlGenerator.getSipAsXml()
-                println("\n* * *   S I P   * * *")
-                println(sipAsXml)
-                println("\n* * *   E N D   O F   S I P   * * *")
-                println("STARTING SIP validation")
-                seriesSequentialConstructedCorrectly(sipAsXml)
-                println("ENDING SIP validation")
-            } else {
-                // We can't process the files
-                throw new RuntimeException("Unable to process fairfaxFileGroup=${fairfaxFileGroup}: No matching sip")
-            }
-            println("ENDING processing")
-        }
-        assertThat("9 files should have been processed", filesProcessed, is(10))
-    }
-
-    void seriesSequentialConstructedCorrectly(String sipXml) {
+    void sipConstructedCorrectly(String sipXml) {
         SipXmlExtractor sipForValidation = new SipXmlExtractor(sipXml)
 
         assertTrue("SipXmlExtractor has content", sipForValidation.xml.length() > 0)
+
+        assertTrue("SipProcessingState is complete", this.sipProcessingState.isComplete())
+        assertTrue("SipProcessingState is successful", this.sipProcessingState.isSuccessful())
 
         TestHelper.assertExpectedSipMetadataValues(sipForValidation, "Test Publication One", 2018, 11, 23,
                 "NewspaperIE", "ALMAMMS", "test-mms-id-one", "200", "PRESERVATION_MASTER", "VIEW", true, 1)

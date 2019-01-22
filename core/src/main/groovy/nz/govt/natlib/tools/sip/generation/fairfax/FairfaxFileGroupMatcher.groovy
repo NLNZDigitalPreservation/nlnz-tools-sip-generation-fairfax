@@ -3,11 +3,20 @@ package nz.govt.natlib.tools.sip.generation.fairfax
 import groovy.util.logging.Slf4j
 import nz.govt.natlib.tools.sip.Sip
 import nz.govt.natlib.tools.sip.pdf.PdfInformationExtractor
+import nz.govt.natlib.tools.sip.state.SipProcessingFailure
+import nz.govt.natlib.tools.sip.state.SipProcessingFailureReason
+import nz.govt.natlib.tools.sip.state.SipProcessingFailureReasonType
+import nz.govt.natlib.tools.sip.state.SipProcessingState
 
 @Slf4j
 class FairfaxFileGroupMatcher {
+    SipProcessingState sipProcessingState
 
-    static List<FairfaxFileGroupMatch> findMatches(FairfaxFileGroup fairfaxFileGroup, FairfaxSpreadsheet spreadsheet) {
+    FairfaxFileGroupMatcher(SipProcessingState sipProcessingState) {
+        this.sipProcessingState = sipProcessingState
+    }
+
+    List<FairfaxFileGroupMatch> findMatches(FairfaxFileGroup fairfaxFileGroup, FairfaxSpreadsheet spreadsheet) {
         List<FairfaxFileGroupMatch> fairfaxFileGroupMatches = [ ]
         List<Map<String, String>> candidateParameterMaps = spreadsheet.matchingParameterMaps(
                 fairfaxFileGroup.fairfaxFileGroupKey.name, fairfaxFileGroup.fairfaxFileGroupKey.edition)
@@ -19,11 +28,18 @@ class FairfaxFileGroupMatcher {
             List<FairfaxFileMatch> matches = [ ]
             // We do every file so we can tell the relative strength of the match
             fairfaxFileGroup.files.each { FairfaxFile fairfaxFile ->
-                // we wrap the regex pattern with '(?i:<pattern>)' to make it case insensitive
-                List<String> matchingLines = PdfInformationExtractor.matchText(fairfaxFile.getFile(), "(?i:.*?${title}.*?)")
-                FairfaxFileMatch fairfaxFileMatch = new FairfaxFileMatch(fairfaxFile: fairfaxFile,
-                        stringMatches: matchingLines)
-                matches.add(fairfaxFileMatch)
+                if (fairfaxFile.file.length() == 0) {
+                    SipProcessingFailureReason failureReason = new SipProcessingFailureReason(
+                            SipProcessingFailureReasonType.FILE_OF_LENGTH_ZERO,  null,
+                            fairfaxFile.file.getCanonicalPath())
+                    sipProcessingState.addFailure(SipProcessingFailure.createWithReason(failureReason))
+                } else {
+                    // we wrap the regex pattern with '(?i:<pattern>)' to make it case insensitive
+                    List<String> matchingLines = PdfInformationExtractor.matchText(fairfaxFile.getFile(), "(?i:.*?${title}.*?)")
+                    FairfaxFileMatch fairfaxFileMatch = new FairfaxFileMatch(fairfaxFile: fairfaxFile,
+                            stringMatches: matchingLines)
+                    matches.add(fairfaxFileMatch)
+                }
             }
             Sip sip = SipFactory.fromMap(parameterMap)
             sip.year = fairfaxFileGroup.fairfaxFileGroupKey.dateYear
@@ -37,7 +53,7 @@ class FairfaxFileGroupMatcher {
         return fairfaxFileGroupMatches
     }
 
-    static FairfaxFileGroupMatch mostLikelyMatch(FairfaxFileGroup fairfaxFileGroup, FairfaxSpreadsheet fairfaxSpreadsheet,
+    FairfaxFileGroupMatch mostLikelyMatch(FairfaxFileGroup fairfaxFileGroup, FairfaxSpreadsheet fairfaxSpreadsheet,
                                                  boolean allowZeroRatio = true) {
         List<FairfaxFileGroupMatch> fairfaxFileGroupMatches = findMatches(fairfaxFileGroup, fairfaxSpreadsheet)
         log.info("Possible matches for fairfaxFileGroup=${fairfaxFileGroup}, matches=${fairfaxFileGroupMatches}")
