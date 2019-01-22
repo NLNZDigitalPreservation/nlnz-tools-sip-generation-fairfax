@@ -6,7 +6,7 @@ import nz.govt.natlib.tools.sip.files.FilesFinder
 import nz.govt.natlib.tools.sip.generation.fairfax.FairfaxSpreadsheet
 import nz.govt.natlib.tools.sip.generation.fairfax.TestHelper
 import nz.govt.natlib.tools.sip.generation.parameters.Spreadsheet
-import nz.govt.natlib.tools.sip.state.SipProcessingFailureReasonType
+import nz.govt.natlib.tools.sip.state.SipProcessingExceptionReasonType
 import nz.govt.natlib.tools.sip.state.SipProcessingState
 import org.junit.Before
 import org.junit.Ignore
@@ -119,7 +119,7 @@ class EmptyFileTest {
         assertTrue("SipXmlExtractor has content", sipForValidation.xml.length() > 0)
 
         assertTrue("SipProcessingState is complete", this.sipProcessingState.isComplete())
-        TestHelper.assertExpectedFailureReason(sipProcessingState, SipProcessingFailureReasonType.FILE_OF_LENGTH_ZERO)
+        TestHelper.assertExpectedExceptionReason(sipProcessingState, SipProcessingExceptionReasonType.FILE_OF_LENGTH_ZERO)
 
         TestHelper.assertExpectedSipMetadataValues(sipForValidation, "Test Publication One", 2018, 11, 23,
                 "NewspaperIE", "ALMAMMS", "test-mms-id-one", "200", "PRESERVATION_MASTER", "VIEW", true, 1)

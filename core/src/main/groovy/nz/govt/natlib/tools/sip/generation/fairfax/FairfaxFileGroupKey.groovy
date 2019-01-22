@@ -3,7 +3,7 @@ package nz.govt.natlib.tools.sip.generation.fairfax
 import groovy.transform.Canonical
 import groovy.transform.Sortable
 import groovy.util.logging.Slf4j
-import nz.govt.natlib.tools.sip.SipProcessingException
+import nz.govt.natlib.tools.sip.state.SipProcessingException
 
 @Canonical
 @Sortable(includes = ['name', 'edition', 'dateYear', 'dateMonthOfYear', 'dateDayOfMonth'])

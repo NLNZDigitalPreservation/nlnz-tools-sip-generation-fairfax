@@ -8,9 +8,9 @@ import nz.govt.natlib.tools.sip.extraction.SipXmlExtractor
 import nz.govt.natlib.tools.sip.files.FilesFinder
 import nz.govt.natlib.tools.sip.generation.SipXmlGenerator
 import nz.govt.natlib.tools.sip.generation.parameters.Spreadsheet
-import nz.govt.natlib.tools.sip.state.SipProcessingFailure
-import nz.govt.natlib.tools.sip.state.SipProcessingFailureReason
-import nz.govt.natlib.tools.sip.state.SipProcessingFailureReasonType
+import nz.govt.natlib.tools.sip.state.SipProcessingException
+import nz.govt.natlib.tools.sip.state.SipProcessingExceptionReason
+import nz.govt.natlib.tools.sip.state.SipProcessingExceptionReasonType
 import nz.govt.natlib.tools.sip.state.SipProcessingState
 
 import java.nio.file.Files
@@ -203,13 +203,13 @@ class TestHelper {
 
     }
 
-    static void assertExpectedFailureReason(SipProcessingState sipProcessingState, SipProcessingFailureReasonType type) {
+    static void assertExpectedExceptionReason(SipProcessingState sipProcessingState, SipProcessingExceptionReasonType type) {
         assertFalse("SipProcessingState is successful", sipProcessingState.isSuccessful())
-        assertTrue("SipProcessingState has failures", sipProcessingState.failures.size() > 0)
-        SipProcessingFailure firstFailure = sipProcessingState.failures.first()
-        assertTrue("SipProcessingFailure has reasons", firstFailure.reasons.size() > 0)
-        SipProcessingFailureReason firstFailureReason = firstFailure.reasons.first()
-        assertThat("SipProcessingState firstFailureReason type is ${type}", firstFailureReason.reasonType, is(type))
+        assertTrue("SipProcessingState has exceptions", sipProcessingState.exceptions.size() > 0)
+        SipProcessingException firstException = sipProcessingState.exceptions.first()
+        assertTrue("SipProcessingException has reasons", firstException.reasons.size() > 0)
+        SipProcessingExceptionReason firstExceptionReason = firstException.reasons.first()
+        assertThat("SipProcessingState firstExceptionReason type is ${type}", firstExceptionReason.reasonType, is(type))
     }
 
     static String processCollectedFiles(SipProcessingState sipProcessingState, FairfaxSpreadsheet fairfaxSpreadsheet,

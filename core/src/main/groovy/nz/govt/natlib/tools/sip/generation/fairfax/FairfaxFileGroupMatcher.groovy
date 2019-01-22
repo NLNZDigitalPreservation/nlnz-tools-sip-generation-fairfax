@@ -3,9 +3,9 @@ package nz.govt.natlib.tools.sip.generation.fairfax
 import groovy.util.logging.Slf4j
 import nz.govt.natlib.tools.sip.Sip
 import nz.govt.natlib.tools.sip.pdf.PdfInformationExtractor
-import nz.govt.natlib.tools.sip.state.SipProcessingFailure
-import nz.govt.natlib.tools.sip.state.SipProcessingFailureReason
-import nz.govt.natlib.tools.sip.state.SipProcessingFailureReasonType
+import nz.govt.natlib.tools.sip.state.SipProcessingException
+import nz.govt.natlib.tools.sip.state.SipProcessingExceptionReason
+import nz.govt.natlib.tools.sip.state.SipProcessingExceptionReasonType
 import nz.govt.natlib.tools.sip.state.SipProcessingState
 
 @Slf4j
@@ -29,10 +29,10 @@ class FairfaxFileGroupMatcher {
             // We do every file so we can tell the relative strength of the match
             fairfaxFileGroup.files.each { FairfaxFile fairfaxFile ->
                 if (fairfaxFile.file.length() == 0) {
-                    SipProcessingFailureReason failureReason = new SipProcessingFailureReason(
-                            SipProcessingFailureReasonType.FILE_OF_LENGTH_ZERO,  null,
+                    SipProcessingExceptionReason exceptionReason = new SipProcessingExceptionReason(
+                            SipProcessingExceptionReasonType.FILE_OF_LENGTH_ZERO,  null,
                             fairfaxFile.file.getCanonicalPath())
-                    sipProcessingState.addFailure(SipProcessingFailure.createWithReason(failureReason))
+                    sipProcessingState.addException(SipProcessingException.createWithReason(exceptionReason))
                 } else {
                     // we wrap the regex pattern with '(?i:<pattern>)' to make it case insensitive
                     List<String> matchingLines = PdfInformationExtractor.matchText(fairfaxFile.getFile(), "(?i:.*?${title}.*?)")
