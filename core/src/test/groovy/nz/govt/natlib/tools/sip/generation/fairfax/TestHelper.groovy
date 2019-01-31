@@ -214,7 +214,7 @@ class TestHelper {
     }
 
     static String processCollectedFiles(SipProcessingState sipProcessingState, FairfaxSpreadsheet fairfaxSpreadsheet,
-                                      List<File> filesForProcessing, int expectedNumberOfFilesProcessed) {
+                                      List<File> filesForProcessing, Integer expectedNumberOfFilesProcessed) {
         String sipAsXml
         println("STARTING processFiles")
 
@@ -232,7 +232,12 @@ class TestHelper {
                 }
                 fairfaxFileGroup.addFile(fairfaxFile)
             } else {
-                println("FairfaxFile=${fairfaxFile} is NOT valid.")
+                SipProcessingExceptionReason exceptionReason = new SipProcessingExceptionReason(
+                        SipProcessingExceptionReasonType.INVALID_PAGE_FILENAME, null,
+                        fairfaxFile.file.getCanonicalPath())
+                SipProcessingException sipProcessingException = SipProcessingException.createWithReason(exceptionReason)
+                sipProcessingState.addException(sipProcessingException)
+                log.warn(sipProcessingException.toString())
             }
         }
         // Find the publication (ultimately the MMSID) associated with this set of files.
