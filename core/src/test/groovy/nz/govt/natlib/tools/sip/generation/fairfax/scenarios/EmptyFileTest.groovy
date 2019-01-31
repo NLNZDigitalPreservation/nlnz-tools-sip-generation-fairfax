@@ -6,6 +6,7 @@ import nz.govt.natlib.tools.sip.files.FilesFinder
 import nz.govt.natlib.tools.sip.generation.fairfax.FairfaxSpreadsheet
 import nz.govt.natlib.tools.sip.generation.fairfax.TestHelper
 import nz.govt.natlib.tools.sip.generation.parameters.Spreadsheet
+import nz.govt.natlib.tools.sip.processing.ProcessOutputInterceptor
 import nz.govt.natlib.tools.sip.state.SipProcessingExceptionReasonType
 import nz.govt.natlib.tools.sip.state.SipProcessingState
 import org.junit.Before
@@ -60,6 +61,10 @@ class EmptyFileTest {
     // TODO Ignore this test before making a code commit
     @Ignore
     void correctlyAssembleSipFromFilesOnFilesystem() {
+        ProcessOutputInterceptor processOutputInterceptor = ProcessOutputInterceptor.forTempFile("EmptyFileTest-",
+                ".txt", false)
+        this.sipProcessingState.processingOutputPath = processOutputInterceptor.path
+        processOutputInterceptor.start()
         String localPath = "src/test/resources/${RESOURCES_FOLDER}"
 
         File spreadsheetFile = new File("${localPath}/${IMPORT_PARAMETERS_FILENAME}")
@@ -69,12 +74,14 @@ class EmptyFileTest {
         // TODO A more complicated pattern -- date and other masks?
         boolean isRegexNotGlob = true
         boolean matchFilenameOnly = true
+        boolean sortFiles = true
         List<File> filesForProcessing
         Path filesPath = Paths.get(localPath)
         if (!Files.exists(filesPath) || !Files.isDirectory(filesPath)) {
             log.warn("Path '${filesPath}' does not exist is not a directory. Returning empty file list.")
         } else {
-            filesForProcessing = FilesFinder.getMatchingFiles(filesPath, isRegexNotGlob, matchFilenameOnly, ".*?\\.pdf")
+            filesForProcessing = FilesFinder.getMatchingFiles(filesPath, isRegexNotGlob, matchFilenameOnly,
+                    sortFiles, ".*?\\.pdf")
         }
 
         println("Collected ${filesForProcessing.size()} files for processing")
@@ -87,10 +94,23 @@ class EmptyFileTest {
         println("STARTING SIP validation")
         sipConstructedCorrectly(sipAsXml)
         println("ENDING SIP validation")
+        println("START SipProcessingState:")
+        println(this.sipProcessingState.toString())
+        println("END SipProcessingState")
+        println("Process output path=${processOutputInterceptor.path}")
+        Path processingStateFilePath = this.sipProcessingState.toTempFile()
+        println("sipProcessingState file path=${processingStateFilePath}")
+        processOutputInterceptor.stopAndClose()
+        // In a normal processing script, the processed files, the processing output and the sipProcessingState file
+        // would be moved/copied to a processing completed directory based on the processing state.
     }
 
     @Test
     void correctlyAssembleSipFromFiles() {
+        ProcessOutputInterceptor processOutputInterceptor = ProcessOutputInterceptor.forTempFile("EmptyFileTest-",
+        ".txt", false)
+        this.sipProcessingState.processingOutputPath = processOutputInterceptor.path
+        processOutputInterceptor.start()
         String resourcePath = "${RESOURCES_FOLDER}"
         String localPath = "src/test/resources/${RESOURCES_FOLDER}"
 
@@ -99,7 +119,9 @@ class EmptyFileTest {
         // TODO A more complicated pattern -- date and other masks?
         boolean isRegexNotGlob = true
         boolean matchFilenameOnly = true
-        List<File> filesForProcessing = TestHelper.findFiles(resourcePath, localPath, isRegexNotGlob, matchFilenameOnly, ".*?\\.pdf")
+        boolean sortFiles = true
+        List<File> filesForProcessing = TestHelper.findFiles(resourcePath, localPath, isRegexNotGlob, matchFilenameOnly,
+                sortFiles, ".*?\\.pdf")
 
         println("Collected ${filesForProcessing.size()} files for processing")
         filesForProcessing.each { File file ->
@@ -111,6 +133,15 @@ class EmptyFileTest {
         println("STARTING SIP validation")
         sipConstructedCorrectly(sipAsXml)
         println("ENDING SIP validation")
+        println("START SipProcessingState:")
+        println(this.sipProcessingState.toString())
+        println("END SipProcessingState")
+        println("Process output path=${processOutputInterceptor.path}")
+        Path processingStateFilePath = this.sipProcessingState.toTempFile()
+        println("sipProcessingState file path=${processingStateFilePath}")
+        processOutputInterceptor.stopAndClose()
+        // In a normal processing script, the processed files, the processing output and the sipProcessingState file
+        // would be moved/copied to a processing completed directory based on the processing state.
     }
 
     void sipConstructedCorrectly(String sipXml) {

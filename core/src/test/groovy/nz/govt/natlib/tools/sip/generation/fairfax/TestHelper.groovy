@@ -140,7 +140,8 @@ class TestHelper {
     }
 
     // TODO Could handle more than one pattern (see https://www.javacodegeeks.com/2012/11/java-7-file-filtering-using-nio-2-part-2.html)
-    static List<File> findFiles(String resourcePath, String localPath, boolean isRegexNotGlob, boolean matchFilenameOnly, String pattern) {
+    static List<File> findFiles(String resourcePath, String localPath, boolean isRegexNotGlob, boolean matchFilenameOnly,
+                                boolean sortFiles, String pattern) {
         List<File> filesList = [ ]
         // We check if we're using a resource stream to load the files, otherwise we are loading from the file system
         InputStream doWeChooseAResourceStream = TestHelper.getResourceAsStream(resourcePath)
@@ -151,7 +152,7 @@ class TestHelper {
                 return filesList
             }
 
-            filesList = FilesFinder.getMatchingFiles(filesPath, isRegexNotGlob, matchFilenameOnly, pattern)
+            filesList = FilesFinder.getMatchingFiles(filesPath, isRegexNotGlob, matchFilenameOnly, sortFiles, pattern)
             return filesList
         } else {
             List<File> files = TestHelper.getResourceFiles(resourcePath)
