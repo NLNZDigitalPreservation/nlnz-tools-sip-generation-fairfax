@@ -3,6 +3,7 @@ package nz.govt.natlib.tools.sip.generation.fairfax
 import groovy.transform.Canonical
 import groovy.transform.Sortable
 import groovy.transform.ToString
+import groovy.util.logging.Slf4j
 import nz.govt.natlib.tools.sip.pdf.PdfInformationExtractor
 
 /**
@@ -15,6 +16,7 @@ import nz.govt.natlib.tools.sip.pdf.PdfInformationExtractor
 @Canonical(excludes = [ 'files' ])
 @Sortable(includes = ['fairfaxFileGroupKey'])
 @ToString(includeNames=true, includePackage=false, excludes=[ 'files' ])
+@Slf4j
 class FairfaxFileGroup {
     FairfaxFileGroupKey fairfaxFileGroupKey
     Set<FairfaxFile> files = [ ]
@@ -42,7 +44,7 @@ class FairfaxFileGroup {
                 if (matchingLines.size() > 0) {
                     likelyMatches.add([ fairfaxFile : matchingLines ])
                 }
-                println("    file=${fairfaxFile}, ")
+                log.info("    file=${fairfaxFile}, ")
             }
         }
     }

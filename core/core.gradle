@@ -144,6 +144,11 @@ task updateDefaultFairfaxImportParameters() {
     }
 }
 
+test {
+    testLogging.showStandardStreams = true
+    testLogging.exceptionFormat = 'full'
+}
+
 //tasks.withType(FindBugs) {
 //    // Unfortunately FindBugs will find a lot of problems with Groovy classes. We could filter out groovy source files,
 //    // but since FindBugs operates on .class files, that filtering will be ineffective. Currently there are no java

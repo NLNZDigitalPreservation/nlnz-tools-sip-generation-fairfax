@@ -84,22 +84,22 @@ class EmptyFileTest {
                     sortFiles, ".*?\\.pdf")
         }
 
-        println("Collected ${filesForProcessing.size()} files for processing")
+        log.info("Collected ${filesForProcessing.size()} files for processing")
         filesForProcessing.each { File file ->
-            println("File for processing=${file.getCanonicalPath()}")
+            log.info("File for processing=${file.getCanonicalPath()}")
         }
 
         String sipAsXml = TestHelper.processCollectedFiles(sipProcessingState, fairfaxSpreadsheet, filesForProcessing,
                 10)
-        println("STARTING SIP validation")
+        log.info("STARTING SIP validation")
         sipConstructedCorrectly(sipAsXml)
-        println("ENDING SIP validation")
-        println("START SipProcessingState:")
-        println(this.sipProcessingState.toString())
-        println("END SipProcessingState")
-        println("Process output path=${processOutputInterceptor.path}")
+        log.info("ENDING SIP validation")
+        log.info("START SipProcessingState:")
+        log.info(this.sipProcessingState.toString())
+        log.info("END SipProcessingState")
+        log.info("Process output path=${processOutputInterceptor.path}")
         Path processingStateFilePath = this.sipProcessingState.toTempFile()
-        println("sipProcessingState file path=${processingStateFilePath}")
+        log.info("sipProcessingState file path=${processingStateFilePath}")
         processOutputInterceptor.stopAndClose()
         // In a normal processing script, the processed files, the processing output and the sipProcessingState file
         // would be moved/copied to a processing completed directory based on the processing state.
@@ -123,22 +123,22 @@ class EmptyFileTest {
         List<File> filesForProcessing = TestHelper.findFiles(resourcePath, localPath, isRegexNotGlob, matchFilenameOnly,
                 sortFiles, ".*?\\.pdf")
 
-        println("Collected ${filesForProcessing.size()} files for processing")
+        log.info("Collected ${filesForProcessing.size()} files for processing")
         filesForProcessing.each { File file ->
-            println("File for processing=${file.getCanonicalPath()}")
+            log.info("File for processing=${file.getCanonicalPath()}")
         }
 
         String sipAsXml = TestHelper.processCollectedFiles(sipProcessingState, fairfaxSpreadsheet, filesForProcessing,
                 10)
-        println("STARTING SIP validation")
+        log.info("SIP validation")
         sipConstructedCorrectly(sipAsXml)
-        println("ENDING SIP validation")
-        println("START SipProcessingState:")
-        println(this.sipProcessingState.toString())
-        println("END SipProcessingState")
-        println("Process output path=${processOutputInterceptor.path}")
+        log.info("ENDING SIP validation")
+        log.info("START SipProcessingState:")
+        log.info(this.sipProcessingState.toString())
+        log.info("END SipProcessingState")
+        log.info("Process output path=${processOutputInterceptor.path}")
         Path processingStateFilePath = this.sipProcessingState.toTempFile()
-        println("sipProcessingState file path=${processingStateFilePath}")
+        log.info("sipProcessingState file path=${processingStateFilePath}")
         processOutputInterceptor.stopAndClose()
         // In a normal processing script, the processed files, the processing output and the sipProcessingState file
         // would be moved/copied to a processing completed directory based on the processing state.

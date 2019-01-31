@@ -99,9 +99,9 @@ class TestHelper {
         String path = url.getPath()
 
         List<File> files = Arrays.asList(new File(path).listFiles())
-        println("All files:")
+        log.info("All files:")
         files.each { file ->
-            println("folderResourcePath=${folderResourcePath} found file=${file.getCanonicalPath()}")
+            log.info("folderResourcePath=${folderResourcePath} found file=${file.getCanonicalPath()}")
         }
         if (!isRegexNotGlob) {
             throw new RuntimeException("Globbing not supported for finding resource files, use a regex pattern instead")
@@ -216,15 +216,15 @@ class TestHelper {
     static String processCollectedFiles(SipProcessingState sipProcessingState, FairfaxSpreadsheet fairfaxSpreadsheet,
                                       List<File> filesForProcessing, Integer expectedNumberOfFilesProcessed) {
         String sipAsXml
-        println("STARTING processFiles")
+        log.info("STARTING processFiles")
 
         Map<FairfaxFileGroupKey, FairfaxFileGroup> fairfaxFileGroupMap = [ : ]
         filesForProcessing.each { File rawFile ->
             FairfaxFile fairfaxFile = new FairfaxFile(rawFile)
-            println("Processing fairfaxFile=${fairfaxFile}")
+            log.info("Processing fairfaxFile=${fairfaxFile}")
             if (fairfaxFile.isValid()) {
                 FairfaxFileGroupKey fairfaxFileKey = FairfaxFileGroupKey.fromFairfaxFile(fairfaxFile)
-                println("fairfaxFileKey=${fairfaxFileKey}")
+                log.info("fairfaxFileKey=${fairfaxFileKey}")
                 FairfaxFileGroup fairfaxFileGroup = fairfaxFileGroupMap.get(fairfaxFileKey)
                 if (fairfaxFileGroup == null) {
                     fairfaxFileGroup = new FairfaxFileGroup(fairfaxFileKey)
@@ -241,16 +241,16 @@ class TestHelper {
             }
         }
         // Find the publication (ultimately the MMSID) associated with this set of files.
-        println("FINDING publication associated with the files")
+        log.info("FINDING publication associated with the files")
         Integer filesProcessed = 0
         boolean allowZeroRatio = true
         fairfaxFileGroupMap.each { FairfaxFileGroupKey fairfaxFileGroupKey, FairfaxFileGroup fairfaxFileGroup ->
-            println("Checking fairfaxFileGroupKey=${fairfaxFileGroupKey}, fairfaxFileGroup=${fairfaxFileGroup}")
+            log.info("Checking fairfaxFileGroupKey=${fairfaxFileGroupKey}, fairfaxFileGroup=${fairfaxFileGroup}")
             FairfaxFileGroupMatcher fairfaxFileGroupMatcher = new FairfaxFileGroupMatcher(sipProcessingState)
             FairfaxFileGroupMatch fairfaxFileGroupMatch = fairfaxFileGroupMatcher.mostLikelyMatch(fairfaxFileGroup,
                     fairfaxSpreadsheet, allowZeroRatio)
             if (fairfaxFileGroupMatch != null) {
-                println("Will process fairfaxFileGroup=${fairfaxFileGroup} according to sip=${fairfaxFileGroupMatch.sip}")
+                log.info("Will process fairfaxFileGroup=${fairfaxFileGroup} according to sip=${fairfaxFileGroupMatch.sip}")
                 List<FairfaxFile> fairfaxFiles = fairfaxFileGroup.files.sort()
                 List<Sip.FileWrapper> fileWrappers = fairfaxFiles.collect() { FairfaxFile fairfaxFile ->
                     SipFileWrapperFactory.generate(fairfaxFile.file, true, true)
@@ -265,19 +265,19 @@ class TestHelper {
                 Sip testSip = fairfaxFileGroupMatch.sip.clone()
                 testSip.fileWrappers = fileWrappers
                 sipProcessingState.setComplete(true)
-                println("\n* * * SipProcessingState:")
-                println(sipProcessingState.toString())
+                log.info("\n* * * SipProcessingState:")
+                log.info(sipProcessingState.toString())
                 SipXmlGenerator sipXmlGenerator = new SipXmlGenerator(testSip)
                 sipAsXml = sipXmlGenerator.getSipAsXml()
-                println("\n* * *   S I P   * * *")
-                println(sipAsXml)
-                println("\n* * *   E N D   O F   S I P   * * *")
+                log.info("\n* * *   S I P   * * *")
+                log.info(sipAsXml)
+                log.info("\n* * *   E N D   O F   S I P   * * *")
             } else {
                 sipProcessingState.setComplete(true)
                 // We can't process the files
                 throw new RuntimeException("Unable to process fairfaxFileGroup=${fairfaxFileGroup}: No matching sip")
             }
-            println("ENDING processing")
+            log.info("ENDING processing")
         }
         assertThat("${expectedNumberOfFilesProcessed} files should have been processed", filesProcessed,
                 is(expectedNumberOfFilesProcessed))
