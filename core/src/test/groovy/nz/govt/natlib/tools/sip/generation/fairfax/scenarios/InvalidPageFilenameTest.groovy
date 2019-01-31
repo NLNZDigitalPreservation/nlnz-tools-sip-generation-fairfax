@@ -3,6 +3,7 @@ package nz.govt.natlib.tools.sip.generation.fairfax.scenarios
 import groovy.util.logging.Slf4j
 import nz.govt.natlib.tools.sip.extraction.SipXmlExtractor
 import nz.govt.natlib.tools.sip.files.FilesFinder
+import nz.govt.natlib.tools.sip.generation.fairfax.FairfaxFilesProcessor
 import nz.govt.natlib.tools.sip.generation.fairfax.FairfaxSpreadsheet
 import nz.govt.natlib.tools.sip.generation.fairfax.TestHelper
 import nz.govt.natlib.tools.sip.generation.parameters.Spreadsheet
@@ -19,6 +20,8 @@ import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
 
+import static org.hamcrest.core.Is.is
+import static org.junit.Assert.assertThat
 import static org.junit.Assert.assertTrue
 
 /**
@@ -89,8 +92,12 @@ class InvalidPageFilenameTest {
             log.info("File for processing=${file.getCanonicalPath()}")
         }
 
-        String sipAsXml = TestHelper.processCollectedFiles(sipProcessingState, fairfaxSpreadsheet, filesForProcessing,
-                9)
+        int expectedNumberOfFilesProcessed = 9
+        String sipAsXml = FairfaxFilesProcessor.processCollectedFiles(sipProcessingState, fairfaxSpreadsheet,
+                filesForProcessing)
+        assertThat("${expectedNumberOfFilesProcessed} files should have been processed",
+                sipProcessingState.totalFilesProcessed, is(expectedNumberOfFilesProcessed))
+
         log.info("STARTING SIP validation")
         sipConstructedCorrectly(sipAsXml)
         log.info("ENDING SIP validation")
@@ -128,8 +135,12 @@ class InvalidPageFilenameTest {
             log.info("File for processing=${file.getCanonicalPath()}")
         }
 
-        String sipAsXml = TestHelper.processCollectedFiles(sipProcessingState, fairfaxSpreadsheet, filesForProcessing,
-                9)
+        int expectedNumberOfFilesProcessed = 9
+        String sipAsXml = FairfaxFilesProcessor.processCollectedFiles(sipProcessingState, fairfaxSpreadsheet,
+                filesForProcessing)
+        assertThat("${expectedNumberOfFilesProcessed} files should have been processed",
+                sipProcessingState.totalFilesProcessed, is(expectedNumberOfFilesProcessed))
+
         log.info("STARTING SIP validation")
         sipConstructedCorrectly(sipAsXml)
         log.info("ENDING SIP validation")

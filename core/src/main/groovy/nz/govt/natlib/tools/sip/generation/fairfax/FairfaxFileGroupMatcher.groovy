@@ -30,7 +30,7 @@ class FairfaxFileGroupMatcher {
             fairfaxFileGroup.files.each { FairfaxFile fairfaxFile ->
                 if (fairfaxFile.file.length() == 0) {
                     SipProcessingExceptionReason exceptionReason = new SipProcessingExceptionReason(
-                            SipProcessingExceptionReasonType.FILE_OF_LENGTH_ZERO,  null,
+                            SipProcessingExceptionReasonType.FILE_OF_LENGTH_ZERO, null,
                             fairfaxFile.file.getCanonicalPath())
                     sipProcessingState.addException(SipProcessingException.createWithReason(exceptionReason))
                 } else {
