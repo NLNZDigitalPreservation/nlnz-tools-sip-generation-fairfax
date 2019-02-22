@@ -4,6 +4,9 @@ import groovy.util.logging.Slf4j
 import nz.govt.natlib.tools.sip.Sip
 import nz.govt.natlib.tools.sip.SipFileWrapperFactory
 import nz.govt.natlib.tools.sip.generation.SipXmlGenerator
+import nz.govt.natlib.tools.sip.pdf.PdfValidator
+import nz.govt.natlib.tools.sip.pdf.PdfValidatorFactory
+import nz.govt.natlib.tools.sip.pdf.PdfValidatorType
 import nz.govt.natlib.tools.sip.state.SipProcessingException
 import nz.govt.natlib.tools.sip.state.SipProcessingExceptionReason
 import nz.govt.natlib.tools.sip.state.SipProcessingExceptionReasonType
@@ -28,6 +31,22 @@ class FairfaxFilesProcessor {
                 if (fairfaxFileGroup == null) {
                     fairfaxFileGroup = new FairfaxFileGroup(fairfaxFileKey)
                     fairfaxFileGroupMap.put(fairfaxFileKey, fairfaxFileGroup)
+                }
+                if (fairfaxFile.file.length() == 0) {
+                    SipProcessingExceptionReason exceptionReason = new SipProcessingExceptionReason(
+                            SipProcessingExceptionReasonType.FILE_OF_LENGTH_ZERO, null,
+                            fairfaxFile.file.getCanonicalPath())
+                    sipProcessingState.addException(SipProcessingException.createWithReason(exceptionReason))
+                    fairfaxFile.validPdf = false
+                } else {
+                    // We use the Jhove validator as it is the same type used by Rosetta.
+                    // There is also a PDF/A validator using the PdfValidatorType.PDF_BOX_VALIDATOR
+                    PdfValidator pdfValidator = PdfValidatorFactory.getValidator(PdfValidatorType.JHOVE_VALIDATOR)
+                    SipProcessingException sipProcessingException = pdfValidator.validatePdf(rawFile.toPath())
+                    if (sipProcessingException != null) {
+                        sipProcessingState.addException(sipProcessingException)
+                        fairfaxFile.validPdf = false
+                    }
                 }
                 fairfaxFileGroup.addFile(fairfaxFile)
             } else {

@@ -27,6 +27,7 @@ class FairfaxFile {
     String sequenceLetter
     String sequenceNumberString
     Integer sequenceNumber
+    boolean validPdf
 
     FairfaxFile(File file) {
         this.file = file

@@ -28,12 +28,7 @@ class FairfaxFileGroupMatcher {
             List<FairfaxFileMatch> matches = [ ]
             // We do every file so we can tell the relative strength of the match
             fairfaxFileGroup.files.each { FairfaxFile fairfaxFile ->
-                if (fairfaxFile.file.length() == 0) {
-                    SipProcessingExceptionReason exceptionReason = new SipProcessingExceptionReason(
-                            SipProcessingExceptionReasonType.FILE_OF_LENGTH_ZERO, null,
-                            fairfaxFile.file.getCanonicalPath())
-                    sipProcessingState.addException(SipProcessingException.createWithReason(exceptionReason))
-                } else {
+                if (fairfaxFile.validPdf) {
                     // we wrap the regex pattern with '(?i:<pattern>)' to make it case insensitive
                     List<String> matchingLines = PdfInformationExtractor.matchText(fairfaxFile.getFile(), "(?i:.*?${title}.*?)")
                     FairfaxFileMatch fairfaxFileMatch = new FairfaxFileMatch(fairfaxFile: fairfaxFile,

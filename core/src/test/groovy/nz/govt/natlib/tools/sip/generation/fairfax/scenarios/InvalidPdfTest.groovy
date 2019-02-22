@@ -25,7 +25,7 @@ import static org.junit.Assert.assertThat
 import static org.junit.Assert.assertTrue
 
 /**
- * Tests the {@code empty-file} scenario.
+ * Tests the {@code invalid-pdf} scenario.
  *
  * Note that this test is complicated by the files either being part of a directory structure or in a resource file (jar),
  * so the {@link TestHelper} class is used to handle both scenarios. In real-life processing the files would be on the
@@ -35,14 +35,14 @@ import static org.junit.Assert.assertTrue
  */
 @RunWith(MockitoJUnitRunner.class)
 @Slf4j
-class EmptyFileTest {
+class InvalidPdfTest {
     // TODO Make this processing simpler
     // - given a starting folder
     // - and a set of selection criteria
     // - create SIPs for the given files
     static String ID_COLUMN_NAME = "MMSID"
 
-    static final String RESOURCES_FOLDER = "ingestion-files-tests/scenario-empty-file"
+    static final String RESOURCES_FOLDER = "ingestion-files-tests/scenario-invalid-pdf"
     static final String IMPORT_PARAMETERS_FILENAME = "test-fairfax-import-parameters.json"
 
     SipProcessingState sipProcessingState
@@ -64,7 +64,7 @@ class EmptyFileTest {
     // TODO Ignore this test before making a code commit
     @Ignore
     void correctlyAssembleSipFromFilesOnFilesystem() {
-        ProcessOutputInterceptor processOutputInterceptor = ProcessOutputInterceptor.forTempFile("EmptyFileTest-",
+        ProcessOutputInterceptor processOutputInterceptor = ProcessOutputInterceptor.forTempFile("InvalidPdfTest-",
                 ".txt", false)
         this.sipProcessingState.processingOutputPath = processOutputInterceptor.path
         processOutputInterceptor.start()
@@ -113,7 +113,7 @@ class EmptyFileTest {
 
     @Test
     void correctlyAssembleSipFromFiles() {
-        ProcessOutputInterceptor processOutputInterceptor = ProcessOutputInterceptor.forTempFile("EmptyFileTest-",
+        ProcessOutputInterceptor processOutputInterceptor = ProcessOutputInterceptor.forTempFile("InvalidPdfTest-",
         ".txt", false)
         this.sipProcessingState.processingOutputPath = processOutputInterceptor.path
         processOutputInterceptor.start()
@@ -160,7 +160,7 @@ class EmptyFileTest {
         assertTrue("SipXmlExtractor has content", sipForValidation.xml.length() > 0)
 
         assertTrue("SipProcessingState is complete", this.sipProcessingState.isComplete())
-        TestHelper.assertExpectedExceptionReason(sipProcessingState, SipProcessingExceptionReasonType.FILE_OF_LENGTH_ZERO)
+        TestHelper.assertExpectedExceptionReason(sipProcessingState, SipProcessingExceptionReasonType.INVALID_PDF)
 
         TestHelper.assertExpectedSipMetadataValues(sipForValidation, "Test Publication One", 2018, 11, 23,
                 "NewspaperIE", "ALMAMMS", "test-mms-id-one", "200", "PRESERVATION_MASTER", "VIEW", true, 1)
@@ -172,7 +172,7 @@ class EmptyFileTest {
                 11437L, "MD5", "df39cff17991188d9994ff94bddf3985", "002", "application/pdf")
 
         TestHelper.assertExpectedSipFileValues(sipForValidation, 3, "TSTPB1-20181123-003.pdf", "TSTPB1-20181123-003.pdf",
-                0L, "MD5", "d41d8cd98f00b204e9800998ecf8427e", "003", "application/pdf")
+                636L, "MD5", "01b66094b1e9e942269c7c816e912672", "003", "application/pdf")
 
         TestHelper.assertExpectedSipFileValues(sipForValidation, 4, "TSTPB1-20181123-004.pdf", "TSTPB1-20181123-004.pdf",
                 11554L, "MD5", "857326c06870577255acd4b21e1a64d7", "004", "application/pdf")
@@ -181,7 +181,7 @@ class EmptyFileTest {
                 11605L, "MD5", "02e254147945f60a6a2be1c35ae0689e", "005", "application/pdf")
 
         TestHelper.assertExpectedSipFileValues(sipForValidation, 6, "TSTPB1-20181123-006.pdf", "TSTPB1-20181123-006.pdf",
-                11430L, "MD5", "6b932154c4b004a2507d73dc3aaf0736", "006", "application/pdf")
+                634L, "MD5", "edaeadde4a4800425e1d392451f17467", "006", "application/pdf")
 
         TestHelper.assertExpectedSipFileValues(sipForValidation, 7, "TSTPB1-20181123-007.pdf", "TSTPB1-20181123-007.pdf",
                 11543L, "MD5", "a7ceb9001aab17e78cfaf1559f130071", "007", "application/pdf")
@@ -190,7 +190,7 @@ class EmptyFileTest {
                 11436L, "MD5", "449dc86bd38979d10c8fb6c3b375a467", "008", "application/pdf")
 
         TestHelper.assertExpectedSipFileValues(sipForValidation, 9, "TSTPB1-20181123-009.pdf", "TSTPB1-20181123-009.pdf",
-                11612L, "MD5", "fee5322aa8d3c7a4fe7adeba7953e071", "009", "application/pdf")
+                634L, "MD5", "3a6b097736755399bfa9dccb9fef2323", "009", "application/pdf")
 
         TestHelper.assertExpectedSipFileValues(sipForValidation, 10, "TSTPB1-20181123-010.pdf", "TSTPB1-20181123-010.pdf",
                 11440L, "MD5", "f621c3081711e895d8fa3d2dd5e49ffa", "010", "application/pdf")

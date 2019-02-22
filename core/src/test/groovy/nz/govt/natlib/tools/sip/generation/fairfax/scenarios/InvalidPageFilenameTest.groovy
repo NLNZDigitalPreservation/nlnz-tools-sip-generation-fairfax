@@ -14,7 +14,7 @@ import org.junit.Before
 import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mockito.runners.MockitoJUnitRunner
+import org.mockito.junit.MockitoJUnitRunner
 
 import java.nio.file.Files
 import java.nio.file.Path
@@ -25,7 +25,7 @@ import static org.junit.Assert.assertThat
 import static org.junit.Assert.assertTrue
 
 /**
- * Tests the {@code empty-file} scenario.
+ * Tests the {@code invalid-page-filename} scenario.
  *
  * Note that this test is complicated by the files either being part of a directory structure or in a resource file (jar),
  * so the {@link TestHelper} class is used to handle both scenarios. In real-life processing the files would be on the
