@@ -2,11 +2,8 @@ package nz.govt.natlib.tools.sip.generation.fairfax
 
 import groovy.util.logging.Slf4j
 import groovy.util.slurpersupport.GPathResult
-import nz.govt.natlib.tools.sip.Sip
-import nz.govt.natlib.tools.sip.SipFileWrapperFactory
 import nz.govt.natlib.tools.sip.extraction.SipXmlExtractor
 import nz.govt.natlib.tools.sip.files.FilesFinder
-import nz.govt.natlib.tools.sip.generation.SipXmlGenerator
 import nz.govt.natlib.tools.sip.generation.parameters.Spreadsheet
 import nz.govt.natlib.tools.sip.state.SipProcessingException
 import nz.govt.natlib.tools.sip.state.SipProcessingExceptionReason

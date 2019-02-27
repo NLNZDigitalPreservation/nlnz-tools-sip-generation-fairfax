@@ -4,7 +4,7 @@ import groovy.transform.Canonical
 import groovy.transform.ToString
 
 @Canonical
-@ToString(includeNames=true, includePackage=false, excludes=[ 'parameterMap' ])
+@ToString(includeNames=true, includePackage=false)
 class FairfaxFileMatch {
     FairfaxFile fairfaxFile
     List<String> stringMatches = [ ]
