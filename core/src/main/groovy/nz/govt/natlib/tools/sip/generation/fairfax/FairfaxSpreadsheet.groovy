@@ -10,6 +10,10 @@ class FairfaxSpreadsheet {
     static String EDITION_KEY = "edition_dict"
 
     Spreadsheet spreadsheet
+    Map<FairfaxFileNameEditionKey, List<Map<String, String>>> nameEditionToRowsMap = [ : ]
+    Map<String, List<Map<String, String>>> nameToRowsMap = [ : ]
+    Set<FairfaxFileNameEditionKey> allNameEditionKeys = [ ]
+    Set<String> allNameKeys = [ ]
 
     /**
      * Load and return the FairfaxSpreadsheet from default resources.
@@ -39,7 +43,26 @@ class FairfaxSpreadsheet {
     }
 
     void index() {
-
+        spreadsheet.rows.each { Map<String, String> rowMap ->
+            String name = rowMap.get(NAME_KEY)
+            String edition = rowMap.get(EDITION_KEY)
+            FairfaxFileNameEditionKey fairfaxFileNameEditionKey = new FairfaxFileNameEditionKey(
+                    name: name, edition: edition)
+            if (nameEditionToRowsMap.containsKey(fairfaxFileNameEditionKey)) {
+                List<Map<String, String>> rowsForNameEdition = nameEditionToRowsMap.get(fairfaxFileNameEditionKey)
+                rowsForNameEdition.add(rowMap)
+            } else {
+                nameEditionToRowsMap.put(fairfaxFileNameEditionKey, [ rowMap ])
+            }
+            allNameEditionKeys.add(fairfaxFileNameEditionKey)
+            if (nameToRowsMap.containsKey(name)) {
+                List<Map<String, String>> rowsForName = nameToRowsMap.get(name)
+                rowsForName.add(rowMap)
+            } else {
+                nameToRowsMap.put(name, [ rowMap ])
+            }
+            allNameKeys.add(name)
+        }
     }
 
 
