@@ -48,6 +48,11 @@ class FairfaxFilesProcessor {
                         fairfaxFile.validPdf = false
                     }
                 }
+                if (fairfaxFile.validPdf) {
+                    sipProcessingState.validFiles.add(fairfaxFile.file)
+                } else {
+                    sipProcessingState.invalidFiles.add(fairfaxFile.file)
+                }
                 fairfaxFileGroup.addFile(fairfaxFile)
             } else {
                 SipProcessingExceptionReason exceptionReason = new SipProcessingExceptionReason(
@@ -56,6 +61,7 @@ class FairfaxFilesProcessor {
                 SipProcessingException sipProcessingException = SipProcessingException.createWithReason(exceptionReason)
                 sipProcessingState.addException(sipProcessingException)
                 log.warn(sipProcessingException.toString())
+                sipProcessingState.unrecognizedFiles.add(fairfaxFile.file)
             }
         }
         // Find the publication (ultimately the MMSID) associated with this set of files.
@@ -69,6 +75,7 @@ class FairfaxFilesProcessor {
                     fairfaxSpreadsheet, allowZeroRatio)
             if (fairfaxFileGroupMatch != null) {
                 log.info("Will process fairfaxFileGroup=${fairfaxFileGroup} according to sip=${fairfaxFileGroupMatch.sip}")
+                sipProcessingState.identifier = fairfaxFileGroupMatch.sip.objectIdentifierValue
                 List<FairfaxFile> fairfaxFiles = fairfaxFileGroup.files.sort()
                 List<Sip.FileWrapper> fileWrappers = fairfaxFiles.collect() { FairfaxFile fairfaxFile ->
                     SipFileWrapperFactory.generate(fairfaxFile.file, true, true)
