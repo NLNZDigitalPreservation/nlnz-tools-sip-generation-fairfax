@@ -1,0 +1,125 @@
+plugins {
+    // required for jacoco test coverage checks
+    id 'com.github.kt3k.coveralls' version '2.6.3'
+}
+
+project.ext {
+    // TODO Will need tasks associated with jacoco to actually use these limits
+    // TODO Generally the goal here is to have code coverage in the 80--90% range
+    // but it may be better to approach this with a more directed focus
+    // (i.e. increase code coverage when new functionality is added)
+    // TODO Write unit tests!
+    codeCoverageLimits = [
+            'instruction': 0.0, // currently at 0.0%
+            'branch'     : 0.0, // currently at 0.0%
+            'line'       : 0.0, // currently at 0.0%
+            'complexity' : 0.0, // currently at 0.0%
+            'method'     : 0.0, // currently at 0.0%
+            'class'      : 0.0  // currently at 0.0%
+    ]
+}
+
+apply plugin: 'groovy'
+
+apply plugin: 'java'
+
+// this needs to be set after the 'java' plugin has been applied
+java {
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
+}
+
+apply plugin: 'jacoco'
+jacoco {
+    // This version is necessary to run under JDK 1.11
+    toolVersion = "0.8.2"
+}
+
+// run the findBugs checks with 'gradle check' or 'gradle findBugsMain' or 'gradle findBugsTest'
+//apply plugin: 'findbugs'
+
+// run the pmd source code analyzer with 'gradle check' or 'gradle pmdMain' or 'gradle pmdTest'
+apply plugin: 'pmd' // source code analyzer
+
+setVersion(project.ext.versionNumber)
+
+dependencies {
+    compile project(':sip-generation-fairfax-core')
+
+    compile  'nz.govt.natlib.m11n.tools:automation-core:1.0.0-SNAPSHOT'
+
+    compile 'info.picocli:picocli:3.9.5'
+
+    compileOnly 'org.slf4j:slf4j-api:1.7.+'
+
+    // latest version
+    testCompile 'junit:junit:4.12'
+
+    // latest version
+    testCompile 'org.hamcrest:hamcrest-core:2.1'
+
+    // latest version
+    testCompile 'org.mockito:mockito-core:2.23.4'
+
+    // use sl4j logging for tests
+    testCompile 'org.slf4j:slf4j-log4j12:1.7.+'
+}
+
+jar {
+    includeEmptyDirs = false
+}
+
+task jarSources(type: Jar, dependsOn: classes) {
+    classifier = 'sources'
+    includeEmptyDirs = false
+
+    from sourceSets.main.allSource
+}
+
+test {
+    testLogging.showStandardStreams = true
+    testLogging.exceptionFormat = 'full'
+}
+
+//tasks.withType(FindBugs) {
+//    // Unfortunately FindBugs will find a lot of problems with Groovy classes. We could filter out groovy source files,
+//    // but since FindBugs operates on .class files, that filtering will be ineffective. Currently there are no java
+//    // classes but that could change in the future.
+//    // See https://stackoverflow.com/questions/22037499/using-excludes-config-in-findbugs-and-checkstyle-plugin-in-gradle
+//    // In order for Java classes to see Groovy classes easily, we compile them all together with the Groovy compiler
+//    // in the same source tree (src/main/groovy). This means we can't use the path to determine if the .class file
+//    // came from a Groovy or Java source. The net effect is that FindBugs won't work with a mixed heritage of
+//    // Java and Groovy classes. So we remove the FindBugs plugin for now.
+//    exclude '**/*.groovy'
+//    classes = classes.filter {
+//        !(it.path.contains(new File("classes/groovy/main").path) || it.path.contains(new File("classes/groovy/test").path))
+//    }
+//}
+
+// We want to force a specific version as part of our dependency resolution
+//configurations.all {
+//    resolutionStrategy {
+//        force 'org.codehaus.groovy:groovy-all:2.4.+'
+//    }
+//}
+
+artifacts {
+    publishableArtifacts jar, jarSources
+}
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            from components.java
+            artifact tasks.jarSources
+        }
+    }
+
+    repositories {
+        maven {
+            mavenLocal()
+        }
+    }
+}
+
+build.dependsOn jar, jarSources

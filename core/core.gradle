@@ -49,6 +49,7 @@ project.ext {
 apply plugin: 'groovy'
 
 apply plugin: 'java'
+
 // this needs to be set after the 'java' plugin has been applied
 java {
     sourceCompatibility = JavaVersion.VERSION_11
@@ -84,6 +85,7 @@ dependencies {
     compileOnly 'org.slf4j:slf4j-api:1.7.+'
 
     compile 'nz.govt.natlib.tools:sip-generation-core:1.0.0-SNAPSHOT'
+
     // latest version
     testCompile 'junit:junit:4.12'
 

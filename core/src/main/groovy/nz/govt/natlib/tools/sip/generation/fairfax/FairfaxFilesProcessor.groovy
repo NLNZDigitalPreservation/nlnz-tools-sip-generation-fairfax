@@ -20,7 +20,7 @@ class FairfaxFilesProcessor {
         String sipAsXml
         log.info("STARTING processFiles")
 
-        Map<FairfaxFileGroupKey, FairfaxFileGroup> fairfaxFileGroupMap = [ : ]
+        Map<FairfaxFileGroupKey, FairfaxFileGroup> fairfaxFileGroupMap = [: ]
         filesForProcessing.each { File rawFile ->
             FairfaxFile fairfaxFile = new FairfaxFile(rawFile)
             log.info("Processing fairfaxFile=${fairfaxFile}")

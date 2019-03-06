@@ -1,0 +1,80 @@
+buildscript {
+    repositories {
+        mavenLocal()
+        mavenCentral()
+        jcenter()
+    }
+    dependencies {
+        // For shadow fat jar plugin, see https://github.com/johnrengelman/shadow
+        classpath 'com.github.jengelman.gradle.plugins:shadow:5.0.0'
+    }
+}
+
+project.ext {
+}
+
+apply plugin: 'groovy'
+
+apply plugin: 'java'
+apply plugin: 'com.github.johnrengelman.shadow'
+
+// this needs to be set after the 'java' plugin has been applied
+java {
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
+}
+
+setVersion(project.ext.versionNumber)
+
+dependencies {
+    compile project(':sip-generation-fairfax-processor')
+
+    // slf4j for fat jar. Log messages go to console at info level.
+    compile 'org.slf4j:slf4j-simple:1.7.26'
+}
+
+jar {
+    includeEmptyDirs = false
+}
+
+task jarSources(type: Jar, dependsOn: classes) {
+    classifier = 'sources'
+    includeEmptyDirs = false
+
+    from sourceSets.main.allSource
+}
+
+shadowJar {
+    baseName = "${rootProject.name}-fat-all"
+    classifier = null
+    version = project.ext.versionNumber
+    manifest {
+        attributes 'Main-Class': 'nz.govt.natlib.tools.sip.generation.fairfax.processor.ProcessorRunner'
+    }
+}
+
+test {
+    testLogging.showStandardStreams = true
+    testLogging.exceptionFormat = 'full'
+}
+
+artifacts {
+    publishableArtifacts jar, jarSources, shadowJar
+}
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            from components.java
+            artifact tasks.jarSources
+        }
+    }
+
+    repositories {
+        maven {
+            mavenLocal()
+        }
+    }
+}
+
+build.dependsOn jar, jarSources, shadowJar
