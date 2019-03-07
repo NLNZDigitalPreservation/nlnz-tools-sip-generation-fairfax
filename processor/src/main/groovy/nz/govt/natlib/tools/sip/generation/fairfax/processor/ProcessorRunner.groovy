@@ -45,8 +45,8 @@ Default is copy (false).""")
     boolean moveFiles = false
 
     @Option(names = ["-c", "--createDestination" ], description = """Whether destination folders will be created.
-Default is creation (true).""")
-    boolean createDestination = true
+Default is no creation (false).""")
+    boolean createDestination = false
 
     @Option(names = ["-h", "--help" ], usageHelp = true, description = 'Display a help message.')
     boolean helpRequested = false
@@ -54,11 +54,11 @@ Default is creation (true).""")
     @Option(names = ["-b", "--startingDate"], paramLabel = "STARTING_DATE", description = """Starting date in the format yyyy-MM-dd.
 Default is 2015-01-01.""")
     // TODO Need a custom converter
-    LocalDate startingDate
+    LocalDate startingDate = DEFAULT_STARTING_DATE
 
     @Option(names = ["-e", "--endingDate"], paramLabel = "ENDING_DATE", description = """Ending date in the format yyyy-MM-dd.
 Default is today.""")
-    LocalDate endingDate
+    LocalDate endingDate = DEFAULT_ENDING_DATE
 
     @Option(names = ["-s", "--sourceFolder"], paramLabel = "SOURCE_FOLDER", description = 'source folder in the format /path/to/folder')
     File sourceFolder
@@ -71,7 +71,6 @@ Default is today.""")
     static void main(String[] args) {
         ProcessorRunner processorRunner = new ProcessorRunner()
         CommandLine.call(processorRunner, args)
-        processorRunner.process()
     }
 
     @Override
@@ -94,8 +93,8 @@ Default is today.""")
                 log.error(message)
                 throw new ProcessorException(message)
             }
-            MiscellaneousProcessor miscellaneousProcessor = new MiscellaneousProcessor()
-            miscellaneousProcessor.listFiles(sourceFolder, timekeeper)
+            MiscellaneousProcessor miscellaneousProcessor = new MiscellaneousProcessor(timekeeper)
+            miscellaneousProcessor.listFiles(sourceFolder)
         }
         if (extractMetadata) {
             if (sourceFolder == null) {
@@ -103,8 +102,8 @@ Default is today.""")
                 log.error(message)
                 throw new ProcessorException(message)
             }
-            MiscellaneousProcessor miscellaneousProcessor = new MiscellaneousProcessor()
-            miscellaneousProcessor.extractMetadata(sourceFolder, timekeeper)
+            MiscellaneousProcessor miscellaneousProcessor = new MiscellaneousProcessor(timekeeper)
+            miscellaneousProcessor.extractMetadata(sourceFolder)
         }
         if (copyProdLoadToTestStructures) {
             if (sourceFolder == null) {
@@ -117,9 +116,9 @@ Default is today.""")
                 log.error(message)
                 throw new ProcessorException(message)
             }
-            MiscellaneousProcessor miscellaneousProcessor = new MiscellaneousProcessor()
+            MiscellaneousProcessor miscellaneousProcessor = new MiscellaneousProcessor(timekeeper)
             miscellaneousProcessor.copyProdLoadToTestStructures(sourceFolder, targetFolder, createDestination,
-                                    startingDate, endingDate, timekeeper)
+                                    startingDate, endingDate)
         }
         if (groupByDateAndName) {
             if (sourceFolder == null) {
@@ -132,9 +131,9 @@ Default is today.""")
                 log.error(message)
                 throw new ProcessorException(message)
             }
-            GroupByDateAndNameProcessor groupByDateAndNameProcessor = new GroupByDateAndNameProcessor()
+            GroupByDateAndNameProcessor groupByDateAndNameProcessor = new GroupByDateAndNameProcessor(timekeeper)
             groupByDateAndNameProcessor.groupByDateAndName(sourceFolder, targetFolder, createDestination, moveFiles,
-                    startingDate, endingDate, timekeeper)
+                    startingDate, endingDate)
         }
         if (processByDate) {
             if (sourceFolder == null) {
@@ -147,9 +146,9 @@ Default is today.""")
                 log.error(message)
                 throw new ProcessorException(message)
             }
-            ProcessByDateProcessor processByDateProcessor = new ProcessByDateProcessor()
+            ProcessByDateProcessor processByDateProcessor = new ProcessByDateProcessor(timekeeper)
             processByDateProcessor.processByDate(sourceFolder, targetFolder, createDestination, moveFiles,
-                    startingDate, endingDate, timekeeper)
+                    startingDate, endingDate)
         }
     }
 

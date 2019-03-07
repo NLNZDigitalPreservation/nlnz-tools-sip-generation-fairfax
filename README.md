@@ -68,8 +68,8 @@ Parameters:
                              target folder in the format /path/to/folder
 
 Options:
-  -c, --createDestination    Whether destination folders will be created. Default is
-                               creation.
+  -c, --createDestination    Whether destination folders will be created.
+                             Default is no creation (false).
   -m, --moveFiles            Whether files will be moved or copied. Default is copy.
   -h, --help                 Display a help message.
 ```
@@ -164,7 +164,8 @@ java -jar sip-generation-fairfax-fat-all-<VERSION>.jar \
     --startingDate="yyyy-MM-dd" \
     --endingDate="yyyy-MM-dd" \
     --sourceFolder="/path/to/source/folder" \
-    --targetFolder="/path/to/target/folder"
+    --targetFolder="/path/to/target/folder" \
+    --createDestination
 ```
 
 ### Parameters

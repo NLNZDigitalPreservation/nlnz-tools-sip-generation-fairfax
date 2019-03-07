@@ -9,6 +9,7 @@ import nz.govt.natlib.tools.sip.generation.fairfax.FairfaxSpreadsheet
 import nz.govt.natlib.tools.sip.pdf.PdfInformationExtractor
 
 import java.nio.file.Files
+import java.nio.file.Path
 import java.nio.file.Paths
 import java.nio.file.StandardCopyOption
 import java.time.LocalDate
@@ -16,10 +17,15 @@ import java.util.regex.Matcher
 
 @Slf4j
 class MiscellaneousProcessor {
+    Timekeeper timekeeper
     Set<String> recognizedNames = []
     Set<String> unrecognizedNames = []
 
-    void listFiles(File sourceFolder, Timekeeper timekeeper) {
+    MiscellaneousProcessor(Timekeeper timekeeper) {
+        this.timekeeper = timekeeper
+    }
+
+    void listFiles(File sourceFolder) {
         log.info("STARTING listFiles doLast")
 
         // Clear the set of recognized and unrecognized names before processing begins
@@ -39,7 +45,8 @@ class MiscellaneousProcessor {
         boolean matchFilenameOnly = true
         boolean sortFiles = true
         String pattern = ".*?\\.pdf"
-        List<File> foundFiles = ProcessorUtils.findFiles(sourceFolder.getAbsolutePath(), isRegexNotGlob, matchFilenameOnly, sortFiles, pattern)
+        List<File> foundFiles = ProcessorUtils.findFiles(sourceFolder.getAbsolutePath(), isRegexNotGlob,
+                matchFilenameOnly, sortFiles, pattern, timekeeper)
         List<FairfaxFile> fairfaxFiles = foundFiles.collect { File file ->
             new FairfaxFile(file)
         }
@@ -122,7 +129,7 @@ class MiscellaneousProcessor {
         timekeeper.logElapsed()
     }
 
-    void extractMetadata(File sourceFolder, Timekeeper timekeeper) {
+    void extractMetadata(File sourceFolder) {
         log.info("STARTING extractMetadata doLast")
         FileNameFinder fileNameFinder = new FileNameFinder()
         List<String> filenames = fileNameFinder.getFileNames(sourceFolder.getAbsolutePath(), "**/*.pdf")
@@ -150,10 +157,9 @@ class MiscellaneousProcessor {
         timekeeper.logElapsed()
     }
 
-    List<File> findProdLoadDirectoriesBetweenDates(String localPath, LocalDate startingDate, LocalDate endingDate,
-                                                   Timekeeper timekeeper) {
+    List<File> findProdLoadDirectoriesBetweenDates(String localPath, LocalDate startingDate, LocalDate endingDate) {
         List<File> directoriesList = []
-        java.nio.file.Path filesPath = Paths.get(localPath)
+        Path filesPath = Paths.get(localPath)
         if (!Files.exists(filesPath) || !Files.isDirectory(filesPath)) {
             log.warn("Path '${filesPath}' does not exist is not a directory. Returning empty file list.")
             return directoriesList
@@ -190,14 +196,14 @@ class MiscellaneousProcessor {
         return filteredDirectoriesList
     }
 
-// Copies the prod load structure to two structures:
-// 1. groupByDateAndName structure. This is to mimic the input to processByName.
-//    Directory structure: groupByDateAndName/<yyyyMMdd>/<name>/{files}
-// 2. post-processByDate structure. This is the structure that gets ingested into Rosetta.
-//    Directory structure: rosettaIngest/<date-in-yyyMMdd>/<name>_<yyyyMMdd>-<identifier>/{files}
-// These structures provide for testing the Fairfax processor, to see if its outputs match the work done previously.
+    // Copies the prod load structure to two structures:
+    // 1. groupByDateAndName structure. This is to mimic the input to processByName.
+    //    Directory structure: groupByDateAndName/<yyyyMMdd>/<name>/{files}
+    // 2. post-processByDate structure. This is the structure that gets ingested into Rosetta.
+    //    Directory structure: rosettaIngest/<date-in-yyyMMdd>/<name>_<yyyyMMdd>-<identifier>/{files}
+    // These structures provide for testing the Fairfax processor, to see if its outputs match the work done previously.
     void copyProdLoadToTestStructures(File sourceFolder, File destinationFolder, boolean createDestination,
-                                      LocalDate startingDate, LocalDate endingDate, Timekeeper timekeeper) {
+                                      LocalDate startingDate, LocalDate endingDate) {
         // The source files are going to be in a subdirectory with the directory structure being:
         // <name>_yyyyMMdd/content/streams/{files} with the mets.xml in the content directory.
         // Find the source directories that are between the starting date and the ending date
@@ -236,7 +242,8 @@ class MiscellaneousProcessor {
                 }
                 File streamsFolder = new File(contentFolder, "streams")
                 if (streamsFolder.exists()) {
-                    List<File> pdfFiles = ProcessorUtils.findFiles(streamsFolder.getAbsolutePath(), isRegexNotGlob, matchFilenameOnly, sortFiles, pattern)
+                    List<File> pdfFiles = ProcessorUtils.findFiles(streamsFolder.getAbsolutePath(), isRegexNotGlob,
+                            matchFilenameOnly, sortFiles, pattern, timekeeper)
                     sourceFiles.addAll(pdfFiles)
                 } else {
                     log.info("streamsFolder=${streamsFolder.getCanonicalPath()} does not exist -- SKIPPING")
@@ -247,6 +254,9 @@ class MiscellaneousProcessor {
 
             // Copy to the groupByDateAndName structure
             File groupByDateAndNameDestinationFolder = new File(destinationFolder, "groupByDateAndName/${dateString}/${nameString}")
+            if (createDestination) {
+                groupByDateAndNameDestinationFolder.mkdirs()
+            }
             groupByDateAndNameDestinationFolder.mkdirs()
             sourceFiles.each { File sourceFile ->
                 File destinationFile = new File(groupByDateAndNameDestinationFolder, sourceFile.getName())

@@ -6,6 +6,7 @@ import nz.govt.natlib.tools.sip.files.FilesFinder
 import nz.govt.natlib.tools.sip.generation.fairfax.FairfaxFile
 
 import java.nio.file.Files
+import java.nio.file.Path
 import java.nio.file.Paths
 import java.nio.file.StandardCopyOption
 import java.time.LocalDate
@@ -24,7 +25,7 @@ class ProcessorUtils {
     static List<File> findFiles(String localPath, boolean isRegexNotGlob, boolean matchFilenameOnly,
                                 boolean sortFiles, String pattern, Timekeeper timekeeper) {
         List<File> filesList = [ ]
-        java.nio.file.Path filesPath = Paths.get(localPath)
+        Path filesPath = Paths.get(localPath)
         if (!Files.exists(filesPath) || !Files.isDirectory(filesPath)) {
             log.warn("Path '${filesPath}' does not exist is not a directory. Returning empty file list.")
             return filesList

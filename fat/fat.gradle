@@ -31,6 +31,9 @@ dependencies {
 
     // slf4j for fat jar. Log messages go to console at info level.
     compile 'org.slf4j:slf4j-simple:1.7.26'
+
+    // Required by FilesFinder
+    compile 'org.apache.ant:ant:1.10.5'
 }
 
 jar {

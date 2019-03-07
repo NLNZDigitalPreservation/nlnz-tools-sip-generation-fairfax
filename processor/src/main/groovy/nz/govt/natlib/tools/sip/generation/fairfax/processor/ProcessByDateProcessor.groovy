@@ -14,8 +14,15 @@ import java.time.LocalDate
  */
 @Slf4j
 class ProcessByDateProcessor {
-    static SipProcessingState processNameFolder(File nameFolder, File destinationFolder, String name, String dateString,
-                                                      boolean moveFilesToDestination, FairfaxSpreadsheet fairfaxSpreadsheet) {
+    FairfaxSpreadsheet fairfaxSpreadsheet
+    Timekeeper timekeeper
+
+    ProcessByDateProcessor(Timekeeper timekeeper) {
+        this.timekeeper = timekeeper
+    }
+
+    SipProcessingState processNameFolder(File nameFolder, File destinationFolder, String name, String dateString,
+                                                      boolean createDestination, boolean moveFilesToDestination) {
         // Process the files in the name folder
 
         boolean isRegexNotGlob = true
@@ -26,7 +33,7 @@ class ProcessByDateProcessor {
         log.info("Searching for files matching pattern=${pattern}")
 
         List<File> allFiles = ProcessorUtils.findFiles(nameFolder.getAbsolutePath(), isRegexNotGlob, matchFilenameOnly,
-                sortFiles, pattern)
+                sortFiles, pattern, timekeeper)
 
         SipProcessingState sipProcessingState = new SipProcessingState()
         // Process the folder as a single collection of files
@@ -41,11 +48,19 @@ class ProcessByDateProcessor {
         }
         File unrecognizedFilesFolder = new File(destinationFolder, "UNRECOGNIZED/${dateString}/${name}")
 
+
         // Move or copy the processed files to the destination folder
+        if ((sipProcessingState.validFiles.size() > 0 || sipProcessingState.invalidFiles.size() > 0) &&
+                !sipAndFilesFolder.exists() && createDestination) {
+            sipAndFilesFolder.mkdirs()
+        }
         ProcessorUtils.copyOrMoveFiles(sipProcessingState.validFiles, sipAndFilesFolder, moveFilesToDestination)
         ProcessorUtils.copyOrMoveFiles(sipProcessingState.invalidFiles, sipAndFilesFolder, moveFilesToDestination)
 
         // If the files aren't recognized, then dump the files in an exception folder
+        if (sipProcessingState.unrecognizedFiles.size() > 0 && !unrecognizedFilesFolder.exists() && createDestination) {
+            unrecognizedFilesFolder.mkdirs()
+        }
         ProcessorUtils.copyOrMoveFiles(sipProcessingState.unrecognizedFiles, unrecognizedFilesFolder, moveFilesToDestination)
 
         // Write out the SipProcessingState
@@ -59,15 +74,15 @@ class ProcessByDateProcessor {
         return sipProcessingState
     }
 
-// The processByDate destinationFolder structure is the following:
-// |- <date-in-yyyMMdd>/<name>_<yyyyMMdd>-<identifier>/{files}
+    // The processByDate destinationFolder structure is the following:
+    // |- <date-in-yyyMMdd>/<name>_<yyyyMMdd>-<identifier>/{files}
     void processByDate(File sourceFolder, File destinationFolder, boolean createDestination, boolean moveFiles,
-                              LocalDate startingDate, LocalDate endingDate, Timekeeper timekeeper) {
+                              LocalDate startingDate, LocalDate endingDate) {
         if (createDestination) {
             destinationFolder.mkdirs()
         }
 
-        FairfaxSpreadsheet fairfaxSpreadsheet = FairfaxSpreadsheet.defaultInstance()
+        this.fairfaxSpreadsheet = FairfaxSpreadsheet.defaultInstance()
 
         // Loop through the dates in sequence, finding and processing files
         LocalDate currentDate = startingDate
@@ -80,7 +95,7 @@ class ProcessByDateProcessor {
                     if (subFile.isDirectory()) {
                         // we want to process this directory, which should be a <name>
                         processNameFolder(subFile, destinationFolder, currentDateString, subFile.getName(),
-                                moveFiles, fairfaxSpreadsheet)
+                                createDestination, moveFiles)
                     } else {
                         log.info("Skipping ${subFile.getCanonicalPath()} as not directory=${subFile.isDirectory()}")
                     }
