@@ -67,7 +67,11 @@ class GroupByDateAndNameProcessor {
         recognizedNames = [ ]
         unrecognizedNames = [ ]
 
-        log.info("Starting groupByDateAndName")
+        ProcessorLogger processorLogger = new ProcessorLogger()
+        processorLogger.startSplit()
+
+        log.info("START groupByDateAndName for sourceFolder=${sourceFolder.getCanonicalPath()}, " +
+        "startindDate=${startingDate}, endingDate=${endingDate}")
         timekeeper.logElapsed()
 
         if (createDestination) {
@@ -95,7 +99,7 @@ class GroupByDateAndNameProcessor {
                 List<File> foundFiles = ProcessorUtils.matchFiles(allFiles, pattern)
                 log.info("Found total files=${foundFiles.size()} matching pattern=${pattern}")
                 if (foundFiles.size() > 0) {
-                    log.info("Moving=${moveFiles} files to destination=${destinationFolder.getCanonicalPath()}")
+                    log.info("Moving=${moveFiles} total files=${foundFiles.size()} to destination=${destinationFolder.getCanonicalPath()}")
                     foundFiles.each { File foundFile ->
                         copyOrMoveFileToDateAndNameGroup(destinationFolder, new FairfaxFile(foundFile), dateString,
                                 moveFiles)
@@ -116,8 +120,10 @@ class GroupByDateAndNameProcessor {
             }
         }
 
-        log.info("Ending groupByDateAndName")
+        log.info("START groupByDateAndName for sourceFolder=${sourceFolder.getCanonicalPath()}, " +
+                "startindDate=${startingDate}, endingDate=${endingDate}")
         timekeeper.logElapsed()
 
+        processorLogger.copySplit(destinationFolder, "Group-By-Date-And-Name", true)
     }
 }

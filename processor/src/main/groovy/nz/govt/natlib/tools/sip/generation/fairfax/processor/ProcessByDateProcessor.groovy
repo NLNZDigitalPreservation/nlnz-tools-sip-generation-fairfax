@@ -24,13 +24,17 @@ class ProcessByDateProcessor {
     SipProcessingState processNameFolder(File nameFolder, File destinationFolder, String name, String dateString,
                                                       boolean createDestination, boolean moveFilesToDestination) {
         // Process the files in the name folder
+        ProcessorLogger processorLogger = new ProcessorLogger()
+        processorLogger.startSplit()
 
         boolean isRegexNotGlob = true
         boolean matchFilenameOnly = true
         boolean sortFiles = true
         // Only process PDF files
         String pattern = '\\w{6}-\\d{8}-\\w{3,4}\\.pdf'
-        log.info("Searching for files matching pattern=${pattern}")
+
+        log.info("START processNameFolder for pattern=${pattern}, nameFolder=${nameFolder.getCanonicalPath()}")
+        timekeeper.logElapsed()
 
         List<File> allFiles = ProcessorUtils.findFiles(nameFolder.getAbsolutePath(), isRegexNotGlob, matchFilenameOnly,
                 sortFiles, pattern, timekeeper)
@@ -48,18 +52,24 @@ class ProcessByDateProcessor {
         }
         File unrecognizedFilesFolder = new File(destinationFolder, "UNRECOGNIZED/${dateString}/${name}")
 
-
+        boolean hasSipAndFilesFolder
+        boolean hasUnrecognizedFilesFolder
         // Move or copy the processed files to the destination folder
-        if ((sipProcessingState.validFiles.size() > 0 || sipProcessingState.invalidFiles.size() > 0) &&
-                !sipAndFilesFolder.exists() && createDestination) {
-            sipAndFilesFolder.mkdirs()
+        if ((sipProcessingState.validFiles.size() > 0 || sipProcessingState.invalidFiles.size() > 0)) {
+            hasSipAndFilesFolder = true
+            if (!sipAndFilesFolder.exists() && createDestination) {
+                sipAndFilesFolder.mkdirs()
+            }
         }
         ProcessorUtils.copyOrMoveFiles(sipProcessingState.validFiles, sipAndFilesFolder, moveFilesToDestination)
         ProcessorUtils.copyOrMoveFiles(sipProcessingState.invalidFiles, sipAndFilesFolder, moveFilesToDestination)
 
         // If the files aren't recognized, then dump the files in an exception folder
-        if (sipProcessingState.unrecognizedFiles.size() > 0 && !unrecognizedFilesFolder.exists() && createDestination) {
-            unrecognizedFilesFolder.mkdirs()
+        if (sipProcessingState.unrecognizedFiles.size() > 0) {
+            hasUnrecognizedFilesFolder = true
+            if (!unrecognizedFilesFolder.exists() && createDestination) {
+                unrecognizedFilesFolder.mkdirs()
+            }
         }
         ProcessorUtils.copyOrMoveFiles(sipProcessingState.unrecognizedFiles, unrecognizedFilesFolder, moveFilesToDestination)
 
@@ -71,6 +81,15 @@ class ProcessByDateProcessor {
         File sipFile = new File(sipAndFilesFolder, "mets.xml")
         sipFile.write(sipAsXml)
 
+        log.info("END processNameFolder for pattern=${pattern}, nameFolder=${nameFolder.getCanonicalPath()}")
+        timekeeper.logElapsed()
+
+        if (hasSipAndFilesFolder) {
+            processorLogger.copySplit(sipAndFilesFolder, "Process-By-Date", false)
+        }
+        if (hasUnrecognizedFilesFolder) {
+            processorLogger.copySplit(unrecognizedFilesFolder, "Process-By-Date", true)
+        }
         return sipProcessingState
     }
 
