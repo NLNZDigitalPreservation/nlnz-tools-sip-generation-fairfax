@@ -134,18 +134,35 @@ class InvalidPdfTest {
             log.info("File for processing=${file.getCanonicalPath()}")
         }
 
-        int expectedNumberOfFilesProcessed = 10
         String sipAsXml = FairfaxFilesProcessor.processCollectedFiles(sipProcessingState, fairfaxSpreadsheet,
                 filesForProcessing)
+
+        log.info("START SipProcessingState:")
+        log.info(this.sipProcessingState.toString())
+        log.info("END SipProcessingState")
+
+        int expectedNumberOfFilesProcessed = 10
         assertThat("${expectedNumberOfFilesProcessed} files should have been processed",
                 sipProcessingState.totalFilesProcessed, is(expectedNumberOfFilesProcessed))
+        int expectedNumberOfValidFiles = 7
+        assertThat("${expectedNumberOfValidFiles} files should have been processed",
+                sipProcessingState.validFiles.size(), is(expectedNumberOfValidFiles))
+        int expectedNumberOfInvalidFiles = 3
+        assertThat("${expectedNumberOfInvalidFiles} files should have been processed",
+                sipProcessingState.invalidFiles.size(), is(expectedNumberOfInvalidFiles))
+        assertThat("First invalid file is 'TSTPB1-20181123-003.pdf'",
+                sipProcessingState.invalidFiles.get(0).getName(), is("TSTPB1-20181123-003.pdf"))
+        assertThat("Second invalid file is 'TSTPB1-20181123-006.pdf'",
+                sipProcessingState.invalidFiles.get(1).getName(), is("TSTPB1-20181123-006.pdf"))
+        assertThat("Third invalid file is 'TSTPB1-20181123-009.pdf'",
+                sipProcessingState.invalidFiles.get(2).getName(), is("TSTPB1-20181123-009.pdf"))
+        int expectedNumberOfUnrecognizedFiles = 0
+        assertThat("${expectedNumberOfUnrecognizedFiles} files should have been processed",
+                sipProcessingState.unrecognizedFiles.size(), is(expectedNumberOfUnrecognizedFiles))
 
         log.info("SIP validation")
         sipConstructedCorrectly(sipAsXml)
         log.info("ENDING SIP validation")
-        log.info("START SipProcessingState:")
-        log.info(this.sipProcessingState.toString())
-        log.info("END SipProcessingState")
         log.info("Process output path=${processOutputInterceptor.path}")
         Path processingStateFilePath = this.sipProcessingState.toTempFile()
         log.info("sipProcessingState file path=${processingStateFilePath}")

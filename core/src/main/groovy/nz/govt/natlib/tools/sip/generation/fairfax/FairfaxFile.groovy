@@ -1,6 +1,7 @@
 package nz.govt.natlib.tools.sip.generation.fairfax
 
 import groovy.transform.Canonical
+import groovy.transform.EqualsAndHashCode
 import groovy.transform.Sortable
 import groovy.transform.ToString
 import nz.govt.natlib.tools.sip.Sip
@@ -11,10 +12,13 @@ import java.time.format.DateTimeFormatter
 import java.util.regex.Matcher
 
 @Canonical
-@Sortable(includes = ['name', 'edition', 'dateYear', 'dateMonthOfYear', 'dateDayOfMonth', 'sequenceLetter', 'sequenceNumber'])
+@Sortable(includes = ['name', 'edition', 'dateYear', 'dateMonthOfYear', 'dateDayOfMonth', 'sequenceLetter',
+        'sequenceNumber', 'qualifier' ])
 @ToString(includeNames=true, includePackage=false, excludes=[ ])
+@EqualsAndHashCode(excludes = [ 'file', 'filename', 'qualifier', 'sequenceNumberString', 'validForProcessing', 'validPdf' ])
 class FairfaxFile {
-    static String REGEX_PATTERN = "(?<name>[a-zA-Z0-9]{3})(?<edition>[a-zA-Z0-9]{3})-(?<date>\\d{8})-(?<sequenceLetter>[A-Za-z]{0,2})(?<sequenceNumber>\\d{1,4})\\.pdf"
+    static String REGEX_PATTERN = "(?<name>[a-zA-Z0-9]{3})(?<edition>[a-zA-Z0-9]{3})-(?<date>\\d{8})-" +
+            "(?<sequenceLetter>[A-Za-z]{0,2})(?<sequenceNumber>\\d{1,4})(?<qualifier>.*?)\\.pdf"
     static final DateTimeFormatter LOCAL_DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyyMMdd")
 
     File file
@@ -27,6 +31,8 @@ class FairfaxFile {
     String sequenceLetter
     String sequenceNumberString
     Integer sequenceNumber
+    String qualifier
+    boolean validForProcessing
     boolean validPdf
 
     FairfaxFile(File file) {
@@ -53,10 +59,11 @@ class FairfaxFile {
             this.sequenceLetter = matcher.group('sequenceLetter')
             this.sequenceNumberString = matcher.group('sequenceNumber')
             this.sequenceNumber = Integer.parseInt(sequenceNumberString)
+            this.qualifier = matcher.group('qualifier')
         }
     }
 
-    boolean isValid() {
+    boolean isValidName() {
         return this.file != null && this.name != null && this.edition != null && this.dateYear != null &&
                 this.dateMonthOfYear != null && this.dateDayOfMonth != null && this.sequenceNumber != null
     }
@@ -68,13 +75,22 @@ class FairfaxFile {
 
     boolean matches(String comparisonName, String comparisonEdition, Integer comparisonYear,
                     Integer comparisonMonthOfYear, Integer comparisonDayOfMonth) {
-        if (isValid()) {
+        if (isValidName()) {
             if (this.name == comparisonName && this.edition == comparisonEdition) {
                 return (this.dateYear == comparisonYear && this.dateMonthOfYear == comparisonMonthOfYear &&
                         this.dateDayOfMonth == comparisonDayOfMonth)
             } else {
                 return false
             }
+        } else {
+            return false
+        }
+    }
+
+    boolean matchesWithSequence(FairfaxFile fairfaxFile) {
+        if (matches(fairfaxFile)) {
+            return (this.sequenceLetter == fairfaxFile.sequenceLetter) &&
+                    (this.sequenceNumber == fairfaxFile.sequenceNumber)
         } else {
             return false
         }

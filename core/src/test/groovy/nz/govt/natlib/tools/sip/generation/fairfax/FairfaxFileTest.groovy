@@ -4,7 +4,6 @@ import static org.hamcrest.core.Is.is
 import static org.junit.Assert.assertEquals
 import static org.junit.Assert.assertFalse
 import static org.junit.Assert.assertNotNull
-import static org.junit.Assert.assertNull
 import static org.junit.Assert.assertThat
 import static org.junit.Assert.assertTrue
 import static org.mockito.Mockito.when
@@ -40,7 +39,8 @@ class FairfaxFileTest {
         assertThat("Prefix parsed correctly", testFairfaxFile.sequenceLetter, is("B"))
         assertThat("Prefix parsed correctly", testFairfaxFile.sequenceNumberString, is("024"))
         assertThat("Prefix parsed correctly", testFairfaxFile.sequenceNumber, is(24))
-        assertTrue("FairfaxFile is valid", testFairfaxFile.isValid())
+        assertThat("Qualifier parsed correctly", testFairfaxFile.qualifier, is(""))
+        assertTrue("FairfaxFile is valid", testFairfaxFile.isValidName())
     }
 
     @Test
@@ -58,7 +58,48 @@ class FairfaxFileTest {
         assertThat("dateDayOfMonth parsed correctly", testFairfaxFile.dateDayOfMonth, is(new Integer(22)))
         assertThat("sequenceLetter parsed correctly", testFairfaxFile.sequenceLetter, is(""))
         assertThat("sequenceNumber parsed correctly", testFairfaxFile.sequenceNumber, is(24))
-        assertTrue("FairfaxFile is valid", testFairfaxFile.isValid())
+        assertThat("Qualifier parsed correctly", testFairfaxFile.qualifier, is(""))
+        assertTrue("FairfaxFile is valid", testFairfaxFile.isValidName())
+    }
+
+    @Test
+    void createsCorrectlyWithLetterSequenceQualifier() {
+        String originalFilename = "TSTED1-20181022-B024a qualifier.pdf"
+        when(mockFile.getName()).thenReturn(originalFilename)
+
+        FairfaxFile testFairfaxFile = new FairfaxFile(mockFile)
+
+        assertThat("Filename extracted correctly", testFairfaxFile.filename, is(originalFilename))
+        assertThat("Name parsed correctly", testFairfaxFile.name, is("TST"))
+        assertThat("Edition parsed correctly", testFairfaxFile.edition, is("ED1"))
+        assertNotNull("Year extracted", testFairfaxFile.dateYear)
+        assertThat("dateYear parsed correctly", testFairfaxFile.dateYear, is(new Integer(2018)))
+        assertThat("dateMonthOfYear parsed correctly", testFairfaxFile.dateMonthOfYear, is(new Integer(10)))
+        assertThat("dateDayOfMonth parsed correctly", testFairfaxFile.dateDayOfMonth, is(new Integer(22)))
+        assertThat("Prefix parsed correctly", testFairfaxFile.sequenceLetter, is("B"))
+        assertThat("Prefix parsed correctly", testFairfaxFile.sequenceNumberString, is("024"))
+        assertThat("Prefix parsed correctly", testFairfaxFile.sequenceNumber, is(24))
+        assertThat("Qualifier parsed correctly", testFairfaxFile.qualifier, is("a qualifier"))
+        assertTrue("FairfaxFile is valid", testFairfaxFile.isValidName())
+    }
+
+    @Test
+    void createsCorrectlyWithNumberOnlySequenceQualifier() {
+        String originalFilename = "t20ABC-20181022-024crop.pdf"
+        when(mockFile.getName()).thenReturn(originalFilename)
+
+        FairfaxFile testFairfaxFile = new FairfaxFile(mockFile)
+
+        assertThat("filename extracted correctly", testFairfaxFile.filename, is(originalFilename))
+        assertThat("Name parsed correctly", testFairfaxFile.name, is("t20"))
+        assertThat("Edition parsed correctly", testFairfaxFile.edition, is("ABC"))
+        assertThat("dateYear parsed correctly", testFairfaxFile.dateYear, is(new Integer(2018)))
+        assertThat("dateMonthOfYear parsed correctly", testFairfaxFile.dateMonthOfYear, is(new Integer(10)))
+        assertThat("dateDayOfMonth parsed correctly", testFairfaxFile.dateDayOfMonth, is(new Integer(22)))
+        assertThat("sequenceLetter parsed correctly", testFairfaxFile.sequenceLetter, is(""))
+        assertThat("sequenceNumber parsed correctly", testFairfaxFile.sequenceNumber, is(24))
+        assertThat("Qualifier parsed correctly", testFairfaxFile.qualifier, is("crop"))
+        assertTrue("FairfaxFile is valid", testFairfaxFile.isValidName())
     }
 
     @Test
@@ -69,7 +110,7 @@ class FairfaxFileTest {
         FairfaxFile testFairfaxFile = new FairfaxFile(mockFile)
 
         assertThat("filename extracted correctly", testFairfaxFile.filename, is(originalFilename))
-        assertFalse("FairfaxFile is invalid", testFairfaxFile.isValid())
+        assertFalse("FairfaxFile is invalid", testFairfaxFile.isValidName())
     }
 
     @Test
@@ -83,6 +124,22 @@ class FairfaxFileTest {
         FairfaxFile fairfaxFile2 = new FairfaxFile(mockFile2)
 
         assertTrue("Same prefix and date in filename matches", fairfaxFile1.matches(fairfaxFile2))
+        assertFalse("Same prefix and date but different sequence does not sequence match",
+                fairfaxFile1.matchesWithSequence(fairfaxFile2))
+    }
+
+    @Test
+    void matchesWhenSamePrefixDateAndSequence() {
+        String filename1 = "Mixy2k-20181022-023.pdf"
+        String filename2 = "Mixy2k-20181022-023withQualifier.pdf"
+        when(mockFile1.getName()).thenReturn(filename1)
+        when(mockFile2.getName()).thenReturn(filename2)
+
+        FairfaxFile fairfaxFile1 = new FairfaxFile(mockFile1)
+        FairfaxFile fairfaxFile2 = new FairfaxFile(mockFile2)
+
+        assertTrue("Same prefix and date in filename matches", fairfaxFile1.matches(fairfaxFile2))
+        assertTrue("Matches with sequence", fairfaxFile1.matchesWithSequence(fairfaxFile2))
     }
 
     @Test

@@ -25,7 +25,7 @@ import static org.junit.Assert.assertThat
 import static org.junit.Assert.assertTrue
 
 /**
- * Tests the {@code invalid-page-filename} scenario.
+ * Tests the {@code same-filename-different-qualifiers} scenario.
  *
  * Note that this test is complicated by the files either being part of a directory structure or in a resource file (jar),
  * so the {@link TestHelper} class is used to handle both scenarios. In real-life processing the files would be on the
@@ -35,14 +35,14 @@ import static org.junit.Assert.assertTrue
  */
 @RunWith(MockitoJUnitRunner.class)
 @Slf4j
-class InvalidPageFilenameTest {
+class SameFilenameDifferentQualifiersTest {
     // TODO Make this processing simpler
     // - given a starting folder
     // - and a set of selection criteria
     // - create SIPs for the given files
     static String ID_COLUMN_NAME = "MMSID"
 
-    static final String RESOURCES_FOLDER = "ingestion-files-tests/scenario-invalid-page-filename"
+    static final String RESOURCES_FOLDER = "ingestion-files-tests/scenario-same-filename-different-qualifiers"
     static final String IMPORT_PARAMETERS_FILENAME = "test-fairfax-import-parameters.json"
 
     SipProcessingState sipProcessingState
@@ -64,7 +64,7 @@ class InvalidPageFilenameTest {
     // TODO Ignore this test before making a code commit
     @Ignore
     void correctlyAssembleSipFromFilesOnFilesystem() {
-        ProcessOutputInterceptor processOutputInterceptor = ProcessOutputInterceptor.forTempFile("InvalidPageFilenameTest-",
+        ProcessOutputInterceptor processOutputInterceptor = ProcessOutputInterceptor.forTempFile("SameFilenameDifferentQualifiersTest-",
                 ".txt", false)
         this.sipProcessingState.processingOutputPath = processOutputInterceptor.path
         processOutputInterceptor.start()
@@ -91,8 +91,7 @@ class InvalidPageFilenameTest {
         filesForProcessing.each { File file ->
             log.info("File for processing=${file.getCanonicalPath()}")
         }
-
-        int expectedNumberOfFilesProcessed = 9
+        int expectedNumberOfFilesProcessed = 10
         String sipAsXml = FairfaxFilesProcessor.processCollectedFiles(sipProcessingState, fairfaxSpreadsheet,
                 filesForProcessing)
         assertThat("${expectedNumberOfFilesProcessed} files should have been processed",
@@ -114,7 +113,7 @@ class InvalidPageFilenameTest {
 
     @Test
     void correctlyAssembleSipFromFiles() {
-        ProcessOutputInterceptor processOutputInterceptor = ProcessOutputInterceptor.forTempFile("InvalidPageFilenameTest-",
+        ProcessOutputInterceptor processOutputInterceptor = ProcessOutputInterceptor.forTempFile("InvalidPdfTest-",
         ".txt", false)
         this.sipProcessingState.processingOutputPath = processOutputInterceptor.path
         processOutputInterceptor.start()
@@ -142,20 +141,20 @@ class InvalidPageFilenameTest {
         log.info(this.sipProcessingState.toString())
         log.info("END SipProcessingState")
 
-        int expectedNumberOfFilesProcessed = 9
+        int expectedNumberOfFilesProcessed = 10
         assertThat("${expectedNumberOfFilesProcessed} files should have been processed",
                 sipProcessingState.totalFilesProcessed, is(expectedNumberOfFilesProcessed))
-        int expectedNumberOfValidFiles = 9
+        int expectedNumberOfValidFiles = 10
         assertThat("${expectedNumberOfValidFiles} files should have been processed",
                 sipProcessingState.validFiles.size(), is(expectedNumberOfValidFiles))
-        int expectedNumberOfInvalidFiles = 0
+        int expectedNumberOfInvalidFiles = 1
         assertThat("${expectedNumberOfInvalidFiles} files should have been processed",
                 sipProcessingState.invalidFiles.size(), is(expectedNumberOfInvalidFiles))
-        int expectedNumberOfUnrecognizedFiles = 1
+        assertThat("Invalid file is 'TSTPB1-20181123-003with-qualifier.pdf'",
+                sipProcessingState.invalidFiles.first().getName(), is("TSTPB1-20181123-003with-qualifier.pdf"))
+        int expectedNumberOfUnrecognizedFiles = 0
         assertThat("${expectedNumberOfUnrecognizedFiles} files should have been processed",
                 sipProcessingState.unrecognizedFiles.size(), is(expectedNumberOfUnrecognizedFiles))
-        assertThat("Unrecognized file is 'TSTPB1-20181123-XYZ010.pdf'",
-                sipProcessingState.unrecognizedFiles.first().getName(), is("TSTPB1-20181123-XYZ010.pdf"))
 
         log.info("STARTING SIP validation")
         sipConstructedCorrectly(sipAsXml)
@@ -174,7 +173,7 @@ class InvalidPageFilenameTest {
         assertTrue("SipXmlExtractor has content", sipForValidation.xml.length() > 0)
 
         assertTrue("SipProcessingState is complete", this.sipProcessingState.isComplete())
-        TestHelper.assertExpectedExceptionReason(sipProcessingState, SipProcessingExceptionReasonType.INVALID_PAGE_FILENAME)
+        TestHelper.assertExpectedExceptionReason(sipProcessingState, SipProcessingExceptionReasonType.DUPLICATE_FILE)
 
         TestHelper.assertExpectedSipMetadataValues(sipForValidation, "Test Publication One", 2018, 11, 23,
                 "NewspaperIE", "ALMAMMS", "test-mms-id-one", "200", "PRESERVATION_MASTER", "VIEW", true, 1)
@@ -205,6 +204,9 @@ class InvalidPageFilenameTest {
 
         TestHelper.assertExpectedSipFileValues(sipForValidation, 9, "TSTPB1-20181123-009.pdf", "TSTPB1-20181123-009.pdf",
                 11612L, "MD5", "fee5322aa8d3c7a4fe7adeba7953e071", "009", "application/pdf")
+
+        TestHelper.assertExpectedSipFileValues(sipForValidation, 10, "TSTPB1-20181123-010.pdf", "TSTPB1-20181123-010.pdf",
+                11440L, "MD5", "f621c3081711e895d8fa3d2dd5e49ffa", "010", "application/pdf")
     }
 
 }

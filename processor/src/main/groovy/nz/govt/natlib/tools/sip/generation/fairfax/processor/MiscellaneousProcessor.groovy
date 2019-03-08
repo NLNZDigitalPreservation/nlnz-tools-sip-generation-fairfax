@@ -53,7 +53,7 @@ class MiscellaneousProcessor {
 
         FairfaxFile previousFile
         fairfaxFiles.each { FairfaxFile fairfaxFile ->
-            if (fairfaxFile.isValid()) {
+            if (fairfaxFile.isValidName()) {
                 if (allNameKeys.contains(fairfaxFile.name)) {
                     if (!recognizedNames.contains(fairfaxFile.name)) {
                         recognizedNames.add(fairfaxFile.name)

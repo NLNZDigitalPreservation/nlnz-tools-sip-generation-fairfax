@@ -134,18 +134,31 @@ class EmptyFileTest {
             log.info("File for processing=${file.getCanonicalPath()}")
         }
 
-        int expectedNumberOfFilesProcessed = 10
         String sipAsXml = FairfaxFilesProcessor.processCollectedFiles(sipProcessingState, fairfaxSpreadsheet,
                 filesForProcessing)
+
+        log.info("START SipProcessingState:")
+        log.info(this.sipProcessingState.toString())
+        log.info("END SipProcessingState")
+
+        int expectedNumberOfFilesProcessed = 10
         assertThat("${expectedNumberOfFilesProcessed} files should have been processed",
                 sipProcessingState.totalFilesProcessed, is(expectedNumberOfFilesProcessed))
+        int expectedNumberOfValidFiles = 9
+        assertThat("${expectedNumberOfValidFiles} files should have been processed",
+                sipProcessingState.validFiles.size(), is(expectedNumberOfValidFiles))
+        int expectedNumberOfInvalidFiles = 1
+        assertThat("${expectedNumberOfInvalidFiles} files should have been processed",
+                sipProcessingState.invalidFiles.size(), is(expectedNumberOfInvalidFiles))
+        assertThat("Invalid file is 'TSTPB1-20181123-003.pdf'",
+                sipProcessingState.invalidFiles.first().getName(), is("TSTPB1-20181123-003.pdf"))
+        int expectedNumberOfUnrecognizedFiles = 0
+        assertThat("${expectedNumberOfUnrecognizedFiles} files should have been processed",
+                sipProcessingState.unrecognizedFiles.size(), is(expectedNumberOfUnrecognizedFiles))
 
         log.info("SIP validation")
         sipConstructedCorrectly(sipAsXml)
         log.info("ENDING SIP validation")
-        log.info("START SipProcessingState:")
-        log.info(this.sipProcessingState.toString())
-        log.info("END SipProcessingState")
         log.info("Process output path=${processOutputInterceptor.path}")
         Path processingStateFilePath = this.sipProcessingState.toTempFile()
         log.info("sipProcessingState file path=${processingStateFilePath}")
