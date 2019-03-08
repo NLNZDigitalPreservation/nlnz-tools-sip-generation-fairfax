@@ -4,6 +4,7 @@ import groovy.util.logging.Slf4j
 import nz.govt.natlib.m11n.tools.automation.logging.Timekeeper
 import nz.govt.natlib.tools.sip.generation.fairfax.FairfaxFile
 import nz.govt.natlib.tools.sip.generation.fairfax.FairfaxSpreadsheet
+import nz.govt.natlib.tools.sip.processing.ProcessLogger
 
 import java.nio.file.Files
 import java.nio.file.StandardCopyOption
@@ -67,8 +68,8 @@ class GroupByDateAndNameProcessor {
         recognizedNames = [ ]
         unrecognizedNames = [ ]
 
-        ProcessorLogger processorLogger = new ProcessorLogger()
-        processorLogger.startSplit()
+        ProcessLogger processLogger = new ProcessLogger()
+        processLogger.startSplit()
 
         log.info("START groupByDateAndName for sourceFolder=${sourceFolder.getCanonicalPath()}, " +
         "startindDate=${startingDate}, endingDate=${endingDate}")
@@ -124,6 +125,6 @@ class GroupByDateAndNameProcessor {
                 "startindDate=${startingDate}, endingDate=${endingDate}")
         timekeeper.logElapsed()
 
-        processorLogger.copySplit(destinationFolder, "Group-By-Date-And-Name", true)
+        processLogger.copySplit(destinationFolder, "Group-By-Date-And-Name", true)
     }
 }

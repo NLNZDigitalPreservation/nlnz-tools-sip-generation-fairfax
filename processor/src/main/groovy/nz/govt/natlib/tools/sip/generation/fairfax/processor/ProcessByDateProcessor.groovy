@@ -5,6 +5,7 @@ import nz.govt.natlib.m11n.tools.automation.logging.Timekeeper
 import nz.govt.natlib.tools.sip.generation.fairfax.FairfaxFile
 import nz.govt.natlib.tools.sip.generation.fairfax.FairfaxFilesProcessor
 import nz.govt.natlib.tools.sip.generation.fairfax.FairfaxSpreadsheet
+import nz.govt.natlib.tools.sip.processing.ProcessLogger
 import nz.govt.natlib.tools.sip.state.SipProcessingState
 
 import java.time.LocalDate
@@ -24,8 +25,8 @@ class ProcessByDateProcessor {
     SipProcessingState processNameFolder(File nameFolder, File destinationFolder, String name, String dateString,
                                                       boolean createDestination, boolean moveFilesToDestination) {
         // Process the files in the name folder
-        ProcessorLogger processorLogger = new ProcessorLogger()
-        processorLogger.startSplit()
+        ProcessLogger processLogger = new ProcessLogger()
+        processLogger.startSplit()
 
         boolean isRegexNotGlob = true
         boolean matchFilenameOnly = true
@@ -85,10 +86,10 @@ class ProcessByDateProcessor {
         timekeeper.logElapsed()
 
         if (hasSipAndFilesFolder) {
-            processorLogger.copySplit(sipAndFilesFolder, "Process-By-Date", false)
+            processLogger.copySplit(sipAndFilesFolder, "Process-By-Date", false)
         }
         if (hasUnrecognizedFilesFolder) {
-            processorLogger.copySplit(unrecognizedFilesFolder, "Process-By-Date", true)
+            processLogger.copySplit(unrecognizedFilesFolder, "Process-By-Date", true)
         }
         return sipProcessingState
     }
