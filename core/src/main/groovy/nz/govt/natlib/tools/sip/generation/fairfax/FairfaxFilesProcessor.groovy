@@ -121,35 +121,57 @@ class FairfaxFilesProcessor {
                 log.info("Will process fairfaxFileGroup=${fairfaxFileGroup} according to sip=${fairfaxFileGroupMatch.sip}")
                 sipProcessingState.identifier = formatSipProcessingStateIdentifier(fairfaxFileGroupKey)
                 List<FairfaxFile> fairfaxFiles = fairfaxFileGroup.files.sort()
-                List<Sip.FileWrapper> fileWrappers = fairfaxFiles.collect() { FairfaxFile fairfaxFile ->
-                    SipFileWrapperFactory.generate(fairfaxFile.file, true, true)
-                }
-                int sequenceNumber = 1
-                fileWrappers.each { Sip.FileWrapper fileWrapper ->
-                    String label = String.format("%03d", sequenceNumber)
-                    fileWrapper.label = label
-                    sequenceNumber += 1
-                    filesProcessed += 1
+                List<File> filesForSip = fairfaxFiles.collect() { FairfaxFile fairfaxFile ->
+                    fairfaxFile.file
                 }
                 Sip testSip = fairfaxFileGroupMatch.sip.clone()
-                testSip.fileWrappers = fileWrappers
-                sipProcessingState.setComplete(true)
-                log.info("\n* * * SipProcessingState:")
-                log.info(sipProcessingState.toString())
-                SipXmlGenerator sipXmlGenerator = new SipXmlGenerator(testSip)
-                sipAsXml = sipXmlGenerator.getSipAsXml()
-                log.info("\n* * *   S I P   * * *")
-                log.info(sipAsXml)
-                log.info("\n* * *   E N D   O F   S I P   * * *")
+                sipAsXml = generateSipAsXml(testSip, filesForSip)
+                filesProcessed = filesForSip.size()
             } else {
-                sipProcessingState.setComplete(true)
-                // We can't process the files
-                throw new RuntimeException("Unable to process fairfaxFileGroup=${fairfaxFileGroup}: No matching sip")
+                String detailedReason = "Unable to process fairfaxFileGroup=${fairfaxFileGroup}: No matching sip definition in Fairfax spreadsheet."
+                SipProcessingExceptionReason exceptionReason = new SipProcessingExceptionReason(
+                        SipProcessingExceptionReasonType.NO_MATCHING_SIP_DEFINITION, null,
+                        detailedReason)
+                SipProcessingException sipProcessingException = SipProcessingException.createWithReason(exceptionReason)
+                sipProcessingState.addException(sipProcessingException)
+                log.warn(detailedReason)
+                // Move the files from validFiles to invalidFiles
+                List<File> sortedFiles = this.filesForProcessing.sort(false) { File a, b ->
+                    a.name <=> b.name
+                }
+                sortedFiles.each { File file ->
+                    filesProcessed += 1
+                    sipProcessingState.validFiles.remove(file)
+                    sipProcessingState.invalidFiles.add(file)
+                }
+                sipAsXml = generateSipAsXml(getBlankSip(), sortedFiles)
             }
+            sipProcessingState.setComplete(true)
+            log.info("\n* * * SipProcessingState:")
+            log.info(sipProcessingState.toString())
+            log.info("\n* * *   S I P   * * *")
+            log.info(sipAsXml)
+            log.info("\n* * *   E N D   O F   S I P   * * *")
         }
         sipProcessingState.totalFilesProcessed = filesProcessed
 
         return sipAsXml
+    }
+
+    String generateSipAsXml(Sip sip, List<File> files) {
+        List<Sip.FileWrapper> fileWrappers = files.collect() { File file ->
+            SipFileWrapperFactory.generate(file, true, true)
+        }
+        int sequenceNumber = 1
+        fileWrappers.each { Sip.FileWrapper fileWrapper ->
+            String label = String.format("%03d", sequenceNumber)
+            fileWrapper.label = label
+            sequenceNumber += 1
+        }
+        sip.fileWrappers = fileWrappers
+        SipXmlGenerator sipXmlGenerator = new SipXmlGenerator(sip)
+
+        return sipXmlGenerator.getSipAsXml()
     }
 
     String formatSipProcessingStateIdentifier(FairfaxFileGroupKey fairfaxFileGroupKey) {
@@ -159,4 +181,13 @@ class FairfaxFilesProcessor {
         return "${fairfaxFileGroupKey.edition}_${titleWithUnderscores}"
     }
 
+    Sip getBlankSip() {
+        Sip sip = new Sip(title: 'UNKNOWN_TITLE', ieEntityType: 'UNKNOWN_ENTITY_TYPE',
+                objectIdentifierType: 'UNKNOWN_OBJECT_IDENTIFIER_TYPE',
+                objectIdentifierValue: 'UNKNOWN_OBJECT_IDENTIFIER_VALUE', policyId: 'UNKNOWN_POLICY_ID',
+                preservationType: 'UNKNOWN_PRESERVATION_TYPE', usageType: 'UNKNOWN_USAGE_TYPE',
+                digitalOriginal: true, revisionNumber: 1,
+                year: 2038, month: 12, dayOfMonth: 31)
+
+    }
 }

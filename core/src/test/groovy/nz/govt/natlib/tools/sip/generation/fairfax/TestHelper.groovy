@@ -5,6 +5,7 @@ import groovy.util.slurpersupport.GPathResult
 import nz.govt.natlib.tools.sip.extraction.SipXmlExtractor
 import nz.govt.natlib.tools.sip.files.FilesFinder
 import nz.govt.natlib.tools.sip.generation.parameters.Spreadsheet
+import nz.govt.natlib.tools.sip.processing.ProcessOutputInterceptor
 import nz.govt.natlib.tools.sip.state.SipProcessingException
 import nz.govt.natlib.tools.sip.state.SipProcessingExceptionReason
 import nz.govt.natlib.tools.sip.state.SipProcessingExceptionReasonType
@@ -26,6 +27,46 @@ import static org.junit.Assert.assertTrue
 @Slf4j
 class TestHelper {
     static final String RESOURCES_FOLDER = "nz/govt/natlib/tools/sip/generation/fairfax"
+
+
+    static class TestMethodState {
+        String idColumnName
+        String resourcesFolder
+        String importParametersFilename
+        SipProcessingState sipProcessingState
+        ProcessOutputInterceptor processOutputInterceptor
+        String localPath
+        String resourcePath
+        FairfaxSpreadsheet fairfaxSpreadsheet
+
+        TestMethodState(String idColumnName, String resourcesFolder, String importParametersFilename) {
+            this.idColumnName = idColumnName
+            this.resourcesFolder = resourcesFolder
+            this.importParametersFilename = importParametersFilename
+        }
+    }
+
+    static void initializeTestMethod(TestMethodState testMethodState, String filePrefix, boolean forLocalFilesystem) {
+        testMethodState.sipProcessingState = new SipProcessingState()
+        testMethodState.processOutputInterceptor = ProcessOutputInterceptor.forTempFile(filePrefix,
+                ".txt", false)
+        testMethodState.sipProcessingState.processingOutputPath = testMethodState.processOutputInterceptor.path
+        testMethodState.processOutputInterceptor.start()
+
+        if (forLocalFilesystem) {
+            testMethodState.localPath = "src/test/resources/${testMethodState.resourcesFolder}"
+
+            File spreadsheetFile = new File("${testMethodState.localPath}/${testMethodState.importParametersFilename}")
+            Spreadsheet spreadsheet = Spreadsheet.fromJson(testMethodState.idColumnName, spreadsheetFile.text, true, true)
+            testMethodState.fairfaxSpreadsheet = new FairfaxSpreadsheet(spreadsheet)
+        } else {
+            testMethodState.resourcePath = "${testMethodState.resourcesFolder}"
+            testMethodState.localPath = "src/test/resources/${testMethodState.resourcesFolder}"
+
+            testMethodState.fairfaxSpreadsheet = TestHelper.loadSpreadsheet(testMethodState.resourcePath, testMethodState.localPath,
+                    testMethodState.importParametersFilename, testMethodState.idColumnName)
+        }
+    }
 
     /**
      * Returns the contents of the file from the given filename and resources folder.
@@ -114,6 +155,38 @@ class TestHelper {
             }
         }
         return filteredFiles
+    }
+
+    static List<File> getFilesForProcessingFromFileSystem(boolean isRegexNotGlob, boolean matchFilenameOnly, boolean sortFiles,
+                                                   String localPath, String pattern) {
+        List<File> filesForProcessing
+        Path filesPath = Paths.get(localPath)
+        if (!Files.exists(filesPath) || !Files.isDirectory(filesPath)) {
+            log.warn("Path '${filesPath}' does not exist is not a directory. Returning empty file list.")
+        } else {
+            filesForProcessing = FilesFinder.getMatchingFiles(filesPath, isRegexNotGlob, matchFilenameOnly,
+                    sortFiles, pattern)
+        }
+
+        log.info("Collected ${filesForProcessing.size()} files for processing")
+        filesForProcessing.each { File file ->
+            log.info("File for processing=${file.getCanonicalPath()}")
+        }
+
+        return filesForProcessing
+    }
+
+    static List<File> getFilesForProcessingFromResource(boolean isRegexNotGlob, boolean matchFilenameOnly, boolean sortFiles,
+                                                        String resourcePath, String localPath, String pattern) {
+        List<File> filesForProcessing = TestHelper.findFiles(resourcePath, localPath, isRegexNotGlob, matchFilenameOnly,
+                sortFiles, pattern)
+
+        log.info("Collected ${filesForProcessing.size()} files for processing")
+        filesForProcessing.each { File file ->
+            log.info("File for processing=${file.getCanonicalPath()}")
+        }
+
+        return filesForProcessing
     }
 
     static List<File> getMatchingFiles(Collection<File> files, String pattern) {

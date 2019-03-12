@@ -2,23 +2,17 @@ package nz.govt.natlib.tools.sip.generation.fairfax.scenarios
 
 import groovy.util.logging.Slf4j
 import nz.govt.natlib.tools.sip.extraction.SipXmlExtractor
-import nz.govt.natlib.tools.sip.files.FilesFinder
 import nz.govt.natlib.tools.sip.generation.fairfax.FairfaxFilesProcessor
-import nz.govt.natlib.tools.sip.generation.fairfax.FairfaxSpreadsheet
 import nz.govt.natlib.tools.sip.generation.fairfax.TestHelper
-import nz.govt.natlib.tools.sip.generation.parameters.Spreadsheet
-import nz.govt.natlib.tools.sip.processing.ProcessOutputInterceptor
+import nz.govt.natlib.tools.sip.generation.fairfax.TestHelper.TestMethodState
 import nz.govt.natlib.tools.sip.state.SipProcessingExceptionReasonType
-import nz.govt.natlib.tools.sip.state.SipProcessingState
 import org.junit.Before
 import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.junit.MockitoJUnitRunner
 
-import java.nio.file.Files
 import java.nio.file.Path
-import java.nio.file.Paths
 
 import static org.hamcrest.core.Is.is
 import static org.junit.Assert.assertThat
@@ -45,11 +39,11 @@ class EmptyFileTest {
     static final String RESOURCES_FOLDER = "ingestion-files-tests/scenario-empty-file"
     static final String IMPORT_PARAMETERS_FILENAME = "test-fairfax-import-parameters.json"
 
-    SipProcessingState sipProcessingState
+    TestMethodState testMethodState
 
     @Before
     void setup() {
-        sipProcessingState = new SipProcessingState()
+        testMethodState = new TestMethodState(ID_COLUMN_NAME, RESOURCES_FOLDER, IMPORT_PARAMETERS_FILENAME)
     }
 
     /**
@@ -64,105 +58,64 @@ class EmptyFileTest {
     // TODO Ignore this test before making a code commit
     @Ignore
     void correctlyAssembleSipFromFilesOnFilesystem() {
-        ProcessOutputInterceptor processOutputInterceptor = ProcessOutputInterceptor.forTempFile("EmptyFileTest-",
-                ".txt", false)
-        this.sipProcessingState.processingOutputPath = processOutputInterceptor.path
-        processOutputInterceptor.start()
-        String localPath = "src/test/resources/${RESOURCES_FOLDER}"
-
-        File spreadsheetFile = new File("${localPath}/${IMPORT_PARAMETERS_FILENAME}")
-        Spreadsheet spreadsheet = Spreadsheet.fromJson(ID_COLUMN_NAME, spreadsheetFile.text, true, true)
-        FairfaxSpreadsheet fairfaxSpreadsheet = new FairfaxSpreadsheet(spreadsheet)
+        boolean forLocalFilesystem = true
+        TestHelper.initializeTestMethod(testMethodState, "EmptyFileTest-", forLocalFilesystem)
 
         // TODO A more complicated pattern -- date and other masks?
         boolean isRegexNotGlob = true
         boolean matchFilenameOnly = true
         boolean sortFiles = true
-        List<File> filesForProcessing
-        Path filesPath = Paths.get(localPath)
-        if (!Files.exists(filesPath) || !Files.isDirectory(filesPath)) {
-            log.warn("Path '${filesPath}' does not exist is not a directory. Returning empty file list.")
-        } else {
-            filesForProcessing = FilesFinder.getMatchingFiles(filesPath, isRegexNotGlob, matchFilenameOnly,
-                    sortFiles, ".*?\\.pdf")
-        }
+        List<File> filesForProcessing = TestHelper.getFilesForProcessingFromFileSystem(isRegexNotGlob, matchFilenameOnly,
+                sortFiles, testMethodState.localPath, ".*?\\.pdf")
 
-        log.info("Collected ${filesForProcessing.size()} files for processing")
-        filesForProcessing.each { File file ->
-            log.info("File for processing=${file.getCanonicalPath()}")
-        }
-        int expectedNumberOfFilesProcessed = 10
-        String sipAsXml = FairfaxFilesProcessor.processCollectedFiles(sipProcessingState, fairfaxSpreadsheet,
-                filesForProcessing)
-        assertThat("${expectedNumberOfFilesProcessed} files should have been processed",
-                sipProcessingState.totalFilesProcessed, is(expectedNumberOfFilesProcessed))
-
-        log.info("STARTING SIP validation")
-        sipConstructedCorrectly(sipAsXml)
-        log.info("ENDING SIP validation")
-        log.info("START SipProcessingState:")
-        log.info(this.sipProcessingState.toString())
-        log.info("END SipProcessingState")
-        log.info("Process output path=${processOutputInterceptor.path}")
-        Path processingStateFilePath = this.sipProcessingState.toTempFile()
-        log.info("sipProcessingState file path=${processingStateFilePath}")
-        processOutputInterceptor.stopAndClose()
-        // In a normal processing script, the processed files, the processing output and the sipProcessingState file
-        // would be moved/copied to a processing completed directory based on the processing state.
+        processFiles(filesForProcessing)
     }
 
     @Test
     void correctlyAssembleSipFromFiles() {
-        ProcessOutputInterceptor processOutputInterceptor = ProcessOutputInterceptor.forTempFile("EmptyFileTest-",
-        ".txt", false)
-        this.sipProcessingState.processingOutputPath = processOutputInterceptor.path
-        processOutputInterceptor.start()
-        String resourcePath = "${RESOURCES_FOLDER}"
-        String localPath = "src/test/resources/${RESOURCES_FOLDER}"
-
-        FairfaxSpreadsheet fairfaxSpreadsheet = TestHelper.loadSpreadsheet(resourcePath, localPath, IMPORT_PARAMETERS_FILENAME, ID_COLUMN_NAME)
+        boolean forLocalFilesystem = false
+        TestHelper.initializeTestMethod(testMethodState, "EmptyFileTest-", forLocalFilesystem)
 
         // TODO A more complicated pattern -- date and other masks?
         boolean isRegexNotGlob = true
         boolean matchFilenameOnly = true
         boolean sortFiles = true
-        List<File> filesForProcessing = TestHelper.findFiles(resourcePath, localPath, isRegexNotGlob, matchFilenameOnly,
-                sortFiles, ".*?\\.pdf")
+        List<File> filesForProcessing = TestHelper.getFilesForProcessingFromResource(isRegexNotGlob, matchFilenameOnly,
+                sortFiles, testMethodState.resourcePath, testMethodState.localPath, ".*?\\.pdf")
 
-        log.info("Collected ${filesForProcessing.size()} files for processing")
-        filesForProcessing.each { File file ->
-            log.info("File for processing=${file.getCanonicalPath()}")
-        }
+        processFiles(filesForProcessing)
+    }
 
-        String sipAsXml = FairfaxFilesProcessor.processCollectedFiles(sipProcessingState, fairfaxSpreadsheet,
-                filesForProcessing)
+    void processFiles(List<File> filesForProcessing) {
+        String sipAsXml = FairfaxFilesProcessor.processCollectedFiles(testMethodState.sipProcessingState,
+                testMethodState.fairfaxSpreadsheet, filesForProcessing)
 
         log.info("START SipProcessingState:")
-        log.info(this.sipProcessingState.toString())
+        log.info(testMethodState.sipProcessingState.toString())
         log.info("END SipProcessingState")
 
         int expectedNumberOfFilesProcessed = 10
         assertThat("${expectedNumberOfFilesProcessed} files should have been processed",
-                sipProcessingState.totalFilesProcessed, is(expectedNumberOfFilesProcessed))
+                testMethodState.sipProcessingState.totalFilesProcessed, is(expectedNumberOfFilesProcessed))
         int expectedNumberOfValidFiles = 9
         assertThat("${expectedNumberOfValidFiles} files should have been processed",
-                sipProcessingState.validFiles.size(), is(expectedNumberOfValidFiles))
+                testMethodState.sipProcessingState.validFiles.size(), is(expectedNumberOfValidFiles))
         int expectedNumberOfInvalidFiles = 1
         assertThat("${expectedNumberOfInvalidFiles} files should have been processed",
-                sipProcessingState.invalidFiles.size(), is(expectedNumberOfInvalidFiles))
+                testMethodState.sipProcessingState.invalidFiles.size(), is(expectedNumberOfInvalidFiles))
         assertThat("Invalid file is 'TSTPB1-20181123-003.pdf'",
-                sipProcessingState.invalidFiles.first().getName(), is("TSTPB1-20181123-003.pdf"))
+                testMethodState.sipProcessingState.invalidFiles.first().getName(), is("TSTPB1-20181123-003.pdf"))
         int expectedNumberOfUnrecognizedFiles = 0
         assertThat("${expectedNumberOfUnrecognizedFiles} files should have been processed",
-                sipProcessingState.unrecognizedFiles.size(), is(expectedNumberOfUnrecognizedFiles))
+                testMethodState.sipProcessingState.unrecognizedFiles.size(), is(expectedNumberOfUnrecognizedFiles))
 
         log.info("SIP validation")
         sipConstructedCorrectly(sipAsXml)
         log.info("ENDING SIP validation")
-        log.info("Process output path=${processOutputInterceptor.path}")
-        Path processingStateFilePath = this.sipProcessingState.toTempFile()
+        log.info("Process output path=${testMethodState.processOutputInterceptor.path}")
+        Path processingStateFilePath = testMethodState.sipProcessingState.toTempFile()
         log.info("sipProcessingState file path=${processingStateFilePath}")
-        processOutputInterceptor.stopAndClose()
+        testMethodState.processOutputInterceptor.stopAndClose()
         // In a normal processing script, the processed files, the processing output and the sipProcessingState file
         // would be moved/copied to a processing completed directory based on the processing state.
     }
@@ -172,8 +125,8 @@ class EmptyFileTest {
 
         assertTrue("SipXmlExtractor has content", sipForValidation.xml.length() > 0)
 
-        assertTrue("SipProcessingState is complete", this.sipProcessingState.isComplete())
-        TestHelper.assertExpectedExceptionReason(sipProcessingState, SipProcessingExceptionReasonType.FILE_OF_LENGTH_ZERO)
+        assertTrue("SipProcessingState is complete", testMethodState.sipProcessingState.isComplete())
+        TestHelper.assertExpectedExceptionReason(testMethodState.sipProcessingState, SipProcessingExceptionReasonType.FILE_OF_LENGTH_ZERO)
 
         TestHelper.assertExpectedSipMetadataValues(sipForValidation, "Test Publication One", 2018, 11, 23,
                 "NewspaperIE", "ALMAMMS", "test-mms-id-one", "200", "PRESERVATION_MASTER", "VIEW", true, 1)

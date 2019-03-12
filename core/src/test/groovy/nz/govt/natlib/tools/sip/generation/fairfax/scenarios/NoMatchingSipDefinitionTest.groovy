@@ -5,6 +5,7 @@ import nz.govt.natlib.tools.sip.extraction.SipXmlExtractor
 import nz.govt.natlib.tools.sip.generation.fairfax.FairfaxFilesProcessor
 import nz.govt.natlib.tools.sip.generation.fairfax.TestHelper
 import nz.govt.natlib.tools.sip.generation.fairfax.TestHelper.TestMethodState
+import nz.govt.natlib.tools.sip.state.SipProcessingExceptionReasonType
 import org.junit.Before
 import org.junit.Ignore
 import org.junit.Test
@@ -18,7 +19,7 @@ import static org.junit.Assert.assertThat
 import static org.junit.Assert.assertTrue
 
 /**
- * Tests the {@code series-sequential} scenario.
+ * Tests the {@code no-matching-sip-definition} scenario.
  *
  * Note that this test is complicated by the files either being part of a directory structure or in a resource file (jar),
  * so the {@link TestHelper} class is used to handle both scenarios. In real-life processing the files would be on the
@@ -28,14 +29,14 @@ import static org.junit.Assert.assertTrue
  */
 @RunWith(MockitoJUnitRunner.class)
 @Slf4j
-class SeriesSequentialTest {
+class NoMatchingSipDefinitionTest {
     // TODO Make this processing simpler
     // - given a starting folder
     // - and a set of selection criteria
     // - create SIPs for the given files
     static String ID_COLUMN_NAME = "MMSID"
 
-    static final String RESOURCES_FOLDER = "ingestion-files-tests/scenario-series-sequential"
+    static final String RESOURCES_FOLDER = "ingestion-files-tests/scenario-no-matching-sip-definition"
     static final String IMPORT_PARAMETERS_FILENAME = "test-fairfax-import-parameters.json"
 
     TestMethodState testMethodState
@@ -58,7 +59,7 @@ class SeriesSequentialTest {
     @Ignore
     void correctlyAssembleSipFromFilesOnFilesystem() {
         boolean forLocalFilesystem = true
-        TestHelper.initializeTestMethod(testMethodState, "SeriesSequentialTest-", forLocalFilesystem)
+        TestHelper.initializeTestMethod(testMethodState, "NoMatchingSipDefinitionTest-", forLocalFilesystem)
 
         // TODO A more complicated pattern -- date and other masks?
         boolean isRegexNotGlob = true
@@ -73,7 +74,7 @@ class SeriesSequentialTest {
     @Test
     void correctlyAssembleSipFromFiles() {
         boolean forLocalFilesystem = false
-        TestHelper.initializeTestMethod(testMethodState, "SeriesSequentialTest-", forLocalFilesystem)
+        TestHelper.initializeTestMethod(testMethodState, "NoMatchingSipDefinitionTest-", forLocalFilesystem)
 
         // TODO A more complicated pattern -- date and other masks?
         boolean isRegexNotGlob = true
@@ -96,17 +97,19 @@ class SeriesSequentialTest {
         int expectedNumberOfFilesProcessed = 10
         assertThat("${expectedNumberOfFilesProcessed} files should have been processed",
                 testMethodState.sipProcessingState.totalFilesProcessed, is(expectedNumberOfFilesProcessed))
-        int expectedNumberOfValidFiles = 10
+        int expectedNumberOfValidFiles = 0
         assertThat("${expectedNumberOfValidFiles} files should have been processed",
                 testMethodState.sipProcessingState.validFiles.size(), is(expectedNumberOfValidFiles))
-        int expectedNumberOfInvalidFiles = 0
-        assertThat("${expectedNumberOfValidFiles} files should have been processed",
+        int expectedNumberOfInvalidFiles = 10
+        assertThat("${expectedNumberOfInvalidFiles} files should have been processed",
                 testMethodState.sipProcessingState.invalidFiles.size(), is(expectedNumberOfInvalidFiles))
+        assertThat("Invalid file is 'TSTPBX-20181123-001.pdf'",
+                testMethodState.sipProcessingState.invalidFiles.first().getName(), is("TSTPBX-20181123-001.pdf"))
         int expectedNumberOfUnrecognizedFiles = 0
-        assertThat("${expectedNumberOfValidFiles} files should have been processed",
+        assertThat("${expectedNumberOfUnrecognizedFiles} files should have been processed",
                 testMethodState.sipProcessingState.unrecognizedFiles.size(), is(expectedNumberOfUnrecognizedFiles))
 
-        log.info("STARTING SIP validation")
+        log.info("SIP validation")
         sipConstructedCorrectly(sipAsXml)
         log.info("ENDING SIP validation")
         log.info("Process output path=${testMethodState.processOutputInterceptor.path}")
@@ -123,39 +126,40 @@ class SeriesSequentialTest {
         assertTrue("SipXmlExtractor has content", sipForValidation.xml.length() > 0)
 
         assertTrue("SipProcessingState is complete", testMethodState.sipProcessingState.isComplete())
-        assertTrue("SipProcessingState is successful", testMethodState.sipProcessingState.isSuccessful())
+        TestHelper.assertExpectedExceptionReason(testMethodState.sipProcessingState, SipProcessingExceptionReasonType.NO_MATCHING_SIP_DEFINITION)
 
-        TestHelper.assertExpectedSipMetadataValues(sipForValidation, "Test Publication One", 2018, 11, 23,
-                "NewspaperIE", "ALMAMMS", "test-mms-id-one", "200", "PRESERVATION_MASTER", "VIEW", true, 1)
+        TestHelper.assertExpectedSipMetadataValues(sipForValidation, "UNKNOWN_TITLE", 2038, 12, 31,
+                "UNKNOWN_ENTITY_TYPE", "UNKNOWN_OBJECT_IDENTIFIER_TYPE", "UNKNOWN_OBJECT_IDENTIFIER_VALUE",
+                "UNKNOWN_POLICY_ID", "UNKNOWN_PRESERVATION_TYPE", "UNKNOWN_USAGE_TYPE", true, 1)
 
-        TestHelper.assertExpectedSipFileValues(sipForValidation, 1, "TSTPB1-20181123-001.pdf", "TSTPB1-20181123-001.pdf",
+        TestHelper.assertExpectedSipFileValues(sipForValidation, 1, "TSTPBX-20181123-001.pdf", "TSTPBX-20181123-001.pdf",
                 11438L, "MD5", "b8b673eeaa076ff19501318a27f85e9c", "001", "application/pdf")
 
-        TestHelper.assertExpectedSipFileValues(sipForValidation, 2, "TSTPB1-20181123-002.pdf", "TSTPB1-20181123-002.pdf",
+        TestHelper.assertExpectedSipFileValues(sipForValidation, 2, "TSTPBX-20181123-002.pdf", "TSTPBX-20181123-002.pdf",
                 11437L, "MD5", "df39cff17991188d9994ff94bddf3985", "002", "application/pdf")
 
-        TestHelper.assertExpectedSipFileValues(sipForValidation, 3, "TSTPB1-20181123-003with-a-qualifier.pdf", "TSTPB1-20181123-003with-a-qualifier.pdf",
+        TestHelper.assertExpectedSipFileValues(sipForValidation, 3, "TSTPBX-20181123-003with-a-qualifier.pdf", "TSTPBX-20181123-003with-a-qualifier.pdf",
                 11657L, "MD5", "1533ab07ff8620fffaec83a2afd92170", "003", "application/pdf")
 
-        TestHelper.assertExpectedSipFileValues(sipForValidation, 4, "TSTPB1-20181123-004.pdf", "TSTPB1-20181123-004.pdf",
+        TestHelper.assertExpectedSipFileValues(sipForValidation, 4, "TSTPBX-20181123-004.pdf", "TSTPBX-20181123-004.pdf",
                 11554L, "MD5", "857326c06870577255acd4b21e1a64d7", "004", "application/pdf")
 
-        TestHelper.assertExpectedSipFileValues(sipForValidation, 5, "TSTPB1-20181123-005.pdf", "TSTPB1-20181123-005.pdf",
+        TestHelper.assertExpectedSipFileValues(sipForValidation, 5, "TSTPBX-20181123-005.pdf", "TSTPBX-20181123-005.pdf",
                 11605L, "MD5", "02e254147945f60a6a2be1c35ae0689e", "005", "application/pdf")
 
-        TestHelper.assertExpectedSipFileValues(sipForValidation, 6, "TSTPB1-20181123-006.pdf", "TSTPB1-20181123-006.pdf",
+        TestHelper.assertExpectedSipFileValues(sipForValidation, 6, "TSTPBX-20181123-006.pdf", "TSTPBX-20181123-006.pdf",
                 11430L, "MD5", "6b932154c4b004a2507d73dc3aaf0736", "006", "application/pdf")
 
-        TestHelper.assertExpectedSipFileValues(sipForValidation, 7, "TSTPB1-20181123-007.pdf", "TSTPB1-20181123-007.pdf",
+        TestHelper.assertExpectedSipFileValues(sipForValidation, 7, "TSTPBX-20181123-007.pdf", "TSTPBX-20181123-007.pdf",
                 11543L, "MD5", "a7ceb9001aab17e78cfaf1559f130071", "007", "application/pdf")
 
-        TestHelper.assertExpectedSipFileValues(sipForValidation, 8, "TSTPB1-20181123-008.pdf", "TSTPB1-20181123-008.pdf",
+        TestHelper.assertExpectedSipFileValues(sipForValidation, 8, "TSTPBX-20181123-008.pdf", "TSTPBX-20181123-008.pdf",
                 11436L, "MD5", "449dc86bd38979d10c8fb6c3b375a467", "008", "application/pdf")
 
-        TestHelper.assertExpectedSipFileValues(sipForValidation, 9, "TSTPB1-20181123-009.pdf", "TSTPB1-20181123-009.pdf",
+        TestHelper.assertExpectedSipFileValues(sipForValidation, 9, "TSTPBX-20181123-009.pdf", "TSTPBX-20181123-009.pdf",
                 11612L, "MD5", "fee5322aa8d3c7a4fe7adeba7953e071", "009", "application/pdf")
 
-        TestHelper.assertExpectedSipFileValues(sipForValidation, 10, "TSTPB1-20181123-010.pdf", "TSTPB1-20181123-010.pdf",
+        TestHelper.assertExpectedSipFileValues(sipForValidation, 10, "TSTPBX-20181123-010.pdf", "TSTPBX-20181123-010.pdf",
                 11440L, "MD5", "f621c3081711e895d8fa3d2dd5e49ffa", "010", "application/pdf")
     }
 

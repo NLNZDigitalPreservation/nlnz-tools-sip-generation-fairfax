@@ -1,0 +1,12 @@
+# Based on https://docs.cucumber.io/
+#
+@tag
+Feature: No matching SIP definition is handled
+
+   No matching SIP definition handled.
+
+   Scenario: The publication issue has multiple PDF pages
+     Given The publication has PDF pages with filenames
+     When the publication issue is processed
+     And there is no publication definition that matches the filenames
+     Then the files are processed to a for-review location with an error file indicating that there is no matching definition
