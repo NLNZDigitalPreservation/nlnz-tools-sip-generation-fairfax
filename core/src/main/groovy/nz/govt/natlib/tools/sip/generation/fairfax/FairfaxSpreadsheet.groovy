@@ -1,13 +1,16 @@
 package nz.govt.natlib.tools.sip.generation.fairfax
 
+import groovy.util.logging.Slf4j
 import nz.govt.natlib.tools.sip.generation.parameters.Spreadsheet
 
+@Slf4j
 class FairfaxSpreadsheet {
     // Note that the CSV 'standard' generally only allows 1 character as a separator
     static String DEFAULT_FIELD_SEPARATOR = "|"
     static String ID_COLUMN_NAME = "MMSID"
     static String NAME_KEY = "names_dict"
     static String EDITION_KEY = "edition_dict"
+    static String TITLE_KEY = "Title"
 
     Spreadsheet spreadsheet
     Map<FairfaxFileNameEditionKey, List<Map<String, String>>> nameEditionToRowsMap = [ : ]
@@ -40,6 +43,27 @@ class FairfaxSpreadsheet {
             }
         }
         return matchingMaps
+    }
+
+    List<String> getTitlesForNameEdition(String name, String edition) {
+        List<String> titles = [ ]
+        matchingParameterMaps(name, edition).each { Map<String, String> rowMap ->
+            titles.add(rowMap.get(TITLE_KEY))
+        }
+
+        return titles
+    }
+
+    String getTitleForNameEdition(String name, String edition) {
+        List<String> titles = getTitlesForNameEdition(name, edition)
+        if (titles.size() == 1) {
+            return titles.first()
+        } else if (titles.size() > 1) {
+            log.info("Found multiple titles for name=${name}, edition=${edition}, titles=${titles}. Using first title.")
+            return titles.first()
+        } else {
+            return "NO-TITLE-GIVEN"
+        }
     }
 
     void index() {

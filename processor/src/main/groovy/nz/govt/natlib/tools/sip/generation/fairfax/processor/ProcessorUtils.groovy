@@ -40,6 +40,24 @@ class ProcessorUtils {
         return filesList
     }
 
+    static List<File> findNonMatchingFiles(String localPath, boolean isRegexNotGlob, boolean matchFilenameOnly,
+                                boolean sortFiles, String pattern, Timekeeper timekeeper) {
+        List<File> filesList = [ ]
+        Path filesPath = Paths.get(localPath)
+        if (!Files.exists(filesPath) || !Files.isDirectory(filesPath)) {
+            log.warn("Path '${filesPath}' does not exist is not a directory. Returning empty file list.")
+            return filesList
+        }
+
+        log.info("Finding files for path=${filesPath.toFile().getCanonicalPath()} and pattern=${pattern}")
+        timekeeper.logElapsed()
+        filesList = FilesFinder.getNonMatchingFiles(filesPath, isRegexNotGlob, matchFilenameOnly, sortFiles, pattern)
+        log.info("Found total files=${filesList.size()} for path=${filesPath.toFile().getCanonicalPath()}")
+        timekeeper.logElapsed()
+
+        return filesList
+    }
+
     static List<File> matchFiles(List<File> allFiles, String pattern) {
         List<File> matchedFiles = [ ]
         allFiles.each { File file ->

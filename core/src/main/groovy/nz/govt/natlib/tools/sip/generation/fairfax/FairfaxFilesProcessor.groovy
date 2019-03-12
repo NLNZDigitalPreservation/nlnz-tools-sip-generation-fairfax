@@ -119,7 +119,7 @@ class FairfaxFilesProcessor {
                     fairfaxSpreadsheet, allowZeroRatio)
             if (fairfaxFileGroupMatch != null) {
                 log.info("Will process fairfaxFileGroup=${fairfaxFileGroup} according to sip=${fairfaxFileGroupMatch.sip}")
-                sipProcessingState.identifier = fairfaxFileGroupMatch.sip.objectIdentifierValue
+                sipProcessingState.identifier = formatSipProcessingStateIdentifier(fairfaxFileGroupKey)
                 List<FairfaxFile> fairfaxFiles = fairfaxFileGroup.files.sort()
                 List<Sip.FileWrapper> fileWrappers = fairfaxFiles.collect() { FairfaxFile fairfaxFile ->
                     SipFileWrapperFactory.generate(fairfaxFile.file, true, true)
@@ -150,6 +150,13 @@ class FairfaxFilesProcessor {
         sipProcessingState.totalFilesProcessed = filesProcessed
 
         return sipAsXml
+    }
+
+    String formatSipProcessingStateIdentifier(FairfaxFileGroupKey fairfaxFileGroupKey) {
+        String title = fairfaxSpreadsheet.getTitleForNameEdition(fairfaxFileGroupKey.name, fairfaxFileGroupKey.edition)
+        String titleWithUnderscores = title.trim().replace(' ', '_')
+
+        return "${fairfaxFileGroupKey.edition}_${titleWithUnderscores}"
     }
 
 }

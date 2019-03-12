@@ -196,11 +196,20 @@ class MiscellaneousProcessor {
         return filteredDirectoriesList
     }
 
+    // See the README.md for a description of the file structures.
+    void copyIngestedLoadsToIngestedFolder(File sourceFolder, File destinationFolder, File forReviewFolder,
+                                           boolean createDestination, boolean moveFiles, LocalDate startingDate,
+                                           LocalDate endingDate, boolean moveOrCopyEvenIfNoRosettaDoneFile) {
+
+
+    }
+
     // Copies the prod load structure to two structures:
-    // 1. groupByDateAndName structure. This is to mimic the input to processByName.
-    //    Directory structure: groupByDateAndName/<yyyyMMdd>/<name>/{files}
-    // 2. post-processByDate structure. This is the structure that gets ingested into Rosetta.
-    //    Directory structure: rosettaIngest/<date-in-yyyMMdd>/<name>_<yyyyMMdd>-<identifier>/{files}
+    // 1. preProcess structure. This is to mimic the input to preProcess.
+    // 2. readyForIngestion structure. This is the structure that gets ingested into Rosetta.
+    //
+    // See the README.md for a description of the folder structures
+    //
     // These structures provide for testing the Fairfax processor, to see if its outputs match the work done previously.
     void copyProdLoadToTestStructures(File sourceFolder, File destinationFolder, boolean createDestination,
                                       LocalDate startingDate, LocalDate endingDate) {

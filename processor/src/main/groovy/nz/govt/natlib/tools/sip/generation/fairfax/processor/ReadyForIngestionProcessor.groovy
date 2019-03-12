@@ -14,16 +14,17 @@ import java.time.LocalDate
  * For calling from gradle build scripts.
  */
 @Slf4j
-class ProcessByDateProcessor {
+class ReadyForIngestionProcessor {
     FairfaxSpreadsheet fairfaxSpreadsheet
     Timekeeper timekeeper
 
-    ProcessByDateProcessor(Timekeeper timekeeper) {
+    ReadyForIngestionProcessor(Timekeeper timekeeper) {
         this.timekeeper = timekeeper
     }
 
-    SipProcessingState processNameFolder(File nameFolder, File destinationFolder, String name, String dateString,
-                                                      boolean createDestination, boolean moveFilesToDestination) {
+    SipProcessingState processNameFolder(File nameFolder, File destinationFolder, File forReviewFolder,
+                                         String dateString, String name, boolean createDestination,
+                                         boolean moveFilesToDestination) {
         // Process the files in the name folder
         ProcessLogger processLogger = new ProcessLogger()
         processLogger.startSplit()
@@ -47,11 +48,13 @@ class ProcessByDateProcessor {
 
         File sipAndFilesFolder
         if (sipProcessingState.complete && sipProcessingState.successful) {
-            sipAndFilesFolder = new File(destinationFolder, "${dateString}/${name}/${sipProcessingState.identifier}")
+            sipAndFilesFolder = new File(destinationFolder, "${dateString}/${name}${sipProcessingState.identifier}")
         } else {
-            sipAndFilesFolder = new File(destinationFolder, "FAILURE/${dateString}/${name}")
+            sipAndFilesFolder = new File(forReviewFolder, "${dateString}/${name}${sipProcessingState.identifier}")
         }
-        File unrecognizedFilesFolder = new File(destinationFolder, "UNRECOGNIZED/${dateString}/${name}")
+        // TODO may need to adjust logic for creation of content/streams folder
+        File contentStreamsFolder = new File(sipAndFilesFolder, "content/streams")
+        File unrecognizedFilesFolder = new File(forReviewFolder, "UNRECOGNIZED/${dateString}/${name}")
 
         boolean hasSipAndFilesFolder
         boolean hasUnrecognizedFilesFolder
@@ -60,10 +63,11 @@ class ProcessByDateProcessor {
             hasSipAndFilesFolder = true
             if (!sipAndFilesFolder.exists() && createDestination) {
                 sipAndFilesFolder.mkdirs()
+                contentStreamsFolder.mkdirs()
             }
         }
-        ProcessorUtils.copyOrMoveFiles(sipProcessingState.validFiles, sipAndFilesFolder, moveFilesToDestination)
-        ProcessorUtils.copyOrMoveFiles(sipProcessingState.invalidFiles, sipAndFilesFolder, moveFilesToDestination)
+        ProcessorUtils.copyOrMoveFiles(sipProcessingState.validFiles, contentStreamsFolder, moveFilesToDestination)
+        ProcessorUtils.copyOrMoveFiles(sipProcessingState.invalidFiles, contentStreamsFolder, moveFilesToDestination)
 
         // If the files aren't recognized, then dump the files in an exception folder
         if (sipProcessingState.unrecognizedFiles.size() > 0) {
@@ -79,25 +83,24 @@ class ProcessByDateProcessor {
         sipProcessingStateFile.write(sipProcessingState.toString())
 
         // Write out the SIP file
-        File sipFile = new File(sipAndFilesFolder, "mets.xml")
+        File sipFile = new File(sipAndFilesFolder, "content/mets.xml")
         sipFile.write(sipAsXml)
 
         log.info("END processNameFolder for pattern=${pattern}, nameFolder=${nameFolder.getCanonicalPath()}")
         timekeeper.logElapsed()
 
         if (hasSipAndFilesFolder) {
-            processLogger.copySplit(sipAndFilesFolder, "Process-By-Date", false)
+            processLogger.copySplit(sipAndFilesFolder, "Process-Name-Folder", false)
         }
         if (hasUnrecognizedFilesFolder) {
-            processLogger.copySplit(unrecognizedFilesFolder, "Process-By-Date", true)
+            processLogger.copySplit(unrecognizedFilesFolder, "Process-Name-Folder", true)
         }
         return sipProcessingState
     }
 
-    // The processByDate destinationFolder structure is the following:
-    // |- <date-in-yyyMMdd>/<name>_<yyyyMMdd>-<identifier>/{files}
-    void processByDate(File sourceFolder, File destinationFolder, boolean createDestination, boolean moveFiles,
-                              LocalDate startingDate, LocalDate endingDate) {
+    // See README.md for folder descriptions and structures.
+    void process(File sourceFolder, File destinationFolder, File forReviewFolder, boolean createDestination,
+                 boolean moveFiles, LocalDate startingDate, LocalDate endingDate) {
         if (createDestination) {
             destinationFolder.mkdirs()
         }
@@ -107,15 +110,14 @@ class ProcessByDateProcessor {
         // Loop through the dates in sequence, finding and processing files
         LocalDate currentDate = startingDate
         while (currentDate.isBefore(endingDate) || currentDate.equals(endingDate)) {
-            // The folder structure is <sourceFolder>/<date>/<name>/{files}
             String currentDateString = FairfaxFile.LOCAL_DATE_TIME_FORMATTER.format(currentDate)
             File dateFolder = new File(sourceFolder, currentDateString)
             if (dateFolder.exists() && dateFolder.isDirectory()) {
                 dateFolder.listFiles().each { File subFile ->
                     if (subFile.isDirectory()) {
                         // we want to process this directory, which should be a <name>
-                        processNameFolder(subFile, destinationFolder, currentDateString, subFile.getName(),
-                                createDestination, moveFiles)
+                        processNameFolder(subFile, destinationFolder, forReviewFolder, currentDateString,
+                                subFile.getName(), createDestination, moveFiles)
                     } else {
                         log.info("Skipping ${subFile.getCanonicalPath()} as not directory=${subFile.isDirectory()}")
                     }

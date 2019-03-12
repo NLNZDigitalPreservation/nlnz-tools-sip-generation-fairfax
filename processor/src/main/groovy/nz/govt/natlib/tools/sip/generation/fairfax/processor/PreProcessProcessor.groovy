@@ -11,18 +11,18 @@ import java.nio.file.StandardCopyOption
 import java.time.LocalDate
 
 @Slf4j
-class GroupByDateAndNameProcessor {
+class PreProcessProcessor {
     Timekeeper timekeeper
     FairfaxSpreadsheet fairfaxSpreadsheet
     Set<String> recognizedNames = [ ]
     Set<String> unrecognizedNames = [ ]
 
-    GroupByDateAndNameProcessor(Timekeeper timekeeper) {
+    PreProcessProcessor(Timekeeper timekeeper) {
         this.timekeeper = timekeeper
     }
 
-    void copyOrMoveFileToDateAndNameGroup(File destinationFolder, FairfaxFile targetFile, String dateFolderName,
-                                          boolean moveFile) {
+    void copyOrMoveFileToPreProcessingDestination(File destinationFolder, File forReviewFolder, FairfaxFile targetFile,
+                                                  String dateFolderName, boolean moveFile) {
         String nameFolderName = targetFile.name
         String folderPath
         Set<String> allNameKeys = fairfaxSpreadsheet.allNameKeys
@@ -32,17 +32,17 @@ class GroupByDateAndNameProcessor {
             // Goes to '<date>/<name>/<file>'
             if (!recognizedNames.contains(targetFile.name)) {
                 recognizedNames.add(targetFile.name)
-                log.info("copyOrMoveFileToDateAndNameGroup adding recognizedName=${targetFile.name}")
+                log.info("copyOrMoveFileToPreProcessingDestination adding recognizedName=${targetFile.name}")
             }
-            folderPath = "${destinationFolder}${File.separator}${dateFolderName}${File.separator}${nameFolderName}"
+            folderPath = "${destinationFolder.getCanonicalPath()}${File.separator}${dateFolderName}${File.separator}${nameFolderName}"
         } else {
             // There is no entry in the spreadsheet for this name
             // Goes to 'UNKNOWN/<date>/<file>'
             if (!unrecognizedNames.contains(targetFile.name)) {
                 unrecognizedNames.add(targetFile.name)
-                log.info("copyOrMoveFileToDateAndNameGroup adding unrecognizedName=${targetFile.name}")
+                log.info("copyOrMoveFileToPreProcessingDestination adding unrecognizedName=${targetFile.name}")
             }
-            folderPath = "${destinationFolder}${File.separator}UNKNOWN${File.separator}${dateFolderName}"
+            folderPath = "${forReviewFolder.getCanonicalPath()}${File.separator}UNKNOWN-NAME${File.separator}${dateFolderName}"
         }
         File destination = new File(folderPath)
         destination.mkdirs()
@@ -59,11 +59,9 @@ class GroupByDateAndNameProcessor {
         }
     }
 
-    // The groupByDateAndName structure is the following in the destinationFolder:
-    // |- <yyyyMMdd>/<name>/{files}
-    // |- UNKNOWN/<yyyyMMdd>/{files}
-    void groupByDateAndName(File sourceFolder, File destinationFolder, boolean createDestination, boolean moveFiles,
-                            LocalDate startingDate, LocalDate endingDate) {
+    // See the README.md for folder descriptions and structures.
+    void process(File sourceFolder, File destinationFolder, File forReviewFolder, boolean createDestination,
+                 boolean moveFiles, LocalDate startingDate, LocalDate endingDate) {
         // Clear the set of recognized and unrecognized names before processing begins
         recognizedNames = [ ]
         unrecognizedNames = [ ]
@@ -71,12 +69,13 @@ class GroupByDateAndNameProcessor {
         ProcessLogger processLogger = new ProcessLogger()
         processLogger.startSplit()
 
-        log.info("START groupByDateAndName for sourceFolder=${sourceFolder.getCanonicalPath()}, " +
-        "startindDate=${startingDate}, endingDate=${endingDate}")
+        log.info("START process for startindDate=${startingDate}, endingDate=${endingDate}, " +
+                "sourceFolder=${sourceFolder.getCanonicalPath()}, forReviewFolder=${forReviewFolder.getCanonicalPath()}")
         timekeeper.logElapsed()
 
         if (createDestination) {
             destinationFolder.mkdirs()
+            forReviewFolder.mkdirs()
         }
         this.fairfaxSpreadsheet = FairfaxSpreadsheet.defaultInstance()
 
@@ -102,29 +101,28 @@ class GroupByDateAndNameProcessor {
                 if (foundFiles.size() > 0) {
                     log.info("Moving=${moveFiles} total files=${foundFiles.size()} to destination=${destinationFolder.getCanonicalPath()}")
                     foundFiles.each { File foundFile ->
-                        copyOrMoveFileToDateAndNameGroup(destinationFolder, new FairfaxFile(foundFile), dateString,
-                                moveFiles)
+                        copyOrMoveFileToPreProcessingDestination(destinationFolder, forReviewFolder,
+                                new FairfaxFile(foundFile), dateString, moveFiles)
                     }
                 }
                 currentDate = currentDate.plusDays(1L)
             }
         } else {
             log.info("startingDate=${startingDate} and endingDate=${endingDate} have not been both specified")
-            //String pattern = ".*?\\.pdf"
-            List<File> foundFiles = ProcessorUtils.findFiles(sourceFolder.getAbsolutePath(), isRegexNotGlob,
+
+            List<File> foundFiles = ProcessorUtils.findNonMatchingFiles(sourceFolder.getAbsolutePath(), isRegexNotGlob,
                     matchFilenameOnly, sortFiles, pattern, timekeeper)
             foundFiles.each { File foundFile ->
-                // TODO This wouldn't work because there's no dateString
-                String dateString = "TODO_NO_DATE_FOUND"
-                copyOrMoveFileToDateAndNameGroup(destinationFolder, new FairfaxFile(foundFile), dateString,
-                        moveFiles)
+                String dateString = "UNKNOWN-DATE"
+                copyOrMoveFileToPreProcessingDestination(destinationFolder, forReviewFolder, new FairfaxFile(foundFile),
+                        dateString, moveFiles)
             }
         }
 
-        log.info("START groupByDateAndName for sourceFolder=${sourceFolder.getCanonicalPath()}, " +
-                "startindDate=${startingDate}, endingDate=${endingDate}")
+        log.info("END process for startindDate=${startingDate}, endingDate=${endingDate}, " +
+                "sourceFolder=${sourceFolder.getCanonicalPath()}, forReviewFolder=${forReviewFolder.getCanonicalPath()}")
         timekeeper.logElapsed()
 
-        processLogger.copySplit(destinationFolder, "Group-By-Date-And-Name", true)
+        processLogger.copySplit(destinationFolder, "Pre-Process-Processor", true)
     }
 }
