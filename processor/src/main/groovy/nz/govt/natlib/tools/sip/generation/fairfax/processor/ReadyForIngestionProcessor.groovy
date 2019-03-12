@@ -48,9 +48,11 @@ class ReadyForIngestionProcessor {
 
         File sipAndFilesFolder
         if (sipProcessingState.complete && sipProcessingState.successful) {
-            sipAndFilesFolder = new File(destinationFolder, "${dateString}/${name}${sipProcessingState.identifier}")
+            sipAndFilesFolder = new File(destinationFolder,
+                    "${sipProcessingState.processingType.getDisplayName()}/${dateString}/${name}${sipProcessingState.identifier}")
         } else {
-            sipAndFilesFolder = new File(forReviewFolder, "${dateString}/${name}${sipProcessingState.identifier}")
+            sipAndFilesFolder = new File(forReviewFolder,
+                    "${sipProcessingState.processingType.getDisplayName()}/${dateString}/${name}${sipProcessingState.identifier}")
         }
         // TODO may need to adjust logic for creation of content/streams folder
         File contentStreamsFolder = new File(sipAndFilesFolder, "content/streams")

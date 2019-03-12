@@ -33,5 +33,9 @@ class FairfaxSpreadsheetTest {
         assertThat("'MMSID' is 9918150268002836", mapsForCountryLiving.get("MMSID"), is("9918150268002836"))
         assertThat("'names_dict' is 'CL4'", mapsForCountryLiving.get("names_dict"), is("CL4"))
         assertThat("'edition_dict' is 'ED1'", mapsForCountryLiving.get("edition_dict"), is("ED1"))
+
+        assertThat("Title for name: CL4 edition: ED1 is 'Country living'", fairfaxSpreadsheet.getTitleForNameEdition('CL4', 'ED1'),
+                is('Country living'))
+        assertTrue("isMagazine is true for Country Living", fairfaxSpreadsheet.isMagazineForNameEdition("CL4", "ED1"))
     }
 }

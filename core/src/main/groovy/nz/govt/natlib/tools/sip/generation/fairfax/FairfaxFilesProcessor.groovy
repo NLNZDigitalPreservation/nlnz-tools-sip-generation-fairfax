@@ -11,6 +11,7 @@ import nz.govt.natlib.tools.sip.state.SipProcessingException
 import nz.govt.natlib.tools.sip.state.SipProcessingExceptionReason
 import nz.govt.natlib.tools.sip.state.SipProcessingExceptionReasonType
 import nz.govt.natlib.tools.sip.state.SipProcessingState
+import nz.govt.natlib.tools.sip.state.SipProcessingType
 
 @Slf4j
 class FairfaxFilesProcessor {
@@ -119,6 +120,7 @@ class FairfaxFilesProcessor {
                     fairfaxSpreadsheet, allowZeroRatio)
             if (fairfaxFileGroupMatch != null) {
                 log.info("Will process fairfaxFileGroup=${fairfaxFileGroup} according to sip=${fairfaxFileGroupMatch.sip}")
+                sipProcessingState.processingType = getProcessingType(fairfaxFileGroupKey)
                 sipProcessingState.identifier = formatSipProcessingStateIdentifier(fairfaxFileGroupKey)
                 List<FairfaxFile> fairfaxFiles = fairfaxFileGroup.files.sort()
                 List<File> filesForSip = fairfaxFiles.collect() { FairfaxFile fairfaxFile ->
@@ -179,6 +181,12 @@ class FairfaxFilesProcessor {
         String titleWithUnderscores = title.trim().replace(' ', '_')
 
         return "${fairfaxFileGroupKey.edition}_${titleWithUnderscores}"
+    }
+
+    SipProcessingType getProcessingType(FairfaxFileGroupKey fairfaxFileGroupKey) {
+        boolean isMagazine = fairfaxSpreadsheet.isMagazineForNameEdition(fairfaxFileGroupKey.name, fairfaxFileGroupKey.edition)
+
+        return isMagazine ? SipProcessingType.MAGAZINE : SipProcessingType.NEWSPAPER
     }
 
     Sip getBlankSip() {

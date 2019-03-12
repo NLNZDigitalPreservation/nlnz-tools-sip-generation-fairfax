@@ -166,10 +166,12 @@ java -jar sip-generation-fairfax-fat-all-<VERSION>.jar \
 Files are processed and prepared for ingestion. The *Ready-for-ingestion* folder structure is how Rosetta ingests the
 files:
 ```
-<targetFolder>/<date-in-yyyyMMdd>/<Name><Edition>_<full-name-of-publication>/content/streams/{files for that name/edition}
+<targetFolder>/<magazines|newspapers><date-in-yyyyMMdd>/<Name><Edition>_<full-name-of-publication>/content/streams/{files for that name/edition}
 ```
 
 Note that the `mets.xml` file is placed in the `content` folder.
+Note that magazines and newspapers have different material flows, so they are processed from different root folders
+under the target folder.
 
 ### Ingested stage
 
@@ -226,7 +228,7 @@ the files are not recognized, then they're placed in the following structure:
 If the files come from the *Pre-processing* stage but cannot be processed into the *Ready-for-ingestion* stage because
 of some error in processing, then they're placed in the following structure:
 ```
-<forReviewFolder>/<date-in-yyyyMMdd>/<Name><Edition>_<full-name-of-publication>/content/streams/{files for that name/edition}
+<forReviewFolder>/<unknown|newspaper|magazine><date-in-yyyyMMdd>/<Name><Edition>_<full-name-of-publication>/content/streams/{files for that name/edition}
 ```
 
 If the files come from the *Ready-for-ingestion* stage but are not ingested into Rosetta properly, then they're placed in the

@@ -11,6 +11,7 @@ class FairfaxSpreadsheet {
     static String NAME_KEY = "names_dict"
     static String EDITION_KEY = "edition_dict"
     static String TITLE_KEY = "Title"
+    static String IS_MAGAZINE_KEY = "Magazine"
 
     Spreadsheet spreadsheet
     Map<FairfaxFileNameEditionKey, List<Map<String, String>>> nameEditionToRowsMap = [ : ]
@@ -33,6 +34,27 @@ class FairfaxSpreadsheet {
     FairfaxSpreadsheet(Spreadsheet spreadsheet) {
         this.spreadsheet = spreadsheet
         index()
+    }
+
+    boolean isMagazineForNameEdition(String name, String edition) {
+        List<String> isMagazines = [ ]
+        matchingParameterMaps(name, edition).each { Map<String, String> rowMap ->
+            isMagazines.add(rowMap.get(IS_MAGAZINE_KEY))
+        }
+
+        if (isMagazines.size() == 1) {
+            return "1" == isMagazines.first()
+        } else if (isMagazines.size() > 1) {
+            log.info("Found multiple rows for name=${name}, edition=${edition}, isMagazines=${isMagazines}. Using first row.")
+            return "1" == isMagazines.first()
+        } else {
+            log.info("Found NO rows for name=${name}, edition=${edition}, isMagazines=${isMagazines}. Defaulting to false.")
+            return false
+        }
+    }
+
+    boolean isNewspaperForNameEdition(String name, String edition) {
+        return !isMagazineForNameEdition(name, edition)
     }
 
     List<Map<String, String>> matchingParameterMaps(String name, String edition) {
