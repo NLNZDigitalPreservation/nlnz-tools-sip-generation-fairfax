@@ -3,9 +3,6 @@ package nz.govt.natlib.tools.sip.generation.fairfax
 import groovy.util.logging.Slf4j
 import nz.govt.natlib.tools.sip.Sip
 import nz.govt.natlib.tools.sip.pdf.PdfInformationExtractor
-import nz.govt.natlib.tools.sip.state.SipProcessingException
-import nz.govt.natlib.tools.sip.state.SipProcessingExceptionReason
-import nz.govt.natlib.tools.sip.state.SipProcessingExceptionReasonType
 import nz.govt.natlib.tools.sip.state.SipProcessingState
 
 @Slf4j

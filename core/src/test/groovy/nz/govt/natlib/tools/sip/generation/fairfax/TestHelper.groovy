@@ -2,6 +2,7 @@ package nz.govt.natlib.tools.sip.generation.fairfax
 
 import groovy.util.logging.Slf4j
 import groovy.util.slurpersupport.GPathResult
+import nz.govt.natlib.tools.sip.IEEntityType
 import nz.govt.natlib.tools.sip.extraction.SipXmlExtractor
 import nz.govt.natlib.tools.sip.files.FilesFinder
 import nz.govt.natlib.tools.sip.generation.parameters.Spreadsheet
@@ -63,7 +64,7 @@ class TestHelper {
             testMethodState.resourcePath = "${testMethodState.resourcesFolder}"
             testMethodState.localPath = "src/test/resources/${testMethodState.resourcesFolder}"
 
-            testMethodState.fairfaxSpreadsheet = TestHelper.loadSpreadsheet(testMethodState.resourcePath, testMethodState.localPath,
+            testMethodState.fairfaxSpreadsheet = loadSpreadsheet(testMethodState.resourcePath, testMethodState.localPath,
                     testMethodState.importParametersFilename, testMethodState.idColumnName)
         }
     }
@@ -159,7 +160,7 @@ class TestHelper {
 
     static List<File> getFilesForProcessingFromFileSystem(boolean isRegexNotGlob, boolean matchFilenameOnly, boolean sortFiles,
                                                    String localPath, String pattern) {
-        List<File> filesForProcessing
+        List<File> filesForProcessing = [ ]
         Path filesPath = Paths.get(localPath)
         if (!Files.exists(filesPath) || !Files.isDirectory(filesPath)) {
             log.warn("Path '${filesPath}' does not exist is not a directory. Returning empty file list.")
@@ -178,7 +179,7 @@ class TestHelper {
 
     static List<File> getFilesForProcessingFromResource(boolean isRegexNotGlob, boolean matchFilenameOnly, boolean sortFiles,
                                                         String resourcePath, String localPath, String pattern) {
-        List<File> filesForProcessing = TestHelper.findFiles(resourcePath, localPath, isRegexNotGlob, matchFilenameOnly,
+        List<File> filesForProcessing = findFiles(resourcePath, localPath, isRegexNotGlob, matchFilenameOnly,
                 sortFiles, pattern)
 
         log.info("Collected ${filesForProcessing.size()} files for processing")
@@ -225,50 +226,51 @@ class TestHelper {
             filesList = FilesFinder.getMatchingFiles(filesPath, isRegexNotGlob, matchFilenameOnly, sortFiles, pattern)
             return filesList
         } else {
-            List<File> files = TestHelper.getResourceFiles(resourcePath)
-            filesList = TestHelper.getMatchingFiles(files, pattern)
+            List<File> files = getResourceFiles(resourcePath, isRegexNotGlob, matchFilenameOnly, pattern)
+            filesList = getMatchingFiles(files, pattern)
 
             return filesList
         }
     }
 
     static void assertExpectedSipMetadataValues(SipXmlExtractor sipForValidation, String title, int year, int month,
-    int dayOfMonth, String ieEntityType, String objectIdentifierType, String objectcIdentifierValue, String policyId,
-    String preservationType, String usageType, boolean isDigitalOriginal, int revisionNumber) {
-        assertThat("title", sipForValidation.getTitle(), is(title))
-        assertThat("year", sipForValidation.getYear(), is(year))
-        assertThat("month", sipForValidation.getMonth(), is(month))
-        assertThat("dayOfMonth", sipForValidation.getDayOfMonth(), is(dayOfMonth))
-        assertThat("ieEntityType", sipForValidation.getIEEntityType(), is(ieEntityType))
-        assertThat("objectIdentifierType", sipForValidation.getObjectIdentifierType(), is(objectIdentifierType))
-        assertThat("objectIdentifierValue", sipForValidation.getObjectIdentifierValue(), is(objectcIdentifierValue))
-        assertThat("policyId", sipForValidation.getPolicyId(), is(policyId))
-        assertThat("preservationType", sipForValidation.getPreservationType(), is(preservationType))
-        assertThat("usageType", sipForValidation.getUsageType(), is(usageType))
-        assertThat("digitalOriginal", sipForValidation.getDigitalOriginal(), is(isDigitalOriginal))
-        assertThat("revisionNumber", sipForValidation.getRevisionNumber(), is(revisionNumber))
+                                                int dayOfMonth, IEEntityType ieEntityType, String objectIdentifierType,
+                                                String objectcIdentifierValue, String policyId, String preservationType,
+                                                String usageType, boolean isDigitalOriginal, int revisionNumber) {
+        assertThat("title", sipForValidation.extractTitle(), is(title))
+        assertThat("year", sipForValidation.extractYear(), is(year))
+        assertThat("month", sipForValidation.extractMonth(), is(month))
+        assertThat("dayOfMonth", sipForValidation.extractDayOfMonth(), is(dayOfMonth))
+        assertThat("ieEntityType", sipForValidation.extractIEEntityType(), is(ieEntityType))
+        assertThat("objectIdentifierType", sipForValidation.extractObjectIdentifierType(), is(objectIdentifierType))
+        assertThat("objectIdentifierValue", sipForValidation.extractObjectIdentifierValue(), is(objectcIdentifierValue))
+        assertThat("policyId", sipForValidation.extractPolicyId(), is(policyId))
+        assertThat("preservationType", sipForValidation.extractPreservationType(), is(preservationType))
+        assertThat("usageType", sipForValidation.extractUsageType(), is(usageType))
+        assertThat("digitalOriginal", sipForValidation.extractDigitalOriginal(), is(isDigitalOriginal))
+        assertThat("revisionNumber", sipForValidation.extractRevisionNumber(), is(revisionNumber))
     }
 
     static void assertExpectedSipFileValues(SipXmlExtractor sipForValidation, int idIndex, String originalName,
                                             String originalPath, long sizeBytes, String fixityType, String fixityValue,
                                             String fileLabel, String mimeType) {
-        GPathResult fileGPath = sipForValidation.getFileIdRecord(idIndex)
+        GPathResult fileGPath = sipForValidation.extractFileIdRecord(idIndex)
         // NOTE Any unit test errors in this section (such as:
         // java.lang.NoSuchMethodError: org.hamcrest.Matcher.describeMismatch(Ljava/lang/Object;Lorg/hamcrest/Description;)V
         // could indicate that a null value is coming into the test, which could mean that the value is not in the SIP's
         // XML.
-        assertThat("fileWrapper${idIndex}.fileOriginalName", sipForValidation.getFileOriginalName(fileGPath), is(originalName))
-        assertThat("fileWrapper${idIndex}.fileOriginalPath", sipForValidation.getFileOriginalPath(fileGPath), is(originalPath))
-        assertThat("fileWrapper${idIndex}.fileSizeBytes", sipForValidation.getFileSizeBytes(fileGPath), is(sizeBytes))
-        assertThat("fileWrapper${idIndex}.fixityType", sipForValidation.getFileFixityType(fileGPath), is(fixityType))
-        assertThat("fileWrapper${idIndex}.fixityValue", sipForValidation.getFileFixityValue(fileGPath), is(fixityValue))
-        assertThat("fileWrapper${idIndex}.label", sipForValidation.getFileLabel(fileGPath), is(fileLabel))
-        assertThat("fileWrapper${idIndex}.mimeType", sipForValidation.getFileMimeType(fileGPath), is(mimeType))
+        assertThat("fileWrapper${idIndex}.fileOriginalName", sipForValidation.extractFileOriginalName(fileGPath), is(originalName))
+        assertThat("fileWrapper${idIndex}.fileOriginalPath", sipForValidation.extractFileOriginalPath(fileGPath), is(originalPath))
+        assertThat("fileWrapper${idIndex}.fileSizeBytes", sipForValidation.extractFileSizeBytes(fileGPath), is(sizeBytes))
+        assertThat("fileWrapper${idIndex}.fixityType", sipForValidation.extractFileFixityType(fileGPath), is(fixityType))
+        assertThat("fileWrapper${idIndex}.fixityValue", sipForValidation.extractFileFixityValue(fileGPath), is(fixityValue))
+        assertThat("fileWrapper${idIndex}.label", sipForValidation.extractFileLabel(fileGPath), is(fileLabel))
+        assertThat("fileWrapper${idIndex}.mimeType", sipForValidation.extractFileMimeType(fileGPath), is(mimeType))
         // This is dependent on the filesystem, so we can't really test this
-        //assertThat("fileWrapper${idIndex}.modificationDate", sipForValidation.getFileModificationDate(fileGPath), is(LocalDateTime.of(
+        //assertThat("fileWrapper${idIndex}.modificationDate", sipForValidation.extractFileModificationDate(fileGPath), is(LocalDateTime.of(
         //        LocalDate.of(2015, 7, 29),
         //        LocalTime.of(0, 0, 0, 0))))
-        //assertThat("fileWrapper${idIndex}.creationDate", sipForValidation.getFileCreationDate(fileGPath), is(LocalDateTime.of(
+        //assertThat("fileWrapper${idIndex}.creationDate", sipForValidation.extractFileCreationDate(fileGPath), is(LocalDateTime.of(
         //        LocalDate.of(2015, 7, 29),
         //        LocalTime.of(0, 0, 0, 0))))
 

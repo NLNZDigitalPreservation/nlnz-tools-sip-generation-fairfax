@@ -1,6 +1,7 @@
 package nz.govt.natlib.tools.sip.generation.fairfax
 
 import groovy.util.logging.Slf4j
+import nz.govt.natlib.tools.sip.IEEntityType
 import nz.govt.natlib.tools.sip.Sip
 import nz.govt.natlib.tools.sip.SipFileWrapperFactory
 import nz.govt.natlib.tools.sip.generation.SipXmlGenerator
@@ -11,7 +12,6 @@ import nz.govt.natlib.tools.sip.state.SipProcessingException
 import nz.govt.natlib.tools.sip.state.SipProcessingExceptionReason
 import nz.govt.natlib.tools.sip.state.SipProcessingExceptionReasonType
 import nz.govt.natlib.tools.sip.state.SipProcessingState
-import nz.govt.natlib.tools.sip.state.SipProcessingType
 
 @Slf4j
 class FairfaxFilesProcessor {
@@ -120,7 +120,7 @@ class FairfaxFilesProcessor {
                     fairfaxSpreadsheet, allowZeroRatio)
             if (fairfaxFileGroupMatch != null) {
                 log.info("Will process fairfaxFileGroup=${fairfaxFileGroup} according to sip=${fairfaxFileGroupMatch.sip}")
-                sipProcessingState.processingType = getProcessingType(fairfaxFileGroupKey)
+                sipProcessingState.ieEntityType = fairfaxFileGroupMatch.sip.ieEntityType
                 sipProcessingState.identifier = formatSipProcessingStateIdentifier(fairfaxFileGroupKey)
                 List<FairfaxFile> fairfaxFiles = fairfaxFileGroup.files.sort()
                 List<File> filesForSip = fairfaxFiles.collect() { FairfaxFile fairfaxFile ->
@@ -183,14 +183,8 @@ class FairfaxFilesProcessor {
         return "${fairfaxFileGroupKey.edition}_${titleWithUnderscores}"
     }
 
-    SipProcessingType getProcessingType(FairfaxFileGroupKey fairfaxFileGroupKey) {
-        boolean isMagazine = fairfaxSpreadsheet.isMagazineForNameEdition(fairfaxFileGroupKey.name, fairfaxFileGroupKey.edition)
-
-        return isMagazine ? SipProcessingType.MAGAZINE : SipProcessingType.NEWSPAPER
-    }
-
     Sip getBlankSip() {
-        Sip sip = new Sip(title: 'UNKNOWN_TITLE', ieEntityType: 'UNKNOWN_ENTITY_TYPE',
+        Sip sip = new Sip(title: 'UNKNOWN_TITLE', ieEntityType: IEEntityType.UNKNOWN,
                 objectIdentifierType: 'UNKNOWN_OBJECT_IDENTIFIER_TYPE',
                 objectIdentifierValue: 'UNKNOWN_OBJECT_IDENTIFIER_VALUE', policyId: 'UNKNOWN_POLICY_ID',
                 preservationType: 'UNKNOWN_PRESERVATION_TYPE', usageType: 'UNKNOWN_USAGE_TYPE',

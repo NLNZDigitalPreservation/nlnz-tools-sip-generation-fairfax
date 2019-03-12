@@ -1,6 +1,7 @@
 package nz.govt.natlib.tools.sip.generation.fairfax.scenarios
 
 import groovy.util.logging.Slf4j
+import nz.govt.natlib.tools.sip.IEEntityType
 import nz.govt.natlib.tools.sip.extraction.SipXmlExtractor
 import nz.govt.natlib.tools.sip.generation.fairfax.FairfaxFilesProcessor
 import nz.govt.natlib.tools.sip.generation.fairfax.TestHelper
@@ -129,7 +130,7 @@ class NoMatchingSipDefinitionTest {
         TestHelper.assertExpectedExceptionReason(testMethodState.sipProcessingState, SipProcessingExceptionReasonType.NO_MATCHING_SIP_DEFINITION)
 
         TestHelper.assertExpectedSipMetadataValues(sipForValidation, "UNKNOWN_TITLE", 2038, 12, 31,
-                "UNKNOWN_ENTITY_TYPE", "UNKNOWN_OBJECT_IDENTIFIER_TYPE", "UNKNOWN_OBJECT_IDENTIFIER_VALUE",
+                IEEntityType.UNKNOWN, "UNKNOWN_OBJECT_IDENTIFIER_TYPE", "UNKNOWN_OBJECT_IDENTIFIER_VALUE",
                 "UNKNOWN_POLICY_ID", "UNKNOWN_PRESERVATION_TYPE", "UNKNOWN_USAGE_TYPE", true, 1)
 
         TestHelper.assertExpectedSipFileValues(sipForValidation, 1, "TSTPBX-20181123-001.pdf", "TSTPBX-20181123-001.pdf",

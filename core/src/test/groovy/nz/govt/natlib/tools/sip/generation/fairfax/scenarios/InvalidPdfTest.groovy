@@ -1,6 +1,7 @@
 package nz.govt.natlib.tools.sip.generation.fairfax.scenarios
 
 import groovy.util.logging.Slf4j
+import nz.govt.natlib.tools.sip.IEEntityType
 import nz.govt.natlib.tools.sip.extraction.SipXmlExtractor
 import nz.govt.natlib.tools.sip.generation.fairfax.FairfaxFilesProcessor
 import nz.govt.natlib.tools.sip.generation.fairfax.TestHelper
@@ -133,7 +134,8 @@ class InvalidPdfTest {
         TestHelper.assertExpectedExceptionReason(testMethodState.sipProcessingState, SipProcessingExceptionReasonType.INVALID_PDF)
 
         TestHelper.assertExpectedSipMetadataValues(sipForValidation, "Test Publication One", 2018, 11, 23,
-                "NewspaperIE", "ALMAMMS", "test-mms-id-one", "200", "PRESERVATION_MASTER", "VIEW", true, 1)
+                IEEntityType.NewspaperIE, "ALMAMMS", "test-mms-id-one", "200",
+                "PRESERVATION_MASTER", "VIEW", true, 1)
 
         TestHelper.assertExpectedSipFileValues(sipForValidation, 1, "TSTPB1-20181123-001.pdf", "TSTPB1-20181123-001.pdf",
                 11438L, "MD5", "b8b673eeaa076ff19501318a27f85e9c", "001", "application/pdf")
