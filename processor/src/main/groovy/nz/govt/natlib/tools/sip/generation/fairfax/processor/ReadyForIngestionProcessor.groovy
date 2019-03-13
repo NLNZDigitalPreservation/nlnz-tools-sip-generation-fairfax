@@ -49,10 +49,10 @@ class ReadyForIngestionProcessor {
         File sipAndFilesFolder
         if (sipProcessingState.complete && sipProcessingState.successful) {
             sipAndFilesFolder = new File(destinationFolder,
-                    "${sipProcessingState.processingType.getDisplayName()}/${dateString}/${name}${sipProcessingState.identifier}")
+                    "${sipProcessingState.ieEntityType.getDisplayName()}/${dateString}/${name}${sipProcessingState.identifier}")
         } else {
             sipAndFilesFolder = new File(forReviewFolder,
-                    "${sipProcessingState.processingType.getDisplayName()}/${dateString}/${name}${sipProcessingState.identifier}")
+                    "${sipProcessingState.ieEntityType.getDisplayName()}/${dateString}/${name}${sipProcessingState.identifier}")
         }
         // TODO may need to adjust logic for creation of content/streams folder
         File contentStreamsFolder = new File(sipAndFilesFolder, "content/streams")
@@ -81,7 +81,9 @@ class ReadyForIngestionProcessor {
         ProcessorUtils.copyOrMoveFiles(sipProcessingState.unrecognizedFiles, unrecognizedFilesFolder, moveFilesToDestination)
 
         // Write out the SipProcessingState
-        File sipProcessingStateFile = new File(sipAndFilesFolder, "sipProcessingState.txt")
+        Date now = new Date()
+        File sipProcessingStateFile = new File(sipAndFilesFolder,
+                "sipProcessingState_${ProcessorUtils.FILE_TIMESTAMP_FORMATTER.format(now)}.txt")
         sipProcessingStateFile.write(sipProcessingState.toString())
 
         // Write out the SIP file

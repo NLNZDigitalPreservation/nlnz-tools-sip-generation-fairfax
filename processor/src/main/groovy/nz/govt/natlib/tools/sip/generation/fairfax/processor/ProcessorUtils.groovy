@@ -9,10 +9,12 @@ import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
 import java.nio.file.StandardCopyOption
+import java.text.SimpleDateFormat
 import java.time.LocalDate
 
 @Slf4j
 class ProcessorUtils {
+    static SimpleDateFormat FILE_TIMESTAMP_FORMATTER = new SimpleDateFormat('yyyy-MM-dd_HH-mm-SS')
 
     static LocalDate parseDate(String dateString) {
         LocalDate parsedDate = null
