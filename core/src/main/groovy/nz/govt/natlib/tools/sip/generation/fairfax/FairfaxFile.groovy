@@ -95,4 +95,8 @@ class FairfaxFile {
             return false
         }
     }
+
+    LocalDate dateAsLocalDate() {
+        return new LocalDate(this.dateYear, this.dateMonthOfYear, this.dateDayOfMonth)
+    }
 }

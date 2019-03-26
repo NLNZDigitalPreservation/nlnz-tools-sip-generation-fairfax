@@ -55,17 +55,17 @@ Usage: processorRunner [-cghilmnpxy] [-b=STARTING_DATE] [-e=ENDING_DATE]
 Runs different processors based on command-line options.
 
 Processing stages:
-  -p, --preProcess          Group source files by date and titleCode.
+  --preProcess              Group source files by date and titleCode.
                             Output is used by readyForIngestion.
                             Requires sourceFolder, targetFolder, forReviewFolder.
                             Uses startingDate, endingDate.
                             Optional createDestination, moveFiles.
-  -g, --readyForIngestion   Process the source files.
+  --readyForIngestion       Process the source files.
                             Output is ready for ingestion by Rosetta.
                             Requires sourceFolder, targetFolder, forReviewFolder.
                             Uses startingDate, endingDate.
                             Optional createDestination, moveFiles.
-  -i, --copyIngestedLoadsToIngestedFolder
+  --copyIngestedLoadsToIngestedFolder
                             Copy the ingested loads to ingested folder.
                             Requires sourceFolder, targetFolder, forReviewFolder.
                             Uses startingDate, endingDate.
@@ -73,9 +73,12 @@ Processing stages:
                               moveOrCopyEvenIfNoRosettaDoneFile
   -l, --listFiles           List the source files in an organized way.
                             Requires sourceFolder
-  -x, --extractMetadata     Extract and list the metadata from the source files.
+  --statisticalAudit    Statistical audit.
+                        Search through the source folder and provide a
+                          statistical audit of the files found.
+  --extractMetadata         Extract and list the metadata from the source files.
                             Requires sourceFolder
-  -y, --copyProdLoadToTestStructures
+  --copyProdLoadToTestStructures
                             Copy the production load to test structures.
                             Requires sourceFolder, targetFolder.
                             Uses startingDate, endingDate

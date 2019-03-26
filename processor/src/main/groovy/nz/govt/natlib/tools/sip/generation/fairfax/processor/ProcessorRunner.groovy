@@ -17,14 +17,14 @@ class ProcessorRunner implements Callable<Void>{
 
     boolean commandExecuted = false
 
-    @Option(names = ["-p", "--preProcess"], description = """Group source files by date and titleCode.
+    @Option(names = ["--preProcess"], description = """Group source files by date and titleCode.
 Output is used by readyForIngestion.
 Requires sourceFolder, targetFolder, forReviewFolder.
 Uses startingDate, endingDate.
 Optional createDestination, moveFiles.""")
     boolean preProcess = false
 
-    @Option(names = ["-g", "--readyForIngestion"], description = """Process the source files.
+    @Option(names = ["--readyForIngestion"], description = """Process the source files.
 Output is ready for ingestion by Rosetta.
 Requires sourceFolder, targetFolder, forReviewFolder.
 Uses startingDate, endingDate.
@@ -35,22 +35,26 @@ Optional createDestination, moveFiles.""")
 Requires sourceFolder""")
     boolean listFiles = false
 
-    @Option(names = [ "-x", "--extractMetadata"], description = """Extract and list the metadata from the source files.
+    @Option(names = ["--statisticalAudit" ], description = """Statistical audit.
+Search through the source folder and provide a statistical audit of the files found.""")
+    boolean statisticalAudit
+
+    @Option(names = ["--extractMetadata"], description = """Extract and list the metadata from the source files.
 Requires sourceFolder""")
     boolean extractMetadata = false
 
-    @Option(names = [ "-i", "--copyIngestedLoadsToIngestedFolder" ], description = """Copy the ingested loads to ingested folder.
+    @Option(names = ["--copyIngestedLoadsToIngestedFolder" ], description = """Copy the ingested loads to ingested folder.
 Requires sourceFolder, targetFolder, forReviewFolder.
 Uses startingDate, endingDate.
 Optional createDestination, moveFiles, moveOrCopyEvenIfNoRosettaDoneFile""")
     boolean copyIngestedLoadsToIngestedFolder = false
 
-    @Option(names = [ "-y", "--copyProdLoadToTestStructures" ], description = """Copy the production load to test structures.
+    @Option(names = ["--copyProdLoadToTestStructures" ], description = """Copy the production load to test structures.
 Requires sourceFolder, targetFolder.
 Uses startingDate, endingDate""")
     boolean copyProdLoadToTestStructures = false
 
-    @Option(names = ["-m", "--moveFiles" ], description = """Whether files will be moved or copied.
+    @Option(names = ["--moveFiles" ], description = """Whether files will be moved or copied.
 Default is copy (false).""")
     boolean moveFiles = false
 
@@ -58,7 +62,7 @@ Default is copy (false).""")
 Default is no creation (false).""")
     boolean createDestination = false
 
-    @Option(names = ["-n", "--moveOrCopyEvenIfNoRosettaDoneFile" ], description = """Whether the move or copy takes place even if there is no Rosetta done file.
+    @Option(names = ["--moveOrCopyEvenIfNoRosettaDoneFile" ], description = """Whether the move or copy takes place even if there is no Rosetta done file.
 The Rosetta done files is a file with a titleCode of 'done'.
 Default is no move or copy unless there IS a Rosetta done file (false).""")
     boolean moveOrCopyEvenIfNoRosettaDoneFile = false
@@ -115,8 +119,18 @@ Default is today.""")
                 log.error(message)
                 throw new ProcessorException(message)
             }
-            MiscellaneousProcessor miscellaneousProcessor = new MiscellaneousProcessor(timekeeper)
-            miscellaneousProcessor.listFiles(sourceFolder)
+            ReportsProcessor reportsProcessor = new ReportsProcessor(timekeeper)
+            reportsProcessor.listFiles(sourceFolder)
+            commandExecuted = true
+        }
+        if (statisticalAudit) {
+            if (sourceFolder == null) {
+                String message = "statisticalAudit requires sourceFolder"
+                log.error(message)
+                throw new ProcessorException(message)
+            }
+            ReportsProcessor reportsProcessor = new ReportsProcessor(timekeeper)
+            reportsProcessor.statisticalAudit(sourceFolder)
             commandExecuted = true
         }
         if (extractMetadata) {
@@ -125,8 +139,8 @@ Default is today.""")
                 log.error(message)
                 throw new ProcessorException(message)
             }
-            MiscellaneousProcessor miscellaneousProcessor = new MiscellaneousProcessor(timekeeper)
-            miscellaneousProcessor.extractMetadata(sourceFolder)
+            ReportsProcessor reportsProcessor = new ReportsProcessor(timekeeper)
+            reportsProcessor.extractMetadata(sourceFolder)
             commandExecuted = true
         }
         if (copyProdLoadToTestStructures) {

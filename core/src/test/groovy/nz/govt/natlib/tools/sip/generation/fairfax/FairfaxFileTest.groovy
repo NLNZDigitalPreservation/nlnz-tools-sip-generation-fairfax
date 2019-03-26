@@ -1,5 +1,7 @@
 package nz.govt.natlib.tools.sip.generation.fairfax
 
+import java.time.LocalDate
+
 import static org.hamcrest.core.Is.is
 import static org.junit.Assert.assertEquals
 import static org.junit.Assert.assertFalse
@@ -234,5 +236,26 @@ class FairfaxFileTest {
 
         assertEquals("Sorts correctly with same date but different sequence numbers",
                 [fairfaxFile1, fairfaxFile2, fairfaxFile3].sort(), [fairfaxFile3, fairfaxFile2, fairfaxFile1])
+    }
+
+    @Test
+    void correctlyCreatesLocalDateFromDate() {
+        String filename1 = "NAMed1-20180101-M023.pdf"
+        String filename2 = "NAMed1-20180630-A021.pdf"
+        String filename3 = "NAMed1-20181231-C022.pdf"
+        when(mockFile1.getName()).thenReturn(filename1)
+        when(mockFile2.getName()).thenReturn(filename2)
+        when(mockFile3.getName()).thenReturn(filename3)
+
+        FairfaxFile fairfaxFile1 = new FairfaxFile(mockFile1)
+        FairfaxFile fairfaxFile2 = new FairfaxFile(mockFile2)
+        FairfaxFile fairfaxFile3 = new FairfaxFile(mockFile3)
+
+        LocalDate january12018 = new LocalDate(2018, 1, 1)
+        LocalDate june302018 = new LocalDate(2018, 6, 30)
+        LocalDate december312018 = new LocalDate(2018, 12, 31)
+        assertThat("Creates date correctly for ${january12018}", fairfaxFile1.dateAsLocalDate(), is(january12018))
+        assertThat("Creates date correctly for ${june302018}", fairfaxFile2.dateAsLocalDate(), is(june302018))
+        assertThat("Creates date correctly for ${december312018}", fairfaxFile3.dateAsLocalDate(), is(december312018))
     }
 }
