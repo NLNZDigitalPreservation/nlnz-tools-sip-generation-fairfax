@@ -6,38 +6,39 @@ import groovy.util.logging.Slf4j
 import nz.govt.natlib.tools.sip.state.SipProcessingException
 
 @Canonical
-@Sortable(includes = ['name', 'edition', 'dateYear', 'dateMonthOfYear', 'dateDayOfMonth'])
+@Sortable(includes = ['titleCode', 'editionCode', 'dateYear', 'dateMonthOfYear', 'dateDayOfMonth'])
 @Slf4j
 class FairfaxFileGroupKey {
 
-    String name
-    String edition
+    String titleCode
+    String editionCode
     Integer dateYear
     Integer dateMonthOfYear
     Integer dateDayOfMonth
 
     static FairfaxFileGroupKey fromFairfaxFile(FairfaxFile fairfaxFile) {
-        return new FairfaxFileGroupKey(fairfaxFile.name, fairfaxFile.edition, fairfaxFile.dateYear,
+        return new FairfaxFileGroupKey(fairfaxFile.titleCode, fairfaxFile.editionCode, fairfaxFile.dateYear,
             fairfaxFile.dateMonthOfYear, fairfaxFile.dateDayOfMonth)
     }
 
-    FairfaxFileGroupKey(String name, String edition, Integer dateYear, Integer dateMonthOfYear, Integer dateDayOfMonth)
-            throws SipProcessingException {
-        this.name = name
-        this.edition = edition
+    FairfaxFileGroupKey(String titleCode, String editionCode, Integer dateYear, Integer dateMonthOfYear,
+                        Integer dateDayOfMonth) throws SipProcessingException {
+        this.titleCode = titleCode
+        this.editionCode = editionCode
         this.dateYear = dateYear
         this.dateMonthOfYear = dateMonthOfYear
         this.dateDayOfMonth = dateDayOfMonth
         if (!isValid()) {
             String errorMessage = "Cannot create FairfaxFileGroupKey, all parameters must be non-null:" +
-                    " name=${name}, edition=${edition}, dateYear=${dateYear}, dateMonthOfYear=${dateMonthOfYear}, dateDayOfMonth=${dateDayOfMonth}"
+                    " titleCode=${titleCode}, editionCode=${editionCode}, dateYear=${dateYear}," +
+                    " dateMonthOfYear=${dateMonthOfYear}, dateDayOfMonth=${dateDayOfMonth}"
             log.error(errorMessage)
             throw new SipProcessingException(errorMessage)
         }
     }
 
     boolean isValid() {
-        return this.name != null && this.edition != null && this.dateYear != null && this.dateMonthOfYear != null &&
+        return this.titleCode != null && this.editionCode != null && this.dateYear != null && this.dateMonthOfYear != null &&
                 this.dateDayOfMonth != null
     }
 }

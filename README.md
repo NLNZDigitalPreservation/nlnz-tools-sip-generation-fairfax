@@ -49,63 +49,64 @@ java -jar sip-generation-fairfax-fat-all-<VERSION>.jar
 
 The basic parameters used by this runner are as follows (these parameters are discussed more in detail):
 ```
-Usage: processorRunner [-cdghilmnpx] [-b=STARTING_DATE] [-e=ENDING_DATE]
-                     [-r=FOR_REVIEW_FOLDER] [-s=SOURCE_FOLDER]
-                     [-t=TARGET_FOLDER]
+Usage: processorRunner [-cghilmnpxy] [-b=STARTING_DATE] [-e=ENDING_DATE]
+                       [-r=FOR_REVIEW_FOLDER] [-s=SOURCE_FOLDER]
+                       [-t=TARGET_FOLDER]
 Runs different processors based on command-line options.
 
 Processing stages:
-    -g, --preProcess          Group source files by date and name.
-                              Output is used by readyForIngestion.
-                              Requires sourceFolder, targetFolder, forReviewFolder.
-                              Uses startingDate, endingDate.
-                              Optional createDestination, moveFiles.
-    -d, --readyForIngestion   Process the source files.
-                              Output is ready for ingestion by Rosetta.
-                              Requires sourceFolder, targetFolder, forReviewFolder.
-                              Uses startingDate, endingDate.
-                              Optional createDestination, moveFiles.
-    -i, --copyIngestedLoadsToIngestedFolder
-                              Copy the ingested loads to ingested folder.
-                              Requires sourceFolder, targetFolder, forReviewFolder.
-                              Uses startingDate, endingDate.
-                              Optional createDestination, moveFiles,
-                                moveOrCopyEvenIfNoRosettaDoneFile
-    -l, --listFiles           List the source files in an organized way.
-                              Requires sourceFolder
-    -x, --extractMetadata     Extract and list the metadata from the source files.
-                              Requires sourceFolder
-    -p, --copyProdLoadToTestStructures
-                              Copy the production load to test structures.
-                              Requires sourceFolder, targetFolder.
-                              Uses startingDate, endingDate
+  -p, --preProcess          Group source files by date and titleCode.
+                            Output is used by readyForIngestion.
+                            Requires sourceFolder, targetFolder, forReviewFolder.
+                            Uses startingDate, endingDate.
+                            Optional createDestination, moveFiles.
+  -g, --readyForIngestion   Process the source files.
+                            Output is ready for ingestion by Rosetta.
+                            Requires sourceFolder, targetFolder, forReviewFolder.
+                            Uses startingDate, endingDate.
+                            Optional createDestination, moveFiles.
+  -i, --copyIngestedLoadsToIngestedFolder
+                            Copy the ingested loads to ingested folder.
+                            Requires sourceFolder, targetFolder, forReviewFolder.
+                            Uses startingDate, endingDate.
+                            Optional createDestination, moveFiles,
+                              moveOrCopyEvenIfNoRosettaDoneFile
+  -l, --listFiles           List the source files in an organized way.
+                            Requires sourceFolder
+  -x, --extractMetadata     Extract and list the metadata from the source files.
+                            Requires sourceFolder
+  -y, --copyProdLoadToTestStructures
+                            Copy the production load to test structures.
+                            Requires sourceFolder, targetFolder.
+                            Uses startingDate, endingDate
 
 Parameters:
-    -b, --startingDate=STARTING_DATE
-                              Starting date in the format yyyy-MM-dd.
-                              Default is 2015-01-01.
-    -e, --endingDate=ENDING_DATE
-                              Ending date in the format yyyy-MM-dd.
-                              Default is today.
-    -s, --sourceFolder=SOURCE_FOLDER
-                              source folder in the format /path/to/folder
-    -t, --targetFolder=TARGET_FOLDER
-                              target folder in the format /path/to/folder
-    -r, --forReviewFolder=FOR_REVIEW_FOLDER
-                              for-review folder in the format /path/to/folder
+  -b, --startingDate=STARTING_DATE
+                            Starting date in the format yyyy-MM-dd.
+                            Default is 2015-01-01.
+  -e, --endingDate=ENDING_DATE
+                            Ending date in the format yyyy-MM-dd.
+                            Default is today.
+  -s, --sourceFolder=SOURCE_FOLDER
+                            source folder in the format /path/to/folder
+  -t, --targetFolder=TARGET_FOLDER
+                            target folder in the format /path/to/folder
+  -r, --forReviewFolder=FOR_REVIEW_FOLDER
+                            for-review folder in the format /path/to/folder
 
 Options:
-    -c, --createDestination   Whether destination (or target) folders will be created.
-                              Default is no creation (false).
-    -m, --moveFiles           Whether files will be moved or copied.
-                              Default is copy (false).
-    -n, --moveOrCopyEvenIfNoRosettaDoneFile
-                              Whether the move or copy takes place even if there is no
-                                Rosetta done file.
-                              The Rosetta done files is a file with a name of 'done'.
-                              Default is no move or copy unless there IS a Rosetta
-                                done file (false).
-    -h, --help                Display a help message.
+  -c, --createDestination   Whether destination (or target) folders will be created.
+                            Default is no creation (false).
+  -m, --moveFiles           Whether files will be moved or copied.
+                            Default is copy (false).
+  -n, --moveOrCopyEvenIfNoRosettaDoneFile
+                            Whether the move or copy takes place even if there is no
+                              Rosetta done file.
+                            The Rosetta done files is a file with a titleCode of
+                              'done'.
+                            Default is no move or copy unless there IS a Rosetta
+                              done file (false).
+  -h, --help                Display a help message.
 ```
 
 See the *Parameters* section for a discussion of the different parameters used.
@@ -118,7 +119,7 @@ recommend running a single stages at a time.
 
 PDF filenames have the following structure:
 ```
-<Name><Edition>-yyyyMMdd-<optional-sequence-letter><optional-sequence-number><optional-qualifier>.pdf
+<TitleCode><EditionCode>-yyyyMMdd-<optional-sequence-letter><optional-sequence-number><optional-qualifier>.pdf
 ```
 
 For example, `SHMED1-20181108-011.pdf` and `WHMED1-20181108-G012new-page.pdf` are valid filenames.
@@ -129,8 +130,8 @@ All PDF files are placed in a single FTP folder by the file producer. There are 
 
 ### Pre-processing stage
 
-The first stage of processing where files are taken from the FTP folder and are separated out by date and name. Note
-that the `--moveFiles` option is not included in the example.
+The first stage of processing where files are taken from the FTP folder and are separated out by date and titleCode.
+Note that the `--moveFiles` option is not included in the example.
 ```
 java -jar sip-generation-fairfax-fat-all-<VERSION>.jar \
     --preProcess \
@@ -145,7 +146,7 @@ java -jar sip-generation-fairfax-fat-all-<VERSION>.jar \
 Files are moved from the FTP stage folder into a folder structure that prepares them for processing. The folder
 structure for *Pre-processing* output is as follows:
 ```
-<targetFolder>/<date-in-yyyyMMMdd>/<Name>/{files for that name and date}
+<targetFolder>/<date-in-yyyyMMdd>/<TitleCode>/{files for that titleCode and date}
 ```
 
 ### Ready-for-ingestion stage
@@ -164,9 +165,13 @@ java -jar sip-generation-fairfax-fat-all-<VERSION>.jar \
 ```
 
 Files are processed and prepared for ingestion. The *Ready-for-ingestion* folder structure is how Rosetta ingests the
-files:
+files. Magazines and newspapers have different Material Flows, so ingestion of those different IEEntity types must
+be in different folders.
+Note that Rosetta ingestion requires that the `content` folder's parent parent be the folder used in Rosetta's
+Submission Format. In this case that folder is either `magazine` or `newspaper`, with the folder for an individual
+publication's ingestion directly underneath:
 ```
-<targetFolder>/<magazines|newspapers><date-in-yyyyMMdd>/<Name><Edition>_<full-name-of-publication>/content/streams/{files for that name/edition}
+<targetFolder>/<magazine|newspaper>/<date-in-yyyyMMdd>_<TitleCode><EditionCode>_<full-name-of-publication>/content/streams/{files for that titleCode/editionCode}
 ```
 
 Note that the `mets.xml` file is placed in the `content` folder.
@@ -176,9 +181,9 @@ under the target folder.
 ### Ingested stage
 
 Once files have been ingested into Rosetta, a file with the name of `done` is placed in the root folder (in this case,
-that folder is `<Name><Edition>_<full-name-of-publication>`). This means that folder can be moved to the *Ingested*
-folder. Note that the `--moveFiles` option is not included in the example. Note also that the `done` file must exist,
-otherwise `--moveOrCopyEvenIfNoRosettaDoneFile` needs to be specified.
+that folder is `<TitleCode><EditionCode>_<full-name-of-publication>`). This means that folder can be moved to the
+*Ingested* folder. Note that the `--moveFiles` option is not included in the example. Note also that the `done` file
+must exist, otherwise `--moveOrCopyEvenIfNoRosettaDoneFile` needs to be specified.
 ```
 java -jar sip-generation-fairfax-fat-all-<VERSION>.jar \
     --copyIngestedLoadsToIngestedFolder \
@@ -192,9 +197,9 @@ java -jar sip-generation-fairfax-fat-all-<VERSION>.jar \
 
 The folder structure for the ingested stage is as follows:
 ```
-<targetFolder>/<full-name-of-publication>/<date-in-yyyyMMdd>/<Name><Edition>/content/streams/{files for that name/edition}
+<targetFolder>/<full-name-of-publication>/<date-in-yyyyMMdd>/<TitleCode><EditionCode>/content/streams/{files for that titleCode/editionCode}
 ```
-Note that the `mets.xml` file is placed in the `content` folder. The `done` files is in the `<Name><Edition>` folder.
+Note that the `mets.xml` file is placed in the `content` folder. The `done` files is in the `<TitleCode><EditionCode>` folder.
 
 ### For-review stage
 
@@ -202,45 +207,45 @@ If a file or set of files is unable to be processed for some reason, it will be 
 is no processor that operates on the *For-review* stage. Processors that output to the *For-review* folder use the
 parameter `forReviewFolder` to set the location of the *For-review* folder.
 
-If the files come from the FTP folder and the *Name* and date are identifiable from the filename, the files are in the
-following structure:
-```
-<forReviewFolder>/<date-in-yyyyMMMdd>/<Name>/{files}
-```
-If the files come from the FTP folder and the *Name* is not identifiable from the filename (but the date is), the files
-are in the following structure:
-```
-<forReviewFolder>/UNKNOWN-NAME/<date-in-yyyyMMdd>/{files-that-have-no-name-mapping-for-that-date}
-```
-
-If the files come from the FTP folder and the *Name* and date are not identifiable from the filename, the files are in
+If the files come from the FTP folder and the *TitleCode* and date are identifiable from the filename, the files are in
 the following structure:
 ```
-<forReviewFolder>/UNKNOWN-NAME/UNKNOWN-DATE/{files-that-have-no-name-mapping-for-that-date}
+<forReviewFolder>/<date-in-yyyyMMMdd>/<TitleCode>/{files}
+```
+If the files come from the FTP folder and the *TitleCode* is not identifiable from the filename (but the date is), the
+files are in the following structure:
+```
+<forReviewFolder>/UNKNOWN-TITLE-CODE/<date-in-yyyyMMdd>/{files-that-have-no-title-code-mapping-for-that-date}
+```
+
+If the files come from the FTP folder and the *TitleCode* and date are not identifiable from the filename, the files are
+in the following structure:
+```
+<forReviewFolder>/UNKNOWN-TITLE-CODE/UNKNOWN-DATE/{files-that-have-no-title-code-mapping-for-that-date}
 ```
 
 If the files come from the *Pre-processing* stage but cannot be processed into the *Ready-for-ingestion* stage because
 the files are not recognized, then they're placed in the following structure:
 ```
-<forReviewFolder>/UNRECOGNIZED/<date-in-yyyyMMdd>/<Name>/{files for that name}
+<forReviewFolder>/UNRECOGNIZED/<date-in-yyyyMMdd>/<TitleCode>/{files for that titleCode}
 ```
 
 If the files come from the *Pre-processing* stage but cannot be processed into the *Ready-for-ingestion* stage because
 of some error in processing, then they're placed in the following structure:
 ```
-<forReviewFolder>/<unknown|newspaper|magazine><date-in-yyyyMMdd>/<Name><Edition>_<full-name-of-publication>/content/streams/{files for that name/edition}
+<forReviewFolder>/<unknown|newspaper|magazine><date-in-yyyyMMdd>/<TitleCode><EditionCode>_<full-name-of-publication>/content/streams/{files for that titleCode/editionCode}
 ```
 
 If the files come from the *Ready-for-ingestion* stage but are not ingested into Rosetta properly, then they're placed in the
 following structure:
 ```
-<forReviewFolder>/<date-in-yyyyMMdd>/<Name><Edition>_<full-name-of-publication>/content/streams/{files for that name/edition}
+<forReviewFolder>/<date-in-yyyyMMdd>/<TitleCode><EditionCode>_<full-name-of-publication>/content/streams/{files for that titleCode/editionCode}
 ```
 
 ### Other stages (reporting, diagnosis and testing)
 
 #### listFiles: list files based on source folder
-`listFiles` simply lists files by name, edition and date:
+`listFiles` simply lists files by titleCode, editionCode and date:
 ```
 java -jar sip-generation-fairfax-fat-all-<VERSION>.jar \
     --listFiles \
@@ -259,7 +264,7 @@ java -jar sip-generation-fairfax-fat-all-<VERSION>.jar \
 ```
 
 #### copyProdLoadToTestStructures: Copy production load files
-Copies files from previous production loads into Rosetta into groupByDateAndName *and* pre-Rosetta ingest structures
+Copies files from previous production loads into Rosetta into Pre-processing *and* Ready-for-ingestion structures
 for testing. The structures are as follows:
 1. preProcess structure. This is to mimic the input to readyForIngestion processing. The folder structures are the
    same as the output to `preProcess`, with the folder structure starting with `<targetFolder>/preProcess`.
@@ -286,7 +291,7 @@ Parameters and their usage. See the `--help` output shown previously if the para
 The starting date for file processing (inclusive). Files before this date are ignored. Note that the `startingDate` is
 based on the file name, and not the time stamp of the file. Files usually have the format:
 ```
-<Name><Edition>-yyyyMMdd-<optional-sequence-letter><optional-sequence-number>
+<TitleCode><EditionCode>-yyyyMMdd-<optional-sequence-letter><optional-sequence-number>
 ```
 
 The format of the starting date `yyyy-MM-dd`.
@@ -323,15 +328,25 @@ of 'done'. Default is no move or copy unless there IS a Rosetta done file (false
 ## Updating the default fairfax import parameters JSON file
 From time to time the spreadsheet that defines how the Fairfax files are ingested will changed based on new information.
 When this happens, the json file found at `core/src/main/resources/default-fairfax-import-parameters.json` needs
-updating to reflect the changes in the source spreadsheet. First, export the original spreadsheet in `.csv` format
-with the file separator as `|` and save it, replacing `core/src/main/resources/nz/govt/natlib/tools/sip/generation/fairfax/default-fairfax-import-spreadsheet.csv`.
+updating to reflect the changes in the source spreadsheet.
 
-The task `updateDefaultFairfaxImportParameters` then updates that JSON file.
+### Export original spreadsheet in csv format
+First, export the original spreadsheet in `.csv` format with the file separator as `|` and save it.
+
+### Copy exported spreadsheet to default-fairfax-import-spreadsheet.csv
+Copy the exported csv spreadsheet to:
+`core/src/main/resources/nz/govt/natlib/tools/sip/generation/fairfax/default-fairfax-import-spreadsheet.csv`.
+
+### Execute the build task updateDefaultFairfaxImportParameters
+Execute the gradle task `updateDefaultFairfaxImportParameters`, which takes the csv spreadsheet and converts it to a
+JSON file, which is then used for the actual processing:
 ```
 gradle updateDefaultFairfaxImportParameters -PfairfaxSpreadsheetImportFilename="core/src/main/resources/nz/govt/natlib/tools/sip/generation/fairfax/default-fairfax-import-spreadsheet.csv"
 ```
 
-Changes should then be checked in and a new version of this jar built.
+### Check in the changes and build a new version of the jar
+Changes should then be checked in and a new version of this jar built, which will have the new JSON processing resource
+file.
 
 ## Contributors
 

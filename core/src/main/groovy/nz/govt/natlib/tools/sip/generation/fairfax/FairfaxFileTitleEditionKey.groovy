@@ -8,10 +8,10 @@ import groovy.util.logging.Slf4j
 
 @Canonical
 @EqualsAndHashCode
-@Sortable(includes = ['name', 'edition' ])
+@Sortable(includes = ['titleCode', 'editionCode' ])
 @ToString
 @Slf4j
-class FairfaxFileNameEditionKey {
-    String name
-    String edition
+class FairfaxFileTitleEditionKey {
+    String titleCode
+    String editionCode
 }

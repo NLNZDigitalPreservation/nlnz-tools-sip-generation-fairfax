@@ -30,8 +30,8 @@ class FairfaxFileTest {
         FairfaxFile testFairfaxFile = new FairfaxFile(mockFile)
 
         assertThat("Filename extracted correctly", testFairfaxFile.filename, is(originalFilename))
-        assertThat("Name parsed correctly", testFairfaxFile.name, is("TST"))
-        assertThat("Edition parsed correctly", testFairfaxFile.edition, is("ED1"))
+        assertThat("TitleCode parsed correctly", testFairfaxFile.titleCode, is("TST"))
+        assertThat("EditionCode parsed correctly", testFairfaxFile.editionCode, is("ED1"))
         assertNotNull("Year extracted", testFairfaxFile.dateYear)
         assertThat("dateYear parsed correctly", testFairfaxFile.dateYear, is(new Integer(2018)))
         assertThat("dateMonthOfYear parsed correctly", testFairfaxFile.dateMonthOfYear, is(new Integer(10)))
@@ -51,8 +51,8 @@ class FairfaxFileTest {
         FairfaxFile testFairfaxFile = new FairfaxFile(mockFile)
 
         assertThat("filename extracted correctly", testFairfaxFile.filename, is(originalFilename))
-        assertThat("Name parsed correctly", testFairfaxFile.name, is("t20"))
-        assertThat("Edition parsed correctly", testFairfaxFile.edition, is("ABC"))
+        assertThat("TitleCode parsed correctly", testFairfaxFile.titleCode, is("t20"))
+        assertThat("EditionCode parsed correctly", testFairfaxFile.editionCode, is("ABC"))
         assertThat("dateYear parsed correctly", testFairfaxFile.dateYear, is(new Integer(2018)))
         assertThat("dateMonthOfYear parsed correctly", testFairfaxFile.dateMonthOfYear, is(new Integer(10)))
         assertThat("dateDayOfMonth parsed correctly", testFairfaxFile.dateDayOfMonth, is(new Integer(22)))
@@ -70,8 +70,8 @@ class FairfaxFileTest {
         FairfaxFile testFairfaxFile = new FairfaxFile(mockFile)
 
         assertThat("Filename extracted correctly", testFairfaxFile.filename, is(originalFilename))
-        assertThat("Name parsed correctly", testFairfaxFile.name, is("TST"))
-        assertThat("Edition parsed correctly", testFairfaxFile.edition, is("ED1"))
+        assertThat("TitleCode parsed correctly", testFairfaxFile.titleCode, is("TST"))
+        assertThat("EditionCode parsed correctly", testFairfaxFile.editionCode, is("ED1"))
         assertNotNull("Year extracted", testFairfaxFile.dateYear)
         assertThat("dateYear parsed correctly", testFairfaxFile.dateYear, is(new Integer(2018)))
         assertThat("dateMonthOfYear parsed correctly", testFairfaxFile.dateMonthOfYear, is(new Integer(10)))
@@ -91,8 +91,8 @@ class FairfaxFileTest {
         FairfaxFile testFairfaxFile = new FairfaxFile(mockFile)
 
         assertThat("filename extracted correctly", testFairfaxFile.filename, is(originalFilename))
-        assertThat("Name parsed correctly", testFairfaxFile.name, is("t20"))
-        assertThat("Edition parsed correctly", testFairfaxFile.edition, is("ABC"))
+        assertThat("TitleCode parsed correctly", testFairfaxFile.titleCode, is("t20"))
+        assertThat("EditionCode parsed correctly", testFairfaxFile.editionCode, is("ABC"))
         assertThat("dateYear parsed correctly", testFairfaxFile.dateYear, is(new Integer(2018)))
         assertThat("dateMonthOfYear parsed correctly", testFairfaxFile.dateMonthOfYear, is(new Integer(10)))
         assertThat("dateDayOfMonth parsed correctly", testFairfaxFile.dateDayOfMonth, is(new Integer(22)))

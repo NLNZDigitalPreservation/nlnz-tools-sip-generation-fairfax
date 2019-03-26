@@ -14,8 +14,8 @@ import java.time.LocalDate
 class PreProcessProcessor {
     Timekeeper timekeeper
     FairfaxSpreadsheet fairfaxSpreadsheet
-    Set<String> recognizedNames = [ ]
-    Set<String> unrecognizedNames = [ ]
+    Set<String> recognizedTitleCodes = [ ]
+    Set<String> unrecognizedTitleCodes = [ ]
 
     PreProcessProcessor(Timekeeper timekeeper) {
         this.timekeeper = timekeeper
@@ -23,26 +23,26 @@ class PreProcessProcessor {
 
     void copyOrMoveFileToPreProcessingDestination(File destinationFolder, File forReviewFolder, FairfaxFile targetFile,
                                                   String dateFolderName, boolean moveFile) {
-        String nameFolderName = targetFile.name
+        String titleCodeFolderName = targetFile.titleCode
         String folderPath
-        Set<String> allNameKeys = fairfaxSpreadsheet.allNameKeys
+        Set<String> allNameKeys = fairfaxSpreadsheet.allTitleCodeKeys
 
-        if (allNameKeys.contains(targetFile.name)) {
-            // There's an entry in the spreadsheet for this name
-            // Goes to '<date>/<name>/<file>'
-            if (!recognizedNames.contains(targetFile.name)) {
-                recognizedNames.add(targetFile.name)
-                log.info("copyOrMoveFileToPreProcessingDestination adding recognizedName=${targetFile.name}")
+        if (allNameKeys.contains(targetFile.titleCode)) {
+            // There's an entry in the spreadsheet for this titleCode
+            // Goes to '<date>/<titleCode>/<file>'
+            if (!recognizedTitleCodes.contains(targetFile.titleCode)) {
+                recognizedTitleCodes.add(targetFile.titleCode)
+                log.info("copyOrMoveFileToPreProcessingDestination adding titleCode=${targetFile.titleCode}")
             }
-            folderPath = "${destinationFolder.getCanonicalPath()}${File.separator}${dateFolderName}${File.separator}${nameFolderName}"
+            folderPath = "${destinationFolder.getCanonicalPath()}${File.separator}${dateFolderName}${File.separator}${titleCodeFolderName}"
         } else {
-            // There is no entry in the spreadsheet for this name
-            // Goes to 'UNKNOWN/<date>/<file>'
-            if (!unrecognizedNames.contains(targetFile.name)) {
-                unrecognizedNames.add(targetFile.name)
-                log.info("copyOrMoveFileToPreProcessingDestination adding unrecognizedName=${targetFile.name}")
+            // There is no entry in the spreadsheet for this titleCode
+            // Goes to 'UNKNOWN-TITLE-CODE/<date>/<file>'
+            if (!unrecognizedTitleCodes.contains(targetFile.titleCode)) {
+                unrecognizedTitleCodes.add(targetFile.titleCode)
+                log.info("copyOrMoveFileToPreProcessingDestination adding unrecognizedName=${targetFile.titleCode}")
             }
-            folderPath = "${forReviewFolder.getCanonicalPath()}${File.separator}UNKNOWN-NAME${File.separator}${dateFolderName}"
+            folderPath = "${forReviewFolder.getCanonicalPath()}${File.separator}UNKNOWN-TITLE-CODE${File.separator}${dateFolderName}"
         }
         File destination = new File(folderPath)
         destination.mkdirs()
@@ -63,8 +63,8 @@ class PreProcessProcessor {
     void process(File sourceFolder, File destinationFolder, File forReviewFolder, boolean createDestination,
                  boolean moveFiles, LocalDate startingDate, LocalDate endingDate) {
         // Clear the set of recognized and unrecognized names before processing begins
-        recognizedNames = [ ]
-        unrecognizedNames = [ ]
+        recognizedTitleCodes = [ ]
+        unrecognizedTitleCodes = [ ]
 
         ProcessLogger processLogger = new ProcessLogger()
         processLogger.startSplit()

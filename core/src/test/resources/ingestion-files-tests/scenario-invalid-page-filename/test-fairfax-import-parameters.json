@@ -1,10 +1,10 @@
 [
   {
     "test-mms-id-one": {
-      "Title": "Test Publication One",
+      "title_parent": "Test Publication One",
       "Collector_folder": "Test_Publication_One",
-      "names_dict": "TST",
-      "edition_dict": "PB1",
+      "title_code": "TST",
+      "edition_code": "PB1",
       "Ingest_Status_Pilot_PIL_Standard_STA_Standard_Complex_STC_Supplement_SUP_Oneoff_ONE_Technical Issues_TEC": "STA",
       "Frequency": "",
       "Entity_Periodic _PER_serial Supplement_SS_oneoff_ONE": "PER",

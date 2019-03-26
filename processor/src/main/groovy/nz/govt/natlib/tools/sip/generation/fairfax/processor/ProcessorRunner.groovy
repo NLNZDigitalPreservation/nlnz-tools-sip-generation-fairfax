@@ -15,14 +15,16 @@ class ProcessorRunner implements Callable<Void>{
     final static LocalDate DEFAULT_STARTING_DATE = LocalDate.of(2015, 1, 1)
     final static LocalDate DEFAULT_ENDING_DATE = LocalDate.now()
 
-    @Option(names = ["-g", "--preProcess"], description = """Group source files by date and name.
+    boolean commandExecuted = false
+
+    @Option(names = ["-p", "--preProcess"], description = """Group source files by date and titleCode.
 Output is used by readyForIngestion.
 Requires sourceFolder, targetFolder, forReviewFolder.
 Uses startingDate, endingDate.
 Optional createDestination, moveFiles.""")
     boolean preProcess = false
 
-    @Option(names = ["-d", "--readyForIngestion"], description = """Process the source files.
+    @Option(names = ["-g", "--readyForIngestion"], description = """Process the source files.
 Output is ready for ingestion by Rosetta.
 Requires sourceFolder, targetFolder, forReviewFolder.
 Uses startingDate, endingDate.
@@ -43,7 +45,7 @@ Uses startingDate, endingDate.
 Optional createDestination, moveFiles, moveOrCopyEvenIfNoRosettaDoneFile""")
     boolean copyIngestedLoadsToIngestedFolder = false
 
-    @Option(names = [ "-p", "--copyProdLoadToTestStructures" ], description = """Copy the production load to test structures.
+    @Option(names = [ "-y", "--copyProdLoadToTestStructures" ], description = """Copy the production load to test structures.
 Requires sourceFolder, targetFolder.
 Uses startingDate, endingDate""")
     boolean copyProdLoadToTestStructures = false
@@ -57,7 +59,7 @@ Default is no creation (false).""")
     boolean createDestination = false
 
     @Option(names = ["-n", "--moveOrCopyEvenIfNoRosettaDoneFile" ], description = """Whether the move or copy takes place even if there is no Rosetta done file.
-The Rosetta done files is a file with a name of 'done'.
+The Rosetta done files is a file with a titleCode of 'done'.
 Default is no move or copy unless there IS a Rosetta done file (false).""")
     boolean moveOrCopyEvenIfNoRosettaDoneFile = false
 
@@ -87,6 +89,10 @@ Default is today.""")
     static void main(String[] args) {
         ProcessorRunner processorRunner = new ProcessorRunner()
         CommandLine.call(processorRunner, args)
+        if (!processorRunner.commandExecuted) {
+            String[] helpArgs = [ '-h' ]
+            CommandLine.call(processorRunner, helpArgs)
+        }
     }
 
     @Override
@@ -111,6 +117,7 @@ Default is today.""")
             }
             MiscellaneousProcessor miscellaneousProcessor = new MiscellaneousProcessor(timekeeper)
             miscellaneousProcessor.listFiles(sourceFolder)
+            commandExecuted = true
         }
         if (extractMetadata) {
             if (sourceFolder == null) {
@@ -120,6 +127,7 @@ Default is today.""")
             }
             MiscellaneousProcessor miscellaneousProcessor = new MiscellaneousProcessor(timekeeper)
             miscellaneousProcessor.extractMetadata(sourceFolder)
+            commandExecuted = true
         }
         if (copyProdLoadToTestStructures) {
             if (sourceFolder == null) {
@@ -135,6 +143,7 @@ Default is today.""")
             MiscellaneousProcessor miscellaneousProcessor = new MiscellaneousProcessor(timekeeper)
             miscellaneousProcessor.copyProdLoadToTestStructures(sourceFolder, targetFolder, createDestination,
                                     startingDate, endingDate)
+            commandExecuted = true
         }
         if (preProcess) {
             if (sourceFolder == null) {
@@ -155,6 +164,7 @@ Default is today.""")
             PreProcessProcessor preProcessProcessor = new PreProcessProcessor(timekeeper)
             preProcessProcessor.process(sourceFolder, targetFolder, forReviewFolder, createDestination, moveFiles,
                     startingDate, endingDate)
+            commandExecuted = true
         }
         if (readyForIngestion) {
             if (sourceFolder == null) {
@@ -175,6 +185,7 @@ Default is today.""")
             ReadyForIngestionProcessor readyForIngestionProcessor = new ReadyForIngestionProcessor(timekeeper)
             readyForIngestionProcessor.process(sourceFolder, targetFolder, forReviewFolder, createDestination,
                     moveFiles, startingDate, endingDate)
+            commandExecuted = true
         }
         if (copyIngestedLoadsToIngestedFolder) {
             if (sourceFolder == null) {
@@ -195,6 +206,7 @@ Default is today.""")
             MiscellaneousProcessor miscellaneousProcessor = new MiscellaneousProcessor(timekeeper)
             miscellaneousProcessor.copyIngestedLoadsToIngestedFolder(sourceFolder, targetFolder, forReviewFolder,
                     createDestination, moveFiles, startingDate, endingDate, moveOrCopyEvenIfNoRosettaDoneFile)
+            commandExecuted = true
         }
     }
 }

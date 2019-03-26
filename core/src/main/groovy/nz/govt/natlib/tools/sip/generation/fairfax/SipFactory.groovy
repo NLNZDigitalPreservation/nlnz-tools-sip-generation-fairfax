@@ -8,7 +8,7 @@ import nz.govt.natlib.tools.sip.SipFileWrapperFactory
  * Generates a {@link Sip} based on the given parameters.
  */
 class SipFactory {
-    static String TITLE_KEY = "Title"
+    static String TITLE_PARENT_KEY = "title_parent"
     static String ALMA_MMS_ID_KEY = "MMSID"
     static String POLICY_ID_KEY = "Access"
     static String PRESERVATION_TYPE = "PRESERVATION_MASTER"
@@ -19,7 +19,7 @@ class SipFactory {
 
     static Sip fromMap(Map<String, String> parameterMap, List<File> files = [ ], boolean useFilenameOnly = false,
                        boolean generateMD5Hash = false) {
-        String title = parameterMap.get(TITLE_KEY)
+        String title = parameterMap.get(TITLE_PARENT_KEY)
         boolean isMagazine = "1" == parameterMap.get(IS_MAGAZINE_KEY)
         String almaMmsId = parameterMap.get(ALMA_MMS_ID_KEY)
         String policyId = parameterMap.get(POLICY_ID_KEY)

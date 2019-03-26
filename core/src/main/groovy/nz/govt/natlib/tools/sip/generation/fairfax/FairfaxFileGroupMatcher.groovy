@@ -16,11 +16,11 @@ class FairfaxFileGroupMatcher {
     List<FairfaxFileGroupMatch> findMatches(FairfaxFileGroup fairfaxFileGroup, FairfaxSpreadsheet spreadsheet) {
         List<FairfaxFileGroupMatch> fairfaxFileGroupMatches = [ ]
         List<Map<String, String>> candidateParameterMaps = spreadsheet.matchingParameterMaps(
-                fairfaxFileGroup.fairfaxFileGroupKey.name, fairfaxFileGroup.fairfaxFileGroupKey.edition)
+                fairfaxFileGroup.fairfaxFileGroupKey.titleCode, fairfaxFileGroup.fairfaxFileGroupKey.editionCode)
 
         candidateParameterMaps.each { Map<String, String> parameterMap -> // could really use any or find?
 
-            String title = parameterMap.get("Title")
+            String title = parameterMap.get(FairfaxSpreadsheet.TITLE_PARENT_KEY)
 
             List<FairfaxFileMatch> matches = [ ]
             // We do every file so we can tell the relative strength of the match

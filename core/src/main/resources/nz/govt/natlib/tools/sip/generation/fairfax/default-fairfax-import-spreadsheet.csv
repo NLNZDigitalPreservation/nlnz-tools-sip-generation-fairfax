@@ -1,178 +1,23 @@
-Title|Collector_folder|names_dict|edition_dict|Ingest_Status_Pilot_PIL_Standard_STA_Standard_Complex_STC_Supplement_SUP_Oneoff_ONE_Technical Issues_TEC|Frequency|Entity_Periodic _PER_serial Supplement_SS_oneoff_ONE|Magazine|Name|MMSID|ISSN online|Bib ID|Access condition|Date catalogued|Cataloguer|Access|Notes|first_issue_starting_page|last_issue_starting_page|has_volume_md|has_issue_md|has_number_md|previous_volume|previous_volume_date|previous_volume_frequency|previous_issue|previous_issue_date|previous_issue_frequency|previous_number|previous_number_date|previous_number_ffrequency
+title_parent|Collector_folder|title_code|edition_code|Ingest_Status_Pilot_PIL_Standard_STA_Standard_Complex_STC_Supplement_SUP_Oneoff_ONE_Technical Issues_TEC|Frequency|Entity_Periodic _PER_serial Supplement_SS_oneoff_ONE|Magazine|title_mets|MMSID|ISSN online|Bib ID|Access condition|Date catalogued|Cataloguer|Access|Notes|first_issue_starting_page|last_issue_starting_page|has_volume_md|has_issue_md|has_number_md|previous_volume|previous_volume_date|previous_volume_frequency|previous_issue|previous_issue_date|previous_issue_frequency|previous_number|previous_number_date|previous_number_ffrequency
 Admire|Admire|ADM|NEL|STA||PER|1|Admire. Nelson-Tasman|9918147749902836||||17/05/2017|Christina|200|Supplement to Nelson mail - If we aren't adding numbering to designations no problem.|||0|0|0|||||||||
 Admire|Admire|ADM|MEX|STA||PER|1|Admire. Marlborough|9918148070202836||||17/05/2017|Christina|200|Supplement to Marlborough Express - if we are not doing numbering in designations, then no problem with this.|||0|0|0|||||||||
 Ag Trader|Ag_Trader|AGT|ED1|STA||PER|1|Ag Trader|9917982733502836||1798273|100-P|30/06/2016|Denise|200||||0|0|0|||||||||
 Ag Trader|Ag_Trader|AGT|SHP - SPC|TEC|Annual|SS|1|Shop|9917982813502836||1798281|100-P|30/06/2016|Denise|200|Serial supplement with different editions|||0|0|0|||||||||
 Auckland City Harbour News|Auckland_City_Harbour_News|AHN|ED1|STA||PER|0|Auckland City Harbour News|9917982663502836|2463-6789|1798266|100-P|30/06/2016|Denise|200||||0|0|0|||||||||
-Auto Extra|Auto_Extra|AXT|ED1|TEC|Biweekly|PER|1|Auto extra|9917990683502836||1799068|100-P|6/07/2016|Christina|200|An issue lacks an edition code, also, there could be updated files in the Auto_Xtra folder (AUXED1-20160711-002)|||0|0|0|||||||||
+New Zealand Autocar|New_Zealand_Autocar|AUC|ED1|STA||PER|1|New Zealand autocar|9917919113502836|2463-6797|1791911|200|2/06/2016|Denise|200||||0|0|0|||||||||
 Avenues|Avenues|AVE|ED1|STA||PER|1|Avenues |9918148069302836||||22/05/2017|Christina|200||||0|1|0||||148|20170401|monthly|||
-A-Z Business Directory|A-Z_Business_Directory|ZMP|ED1|STA||PER|1|A-Z business directory and community guide. Matamata-Piako|9918148048502836||||26/05/2017|Christina|200||||0|0|0|||||||||
-A-Z Business Directory|A-Z_Business_Directory|ZRO|ED1|STA||PER|1|A-Z business directory and community guide. Rotorua|9918148046002836||||30/05/2017|Christina|200||||0|0|0|||||||||
-A-Z Business Directory__|A-Z_Business_Directory__|ZMA|ED1|STA||PER|1|A-Z business directory and ommunity guide. Manawatu|9918148049202836||||26/05/2017|Christina|200||||0|0|0|||||||||
-A-Z Business Directory Coromandel Peninsula|A-Z_Business_Directory_Coromandel_Peninsula|ZCP|ED1|STA||PER|1|A-Z Business Directory Coromandel Peninsula|9917982913502836||1798291|???|30/06/2016|Denise|200||||0|0|0|||||||||
-A-Z Business Directory Franklin|A-Z_Business_Directory_Franklin|ZFR|ED1|STA||PER|1|A-Z Business Directory Franklin|9917983323502836||1798332|???|30/06/2016|Christina|200||||0|0|0|||||||||
-A-Z Business Directory Hibiscus|A-Z_Business_Directory_Hibiscus|ZHI|ED1|STA||PER|1|A-Z Business Directory Hibiscus|9917983383502836||1798338|???|30/06/2016|Christina|200||||0|0|0|||||||||
-A-Z Business Directory Horowhenua|A-Z_Business_Directory_Horowhenua|ZHO|ED1|STA||PER|1|A-Z business directory and community guide. Horowhenua|9918148054002836||||26/05/2017|Christina|200||||0|0|0|||||||||
-A-Z Business Directory Kapiti|A-Z_Business_Directory_Kapiti|ZKA|ED1|STA||PER|1|A-Z Business Directory Kapiti|9917983413502836||1798341|???|30/06/2016|Christina|200||||0|0|0|||||||||
-A-Z Business Directory Lake Taupo|A-Z_Business_Directory_Lake_Taupo|ZLT|ED1|STA||PER|1|A-Z business directory and community guide. Lake Taupo|9918148053302836||||26/05/2017|Christina|200||||0|0|0|||||||||
-A-Z Business Directory Rangitikei|A-Z_Business_Directory_Rangitikei|ZRA|ED1|STA||PER|1|A-Z business directory and community guide. Rangitikei|9918148047102836||||30/05/2017|Christina|200||||0|0|0|||||||||
-A-Z Business Directory Ruapehu|A-Z_Business_Directory_Ruapehu|ZRU|ED1|STA||PER|1|A-Z Business Directory Ruapehu|9917983443502836||1798344|???|30/06/2016|Christina|200||||0|0|0|||||||||
-A-Z Business Directory South Taranaki|A-Z_Business_Directory_South_Taranaki|ZST|ED1|STA||PER|1|A-Z business directory and community guide.  South Taranaki|9918148045802836||||30/05/2017|Christina|200||||0|0|0|||||||||
-A-Z Business Directory South Waikato|A-Z_Business_Directory_South_Waikato|ZSW|ED1|STA||PER|1|"A-Z business directory and community guide. South Waikato
-"|"9918148045102836
-"||||30/05/2017|Christina|200||||0|0|0|||||||||
-A-Z Business Directory Tararua|A-Z_Business_Directory_Tararua|ZTA|ED1|STA||PER|1|"A-Z business directory and community guide. Tararua
-"|"9918148044402836
-"||||30/05/2017|Christina|200||||0|0|0|||||||||
-A-Z Business Directory Waiheke Marketplace|A-Z_Business_Directory_Waiheke_Marketplace|ZWM|ED1|STA||PER|1|A-Z Business Directory Waiheke Marketplace|9917983523502836||1798352|???|1/07/2016|Christina|200||||0|0|0|||||||||
-A-Z Business Directory Waipa|A-Z_Business_Directory_Waipa|ZWP|ED1|STA||PER|1|A-Z Business Directory Waipa|9917983543502836||1798354|???|1/07/2016|Christina|200||||0|0|0|||||||||
-A-Z Business Directory Waitomo|A-Z_Business_Directory_Waitomo|ZWA|ED1|STA||PER|1|A-Z Business Directory Waitomo|9917983623502836||1798362|???|1/07/2016|Christina|200||||0|0|0|||||||||
+Auto Extra|Auto_Extra|AXT|ED1|TEC|Biweekly|PER|1|Auto extra|9917990683502836||1799068|100-P|6/07/2016|Christina|200|An issue lacks an edition code, also, there could be updated files in the Auto_Xtra folder (AUXED1-20160711-002)|||0|0|0|||||||||
+The Bay Chronicle|The_Bay_Chronicle|BAC|ED1|STA||PER|0|Bay Chronicle|9917952983502836||||||200|Fairfax updated title code|||0|0|0|||||||||
+The Bay Chronicle|The_Bay_Chronicle|BCR|ED1|STA||PER|0|Bay Chronicle|9917952983502836||1795298|100-P|10/06/2016|Denise|200||||0|0|0|||||||||
 Boating New Zealand|Boating_New_Zealand|BNZ|ED1|PIL||PER|1|Boating New Zealand|9917979463502836|2463-6800|1797946|200|28/06/2016|Andrew R|200|Ceased|BNZED1-20160101-001|BNZED1-20160601-148|0|1|0||||352|20151201|monthly|||
+Cambridge Edition|Cambridge_Edition|CAE|ED1|STA||PER|0|Cambridge Edition|9917979753502836|||||||Fairfax updated title code|||0|0|0|||||||||
 Cambridge Edition|Cambridge_Edition|CBE|ED1|STA||PER|0|Cambridge Edition|9917979753502836||1797975|100-P|28/06/2016|Andrew R|200||||0|0|0|||||||||
 Cambridge Edition|Cambridge_Edition|CBE|EQW + SPC|TEC|Annual, January 13 2016|SS|0|Equine world|9917980363502836||1798036|100-P|28/06/2016|Andrew R|200|Can't anticipate next issue|||0|0|0|||||||||
 Cambridge Edition|Cambridge_Edition|CBE|SPC|TEC|Annual|SS|0|... Maadi Cup|9918150270202836||||7/06/2017|Christina|200|Can't anticipate next issue|CBESPC-20170322-001||0|0|0|||||||||
-Canterbury Farmer|Canterbury_Farmer|FCY|ED1|STA||PER|0|Canterbury farmer|9917973633502836||1797363|100-P|23/06/2016|Andrew R|200|Continues Central South Island farmer northern and southern editions|||0|0|0|||||||||
-Central Canterbury News|Central_Canterbury_News|CEN|ED1|STA||PER|0|Central Canterbury news|9917967113502836||1796711|100-P|17/06/2016|Denise|200|Ceased. Merged with Mid Canterbury herald to become Selwyn & Ashburton outlook.|CENED1-20150923-001|CENED1-20160504-020|0|0|0|||||||||
-Central District Times|Central_District_Times|CDT|ED1|STA||PER|0|Central District Times|9917960673502836||1796067|???|14/06/2016|Denise|200|Ceased|CDTED1-20150707-001|CDTED1-20160329-012|0|0|0|||||||||
 Central Districts Farmer|Central_Districts_Farmer|CDF + FCD|ED1|TEC|Weekly|PER|0|Central Districts farmer|9917974223502836||1797422|100-P|23/06/2016|Andrew R|200|Two title codes within the same collector folder|CDFED1-20150807-001||0|0|0|||||||||
-Official preview : Central Districts Field Days|Central_Districts_Field_Days_Official_Preview|FDP|ED1|STC|Annual|PER|1|Offical preview : Central Districts Field Days|9918150138102836||||9/06/2017|Denise|200|Two titles with same FDP prefix in this folder|||0|0|0|||||||||
-Central Districts Field Days|Central_Districts_Field_Days_Official_Preview|FDP|ED1|STC||PER|1|Programme|9918150266802836||||12/06/2017|Christina|200|Two titles with same FDP prefix in this folder|||0|0|0|||||||||
-Visitor handbook : Central Districts Field Days|Central_Districts_Field_Days_Visitor_Handbook|RLP|FDH|STA|Annual|PER|1|Visitor handbook : Central Districts Field Days|9918150135402836||||9/06/2017|Denise|200||||0|0|0|||||||||
-Central Leader|Central_Leader|CLD|ED1|PIL||PER|0|Central Leader|9917960423502836||1796042|200|14/06/2016|Denise|200||CLDED1-20150724-001||0|0|0|||||||||
-Central South Island Farmer North|Central_South_Island_Farmer_North|CSN|ED1|PIL||PER|0|Central South Island farmer north|9917973293502836||1797329|200|23/06/2016|Andrew R|200||CSNED1-20150919-001||0|0|0|||||||||
-Central South Island Farmer South|Central_South_Island_Farmer_South|CSS|ED1|PIL||PER|0|Central South Island farmer south|9917974103502836||1797410|200|23/06/2016|Andrew R|200||CSSED1-20150923-001||0|0|0|||||||||
-Christchurch Mail|Christchurch_Mail|CML|NTW|PIL||PER|0|Christchurch mail|9917960583502836||1796058|200|14/06/2016|Denise|200||CMLNTW-20150924-001||0|0|0|||||||||
-Clutha Leader|Clutha_Leader|CLU|ED1|TEC||PER|0|Clutha leader|9914702963502836||1470296|100-P|27/05/2016|Andrew R|200|Shared bibliographic record with papers past content|||0|0|0|||||||||
-Country living|Country_living|CL4|ED1|STA|Irregular|PER|1|Country living|9918150268002836||||7/06/2017|Christina|200|Can't see pattern to anticipate previous designation, if we are not doing numbering in designation this is not a problem.|CL4ED1-201612-001crop||1|0|0|||||||||
-Cuisine|Cuisine|CUI|ED1|PIL||PER|1|Cuisine|9917955233502836||1795523|200|10/06/2016|Denise|200||CUIED1-20160101-001||0|1|0||||173|20151201|monthly|||
-Cuisine Good Food Guide|Cuisine_Good_Food_Guide|GFG|ED1|TEC||PER|1|Good food guide|9918150265702836||||7/06/2017|Christina|200|One issue with different dates, multiple versions of pages|||0|0|0|||||||||
-Dargaville & Districts News|Dargaville_&_Districts_News|DDN|ED1|PIL||PER|0|Dargaville & Districts News|9917930123502836||1793012|200|7/06/2016|Denise|200|Ceased|DDNED1-20150729-001|DDNED1-20160224-W04|0|0|0|||||||||
-Dominion post|Dominion_post|DPT|TAB|TEC|Annual|SS|0|Property market|9918150131902836||||9/06/2017|Denise|200|Can't anticipate next issue|DPTTAB-20150930-001||0|0|0|||||||||
-East & Bays Courier|East_&_Bays_Courier|EBC|ED1|STA||PER|0|East & Bays Courier|9917930793502836||1793079|100-P|7/06/2016|Denise|200||||0|0|0|||||||||
-Eastern Courier|Eastern_Courier|ESC|ED1|PIL||PER|0|Eastern Courier|9917951973502836||1795197|100-P|10/06/2016|Denise|200||||0|0|0|||||||||
-Far North Real Estate|Far_North_Real_Estate|FRE|ED1|PIL||PER|0|Far North Real Estate|9917926363502836||1792636|100|3/06/2016|Denise|200||||0|0|0|||||||||
-Feilding Herald|Feilding_Herald|FDH|ED1|TEC||PER|0|Feilding Herald|9917919593502836||1791959|100-P|2/06/2016|Denise|200|Paper merged with Rangitikei mail (2005) and Central district times to form Feilding-Rangitikei Herald|FDHED1-20150702-001|FDHED1-20160331-040|0|0|0|||||||||
-Feilding Herald|Feilding_Herald|FDH|ED1|TEC||PER|0|Feilding-Rangitikei Herald |9917921803502836||1792180|100-P|2/06/2016|Denise|200|Paper merged with Rangitikei mail (2005) and Central district times to form Feilding-Rangitikei Herald|FDHED1-20160407-001||0|0|0|||||||||
-Feilding Herald|Feilding_Herald|FDH|TAB|TEC|Annual|SS|0|Rural Manawatu|9917920033502836||1792003|100-P|2/06/2016|Denise|200|Can't anticipate next issue|FDHTAB-20151203-001||0|0|0|||||||||
-Fieldays focus|Fieldays_focus|FDF|ED1|STA||PER|1|Focus|9918150264102836||||8/06/2017|Christina|200||||0|0|0|||||||||
-Fish and Game New Zealand|Fish_and_Game_New_Zealand|FGM|ED1|STA||PER|1|Fish & game New Zealand|9918150265302836||||7/06/2017|Christina|200||FGMED1-20160101-001|FGMED1-20161101-084|0|1|0||||90|20151201|monthly|||
-Franklin county news|Franklin_county_news|FCN|SPC|ONE||ONE|0|Fabulous Franklin|9918150265002836||||7/06/2017|Christina|200||FCNSPC-20161018-001|FCNSPC-20161018-032|0|0|0|||||||||
-Franklin County News|Franklin_County_News|FCN|ED1|STA||PER|0|Franklin County News|9917905833502836||1790583|100-P|2/06/2016|Denise|200||||0|0|0|||||||||
-Franklin County News|Franklin_County_News|FCN|HML|SUP||SS|0|Home & living|9917921613502836||1792161|100-P|2/06/2016|Denise|200||||0|0|0|||||||||
-Get growing|Get_growing|GTG|ED1|STA||PER|1|Get growing|9915719963502836||||7/06/2017|Christina|200||||0|0|0|||||||||
-Hamilton Press|Hamilton_Press|HMP|ED1|STA||PER|0|Hamilton Press|9917905443502836||1790544|100-P|27/05/2016|Denise|200||||0|0|0|||||||||
-Hauraki Herald|Hauraki_Herald|HAU|ED1|STA||PER|0|Hauraki Herald|9917905183502836||1790518|100-P|27/05/2016|Denise|200||||0|0|0|||||||||
-Hauraki Herald|Hauraki_Herald|HAU|PAP|SUP||SS|0|Paradise playground|9917905343502836||1790534|100-P|27/05/2016|Denise|200||||0|0|0|||||||||
-Horse and Pony New Zealand|Horse_and_Pony_New_Zealand|HPY|ED1|STA||PER|1|Horse and pony|9917983163502836||1798316|200|30/06/2016|Christina|200|Ceased|HPYED1-20160101-001|HPYED1-20160201-116|0|1|0||||679|20151201|Monthly|||
-Kaikoura Star|Kaikoura_Star|KKS|ED1|STC||PER|0|Kaikoura star|9917913773502836||1791377|200|1/06/2016|Andrew E|200||||0|0|0|||||||||
-Kaikoura Star|Kaikoura_Star|KKS|TAB + SPC|TEC|Biannual|SS|0|Experience Kaikoura |9917947923502836||1794792|100|10/06/2016|Andrew E|200|Variations in edition, can't anticipate next issue|||0|0|0|||||||||
-Kapi-Mana News|Kapi-Mana_News|KPN|ED1|STA||PER|0|Kapi-Mana News|9917913663502836||1791366|100-P|1/06/2016|Andrew E|200||||0|0|0|||||||||
-Kapi-Mana news|Kapi-Mana_news|KPN|SPC|TEC|Annual|SS|0|Porirua Sports Awards|9918150132802836||||9/06/2017|Denise|200|Can't anticipate next issue|KPNSPC-20161101-001||0|0|0|||||||||
-Kapiti Observer|Kapiti_Observer|KAP|ED1|STA||PER|0|Kapiti Observer|9917913883502836||1791388|100-P|1/06/2016|Andrew E|200||||0|0|0|||||||||
-Lifestyle Block|Lifestyle_Block|LSB|ED1|TEC||PER|1|Lifestyle block|9917980423502836||1798042|200|28/06/2016|Andrew R|200|Ceased, 1 issue, designations not worth the trouble!|GTDED1-20160101-001|GTDED1-20160201-084|1|0|1|29|20150101|Yearly||||0|20151201|Monthly
-Manawatu Standard|Manawatu_Standard|MAN|TAB|ONE||ONE|0|Our Manawatu|9917950073502836||1795007|200|16/06/2016|Andrew E|200||MANTAB-20150728-001|MANTAB-20150728-024|0|0|0|||||||||
-Manawatu Standard|Manawatu_Standard|MAN|TAB|ONE||ONE|0|Home maintenance|9917953123502836||1795312|200|16/06/2016|Andrew E|200||MANTAB-20150825-T01|MANTAB-20150825-T12|0|0|0|||||||||
-Manawatu Standard|Manawatu_Standard|MAN|TAB|ONE||ONE|0|Arohanui Hospice is celebrating 25 years|9917965223502836||1796522|200|16/06/2016|Andrew E|200||MANTAB-20160503-T01|MANTAB-20160503-T16|0|0|0|||||||||
-Manawatu Standard|Manawatu_Standard|MAN|TAB|ONE||ONE|0|Daffodil Day 25th Anniversary|9917965363502836||1796536|200|16/06/2016|Andrew E|200||MANTAB-20160824-001|MANTAB-20160824-012|0|0|0|||||||||
-Manawatu Standard|Manawatu_Standard|MAN|TAB|ONE||ONE|0|Student City Palmerston North|9917965623502836||1796562|200|16/06/2016|Andrew E|200||MANTAB-20160303-T01|MANTAB-20160303-T12|0|0|0|||||||||
-Manawatu standard|Manawatu_standard|MAN|TAB|ONE||ONE|0|Help me get home|9918150167102836||||6/06/2017|Christina|200||MANTAB-20160622-001|MANTAB-20160622-008|0|0|0|||||||||
-Manawatu Standard|Manawatu_Standard|MAN|ED1|STC||PER|0|Manawatu Standard|9917914353502836||1791435|200|16/06/2016|Andrew E|200||||0|0|0|||||||||
-Manawatu Standard|Manawatu_Standard|MAN|TAB|TEC|Monthly|SS|0|Manawatu home & garden|9917951143502836||1795114|200|10/06/2016|Andrew E|200|Can't anticipate next issue, I don't think this is monthly|MANTAB-20150728-001||0|0|0|||||||||
-Manawatu Standard|Manawatu_Standard|MAN|TAB|TEC|Annual|SS|0|Summer sportacular|9917971383502836||1797138|200|22/06/2016|Andrew E|200|Can't anticipate next issue|MANTAB-20150922-T01||0|0|0|||||||||
-Manawatu Standard|Manawatu_Standard|MAN|ED1|TEC|Weekly|SS|0|Rangitikei mail|9917975483502836||1797548|200|24/06/2016|Andrew E|200|Just pages 1 and 3, shares the rest of content with Feilding Herald|MANED1-20150702-R01|MANED1-20160331-R03|0|0|0|||||||||
-Manawatu Standard|Manawatu_Standard|MAN|TAB|TEC|Annual|SS|0|Weddings|9917951953502836||1795195|200|22/06/2016|Andrew E|200|Can't anticipate next issue|MANTAB-20151028-001||0|0|0|||||||||
-Manawatu Standard|Manawatu_Standard|MAN|TAB|TEC||SS|0|Under 5's … |9917971403502836||1797140|200|22/06/2016|Andrew E|200|Can't anticipate next issue|MANTAB-20151021-001||0|0|0|||||||||
-Manawatu standard|Manawatu_standard|MAN|SPC|TEC|Annual|SS|0|Central Districts Field Days|9918150135002836||||9/06/2017|Denise|200|Can't anticipate next issue|MANSPC-20170307-001||0|0|0|||||||||
-Manawatu standard|Manawatu_standard|MAN|SPC|TEC|Annual|SS|0|Hilux New Zealand Rural Games|9918150134602836||||9/06/2017|Denise|200|Can't anticipate next issue|MANTAB-20170308-001||0|0|0|||||||||
-Manukau Courier|Manukau_Courier|MKC|ED1|STA||PER|0|Manukau Courier|9917976523502836||1797652|100-P|27/06/2016|Andrew E|200||||0|0|0|||||||||
-Marlborough Express|Marlborough_Express|MEX|TAB|STC|Thursday|SS|0|Marlborough property express|9917913203502836||1791320|100|31/05/2016|Andrew R|200||||0|0|0|||||||||
-Marlborough Express|Marlborough_Express|MEX|ED1|TEC||PER|0|Marlborough express|9914705253502836||1470525|200|3/06/2016|Andrew R|200|Shared bibliographic record with papers past content|||0|0|0|||||||||
-Marlborough Express|Marlborough_Express|MEX|ED1 + TAB|TEC||ONE|0|Celebrating 150 years of Marlborough news|9917923693502836||1792369|200|3/06/2016|Andrew R|200|Two parts of this publication, with another insert for the same day inserted between them.|MEXED1-20160421-001, MEXTAB-20160421-A01|MEXED1-20160421-020, MEXTAB-20160421-A32|0|0|0|||||||||
-Marlborough Midweek|Marlborough_Midweek|MMW|TAB|ONE||ONE|0|Vine & wine|9917961543502836||1796154|100-P|14/06/2016|Denise|200||MMWTAB-20151021-001|MMWTAB-20151021-008|0|0|0|||||||||
-Marlborough Midweek|Marlborough_Midweek|MMW|ED1|STA||PER|0|Marlborough midweek|9917961213502836||1796121|100-P|14/06/2016|Denise|200||||0|0|0|||||||||
-Marlborough Midweek|Marlborough_Midweek|MMW|TAB + SPC|TEC||SS|0|Marlborough Wine & Food Festival|9917981353502836||1798135|100|29/06/2016|Denise|200|Variations in edition, can't anticipate next issue|||0|0|0|||||||||
-Marlborough Midweek|Marlborough_Midweek|MMW|TAB|TEC||SS|0|Marlborough farmer|9917961763502836||1796176|100-P|14/06/2016|Denise|200|Can't anticipate next issue|MMWTAB-20151028-001||0|0|0|||||||||
-Matamata Chronicle|Matamata_Chronicle|MMT|ED1|STA||PER|0|Matamata Chronicle|9917975663502836||1797566|100-P|24/06/2016|Andrew E|200||||0|0|0|||||||||
-Mid Canterbury Herald|Mid_Canterbury_Herald|MHD|ED1|STA||PER|0|Mid Canterbury herald|9917967003502836||1796700|???|17/06/2016|Denise|200||||0|0|0|||||||||
-Mirror|Mirror|QCM|ED1|STC||PER|0|Mirror (Queenstown)|9917975563502836||1797556|100-P|24/06/2016|Jenny|200|This edition has largely same content as Queenstown, with a few pages specific to this edition, fairfax files only show specific otago ed pages.|||0|0|0|||||||||
-Mirror|Mirror|QCM|ED2|STC||PER|0|Mirror (Central Otago)|9917975673502836||1797567|100-P|24/06/2016|Jenny|200|This edition has largely same content as Queenstown, with a few pages specific to this edition, fairfax files only show specific Wanaka ed pages.|||0|0|0|||||||||
-Mirror|Mirror|QCM|ED3|STC||PER|0|Mirror (Wanaka)|9917975753502836||1797575|100-P|24/06/2016|Jenny|200|Advised JG - Too hard for this iteration because of the versioning/editions stuff 22/9/17 |||0|0|0|||||||||
-Motor Times|Motor_Times|WKM|ED1|STA||PER|0|Motor Times|9917982213502836||1798221|100-P|30/06/2016|Denise|200||||0|0|0|||||||||
-New Zealand Autocar|New_Zealand_Autocar|AUC|ED1|STA||PER|1|New Zealand autocar|9917919113502836|2463-6797|1791911|200|2/06/2016|Denise|200||||0|0|0|||||||||
-New Zealand Fishing News|New_Zealand_Fishing_News|NZF|ED1|STA||PER|1|New Zealand fishing news|9917975583502836||1797558|200|24/06/2016|Christina|200|6 issues, if volume designation not being done, then no problem with this.|NZFED1-20160101-001|NZFED1-20160601-132|1|0|1|38|20150101|Yearly||||0|20151201|monthly
-New Zealand Gardener|New_Zealand_Gardener|NZG|ED1|TEC||PER|1|New Zealand gardener|9917905613502836||1790561|200|27/05/2016|Christina|200||NZGED1-20160101-001||1|1|0|71|20150101|Yearly|1|20151201|Monthly|||
-News Link |News_Link|NLK|ED1|STA||PER|0|Newslink|9917920023502836||1792002|100-P|2/06/2016|Christina|200||||0|0|0|||||||||
-North Harbour News|North_Harbour_News|NHN|ED1|STA||PER|0|North Harbour News|9917921493502836||1792149|100-P|2/06/2016|Christina|200||||0|0|0|||||||||
-North Shore Times|North_Shore_Times|NST|ED1|STA||PER|0|North Shore Times|9917922613502836||1792261|100-P|2/06/2016|Christina|200||||1796150|100-P|14/06/2016|Christina|200|||||||
-North Taranaki Midweek|North_Taranaki_Midweek|NTM|ED1|STA||PER|0|North Taranaki Midweek|9917923443502836||1792344|100-P|2/06/2016|Christina|200||||0|0|0|||||||||
-North Waikato News|North_Waikato_News|NWN|ED1|STA||PER|0|North Waikato News|9917961503502836||||||200||||0|0|0|||||||||
-Northern News|Northern_News|NNW|ED1|STA||PER|0|Northern News|9917961933502836||1796193|100-P|14/06/2016|Christina|200||||0|0|0|||||||||
-Northern Outlook|Northern_Outlook|NOL|ED1|STA||PER|0|Northern outlook|9918190442202836||||||200||||0|0|0|||||||||
-Nor-West News|Nor-West_News|NRN|ED1|STA||PER|0|Nor-West News|9917962043502836||1796204|100-P|14/06/2016|Christina|200||||0|0|0|||||||||
-Nor-West news|Nor-West_news|NRN|TAB|TEC|Annual|SS|0|Kumeu show|9918150169502836||||6/06/2017|Denise|200|Can't anticipate next issue|NRNTAB-20170309-001||0|0|0|||||||||
-NZ Dairy Farmer|NZ_Dairy_Farmer|DRY|ED1|STA||PER|1|NZ Dairy Farmer|9917320163502836|2463-2724|1732016|100-P|14/06/2016|Christina|200||||0|0|0|||||||||
-NZ House and Garden|NZ_House_and_Garden|HSG|ED1|STA||PER|1|New Zealand house and garden|9917905973502836||1790597|200|27/05/2016|Christina|200||HSGED1-20160101-001||0|0|1|||||||256|20151201|Monthly
-NZ Life and Leisure|NZ_Life_and_Leisure|LIF|ED1|STA||PER|1|NZ life and leisure|9917974013502836||1797401|200|23/06/2016|Christina|200|Ceased|LIFED1-20160101-001|LIFED1-20160101-164|0|1|0||||64|20151201|Monthly|||
-NZFarmer|NZFarmer|SFW|ED1 + STH|TEC||PER|0|NZFarmer|9916658013502836|2382-056X|1665801|100-P|22/06/2016|Christina|200|STH = Front pages from a selection of issues, for the Southern edition,|||0|0|0|||||||||
-Otago Southland Farmer|Otago_Southland_Farmer|OSF|ED1|STA||PER|0|Otago Southland farmer|9917974203502836||1797420|100-P|23/06/2016|Christina|200||||0|0|0|||||||||
-Outlook Real Estate|Outlook_Real_Estate|ORE|ED1|TEC||PER|0|Outlook Real Estate|9917974563502836||1797456|100|23/06/2016|Christina|200|TDNYPW-20160806-001 just page 1 - sitting in Taranaki Daily news folder|||0|0|0|||||||||
-Papakura Courier|Papakura_Courier|PKC|ED1|STA||PER|0|Papakura Courier|9917966453502836||1796645|100-P|17/06/2016|Denise|200||||0|0|0|||||||||
-Piako Post|Piako_Post|PKP|ED1|STA||PER|0|Piako Post|9917966443502836||1796644|100-P|17/06/2016|Denise|200||||0|0|0|||||||||
-Rodney Times|Rodney_Times|ROD|ED1|STA||PER|0|Rodney Times|9917966493502836||1796649|100-P|17/06/2016|Denise|200||||0|0|0|||||||||
-Rotorua Review|Rotorua_Review|ROT|ED1|STA||PER|0|Rotorua Review|9917966553502836||1796655|100-P|17/06/2016|Denise|200||||0|0|0|||||||||
-Ruapehu Press|Ruapehu_Press|RUA|ED1|STA||PER|0|Ruapehu Press|9917966623502836||1796662|100-P|17/06/2016|Denise|200||||0|0|0|||||||||
-Saturday Express|Saturday_Express|SAT|ED1|TEC||PER|0|Saturday express|9917907173502836||1790717|100-P|3/06/2016|Andrew R|200||||0|0|0|||||||||
-Saturday Express|Saturday_Express|SAT + MMW|TAB + TAB|TEC|Saturdays|SS|0|Marlborough property guide|9917923813502836||1792381|100-P|3/06/2016|Andrew R|200|Variations in name collector code and edition - MMWTAB-20161221-001 files are a duplicate issue|||0|0|0|||||||||
-Selwyn & Ashburton Outlook|Selwyn_&_Ashburton_Outlook|SAO|ED1|STA||PER|0|Selwyn & Ashburton Outlook|9918150572602836||||12/06/2017|Christina|200||||0|0|0|||||||||
-South Canterbury Herald|South_Canterbury_Herald|HCH|ED1|STA||PER|0|South Canterbury herald|9917966653502836||1796665|100-P|17/06/2016|Denise|200||||0|0|0|||||||||
-South Taranaki Star|South_Taranaki_Star|STS|ED1|STC||PER|0|South Taranaki Star|9917966723502836||1796672|100-P|17/06/2016|Denise|200|Some issues have 2nd ed., some have Nth Is. & Sth Is. Ed, but different pages for diff eds don't have any indication that from diff ed.|||0|0|0|||||||||
-South Waikato News|South_Waikato_News|SWN|ED1|STA||PER|0|South Waikato News|9917966833502836||1796683|100-P|17/06/2016|Denise|200||||0|0|0|||||||||
-Southern Homes|Southern_Homes|SHM|ED1|STA||PER|0|Southern Homes|9917982163502836||1798216|100|30/06/2016|Denise|200||||0|0|0|||||||||
-Style of life|Style_of_life|ONL + SNA|SPC|TEC||PER|1|Style of life|9918150572002836||||12/06/2017|Christina|200|Two title name codes|||0|0|0|||||||||
-Sunday News|Sunday_News|SUN|ED1 + ED2 + NT1 |TEC||PER|0|Sunday News|9917984313502836||1798431|200|1/07/2016|Jenny|200|"NT1 = North Island First Edition - A few pages for a handful of issues stops Oct 2016,
-ST1 = South Island First Edition - A few pages for a handful of issues stops Oct 2016
-ED2 just a few pages from 3 issues"|||0|0|0|||||||||
-Sunday Star Times|Sunday_Star_Times|SST|ED1|TEC||SS|0|Sunday star times property|9917976273502836||1797627|100|24/06/2016|Christina|200|Three regional issues: Southern, Lower North Island, Upper North Island|||0|0|0|||||||||
-Sunday Star Times|Sunday_Star_Times|SST|NT1 |TEC||PER|0|Sunday Star Times|9917976113502836||1797611|200|24/06/2016|Christina|200|"NT1 = North Island First Edition (a selection of a few pages for a handful of issues) - continuing
-NT2 = North Island Second edition (usually the first page for a selection of issues) - continuing
-ST2 = South Island Second edition (usually the first page for a selection of issues) - continuing"|||0|0|0|||||||||
-Sunday Star Times Sunday|Sunday_Star_Times_Sunday|SMG|NT1 |TEC||PER|0|Sunday Star Times Sunday|9917976283502836||1797628|200|1/07/2016|Christina|200|NT1 = North Island First Edition -Just a few pages for each issue stops May 2016|||0|0|0|||||||||
-Taranaki Daily News|Taranaki_Daily_News|TDN|ED1|STC||PER|0|Taranaki Daily News|9917976003502836||1797600|200|24/06/2016|Denise|200||||0|0|0|||||||||
-Taranaki Daily News|Taranaki_Daily_News|TDN|ED1|SUP|Quarterly|SS|0|Lifestyle homes |9917981473502836||1798147|200|29/06/2016|Denise|200||TDNTAB-20151211-T01|TDNTAB-20151211-T24|0|0|0|||||||||
-Taranaki Daily News|Taranaki_Daily_News|TDN|ED1|SUP|Wednesday|SS|0|Motor|9917982063502836||1798206|100-P|30/06/2016|Denise|200||TDNED1-20150701-T01||0|0|0|||||||||
-Taranaki Daily News|Taranaki_Daily_News|TDN|ED1 + YPW|TEC|Saturday (weekly)|SS|0|Property weekly|9917976413502836||1797641|100|27/06/2016|Denise|200|Edition changes within collector folder|TDNED1-20150704-P01||0|0|0|||||||||
-Taranaki Daily News|Taranaki_Daily_News|TDN|ED1|TEC|Annual|SS|0|Taranaki international arts festival|9917976443502836||1797644|200|27/06/2016|Denise|200|Can't anticipate next issue|TDNTAB-20150731-T01||0|0|0|||||||||
-Taranaki Daily News|Taranaki_Daily_News|TDN|ED1 + TAB|TEC|Annual|SS|0|Farming|9917976573502836||1797657|200|27/06/2016|Denise|200|Can't anticipate next issue|TDNTAB-20150925-T01||0|0|0|||||||||
-Taranaki Daily News|Taranaki_Daily_News|TDN|TAB|TEC|bimonthly|SS|0|Lifestyles Taranaki |9917981553502836||1798155|200|29/06/2016|Denise|200|Can't anticipate next issue|TDNTAB-20160324-T01||0|0|0|||||||||
-Taranaki Daily News|Taranaki_Daily_News|TDN|TAB|TEC|Annual|SS|0|Garden spectacular|9917983063502836||1798306|200|30/06/2016|Denise|200|Can't anticipate next issue|TDNTAB-20151019-T01||0|0|0|||||||||
-Taupo Times|Taupo_Times|TPO|ED1|STA||PER|0|Taupo Times|9917962373502836||1796237|100-P|15/06/2016|Denise|200||||0|0|0|||||||||
-The Bay Chronicle|The_Bay_Chronicle|BCR|ED1|STA||PER|0|Bay Chronicle|9917952983502836||1795298|100-P|10/06/2016|Denise|200|||||||||||||||
-Cut magazine|The_Cut_magazine|CUT|ED1|STA||PER|1|Cut magazine|9918150131402836||||9/06/2017|Denise|200||CUTED1-20160201-001|CUTED1-20160201-164|0|0|0|||||||||
-The Dominion post|The_Dominion_post|DPT|TAB|ONE||ONE|0|Wings over Wairarapa air festival|9918148153202836||||2/06/2017|Denise|200||DPTTAB-20170207-001|DPTTAB-20170207-016|0|0|0|||||||||
-The Dominion Post|The_Dominion_Post|DPT|ED1|SUP|Wednesday|SS|0|Life|9917963483502836||1796348|200|15/06/2016|Denise|200| |DPTED1-20150701-L01||0|0|0|||||||||
-The Dominion Post|The_Dominion_Post|DPT|YWE|SUP||SS|0|Your weekend|9917963903502836||1796390|200|16/06/2016|Denise|200| |||0|0|0|||||||||
-The Dominion Post|The_Dominion_Post|DPT|ED1|SUP|Tuesday|SS|0|TV week|9917964493502836||1796449|200|16/06/2016|Denise|200| |DPTED1-20150707-T01||0|0|0|||||||||
-The Dominion Post|The_Dominion_Post|DPT|ED1 + ED2|TEC||PER|0|Dominion Post|9917963133502836||1796313|200|15/06/2016|Denise|200|Pages are different for each edition, just a few pages across issues|||0|0|0|||||||||
-The Dominion Post|The_Dominion_Post|DPT|SPE + TAB|TEC|Annual|SS|0|Commercial property|9917964553502836||1796455|200|16/06/2016|Denise|200|Can't anticipate next issue|DPTSPE-20150317-001||0|0|0|||||||||
-The Dominion Post|The_Dominion_Post|DPT|TAB|TEC|Annual|SS|0|Wellington gold awards|9917964843502836||1796484|200|16/06/2016|Denise|200|Can't anticipate next issue|DPTTAB-20150701-T01||0|0|0|||||||||
-The Dominion Post|The_Dominion_Post|DPT|TAB + SPC|TEC|Annual|SS|0|Wellington success|9917964913502836||1796491|200|16/06/2016|Denise|200|Can't anticipate next issue|DPTTAB-20150722-T01||0|0|0|||||||||
-The Dominion Post|The_Dominion_Post|DPT|TAB + SPC|TEC|Annual|SS|0|World of wearable art awards show|9917965233502836||1796523|200|16/06/2016|Denise|200|Can't anticipate next issue|DPTTAB-20150921-001||0|0|0|||||||||
-The Dominion Post|The_Dominion_Post|DPT|TAB|TEC|Annual|SS|0|Education|9917966353502836||1796635|200|17/06/2016|Denise|200|Can't anticipate next issue|DPTTAB-20151021-001||0|0|0|||||||||
-The Dominion Post|The_Dominion_Post|DPT|TAB|TEC|Annual|SS|0|Great taste|9917966383502836||1796638|200|17/06/2016|Denise|200|Can't anticipate next issue|DPTTAB-20151209-001||0|0|0|||||||||
-The Dominion Post|The_Dominion_Post|DPT|TAB|TEC|Annual|SS|0|Round the bays official results|9917966423502836||1796642|200|17/06/2016|Denise|200|Can't anticipate next issue|DPTTAB-20160222-T01||0|0|0|||||||||
-The Dominion Post|The_Dominion_Post|DPT|TAB|TEC|Annual|SS|0|Summer times|9917981633502836||1798163|200|29/06/2016|Denise|200|Can't anticipate next issue|DPTTAB-20151109-T01||0|0|0|||||||||
-The Eye|The_Eye|EYE|ED1|PIL||PER|0|Eye|9917926863502836||1792686|100-P|3/06/2016|Denise|200||||0|0|0|||||||||
-The Hastings Mail|The_Hastings_Mail|HAM|ED1|STA||PER|0|Hastings Mail|9913270193502836||1327019|100-P|7/07/2016|Denise|200| |||0|0|0|||||||||
-The Horowhenua Mail|The_Horowhenua_Mail|HML|ED1|STA||PER|0|Horowhenua Mail|9917667743502836||1766774|100-P|27/05/2016|Andrew R|200||||0|0|0|||||||||
-The Hutt News|The_Hutt_News|HUT|ED1|TEC||PER|0|Hutt News|9914842803502836||1484280|100-P|27/05/2016|Andrew R|200|Shared bibliographic record with papers past content|||0|0|0|||||||||
-The Napier Mail|The_Napier_Mail|NAM|ED1|STA||PER|0|Napier Mail|9917975853502836||1797585|200|24/06/2016|Andrew E|200||||0|0|0|||||||||
-The Nelson Leader|The_Nelson_Leader|LNS|ED1|STA||PER|0|Nelson leader|9917975883502836||1797588|100-P|24/06/2016|Andrew E|200||||0|0|0|||||||||
-The Nelson Mail|The_Nelson_Mail|NEL|TAB|ONE||ONE|0|Nelson's newspaper : the story of the Nelson mail 150 years |9917976433502836||1797643|200|27/06/2016|Andrew E|200||NELTAB-20160319-001|NELTAB-20160319-032|0|0|0|||||||||
-The Nelson Mail|The_Nelson_Mail|NEL|ED1|STC||PER|0|Nelson mail|9917975923502836||1797592|200|24/06/2016|Andrew E|200||||0|0|0|||||||||
-The Nelson Mail|The_Nelson_Mail|NEL|TAB|SUP|Wednesday - fortnightly|SS|0|Motoring plus|9917975983502836||1797598|100-P|24/06/2016|Andrew E|200||NELTAB-20150923-001||0|0|0|||||||||
-The Nelson Mail|The_Nelson_Mail|NEL|TAB|TEC||SS|0|Return to education|9917976293502836||1797629|200|27/06/2016|Andrew E|200|Can't anticipate next issue|NELTAB-20160123-001||0|0|0|||||||||
-The Nelson mail|The_Nelson_mail|NM|SUM|ONE||ONE|0|Nelson Marlborough Rescue Helicopter : celebrating 25 years.|9918148153302836||||2/06/2017|Denise|200||NELTAB-20160523-001|NELTAB-20160523-020|0|0|0|||||||||
-The Nelson mail|The_Nelson_mail|NM|SUM|TEC|Weekly|SS|0|Summit property weekly|9918148153402836||||2/06/2017|Denise|200|Can't find all the issues|||0|0|0|||||||||
+Central District Times|Central_District_Times|CDT|ED1|STA||PER|0|Central District Times|9917960673502836||1796067|???|14/06/2016|Denise|200|Ceased|CDTED1-20150707-001|CDTED1-20160329-012|0|0|0|||||||||
+Central Leader|Central_Leader|CEL|ED1|STA||PER|0|Central Leader|9917960423502836||||||200|Fairfax updated title code|||0|0|0|||||||||
+Central Canterbury News|Central_Canterbury_News|CEN|ED1|STA||PER|0|Central Canterbury news|9917967113502836||1796711|100-P|17/06/2016|Denise|200|Ceased. Merged with Mid Canterbury herald to become Selwyn & Ashburton outlook.|CENED1-20150923-001|CENED1-20160504-020|0|0|0|||||||||
 The Press|The_Press|CHP|TAB|ONE||ONE|0|Great place to be |9917927233502836||1792723|200|17/06/2016|Andrew R|200||CHPTAB-20151127-001|CHPTAB-20151127-016|0|0|0|||||||||
 The Press|The_Press|CHP|ED1|STC||PER|0|Press (Christchurch)|9915205583502836||1520558|200|27/05/2016|Andrew R|200|Shared bibliographic record with papers past content|||0|0|0|||||||||
 The Press|The_Press|CHP|ED1|SUP|Monday|SS|0|Escape|9917905293502836||1790529|200|27/05/2016|Andrew R|200||CHPED1-20150921-001||0|0|0|||||||||
@@ -183,32 +28,224 @@ The Press|The_Press|CHP|TAB|SUP|Monthly - first Wednesday|SS|0|At home |99179061
 The Press|The_Press|CHP|TAB|TEC|Semiannual|SS|0|Land and new homes|9918148154702836||||1/06/2017|Denise|200|Can't anticipate next issue|CHPTAB-20160324-001 ||0|0|0|||||||||
 The Press|The_Press|CHP|TAB|TEC|Annual|SS|0|Canterbury home show|9918148154502836||||1/06/2017|Denise|200|Can't anticipate next issue|CHPTAB-20151014-001||0|0|0|||||||||
 The Press|The_Press|CHP|TAB|TEC|Annual|SS|0|Champion Canterbury business awards ...|9918150171902836||||6/06/2017|Denise|200|Can't anticipate next issue|CHPTAB-20160922-001||0|0|0|||||||||
-Southland times|The_Southland_times|STL|TAB|SUP|Thursday|SS|0|Southland Real Estate Ltd|9918150569902836||||12/06/2017|Denise|200|| STLTAB-20160211-001 ||0|0|0|||||||||
-The Southland times|The_Southland_times|STL|TAB|ONE||ONE|0|SBS Bank Tour of Southland|9918148154902836||||31/05/2017|Denise|200||STLTAB-20161028-001|STLTAB-20161028-012|0|0|0|||||||||
-The Southland Times|The_Southland_Times|STL|ED1|TEC||PER|0|Southland times|9914607593502836||1460759|200|27/05/2016|Andrew R|200|Shared bibliographic record with papers past content|||0|0|0|||||||||
-The Southland times|The_Southland_times|STL|TAB|TEC|Annual|SS|0|Wedding guide|9918148155302836||||31/05/2017|Denise|200|Can't anticipate next issue|STLTAB-20160930-001||0|0|0|||||||||
-The Southland times|The_Southland_times|STL|TAB|TEC|Annual|SS|0|Stags season|9918148155202836||||31/05/2017|Denise|200|Can't anticipate next issue|STLTAB-20160819-001||0|0|0|||||||||
-The Southland times|The_Southland_times|STL|TAB|TEC|Annual|SS|0|Building and renovation guide ...|9918148155002836||||31/05/2017|Denise|200|Can't anticipate next issue|STLTAB-20160826-001||0|0|0|||||||||
-The Southland times|The_Southland_times|STL|TAB|TEC|Annual|SS|0|Crank up ...|9918148154802836||||31/05/2017|Denise|200|Can't anticipate next issue|STLTAB-20170125-001||0|0|0|||||||||
-The Tasman Leader|The_Tasman_Leader|LRC|ED1|STA||PER|0|Tasman leader|9917962463502836||1796246|100-P|15/06/2016|Denise|200||||0|0|0|||||||||
+Country Living|Country_living|CL4|ED1|STA|Irregular|PER|1|Country living|9918150268002836||||7/06/2017|Christina|200|Can't see pattern to anticipate previous designation, if we are not doing numbering in designation this is not a problem.|CL4ED1-201612-001crop||1|0|0|||||||||
+Central Leader|Central_Leader|CLD|ED1|PIL||PER|0|Central Leader|9917960423502836||1796042|200|14/06/2016|Denise|200||CLDED1-20150724-001||0|0|0|||||||||
+Clutha Leader|Clutha_Leader|CLU|ED1|TEC||PER|0|Clutha leader|9914702963502836||1470296|100-P|27/05/2016|Andrew R|200|Shared bibliographic record with papers past content|||0|0|0|||||||||
+Christchurch Mail|Christchurch_Mail|CML|NTW|PIL||PER|0|Christchurch mail|9917960583502836||1796058|200|14/06/2016|Denise|200||CMLNTW-20150924-001||0|0|0|||||||||
+Central South Island Farmer North|Central_South_Island_Farmer_North|CSN|ED1|PIL||PER|0|Central South Island farmer north|9917973293502836||1797329|200|23/06/2016|Andrew R|200||CSNED1-20150919-001||0|0|0|||||||||
+Central South Island Farmer South|Central_South_Island_Farmer_South|CSS|ED1|PIL||PER|0|Central South Island farmer south|9917974103502836||1797410|200|23/06/2016|Andrew R|200||CSSED1-20150923-001||0|0|0|||||||||
+Cuisine|Cuisine|CUI|ED1|PIL||PER|1|Cuisine|9917955233502836||1795523|200|10/06/2016|Denise|200||CUIED1-20160101-001||0|1|0||||173|20151201|monthly|||
+Cut Magazine|The_Cut_magazine|CUT|ED1|STA||PER|1|Cut magazine|9918150131402836||||9/06/2017|Denise|200||CUTED1-20160201-001|CUTED1-20160201-164|0|0|0|||||||||
+Dargaville & Districts News|Dargaville_&_Districts_News|DDN|ED1|PIL||PER|0|Dargaville & Districts News|9917930123502836||1793012|200|7/06/2016|Denise|200|Ceased|DDNED1-20150729-001|DDNED1-20160224-W04|0|0|0|||||||||
+The Dominion Post|The_Dominion_post|DOM|TAB|TEC|Annual|SS|0|Wings over Wairarapa air festival|9918148153202836|||||||Can't anticipate next issue. Fairfax updated title code|||0|0|0|||||||||
+The Dominion Post|The_Dominion_Post|DOM|YWE|SUP|Saturday|SS|0|Your weekend|9917963903502836|||||||Fairfax updated title code||||||||||||||
+The Dominion Post|The_Dominion_Post|DOM|ED1|TEC||PER|0|Dominion Post|9917963133502836||||||200|Fairfax updated title code|||0|0|0|||||||||
+The Dominion Post|The_Dominion_post|DPT|TAB|TEC|Annual|SS|0|Property market|9918150131902836||||9/06/2017|Denise|200|Can't anticipate next issue|DPTTAB-20150930-001||0|0|0|||||||||
+The Dominion Post|The_Dominion_post|DPT|TAB|ONE|Annual|SS|0|Wings over Wairarapa air festival|9918148153202836||||2/06/2017|Denise|200|Can't anticipate next issue|DPTTAB-20170207-001|DPTTAB-20170207-016|0|0|0|||||||||
+The Dominion Post|The_Dominion_Post|DPT|ED1|SUP|Wednesday|SS|0|Life|9917963483502836||1796348|200|15/06/2016|Denise|200|L Prefix before page number. Fairfax updated title code to DOM|DPTED1-20150701-L01||0|0|0|||||||||
+The Dominion Post|The_Dominion_Post|DPT|YWE|SUP|Saturday|SS|0|Your weekend|9917963903502836||1796390|200|16/06/2016|Denise|200| |||0|0|0|||||||||
+The Dominion Post|The_Dominion_Post|DPT|ED1|SUP|Tuesday|SS|0|TV week|9917964493502836||1796449|200|16/06/2016|Denise|200|T Prefix before page number. Fairfax updated title code to DOM|DPTED1-20150707-T01||0|0|0|||||||||
+The Dominion Post|The_Dominion_Post|DPT|ED1 + ED2|TEC||PER|0|Dominion Post|9917963133502836||1796313|200|15/06/2016|Denise|200|Pages are different for each edition, just a few pages across issues|||0|0|0|||||||||
+The Dominion Post|The_Dominion_Post|DPT|SPE + TAB|TEC|Annual|SS|0|Commercial property|9917964553502836||1796455|200|16/06/2016|Denise|200|Can't anticipate next issue|DPTSPE-20150317-001||0|0|0|||||||||
+The Dominion Post|The_Dominion_Post|DPT|TAB|TEC|Annual|SS|0|Wellington gold awards|9917964843502836||1796484|200|16/06/2016|Denise|200|Can't anticipate next issue|DPTTAB-20150701-T01||0|0|0|||||||||
+The Dominion Post|The_Dominion_Post|DPT|TAB + SPC|TEC|Annual|SS|0|Wellington success|9917964913502836||1796491|200|16/06/2016|Denise|200|Can't anticipate next issue|DPTTAB-20150722-T01||0|0|0|||||||||
+The Dominion Post|The_Dominion_Post|DPT|TAB + SPC|TEC|Annual|SS|0|World of wearable art awards show|9917965233502836||1796523|200|16/06/2016|Denise|200|Can't anticipate next issue|DPTTAB-20150921-001||0|0|0|||||||||
+The Dominion Post|The_Dominion_Post|DPT|TAB|TEC|Annual|SS|0|Education|9917966353502836||1796635|200|17/06/2016|Denise|200|Can't anticipate next issue|DPTTAB-20151021-001||0|0|0|||||||||
+The Dominion Post|The_Dominion_Post|DPT|TAB|TEC|Annual|SS|0|Great taste|9917966383502836||1796638|200|17/06/2016|Denise|200|Can't anticipate next issue|DPTTAB-20151209-001||0|0|0|||||||||
+The Dominion Post|The_Dominion_Post|DPT|TAB|TEC|Annual|SS|0|Round the bays official results|9917966423502836||1796642|200|17/06/2016|Denise|200|Can't anticipate next issue|DPTTAB-20160222-T01||0|0|0|||||||||
+The Dominion Post|The_Dominion_Post|DPT|TAB|TEC|Annual|SS|0|Summer times|9917981633502836||1798163|200|29/06/2016|Denise|200|Can't anticipate next issue|DPTTAB-20151109-T01||0|0|0|||||||||
+NZ Dairy Farmer|NZ_Dairy_Farmer|DRY|ED1|STA||PER|1|NZ Dairy Farmer|9917320163502836|2463-2724|1732016|100-P|14/06/2016|Christina|200||||0|0|0|||||||||
+East & Bays Courier|East_&_Bays_Courier|EAB|ED1|STA||PER|0|East & Bays Courier|9917930793502836||||||200|Fairfax updated title code|||0|0|0|||||||||
+Eastern Courier|Eastern_Courier|EAC|ED1|PIL||PER|0|Eastern Courier|9917951973502836||||||200|Fairfax updated title code|||0|0|0|||||||||
+East & Bays Courier|East_&_Bays_Courier|EBC|ED1|STA||PER|0|East & Bays Courier|9917930793502836||1793079|100-P|7/06/2016|Denise|200||||0|0|0|||||||||
+Eastern Courier|Eastern_Courier|ESC|ED1|PIL||PER|0|Eastern Courier|9917951973502836||1795197|100-P|10/06/2016|Denise|200||||0|0|0|||||||||
+The Eye|The_Eye|EYE|ED1|PIL||PER|0|Eye|9917926863502836||1792686|100-P|3/06/2016|Denise|200||||0|0|0|||||||||
+Franklin County News|Franklin_county_news|FCN|SPC|ONE||ONE|0|Fabulous Franklin|9918150265002836||||7/06/2017|Christina|200||FCNSPC-20161018-001|FCNSPC-20161018-032|0|0|0|||||||||
+Franklin County News|Franklin_County_News|FCN|ED1|STA||PER|0|Franklin County News|9917905833502836||1790583|100-P|2/06/2016|Denise|200||||0|0|0|||||||||
+Franklin County News|Franklin_County_News|FCN|HML|SUP||SS|0|Home & living|9917921613502836||1792161|100-P|2/06/2016|Denise|200||||0|0|0|||||||||
+Canterbury Farmer|Canterbury_Farmer|FCY|ED1|STA||PER|0|Canterbury farmer|9917973633502836||1797363|100-P|23/06/2016|Andrew R|200|Continues Central South Island farmer northern and southern editions|||0|0|0|||||||||
+Fieldays Focus|Fieldays_focus|FDF|ED1|STA||PER|1|Focus|9918150264102836||||8/06/2017|Christina|200||||0|0|0|||||||||
+Feilding Herald|Feilding_Herald|FDH|ED1|TEC||PER|0|Feilding Herald|9917919593502836||1791959|100-P|2/06/2016|Denise|200|Paper merged with Rangitikei mail (2005) and Central district times to form Feilding-Rangitikei Herald|FDHED1-20150702-001|FDHED1-20160331-040|0|0|0|||||||||
+Feilding-Rangitikei Herald |Feilding_Herald|FDH|ED1|TEC||PER|0|Feilding-Rangitikei Herald |9917921803502836||1792180|100-P|2/06/2016|Denise|200|Paper merged with Rangitikei mail (2005) and Central district times to form Feilding-Rangitikei Herald|FDHED1-20160407-001||0|0|0|||||||||
+Feilding Herald|Feilding_Herald|FDH|TAB|TEC|Annual|SS|0|Rural Manawatu|9917920033502836||1792003|100-P|2/06/2016|Denise|200|Can't anticipate next issue|FDHTAB-20151203-001||0|0|0|||||||||
+Official preview : Central Districts Field Days|Central_Districts_Field_Days_Official_Preview|FDP|ED1|STC|Annual|PER|1|Offical preview : Central Districts Field Days|9918150138102836||||9/06/2017|Denise|200|Two titles with same FDP prefix in this folder|||0|0|0|||||||||
+Central Districts Field Days|Central_Districts_Field_Days_Official_Preview|FDP|ED1|STC||PER|1|Programme|9918150266802836||||12/06/2017|Christina|200|Two titles with same FDP prefix in this folder|||0|0|0|||||||||
+Feilding-Rangitikei Herald |Feilding_Herald|FER|ED1|STA||PER|0|Feilding-Rangitikei Herald |9917921803502836||||||200|Fairfax updated title code|||0|0|0|||||||||
+Fish and Game New Zealand|Fish_and_Game_New_Zealand|FGM|ED1|STA||PER|1|Fish & game New Zealand|9918150265302836||||7/06/2017|Christina|200||FGMED1-20160101-001|FGMED1-20161101-084|0|1|0||||90|20151201|monthly|||
+Franklin County News|Franklin_County_News|FRC|ED1|STA||PER|0|Franklin County News|9917905833502836||||||200|Fairfax updated title code|||0|0|0|||||||||
+Far North Real Estate|Far_North_Real_Estate|FRE|ED1|PIL||PER|0|Far North Real Estate|9917926363502836||1792636|100|3/06/2016|Denise|200||||0|0|0|||||||||
+Waikato Farmer|Waikato_Farmer|FWK + WFK|ED1|TEC||PER|0|Waikato Farmer|9917975283502836|||100-P|||200|Two title codes within the same collector folder - rename file FWKED1-20160516-026|||0|0|0|||||||||
+Cuisine Good Food Guide|Cuisine_Good_Food_Guide|GFG|ED1|TEC||PER|1|Good food guide|9918150265702836||||7/06/2017|Christina|200|One issue with different dates, multiple versions of pages|||0|0|0|||||||||
+Get Growing|Get_growing|GTG|ED1|STA||PER|1|Get growing|9915719963502836||||7/06/2017|Christina|200||||0|0|0|||||||||
+Hauraki Herald|Hauraki_Herald|HAH|ED1|STA||PER|0|Hauraki Herald|9917905183502836||||||200|Fairfax updated title code|||0|0|0|||||||||
+The Hastings Mail|The_Hastings_Mail|HAM|ED1|STA||PER|0|Hastings Mail|9913270193502836||1327019|100-P|7/07/2016|Denise|200| |||0|0|0|||||||||
+Hamilton Press|Hamilton_Press|HAP|ED1|STA||PER|0|Hamilton Press|9917905443502836||1790544|100-P|27/05/2016|Denise|200|Fairfax updated title code|||0|0|0|||||||||
+Hauraki Herald|Hauraki_Herald|HAU|ED1|STA||PER|0|Hauraki Herald|9917905183502836||1790518|100-P|27/05/2016|Denise|200||||0|0|0|||||||||
+Hauraki Herald|Hauraki_Herald|HAU|PAP|SUP|Annual|SS|0|Paradise playground|9917905343502836||1790534|100-P|27/05/2016|Denise|200||||0|0|0|||||||||
+Hauraki Herald|Hauraki_Herald|HAU|QFS|SUP|Annual|SS|0|Paradise playground|9917905343502836||||||200|Need to see if there any other *QFS in lost 2018 pages. Fairfax updated title code|||0|0|0|||||||||
+South Canterbury Herald|South_Canterbury_Herald|HCH|ED1|STA||PER|0|South Canterbury herald|9917966653502836||1796665|100-P|17/06/2016|Denise|200||||0|0|0|||||||||
+The Horowhenua Mail|The_Horowhenua_Mail|HML|ED1|STA||PER|0|Horowhenua Mail|9917667743502836||1766774|100-P|27/05/2016|Andrew R|200||||0|0|0|||||||||
+Hamilton Press|Hamilton_Press|HMP|ED1|STA||PER|0|Hamilton Press|9917905443502836||1790544|100-P|27/05/2016|Denise|200||||0|0|0|||||||||
+The Horowhenua Mail|The_Horowhenua_Mail|HOM|ED1|STA||PER|0|Horowhenua Mail|9917667743502836||1766774|100-P|27/05/2016|Andrew R|200|Fairfax updated title code|||0|0|0|||||||||
+Horse and Pony New Zealand|Horse_and_Pony_New_Zealand|HPY|ED1|STA||PER|1|Horse and pony|9917983163502836||1798316|200|30/06/2016|Christina|200|Ceased|HPYED1-20160101-001|HPYED1-20160201-116|0|1|0||||679|20151201|Monthly|||
+NZ House and Garden|NZ_House_and_Garden|HSG|ED1|STA||PER|1|New Zealand house and garden|9917905973502836||1790597|200|27/05/2016|Christina|200||HSGED1-20160101-001||0|0|1|||||||256|20151201|Monthly
+The Hutt News|The_Hutt_News|HUN|ED1|TEC||PER|0|Hutt News|9914842803502836||1484280|100-P|27/05/2016|Andrew R|200|Papers Past. Fairfax updated title code|||0|0|0|||||||||
+The Hutt News|The_Hutt_News|HUT|ED1|TEC||PER|0|Hutt News|9914842803502836||1484280|100-P|27/05/2016|Andrew R|200|Papers Past. |||0|0|0|||||||||
+Kapi-Mana News|Kapi-Mana_News|KAN|ED1|STA||PER|0|Kapi-Mana News|9917913663502836||||||200|Fairfax updated title code|||0|0|0|||||||||
+Kapiti Observer|Kapiti_Observer|KAO|ED1|STA||PER|0|Kapiti Observer|9917913883502836||||||200|Fairfax updated title code|||0|0|0|||||||||
+Kapiti Observer|Kapiti_Observer|KAP|ED1|STA||PER|0|Kapiti Observer|9917913883502836||1791388|100-P|1/06/2016|Andrew E|200||||0|0|0|||||||||
+Kaikoura Star|Kaikoura_Star|KKS|ED1|STC||PER|0|Kaikoura star|9917913773502836||1791377|200|1/06/2016|Andrew E|200||||0|0|0|||||||||
+Kaikoura Star|Kaikoura_Star|KKS|TAB + SPC|TEC|Biannual|SS|0|Experience Kaikoura |9917947923502836||1794792|100|10/06/2016|Andrew E|200|Variations in edition, can't anticipate next issue|||0|0|0|||||||||
+Kapi-Mana News|Kapi-Mana_News|KPN|ED1|STA||PER|0|Kapi-Mana News|9917913663502836||1791366|100-P|1/06/2016|Andrew E|200||||0|0|0|||||||||
+Kapi-Mana News|Kapi-Mana_news|KPN|SPC|TEC|Annual|SS|0|Porirua Sports Awards|9918150132802836||||9/06/2017|Denise|200|Can't anticipate next issue|KPNSPC-20161101-001||0|0|0|||||||||
+The Nelson Leader|The_Nelson_Leader|LEN|ED1|STA||PER|0|The Leader (Nelson)|9917975883502836||1797588|100-P|24/06/2016|Andrew E|200|Fairfax updated title code|||0|0|0|||||||||
+The Tasman Leader|The_Tasman_Leader|LET|ED1|STA||PER|0|The Leader (Tasman)|9917962463502836||1796246|100-P|15/06/2016|Denise|200|Fairfax updated title code|||0|0|0|||||||||
+NZ Life and Leisure|NZ_Life_and_Leisure|LIF|ED1|STA||PER|1|NZ life and leisure|9917974013502836||1797401|200|23/06/2016|Christina|200|Ceased|LIFED1-20160101-001|LIFED1-20160101-164|0|1|0||||64|20151201|Monthly|||
+The Nelson Leader|The_Nelson_Leader|LNS|ED1|STA||PER|0|The Leader (Nelson)|9917975883502836||1797588|100-P|24/06/2016|Andrew E|200||||0|0|0|||||||||
+The Tasman Leader|The_Tasman_Leader|LRC|ED1|STA||PER|0|The Leader (Tasman)|9917962463502836||1796246|100-P|15/06/2016|Denise|200||||0|0|0|||||||||
+Lifestyle Block|Lifestyle_Block|LSB|ED1|TEC||PER|1|Lifestyle block|9917980423502836||1798042|200|28/06/2016|Andrew R|200|Ceased, 1 issue, designations not worth the trouble!|GTDED1-20160101-001|GTDED1-20160201-084|1|0|1|29|20150101|Yearly||||0|20151201|Monthly
+Manukau Courier|Manukau_Courier|MAC|ED1|STA||PER|0|Manukau Courier|9917976523502836|||||||Fairfax updated title code|||0|0|0|||||||||
+Marlborough Express|Marlborough_Express|MAE|ED1|TEC||PER|0|Marlborough express|9914705253502836||1470525|200|3/06/2016|Andrew R|200|Papers past. Fairfax updated title code|||0|0|0|||||||||
+Marlborough Midweek|Marlborough_Midweek|MAM|ED1|STA||PER|0|Marlborough midweek|9917961213502836|||||||Fairfax updated title code|||0|0|0|||||||||
+Manawatu Standard|Manawatu_Standard|MAN|TAB|ONE||ONE|0|Our Manawatu|9917950073502836||1795007|200|16/06/2016|Andrew E|200||MANTAB-20150728-001|MANTAB-20150728-024|0|0|0|||||||||
+Manawatu Standard|Manawatu_Standard|MAN|TAB|ONE||ONE|0|Home maintenance|9917953123502836||1795312|200|16/06/2016|Andrew E|200||MANTAB-20150825-T01|MANTAB-20150825-T12|0|0|0|||||||||
+Manawatu Standard|Manawatu_Standard|MAN|TAB|ONE||ONE|0|Arohanui Hospice is celebrating 25 years|9917965223502836||1796522|200|16/06/2016|Andrew E|200||MANTAB-20160503-T01|MANTAB-20160503-T16|0|0|0|||||||||
+Manawatu Standard|Manawatu_Standard|MAN|TAB|ONE||ONE|0|Daffodil Day 25th Anniversary|9917965363502836||1796536|200|16/06/2016|Andrew E|200||MANTAB-20160824-001|MANTAB-20160824-012|0|0|0|||||||||
+Manawatu Standard|Manawatu_Standard|MAN|TAB|ONE||ONE|0|Student City Palmerston North|9917965623502836||1796562|200|16/06/2016|Andrew E|200||MANTAB-20160303-T01|MANTAB-20160303-T12|0|0|0|||||||||
+Manawatu Standard|Manawatu_standard|MAN|TAB|ONE||ONE|0|Help me get home|9918150167102836||||6/06/2017|Christina|200||MANTAB-20160622-001|MANTAB-20160622-008|0|0|0|||||||||
+Manawatu Standard|Manawatu_Standard|MAN|ED1|STC||PER|0|Manawatu Standard|9917914353502836||1791435|200|16/06/2016|Andrew E|200||||0|0|0|||||||||
+Manawatu Standard|Manawatu_Standard|MAN|TAB|TEC|Monthly|SS|0|Manawatu home & garden|9917951143502836||1795114|200|10/06/2016|Andrew E|200|Can't anticipate next issue, I don't think this is monthly|MANTAB-20150728-001||0|0|0|||||||||
+Manawatu Standard|Manawatu_Standard|MAN|TAB|TEC|Annual|SS|0|Summer sportacular|9917971383502836||1797138|200|22/06/2016|Andrew E|200|Can't anticipate next issue|MANTAB-20150922-T01||0|0|0|||||||||
+Manawatu Standard|Manawatu_Standard|MAN|ED1|TEC|Weekly|SS|0|Rangitikei mail|9917975483502836||1797548|200|24/06/2016|Andrew E|200|Just pages 1 and 3, shares the rest of content with Feilding Herald|MANED1-20150702-R01|MANED1-20160331-R03|0|0|0|||||||||
+Manawatu Standard|Manawatu_Standard|MAN|TAB|TEC|Annual|SS|0|Weddings|9917951953502836||1795195|200|22/06/2016|Andrew E|200|Can't anticipate next issue|MANTAB-20151028-001||0|0|0|||||||||
+Manawatu Standard|Manawatu_Standard|MAN|TAB|TEC||SS|0|Under 5's … |9917971403502836||1797140|200|22/06/2016|Andrew E|200|Can't anticipate next issue|MANTAB-20151021-001||0|0|0|||||||||
+Manawatu Standard|Manawatu_standard|MAN|SPC|TEC|Annual|SS|0|Central Districts Field Days|9918150135002836||||9/06/2017|Denise|200|Can't anticipate next issue|MANSPC-20170307-001||0|0|0|||||||||
+Manawatu Standard|Manawatu_standard|MAN|SPC|TEC|Annual|SS|0|Hilux New Zealand Rural Games|9918150134602836||||9/06/2017|Denise|200|Can't anticipate next issue|MANTAB-20170308-001||0|0|0|||||||||
+Manawatu Standard|Manawatu_Standard|MAS|ED1|STC||PER|0|Manawatu Standard|9917914353502836||1791435|200|16/06/2016|Andrew E|200|Fairfax updated title code|||0|0|0|||||||||
+Marlborough Express|Marlborough_Express|MEX|TAB|STC|Thursday|SS|0|Marlborough property express|9917913203502836||1791320|100|31/05/2016|Andrew R|200||||0|0|0|||||||||
+Marlborough Express|Marlborough_Express|MEX|ED1|TEC||PER|0|Marlborough express|9914705253502836||1470525|200|3/06/2016|Andrew R|200|Papers past.|||0|0|0|||||||||
+Marlborough Express|Marlborough_Express|MEX|ED1 + TAB|TEC||ONE|0|Celebrating 150 years of Marlborough news|9917923693502836||1792369|200|3/06/2016|Andrew R|200|Two parts of this publication, with another insert for the same day inserted between them.|MEXED1-20160421-001, MEXTAB-20160421-A01|MEXED1-20160421-020, MEXTAB-20160421-A32|0|0|0|||||||||
+Mid Canterbury Herald|Mid_Canterbury_Herald|MHD|ED1|STA||PER|0|Mid Canterbury herald|9917967003502836||1796700|???|17/06/2016|Denise|200||||0|0|0|||||||||
+Manukau Courier|Manukau_Courier|MKC|ED1|STA||PER|0|Manukau Courier|9917976523502836||1797652|100-P|27/06/2016|Andrew E|200||||0|0|0|||||||||
+Matamata Chronicle|Matamata_Chronicle|MMC|ED1|STA||PER|0|Matamata Chronicle|9917975663502836||1797566|100-P|24/06/2016|Andrew E|200|Fairfax updated title code|||0|0|0|||||||||
+Matamata Chronicle|Matamata_Chronicle|MMT|ED1|STA||PER|0|Matamata Chronicle|9917975663502836||1797566|100-P|24/06/2016|Andrew E|200||||0|0|0|||||||||
+Marlborough Midweek|Marlborough_Midweek|MMW|TAB|ONE||ONE|0|Vine & wine|9917961543502836||1796154|100-P|14/06/2016|Denise|200||MMWTAB-20151021-001|MMWTAB-20151021-008|0|0|0|||||||||
+Marlborough Midweek|Marlborough_Midweek|MMW|ED1|STA||PER|0|Marlborough midweek|9917961213502836||1796121|100-P|14/06/2016|Denise|200||||0|0|0|||||||||
+Marlborough Midweek|Marlborough_Midweek|MMW|TAB + SPC|TEC||SS|0|Marlborough Wine & Food Festival|9917981353502836||1798135|100|29/06/2016|Denise|200|Variations in edition, can't anticipate next issue|||0|0|0|||||||||
+Marlborough Midweek|Marlborough_Midweek|MMW|TAB|TEC||SS|0|Marlborough farmer|9917961763502836||1796176|100-P|14/06/2016|Denise|200|Can't anticipate next issue|MMWTAB-20151028-001||0|0|0|||||||||
+Waikato Times|Motor_Times|MOW|ED1|STA||PER|0|Motor Times|9917982213502836|||||||Part of Waikato Times (Advertised on Leader). May need to change collector folder name. Fairfax updated title code|||0|0|0|||||||||
+The Napier Mail|The_Napier_Mail|NAM|ED1|STA||PER|0|Napier Mail|9917975853502836||1797585|200|24/06/2016|Andrew E|200||||0|0|0|||||||||
+The Nelson Mail|The_Nelson_Mail|NEL|TAB|ONE||ONE|0|Nelson's newspaper : the story of the Nelson mail 150 years |9917976433502836||1797643|200|27/06/2016|Andrew E|200||NELTAB-20160319-001|NELTAB-20160319-032|0|0|0|||||||||
+The Nelson Mail|The_Nelson_Mail|NEL|ED1|STC||PER|0|Nelson mail|9917975923502836||1797592|200|24/06/2016|Andrew E|200||||0|0|0|||||||||
+The Nelson Mail|The_Nelson_Mail|NEL|TAB|SUP|Wednesday - fortnightly|SS|0|Motoring plus|9917975983502836||1797598|100-P|24/06/2016|Andrew E|200||NELTAB-20150923-001||0|0|0|||||||||
+The Nelson Mail|The_Nelson_Mail|NEL|TAB|TEC||SS|0|Return to education|9917976293502836||1797629|200|27/06/2016|Andrew E|200|Can't anticipate next issue|NELTAB-20160123-001||0|0|0|||||||||
+The Nelson Mail|The_Nelson_Mail|NEM|ED1|STC||PER|0|Nelson mail|9917975923502836||1797592|200|24/06/2016|Andrew E|200|Fairfax updated title code|||0|0|0|||||||||
+North Harbour News|North_Harbour_News|NHN|ED1|STA||PER|0|North Harbour News|9917921493502836||1792149|100-P|2/06/2016|Christina|200||||0|0|0|||||||||
+News Link |News_Link|NLK|ED1|STA||PER|0|Newslink|9917920023502836||1792002|100-P|2/06/2016|Christina|200||||0|0|0|||||||||
+The Nelson Mail|The_Nelson_mail|NM|SUM|ONE||ONE|0|Nelson Marlborough Rescue Helicopter : celebrating 25 years.|9918148153302836||||2/06/2017|Denise|200||NELTAB-20160523-001|NELTAB-20160523-020|0|0|0|||||||||
+The Nelson Mail|The_Nelson_mail|NM|SUM|TEC|Weekly|SS|0|Summit property weekly|9918148153402836||||2/06/2017|Denise|200|Can't find all the issues|||0|0|0|||||||||
+Northern News|Northern_News|NNW|ED1|STA||PER|0|Northern News|9917961933502836||1796193|100-P|14/06/2016|Christina|200||||0|0|0|||||||||
+North Harbour News|North_Harbour_News|NOH|ED1|STA||PER|0|North Harbour News|9917921493502836||1792149|100-P|2/06/2016|Christina|200|Fairfax updated title code|||0|0|0|||||||||
+Northern Outlook|Northern_Outlook|NOL|ED1|STA||PER|0|Northern outlook|9918190442202836||||||200||||0|0|0|||||||||
+Northern News|Northern_News|NON|ED1|STA||PER|0|Northern News|9917961933502836||1796193|100-P|14/06/2016|Christina|200|Fairfax updated title code|||0|0|0|||||||||
+Northern Outlook|Northern_Outlook|NOO|ED1|STA||PER|0|Northern outlook|9918190442202836||||||200|Fairfax updated title code|||0|0|0|||||||||
+North Shore Times|North_Shore_Times|NOS|ED1|STA||PER|0|North Shore Times|9917922613502836||||||200|Fairfax updated title code|||0|0|0|||||||||
+North Taranaki Midweek|North_Taranaki_Midweek|NOT|ED1|STA||PER|0|North Taranaki Midweek|9917923443502836||||||200|Fairfax updated title code|||0|0|0|||||||||
+Nor-West News|Nor-West_News|NRN|ED1|STA||PER|0|Nor-West News|9917962043502836||1796204|100-P|14/06/2016|Christina|200||||0|0|0|||||||||
+Nor-West News|Nor-West_news|NRN|TAB|TEC|Annual|SS|0|Kumeu show|9918150169502836||||6/06/2017|Denise|200|Can't anticipate next issue|NRNTAB-20170309-001||0|0|0|||||||||
+North Shore Times|North_Shore_Times|NST|ED1|STA||PER|0|North Shore Times|9917922613502836||1792261|100-P|2/06/2016|Christina|200||||1796150|100-P|14/06/2016|Christina|200|||||||
+North Taranaki Midweek|North_Taranaki_Midweek|NTM|ED1|STA||PER|0|North Taranaki Midweek|9917923443502836||1792344|100-P|2/06/2016|Christina|200||||0|0|0|||||||||
+North Waikato News|North_Waikato_News|NWN|ED1|STA||PER|0|North Waikato News|9917961503502836||||||200||||0|0|0|||||||||
+Nor-West News|Nor-West_News|NWT|ED1|STA||PER|0|Nor-West News|9917962043502836||||||200|Fairfax updated title code|||0|0|0|||||||||
+New Zealand Fishing News|New_Zealand_Fishing_News|NZF|ED1|STA||PER|1|New Zealand fishing news|9917975583502836||1797558|200|24/06/2016|Christina|200|6 issues, if volume designation not being done, then no problem with this.|NZFED1-20160101-001|NZFED1-20160601-132|1|0|1|38|20150101|Yearly||||0|20151201|monthly
+New Zealand Gardener|New_Zealand_Gardener|NZG|ED1|TEC||PER|1|New Zealand gardener|9917905613502836||1790561|200|27/05/2016|Christina|200||NZGED1-20160101-001||1|1|0|71|20150101|Yearly|1|20151201|Monthly|||
+Style of Life|Style_of_life|ONL + SNA|SPC|TEC||PER|1|Style of life|9918150572002836||||12/06/2017|Christina|200|Two title name codes|||0|0|0|||||||||
+Outlook Real Estate|Outlook_Real_Estate|ORE|ED1|TEC||PER|0|Outlook Real Estate|9917974563502836||1797456|100|23/06/2016|Christina|200|TDNYPW-20160806-001 just page 1 - sitting in Taranaki Daily news folder|||0|0|0|||||||||
+Otago Southland Farmer|Otago_Southland_Farmer|OSF|ED1|STA||PER|0|Otago Southland farmer|9917974203502836||1797420|100-P|23/06/2016|Christina|200||||0|0|0|||||||||
+Papakura Courier|Papakura_Courier|PAC|ED1|STA||PER|0|Papakura Courier|9917966453502836||||||200|Fairfax updated title code|||0|0|0|||||||||
+Piako Post|Piako_Post|PIP|ED1|STA||PER|0|Piako Post|9917966443502836||||||200|Fairfax updated title code|||0|0|0|||||||||
+Papakura Courier|Papakura_Courier|PKC|ED1|STA||PER|0|Papakura Courier|9917966453502836||1796645|100-P|17/06/2016|Denise|200||||0|0|0|||||||||
+Piako Post|Piako_Post|PKP|ED1|STA||PER|0|Piako Post|9917966443502836||1796644|100-P|17/06/2016|Denise|200||||0|0|0|||||||||
+The Press|The_Press|PRE|ED1|STC||PER|0|Press (Christchurch)|9915205583502836||||||200|Fairfax updated title code|||0|0|0|||||||||
+Marlborough Express|Marlborough_Express|PRM|ED1|SUP|Thursday|SS|0|Marlborough property express|9917913203502836||1791320|100|31/05/2016|Andrew R|200|Fairfax updated title code|||0|0|0|||||||||
+The Press|The_Press|PRS|YWE|SUP||SS|0|Your weekend|9917906003502836||1790600|200|27/05/2016|Andrew R|200|Fairfax updated title code|||0|0|0|||||||||
+The Press|TBD|PRS|TAB|TEC||PER|FALSE|Homed|9918647057402836||||||200|New title. Need missing pages. May be a continuation of At home (The Press)|||0|0|0|||||||||
+Property weekly|TBD|PWM|ED1|TEC||PER|FALSE|Property weekly|9918647057502836||||||200|New title. Need missing pages|||0|0|0|||||||||
+Mirror|Mirror|QCM|ED1|STC||PER|0|Mirror (Queenstown)|9917975563502836||1797556|100-P|24/06/2016|Jenny|200|This edition has largely same content as Queenstown, with a few pages specific to this edition, fairfax files only show specific otago ed pages.|||0|0|0|||||||||
+Mirror|Mirror|QCM|ED2|STC||PER|0|Mirror (Central Otago)|9917975673502836||1797567|100-P|24/06/2016|Jenny|200|This edition has largely same content as Queenstown, with a few pages specific to this edition, fairfax files only show specific Wanaka ed pages.|||0|0|0|||||||||
+Mirror|Mirror|QCM|ED3|STC||PER|0|Mirror (Wanaka)|9917975753502836||1797575|100-P|24/06/2016|Jenny|200|Advised JG - Too hard for this iteration because of the versioning/editions stuff 22/9/17 |||0|0|0|||||||||
+Rodney Times|Rodney_Times|RDT|ED1|STA||PER|0|Rodney Times|9917966493502836||||||200|Fairfax updated title code|||0|0|0|||||||||
+Visitor handbook : Central Districts Field Days|Central_Districts_Field_Days_Visitor_Handbook|RLP|FDH|STA|Annual|PER|1|Visitor handbook : Central Districts Field Days|9918150135402836||||9/06/2017|Denise|200||||0|0|0|||||||||
+Rodney Times|Rodney_Times|ROD|ED1|STA||PER|0|Rodney Times|9917966493502836||1796649|100-P|17/06/2016|Denise|200||||0|0|0|||||||||
+Rotorua Review|Rotorua_Review|ROT|ED1|STA||PER|0|Rotorua Review|9917966553502836||1796655|100-P|17/06/2016|Denise|200||||0|0|0|||||||||
+Ruapehu Press|Ruapehu_Press|RUA|ED1|STA||PER|0|Ruapehu Press|9917966623502836||1796662|100-P|17/06/2016|Denise|200||||0|0|0|||||||||
+Saturday Express|Saturday_Express|SAE|ED1|STA||PER|0|Saturday express|9917907173502836||||||200|Fairfax updated title code|||0|0|0|||||||||
+Selwyn & Ashburton Outlook|Selwyn_&_Ashburton_Outlook|SAO|ED1|STA||PER|0|Selwyn & Ashburton Outlook|9918150572602836||||12/06/2017|Christina|200||||0|0|0|||||||||
+Saturday Express|Saturday_Express|SAT|ED1|TEC||PER|0|Saturday express|9917907173502836||1790717|100-P|3/06/2016|Andrew R|200||||0|0|0|||||||||
+Saturday Express|Saturday_Express|SAT + MMW|TAB + TAB|TEC|Saturdays|SS|0|Marlborough property guide|9917923813502836||1792381|100-P|3/06/2016|Andrew R|200|Variations in name collector code and edition - MMWTAB-20161221-001 files are a duplicate issue|||0|0|0|||||||||
+Sunday News|Sunday_News|SDN|ED1|STA||PER|0|Sunday News|9917984313502836||||||200|Fairfax updated title code|||0|0|0|||||||||
+NZFarmer|NZFarmer|SFW|ED1 + STH|TEC||PER|0|NZFarmer|9916658013502836|2382-056X|1665801|100-P|22/06/2016|Christina|200|STH = Front pages from a selection of issues, for the Southern edition,|||0|0|0|||||||||
+Southern Homes|Southern_Homes|SHM|ED1|STA||PER|0|Southern Homes|9917982163502836||1798216|100|30/06/2016|Denise|200||||0|0|0|||||||||
+Sunday Star Times Sunday|Sunday_Star_Times_Sunday|SMG|NT1 |TEC||PER|0|Sunday Star Times Sunday|9917976283502836||1797628|200|1/07/2016|Christina|200|NT1 = North Island First Edition -Just a few pages for each issue stops May 2016|||0|0|0|||||||||
+Sunday Star Times Sunday|Sunday_Star_Times_Sunday|SMG|ED1|TEC||PER|1|Sunday Star Times Sunday|9917976283502836|||||||Format change. Fairfax updated title code|||0|0|0|||||||||
+Southland times|The_Southland_times|SOT|TAB|SUP|Thursday|SS|0|Southland Real Estate Ltd|9918150569902836||||||200||||0|0|0|||||||||
+The Southland Times|The_Southland_Times|SOT|ED1|TEC||PER|0|Southland times|9914607593502836||||||200|Papers Past. Fairfax updated title code|||0|0|0|||||||||
+South Waikato News|South_Waikato_News|SOW|ED1|STA||PER|0|South Waikato News|9917966833502836||||||200|Fairfax updated title code|||0|0|0|||||||||
+Sunday Star Times|Sunday_Star_Times|SST|ED1|TEC||SS|0|Sunday star times property|9917976273502836||1797627|100|24/06/2016|Christina|200|Three regional issues: Southern, Lower North Island, Upper North Island|||0|0|0|||||||||
+Sunday Star Times|Sunday_Star_Times|SST|NT1 |TEC||PER|0|Sunday Star Times|9917976113502836||1797611|200|24/06/2016|Christina|200|"NT1 = North Island First Edition (a selection of a few pages for a handful of issues) - continuing
+NT2 = North Island Second edition (usually the first page for a selection of issues) - continuing
+ST2 = South Island Second edition (usually the first page for a selection of issues) - continuing"|||0|0|0|||||||||
+Southland Times|The_Southland_times|STL|TAB|SUP|Thursday|SS|0|Southland Real Estate Ltd|9918150569902836||||12/06/2017|Denise|200|| STLTAB-20160211-001 ||0|0|0|||||||||
+The Southland Times|The_Southland_times|STL|TAB|ONE||ONE|0|SBS Bank Tour of Southland|9918148154902836||||31/05/2017|Denise|200||STLTAB-20161028-001|STLTAB-20161028-012|0|0|0|||||||||
+The Southland Times|The_Southland_Times|STL|ED1|TEC||PER|0|Southland times|9914607593502836||1460759|200|27/05/2016|Andrew R|200|Papers Past. |||0|0|0|||||||||
+The Southland Times|The_Southland_times|STL|TAB|TEC|Annual|SS|0|Wedding guide|9918148155302836||||31/05/2017|Denise|200|Can't anticipate next issue|STLTAB-20160930-001||0|0|0|||||||||
+The Southland Times|The_Southland_times|STL|TAB|TEC|Annual|SS|0|Stags season|9918148155202836||||31/05/2017|Denise|200|Can't anticipate next issue|STLTAB-20160819-001||0|0|0|||||||||
+The Southland Times|The_Southland_times|STL|TAB|TEC|Annual|SS|0|Building and renovation guide ...|9918148155002836||||31/05/2017|Denise|200|Can't anticipate next issue|STLTAB-20160826-001||0|0|0|||||||||
+The Southland Times|The_Southland_times|STL|TAB|TEC|Annual|SS|0|Crank up ...|9918148154802836||||31/05/2017|Denise|200|Can't anticipate next issue|STLTAB-20170125-001||0|0|0|||||||||
+South Taranaki Star|South_Taranaki_Star|STS|ED1|STC||PER|0|Taranaki star : south, central, coastal.|9917966723502836||1796672|100-P|17/06/2016|Denise|200||||0|0|0|||||||||
+Sunday News|Sunday_News|SUN|ED1 + ED2 + NT1 |TEC||PER|0|Sunday News|9917984313502836||1798431|200|1/07/2016|Jenny|200|"NT1 = North Island First Edition - A few pages for a handful of issues stops Oct 2016,
+ST1 = South Island First Edition - A few pages for a handful of issues stops Oct 2016
+ED2 just a few pages from 3 issues"|||0|0|0|||||||||
+Sunday Star Times|Sunday_Star_Times|SUS|ED1|TEC||PER|0|Sunday Star Times|9917976113502836|||||||Fairfax updated title code|||0|0|0|||||||||
+Sunday Star Times|Sunday_Star_Times|SUS|ED2|TEC||PER|0|Sunday Star Times|9917976113502836|||||||Partial How often is a 2nd ed published. Fairfax updated title code||||||||||||||
+South Waikato News|South_Waikato_News|SWN|ED1|STA||PER|0|South Waikato News|9917966833502836||1796683|100-P|17/06/2016|Denise|200||||0|0|0|||||||||
+Taranaki Daily News|Taranaki_Daily_News|TAD|ED1|STC||PER|0|Taranaki Daily News|9917976003502836||||||200|Fairfax updated title code|||0|0|0|||||||||
+South Taranaki Star|South_Taranaki_Star|TAS|ED1|STC||PER|0|Taranaki star : south, central, coastal.|9917966723502836||||||200|Fairfax updated title code|||0|0|0|||||||||
+Taupo Times|Taupo_Times|TAT|ED1|STA||PER|0|Taupo Times|9917962373502836||||||200|Fairfax updated title code|||0|0|0|||||||||
+Taranaki Daily News|Taranaki_Daily_News|TDN|ED1|STC||PER|0|Taranaki Daily News|9917976003502836||1797600|200|24/06/2016|Denise|200||||0|0|0|||||||||
+Taranaki Daily News|Taranaki_Daily_News|TDN|ED1|SUP|Quarterly|SS|0|Lifestyle homes |9917981473502836||1798147|200|29/06/2016|Denise|200||TDNTAB-20151211-T01|TDNTAB-20151211-T24|0|0|0|||||||||
+Taranaki Daily News|Taranaki_Daily_News|TDN|ED1|SUP|Wednesday|SS|0|Motor|9917982063502836||1798206|100-P|30/06/2016|Denise|200||TDNED1-20150701-T01||0|0|0|||||||||
+Taranaki Daily News|Taranaki_Daily_News|TDN|ED1|TEC|Saturday (weekly)|SS|0|Property weekly|9917976413502836||1797641|100|27/06/2016|Denise|200|Edition changes within collector folder|TDNED1-20150704-P01||0|0|0|||||||||
+Taranaki Daily News|Taranaki_Daily_News|TDN|YPW|TEC|Saturday (weekly)|SS|0|Property weekly|9917976413502836|||||||Fairfax updated title code|||0|0|0|||||||||
+Taranaki Daily News|Taranaki_Daily_News|TDN|ED1|TEC|Annual|SS|0|Taranaki international arts festival|9917976443502836||1797644|200|27/06/2016|Denise|200|Can't anticipate next issue|TDNTAB-20150731-T01||0|0|0|||||||||
+Taranaki Daily News|Taranaki_Daily_News|TDN|ED1 + TAB|TEC|Annual|SS|0|Farming|9917976573502836||1797657|200|27/06/2016|Denise|200|Can't anticipate next issue|TDNTAB-20150925-T01||0|0|0|||||||||
+Taranaki Daily News|Taranaki_Daily_News|TDN|TAB|TEC|bimonthly|SS|0|Lifestyles Taranaki |9917981553502836||1798155|200|29/06/2016|Denise|200|Can't anticipate next issue|TDNTAB-20160324-T01||0|0|0|||||||||
+Taranaki Daily News|Taranaki_Daily_News|TDN|TAB|TEC|Annual|SS|0|Garden spectacular|9917983063502836||1798306|200|30/06/2016|Denise|200|Can't anticipate next issue|TDNTAB-20151019-T01||0|0|0|||||||||
+The Timaru Herald|The_Timaru_Herald|TIH|ED1|TEC||PER|0|Timaru herald|9914609313502836|||||||Papers past. Fairfax updated title code|||0|0|0|||||||||
 The Timaru Herald|The_Timaru_Herald|TIM|TAB|ONE||ONE|0|Lest we forget (Timaru, N.Z.)|9918148160602836||||25/05/2017|Denise|200||TIMTAB-20170425-001|TIMTAB-20170425-012|0|0|0|||||||||
-The Timaru Herald|The_Timaru_Herald|TIM|ED1|TEC||PER|0|Timaru herald|9914609313502836||1460931|200|27/05/2016|Andrew R|200|Shared bibliographic record with papers past content|||0|0|0|||||||||
-The Timaru herald|The_Timaru_herald|TIM|TAB|TEC|Annual|SS|0|Your wedding - planning the perfect day|9918148160802836||||25/05/2017|Denise|200|Can't anticipate next issue|TIMTAB-20160326-001||0|0|0|||||||||
-The Timaru herald|The_Timaru_herald|TIM|TAB|TEC|Wednesday|SS|0|South Canterbury property|9918148160502836||||25/05/2017|Denise|200|Tab/date conflict named TIMTAB-20170322-P01|TIMTAB-20160601-001||0|0|0|||||||||
-The Timaru herald|The_Timaru_herald|TIM|TAB|TEC||ONE|0|A perfect day|9918148155402836||||31/05/2017|Denise|200|Tab/date conflict named TIMTAB-20170322-01|TIMTAB-20170322-001|TIMTAB-20170322-012|0|0|0|||||||||
-The Timaru herald|The_Timaru_herald|TIM|TAB|TEC|Annual|SS|0|Central South Island holiday guide|9918148155502836||||31/05/2017|Denise|200|Can't anticipate next issue|TIMTAB-20151216-001||0|0|0|||||||||
-Timaru herald|The_Timaru_herald|TIM|TAB|TEC|Annual|SS|0|South Canterbury Chamber of Commerce Business Excellence Awards|9918150139902836||||9/06/2017|Denise|200|Can't anticipate next issue|TIMTAB-20160824-001||0|0|0|||||||||
+The Timaru Herald|The_Timaru_Herald|TIM|ED1|TEC||PER|0|Timaru herald|9914609313502836||1460931|200|27/05/2016|Andrew R|200|Papers past|||0|0|0|||||||||
+The Timaru Herald|The_Timaru_herald|TIM|TAB|TEC|Annual|SS|0|Your wedding - planning the perfect day|9918148160802836||||25/05/2017|Denise|200|Can't anticipate next issue|TIMTAB-20160326-001||0|0|0|||||||||
+The Timaru Herald|The_Timaru_herald|TIM|TAB|TEC|Wednesday|SS|0|South Canterbury property|9918148160502836||||25/05/2017|Denise|200|Tab/date conflict named TIMTAB-20170322-P01|TIMTAB-20160601-001||0|0|0|||||||||
+The Timaru Herald|The_Timaru_herald|TIM|TAB|TEC||ONE|0|A perfect day|9918148155402836||||31/05/2017|Denise|200|Tab/date conflict named TIMTAB-20170322-01|TIMTAB-20170322-001|TIMTAB-20170322-012|0|0|0|||||||||
+The Timaru Herald|The_Timaru_herald|TIM|TAB|TEC|Annual|SS|0|Central South Island holiday guide|9918148155502836||||31/05/2017|Denise|200|Can't anticipate next issue|TIMTAB-20151216-001||0|0|0|||||||||
+Timaru Herald|The_Timaru_herald|TIM|TAB|TEC|Annual|SS|0|South Canterbury Chamber of Commerce Business Excellence Awards|9918150139902836||||9/06/2017|Denise|200|Can't anticipate next issue|TIMTAB-20160824-001||0|0|0|||||||||
+Taupo Times|Taupo_Times|TPO|ED1|STA||PER|0|Taupo Times|9917962373502836||1796237|100-P|15/06/2016|Denise|200||||0|0|0|||||||||
+Taupo Times|TBD|TPO|TAB|TEC||PER|FALSE|Paradise playground : the very best of Tauranga to Taupo|9918647057402836||||||200|New title|||0|0|0|||||||||
 The Tribune|The_Tribune|TRB|ED1|STA||PER|0|Tribune|9917962343502836||1796234|100-P|15/06/2016|Denise|200||||0|0|0|||||||||
 The Tribune|The_Tribune|TRB|TAB|TEC|Annual|SS|0|Christmas guide 2015|9918148169602836||||22/05/2017|Denise|200|Can't anticipate next issue|TRBTAB-20151209-001||0|0|0|||||||||
-Wellingtonian|The_Wellingtonian|WGN|ED1|STA||PER|0|Wellingtonian|9917924613502836||1792461|100|3/06/2016|Denise|200||||0|0|0|||||||||
 TV Guide|TV_Guide|TVG|ED1|STA||PER|1|TV guide|9917981683502836||1798168|200|29/06/2016|Denise|200||||0|0|0|||||||||
+Urban and Country |Urban_and_Country|UAC|ED1|STA||PER|1|Urban and Country|9917975793502836||1797579|100-P|24/06/2016|Denise|200||||0|0|0|||||||||
 Upper Hutt Leader|Upper_Hutt_Leader|UHL|TAB|ONE||ONE|0|50th Anniversary Upper Hutt City 1966-2016|9918147571402836||||15/05/2017|Denise|200||uhltab-20160525-001|uhltab-20160525-015|0|0|0|||||||||
 Upper Hutt Leader|Upper_Hutt_Leader|UHL|ED1|STA||PER|0|Upper Hutt Leader|9917962273502836||1796227|100-P|15/06/2016|Denise|200||||0|0|0|||||||||
-Urban and Country |Urban_and_Country|UAC|ED1|STA||PER|1|Urban and Country|9917975793502836||1797579|100-P|24/06/2016|Denise|200||||0|0|0|||||||||
-Waiheke Marketplace|Waiheke_Marketplace|WMP|ED1|STC||PER|0|Waiheke Marketplace|9917975423502836||1797542|100-P|24/06/2016|Denise|200|From 26 Mar 2016 supplement's naming convention changed to Section L|||0|0|0|||||||||
-Waiheke Marketplace|Waiheke_Marketplace|WMP|TAB|TEC|Annual|SS|0|Waiheke Island garden safari|9917975633502836||1797563|100|24/06/2016|Denise|200|Can't anticipate next issue|||0|0|0|||||||||
-Waikato Farmer|Waikato_Farmer|FWK + WFK|ED1|TEC||PER|0|Waikato Farmer|9917975283502836|||100-P|||200|Two title codes within the same collector folder - rename file FWKED1-20160516-026|||0|0|0|||||||||
-Waikato Location Edition|Waikato_Location_Edition|WPG|ED1|STA||PER|0|Waikato Location Edition|9917975173502836||1797517|100|24/06/2016|Denise|200|From 26 Mar 2016 supplement's naming convention changed to Section G|||0|0|0|||||||||
+Upper Hutt Leader|Upper_Hutt_Leader|UPH|ED1|STA||PER|0|Upper Hutt Leader|9917962273502836||1796227|100-P|15/06/2016|Denise|200|Fairfax updated title code|||0|0|0|||||||||
+Waikato Times|Waikato_Times|WAT|ED1|STC||PER|0|Waikato Times|9917971643502836||1797164|200|22/06/2016|Denise|200|Fairfax updated title code|||0|0|0|||||||||
+Waikato Times|Waikato_Times|WAT|YWE|SUP|Saturday|SS|0|Your weekend |9917971783502836||||||200|Fairfax updated title code|||0|0|0|||||||||
+Western Leader|Western_Leader|WEL|ED1|STA||PER|0|Western Leader|9917923483502836||1792348|100-P|3/06/2016|Denise|200||||0|0|0|||||||||
+Wellingtonian|The_Wellingtonian|WGN|ED1|STA||PER|0|Wellingtonian|9917924613502836||1792461|100|3/06/2016|Denise|200||||0|0|0|||||||||
+Waitaki Herald|Waitaki_Herald|WHD|ED1|STA||PER|0|Waitaki herald|9917924353502836||1792435|100-P|3/06/2016|Denise|200||||0|0|0|||||||||
+Whangarei Leader|Whangarei_Leader|WHL|ED1|STA||PER|0|Whangarei Leader|9917923503502836||1792350|100-P|3/06/2016|Denise|200||||0|0|0|||||||||
+Western Homes |Western_Homes|WHM|ED1|STA||PER|0|Western Homes |9917925423502836||1792542|100-P|3/06/2016|Denise|200||||0|0|0|||||||||
+Waikato Times|Motor_Times|WKM|ED1|STA||PER|0|Motor Times|9917982213502836||1798221|100-P|30/06/2016|Denise|200|Part of Waikato Times (Advertised on Leader). May need to change collector folder name. Files still foldered up on Pawai - YaY|||0|0|0|||||||||
 Waikato Times|Waikato_Times|WKT|ED1|STC||PER|0|Waikato Times|9917971643502836||1797164|200|22/06/2016|Denise|200||||0|0|0|||||||||
 Waikato Times|Waikato_Times|WKT|LOD|SUP|Saturday|SS|0|Lodge|9917974683502836||1797468|100|23/06/2016|Denise|200||WKTLOD-20150704-001||0|0|0|||||||||
 Waikato Times|Waikato_Times|WKT|LUG|SUP|Saturday|SS|0|Lugtons|9917975033502836||1797503|100|24/06/2016|Denise|200||WKTLUG-20150704-001||0|0|0|||||||||
@@ -224,9 +261,31 @@ Waikato Times|Waikato_Times|WKT|CHF|TEC|Annual|SS|0|Chiefs commemorative magazin
 Waikato Times|Waikato_Times|WKT|BAL|TEC|Annual|SS|0|Balloons over Waikato|9917973813502836||1797381|200|23/06/2016|Denise|200|Can't anticipate next issue|WKTBAL-20160309-001||0|0|0|||||||||
 Waikato Times|Waikato_Times|WKT|TAB|TEC|Annual|SS|0|Top cars|9917975103502836||1797510|200|24/06/2016|Denise|200|Can't anticipate next issue|WKTTAB-20151216-001||0|0|0|||||||||
 Waikato Times|Waikato_Times|WKT|KID + SPC|TEC|Quarterly|SS|0|4kids|9917972173502836||1797217|100-P|23/06/2016|Denise|200|Edition changes within collector folder, can't anticipate next issue|||0|0|0|||||||||
-Waikato times|Waikato_times|WKT|SPC|TEC|Annual|SS|0|Design & build winter 2016|9918147572402836||||16/05/2017|Denise|200|Can't anticipate next issue|WKTSPC-20160819-001||0|0|0|||||||||
+Waikato Times|Waikato_times|WKT|SPC|TEC|Annual|SS|0|Design & build winter 2016|9918147572402836||||16/05/2017|Denise|200|Can't anticipate next issue|WKTSPC-20160819-001||0|0|0|||||||||
+Whangarei Leader|Whangarei_Leader|WLD|ED1|STA||PER|0|Whangarei Leader|9917923503502836||1792350|100-P|3/06/2016|Denise|200|Fairfax updated title code|||0|0|0|||||||||
+Waiheke Marketplace|Waiheke_Marketplace|WMP|ED1|STC||PER|0|Waiheke Marketplace|9917975423502836||1797542|100-P|24/06/2016|Denise|200|From 26 Mar 2016 supplement's naming convention changed to Section L|||0|0|0|||||||||
+Waiheke Marketplace|Waiheke_Marketplace|WMP|TAB|TEC|Annual|SS|0|Waiheke Island garden safari|9917975633502836||1797563|100|24/06/2016|Denise|200|Can't anticipate next issue|||0|0|0|||||||||
+Waikato Location Edition|Waikato_Location_Edition|WPG|ED1|STA||PER|0|Waikato Location Edition|9917975173502836||1797517|100|24/06/2016|Denise|200|From 26 Mar 2016 supplement's naming convention changed to Section G|||0|0|0|||||||||
 Wairarapa News|Wairarapa_News|WRN|ED1|STA||PER|0|Wairarapa News|9917961863502836||1796186|100-P|14/06/2016|Denise|200||||0|0|0|||||||||
-Waitaki Herald|Waitaki_Herald|WHD|ED1|STA||PER|0|Waitaki herald|9917924353502836||1792435|100-P|3/06/2016|Denise|200||||0|0|0|||||||||
-Western Homes |Western_Homes|WHM|ED1|STA||PER|0|Western Homes |9917925423502836||1792542|100-P|3/06/2016|Denise|200||||0|0|0|||||||||
-Western Leader|Western_Leader|WEL|ED1|STA||PER|0|Western Leader|9917923483502836||1792348|100-P|3/06/2016|Denise|200||||0|0|0|||||||||
-Whangarei Leader|Whangarei_Leader|WHL|ED1|STA||PER|0|Whangarei Leader|9917923503502836||1792350|100-P|3/06/2016|Denise|200||||0|0|0|||||||||
+Western Leader|Western_Leader|WSL|ED1|STA||PER|0|Western Leader|9917923483502836||||||200|Fairfax updated title code|||0|0|0|||||||||
+A-Z Business Directory Coromandel Peninsula|A-Z_Business_Directory_Coromandel_Peninsula|ZCP|ED1|STA||PER|1|A-Z Business Directory Coromandel Peninsula|9917982913502836||1798291|???|30/06/2016|Denise|200||||0|0|0|||||||||
+A-Z Business Directory Franklin|A-Z_Business_Directory_Franklin|ZFR|ED1|STA||PER|1|A-Z Business Directory Franklin|9917983323502836||1798332|???|30/06/2016|Christina|200||||0|0|0|||||||||
+A-Z Business Directory Hibiscus|A-Z_Business_Directory_Hibiscus|ZHI|ED1|STA||PER|1|A-Z Business Directory Hibiscus|9917983383502836||1798338|???|30/06/2016|Christina|200||||0|0|0|||||||||
+A-Z Business Directory Horowhenua|A-Z_Business_Directory_Horowhenua|ZHO|ED1|STA||PER|1|A-Z business directory and community guide. Horowhenua|9918148054002836||||26/05/2017|Christina|200||||0|0|0|||||||||
+A-Z Business Directory Kapiti|A-Z_Business_Directory_Kapiti|ZKA|ED1|STA||PER|1|A-Z Business Directory Kapiti|9917983413502836||1798341|???|30/06/2016|Christina|200||||0|0|0|||||||||
+A-Z Business Directory Lake Taupo|A-Z_Business_Directory_Lake_Taupo|ZLT|ED1|STA||PER|1|A-Z business directory and community guide. Lake Taupo|9918148053302836||||26/05/2017|Christina|200||||0|0|0|||||||||
+A-Z Business Directory__|A-Z_Business_Directory__|ZMA|ED1|STA||PER|1|A-Z business directory and ommunity guide. Manawatu|9918148049202836||||26/05/2017|Christina|200||||0|0|0|||||||||
+A-Z Business Directory|A-Z_Business_Directory|ZMP|ED1|STA||PER|1|A-Z business directory and community guide. Matamata-Piako|9918148048502836||||26/05/2017|Christina|200||||0|0|0|||||||||
+A-Z Business Directory Rangitikei|A-Z_Business_Directory_Rangitikei|ZRA|ED1|STA||PER|1|A-Z business directory and community guide. Rangitikei|9918148047102836||||30/05/2017|Christina|200||||0|0|0|||||||||
+A-Z Business Directory|A-Z_Business_Directory|ZRO|ED1|STA||PER|1|A-Z business directory and community guide. Rotorua|9918148046002836||||30/05/2017|Christina|200||||0|0|0|||||||||
+A-Z Business Directory Ruapehu|A-Z_Business_Directory_Ruapehu|ZRU|ED1|STA||PER|1|A-Z Business Directory Ruapehu|9917983443502836||1798344|???|30/06/2016|Christina|200||||0|0|0|||||||||
+A-Z Business Directory South Taranaki|A-Z_Business_Directory_South_Taranaki|ZST|ED1|STA||PER|1|A-Z business directory and community guide.  South Taranaki|9918148045802836||||30/05/2017|Christina|200||||0|0|0|||||||||
+A-Z Business Directory South Waikato|A-Z_Business_Directory_South_Waikato|ZSW|ED1|STA||PER|1|"A-Z business directory and community guide. South Waikato
+"|"9918148045102836
+"||||30/05/2017|Christina|200||||0|0|0|||||||||
+A-Z Business Directory Tararua|A-Z_Business_Directory_Tararua|ZTA|ED1|STA||PER|1|"A-Z business directory and community guide. Tararua
+"|"9918148044402836
+"||||30/05/2017|Christina|200||||0|0|0|||||||||
+A-Z Business Directory Waitomo|A-Z_Business_Directory_Waitomo|ZWA|ED1|STA||PER|1|A-Z Business Directory Waitomo|9917983623502836||1798362|???|1/07/2016|Christina|200||||0|0|0|||||||||
+A-Z Business Directory Waiheke Marketplace|A-Z_Business_Directory_Waiheke_Marketplace|ZWM|ED1|STA||PER|1|A-Z Business Directory Waiheke Marketplace|9917983523502836||1798352|???|1/07/2016|Christina|200||||0|0|0|||||||||
+A-Z Business Directory Waipa|A-Z_Business_Directory_Waipa|ZWP|ED1|STA||PER|1|A-Z Business Directory Waipa|9917983543502836||1798354|???|1/07/2016|Christina|200||||0|0|0|||||||||

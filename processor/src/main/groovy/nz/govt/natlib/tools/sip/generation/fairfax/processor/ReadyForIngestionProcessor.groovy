@@ -22,10 +22,10 @@ class ReadyForIngestionProcessor {
         this.timekeeper = timekeeper
     }
 
-    SipProcessingState processNameFolder(File nameFolder, File destinationFolder, File forReviewFolder,
-                                         String dateString, String name, boolean createDestination,
-                                         boolean moveFilesToDestination) {
-        // Process the files in the name folder
+    SipProcessingState processTitleCodeFolder(File titleCodeFolder, File destinationFolder, File forReviewFolder,
+                                              String dateString, String titleCode, boolean createDestination,
+                                              boolean moveFilesToDestination) {
+        // Process the files in the titleCode folder
         ProcessLogger processLogger = new ProcessLogger()
         processLogger.startSplit()
 
@@ -35,28 +35,28 @@ class ReadyForIngestionProcessor {
         // Only process PDF files
         String pattern = '\\w{6}-\\d{8}-\\w{3,4}.*?\\.pdf'
 
-        log.info("START processNameFolder for pattern=${pattern}, nameFolder=${nameFolder.getCanonicalPath()}")
+        log.info("START processTitleCodeFolder for pattern=${pattern}, titleCodeFolder=${titleCodeFolder.getCanonicalPath()}")
         timekeeper.logElapsed()
 
-        List<File> allFiles = ProcessorUtils.findFiles(nameFolder.getAbsolutePath(), isRegexNotGlob, matchFilenameOnly,
+        List<File> allFiles = ProcessorUtils.findFiles(titleCodeFolder.getAbsolutePath(), isRegexNotGlob, matchFilenameOnly,
                 sortFiles, pattern, timekeeper)
 
         SipProcessingState sipProcessingState = new SipProcessingState()
         // Process the folder as a single collection of files
-        // TODO Note that there may be multiple destinations (as there could be different editions of the same name for a given day).
+        // TODO Note that there may be multiple destinations (as there could be different editions of the same titleCode for a given day).
         String sipAsXml = FairfaxFilesProcessor.processCollectedFiles(sipProcessingState, fairfaxSpreadsheet, allFiles)
 
         File sipAndFilesFolder
         if (sipProcessingState.complete && sipProcessingState.successful) {
             sipAndFilesFolder = new File(destinationFolder,
-                    "${sipProcessingState.ieEntityType.getDisplayName()}/${dateString}/${name}${sipProcessingState.identifier}")
+                    "${sipProcessingState.ieEntityType.getDisplayName()}/${dateString}_${titleCode}${sipProcessingState.identifier}")
         } else {
             sipAndFilesFolder = new File(forReviewFolder,
-                    "${sipProcessingState.ieEntityType.getDisplayName()}/${dateString}/${name}${sipProcessingState.identifier}")
+                    "${sipProcessingState.ieEntityType.getDisplayName()}/${dateString}_${titleCode}${sipProcessingState.identifier}")
         }
         // TODO may need to adjust logic for creation of content/streams folder
         File contentStreamsFolder = new File(sipAndFilesFolder, "content/streams")
-        File unrecognizedFilesFolder = new File(forReviewFolder, "UNRECOGNIZED/${dateString}/${name}")
+        File unrecognizedFilesFolder = new File(forReviewFolder, "UNRECOGNIZED/${dateString}/${titleCode}")
 
         boolean hasSipAndFilesFolder
         boolean hasUnrecognizedFilesFolder
@@ -90,7 +90,7 @@ class ReadyForIngestionProcessor {
         File sipFile = new File(sipAndFilesFolder, "content/mets.xml")
         sipFile.write(sipAsXml)
 
-        log.info("END processNameFolder for pattern=${pattern}, nameFolder=${nameFolder.getCanonicalPath()}")
+        log.info("END processTitleCodeFolder for pattern=${pattern}, titleCodeFolder=${titleCodeFolder.getCanonicalPath()}")
         timekeeper.logElapsed()
 
         if (hasSipAndFilesFolder) {
@@ -119,8 +119,8 @@ class ReadyForIngestionProcessor {
             if (dateFolder.exists() && dateFolder.isDirectory()) {
                 dateFolder.listFiles().each { File subFile ->
                     if (subFile.isDirectory()) {
-                        // we want to process this directory, which should be a <name>
-                        processNameFolder(subFile, destinationFolder, forReviewFolder, currentDateString,
+                        // we want to process this directory, which should be a <titleCode>
+                        processTitleCodeFolder(subFile, destinationFolder, forReviewFolder, currentDateString,
                                 subFile.getName(), createDestination, moveFiles)
                     } else {
                         log.info("Skipping ${subFile.getCanonicalPath()} as not directory=${subFile.isDirectory()}")

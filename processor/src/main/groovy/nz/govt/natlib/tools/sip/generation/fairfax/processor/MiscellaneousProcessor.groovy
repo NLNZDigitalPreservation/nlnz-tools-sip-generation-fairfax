@@ -4,7 +4,7 @@ import groovy.util.logging.Slf4j
 import nz.govt.natlib.m11n.tools.automation.logging.Timekeeper
 import nz.govt.natlib.tools.sip.files.FilesFinder
 import nz.govt.natlib.tools.sip.generation.fairfax.FairfaxFile
-import nz.govt.natlib.tools.sip.generation.fairfax.FairfaxFileNameEditionKey
+import nz.govt.natlib.tools.sip.generation.fairfax.FairfaxFileTitleEditionKey
 import nz.govt.natlib.tools.sip.generation.fairfax.FairfaxSpreadsheet
 import nz.govt.natlib.tools.sip.pdf.PdfInformationExtractor
 
@@ -18,8 +18,8 @@ import java.util.regex.Matcher
 @Slf4j
 class MiscellaneousProcessor {
     Timekeeper timekeeper
-    Set<String> recognizedNames = []
-    Set<String> unrecognizedNames = []
+    Set<String> recognizedTitleCodes = []
+    Set<String> unrecognizedTitleCodes = []
 
     MiscellaneousProcessor(Timekeeper timekeeper) {
         this.timekeeper = timekeeper
@@ -29,17 +29,17 @@ class MiscellaneousProcessor {
         log.info("STARTING listFiles doLast")
 
         // Clear the set of recognized and unrecognized names before processing begins
-        recognizedNames = []
-        unrecognizedNames = []
-        Set<FairfaxFileNameEditionKey> recognizedNameEditions = []
-        Set<FairfaxFileNameEditionKey> unrecognizedNameEditions = []
+        recognizedTitleCodes = []
+        unrecognizedTitleCodes = []
+        Set<FairfaxFileTitleEditionKey> recognizedTitleCodeEditionCodes = []
+        Set<FairfaxFileTitleEditionKey> unrecognizedTitleCodeEditionCodes = []
         Set<File> invalidFiles = []
 
         log.info("sourceFolder=${sourceFolder}")
 
         FairfaxSpreadsheet fairfaxSpreadsheet = FairfaxSpreadsheet.defaultInstance()
-        Set<String> allNameKeys = fairfaxSpreadsheet.allNameKeys
-        Set<FairfaxFileNameEditionKey> allNameEditionKeys = fairfaxSpreadsheet.allNameEditionKeys
+        Set<String> allNameKeys = fairfaxSpreadsheet.allTitleCodeKeys
+        Set<FairfaxFileTitleEditionKey> allNameEditionKeys = fairfaxSpreadsheet.allTitleCodeEditionCodeKeys
 
         boolean isRegexNotGlob = true
         boolean matchFilenameOnly = true
@@ -54,28 +54,28 @@ class MiscellaneousProcessor {
         FairfaxFile previousFile
         fairfaxFiles.each { FairfaxFile fairfaxFile ->
             if (fairfaxFile.isValidName()) {
-                if (allNameKeys.contains(fairfaxFile.name)) {
-                    if (!recognizedNames.contains(fairfaxFile.name)) {
-                        recognizedNames.add(fairfaxFile.name)
-                        log.info("listFiles adding recognizedName=${fairfaxFile.name}")
+                if (allNameKeys.contains(fairfaxFile.titleCode)) {
+                    if (!recognizedTitleCodes.contains(fairfaxFile.titleCode)) {
+                        recognizedTitleCodes.add(fairfaxFile.titleCode)
+                        log.info("listFiles adding recognizedTitleCode=${fairfaxFile.titleCode}")
                     }
                 } else {
-                    if (!unrecognizedNames.contains(fairfaxFile.name)) {
-                        unrecognizedNames.add(fairfaxFile.name)
-                        log.info("listFiles adding unrecognizedName=${fairfaxFile.name}")
+                    if (!unrecognizedTitleCodes.contains(fairfaxFile.titleCode)) {
+                        unrecognizedTitleCodes.add(fairfaxFile.titleCode)
+                        log.info("listFiles adding unrecognizedTitleCode=${fairfaxFile.titleCode}")
                     }
                 }
-                FairfaxFileNameEditionKey fairfaxFileNameEditionKey = new FairfaxFileNameEditionKey(
-                        name: fairfaxFile.name, edition: fairfaxFile.edition)
-                if (allNameEditionKeys.contains(fairfaxFileNameEditionKey)) {
-                    if (!recognizedNameEditions.contains(fairfaxFileNameEditionKey)) {
-                        recognizedNameEditions.add(fairfaxFileNameEditionKey)
-                        log.info("listFiles adding recognizedNameEditions=${fairfaxFileNameEditionKey}")
+                FairfaxFileTitleEditionKey fairfaxFileTitleEditionKey = new FairfaxFileTitleEditionKey(
+                        titleCode: fairfaxFile.titleCode, editionCode: fairfaxFile.editionCode)
+                if (allNameEditionKeys.contains(fairfaxFileTitleEditionKey)) {
+                    if (!recognizedTitleCodeEditionCodes.contains(fairfaxFileTitleEditionKey)) {
+                        recognizedTitleCodeEditionCodes.add(fairfaxFileTitleEditionKey)
+                        log.info("listFiles adding recognizedTitleCodeEditionCodes=${fairfaxFileTitleEditionKey}")
                     }
                 } else {
-                    if (!unrecognizedNameEditions.contains(fairfaxFileNameEditionKey)) {
-                        unrecognizedNameEditions.add(fairfaxFileNameEditionKey)
-                        log.info("listFiles adding unrecognizedNameEditions=${fairfaxFileNameEditionKey}")
+                    if (!unrecognizedTitleCodeEditionCodes.contains(fairfaxFileTitleEditionKey)) {
+                        unrecognizedTitleCodeEditionCodes.add(fairfaxFileTitleEditionKey)
+                        log.info("listFiles adding unrecognizedTitleCodeEditionCodes=${fairfaxFileTitleEditionKey}")
                     }
                 }
             } else {
@@ -83,9 +83,9 @@ class MiscellaneousProcessor {
             }
 
             if (previousFile != null) {
-                if (previousFile.name != fairfaxFile.name) {
+                if (previousFile.titleCode != fairfaxFile.titleCode) {
                     println("* * * CHANGE OF PREFIX * * *")
-                } else if (previousFile.edition != fairfaxFile.edition) {
+                } else if (previousFile.editionCode != fairfaxFile.editionCode) {
                     println("* * * CHANGE OF EDITION * * *")
                 } else if (previousFile.dateYear != fairfaxFile.dateYear &&
                         previousFile.dateMonthOfYear != fairfaxFile.dateMonthOfYear &&
@@ -99,23 +99,23 @@ class MiscellaneousProcessor {
         }
 
         log.info("* * * *")
-        log.info("Recognized names:")
-        recognizedNames.each { String recognizedName ->
+        log.info("Recognized tileCodes:")
+        recognizedTitleCodes.each { String recognizedName ->
             log.info("    ${recognizedName}")
         }
         log.info("* * * *")
-        log.info("Recognized names and editions:")
-        recognizedNameEditions.each { FairfaxFileNameEditionKey fairfaxFileNameEditionKey ->
+        log.info("Recognized titleCodes and editionCodes:")
+        recognizedTitleCodeEditionCodes.each { FairfaxFileTitleEditionKey fairfaxFileNameEditionKey ->
             log.info("    ${fairfaxFileNameEditionKey}")
         }
         log.info("* * * *")
-        log.info("UNRECOGNIZED names:")
-        unrecognizedNames.each { String recognizedName ->
+        log.info("UNRECOGNIZED titleCodes:")
+        unrecognizedTitleCodes.each { String recognizedName ->
             log.info("    ${recognizedName}")
         }
         log.info("* * * *")
-        log.info("UNRECOGNIZED names and editions:")
-        unrecognizedNameEditions.each { FairfaxFileNameEditionKey fairfaxFileNameEditionKey ->
+        log.info("UNRECOGNIZED titleCodes and editionCodes:")
+        unrecognizedTitleCodeEditionCodes.each { FairfaxFileTitleEditionKey fairfaxFileNameEditionKey ->
             log.info("    ${fairfaxFileNameEditionKey}")
         }
         log.info("* * * *")
@@ -171,7 +171,7 @@ class MiscellaneousProcessor {
         boolean includeSubdirectories = true
         boolean directoryOnly = true
 
-        // Load directories have the structure <name>_<yyyyMMdd> (and possibly <name><edition>_<yyyyMMdd>
+        // Load directories have the structure <titleCode>_<yyyyMMdd> (and possibly <titleCode><editionCode>_<yyyyMMdd>
         String pattern = '\\w{3,6}_\\d{8}'
         log.info("Finding directories for path=${filesPath.toFile().getCanonicalPath()} and pattern=${pattern}")
         timekeeper.logElapsed()
@@ -181,7 +181,7 @@ class MiscellaneousProcessor {
         timekeeper.logElapsed()
 
         List<File> filteredDirectoriesList = []
-        String regexPattern = '(?<name>\\w{3,6})_(?<date>\\d{8})'
+        String regexPattern = '(?<titleCode>\\w{3,6})_(?<date>\\d{8})'
         directoriesList.each { File directory ->
             Matcher matcher = directory.getName() =~ /${regexPattern}/
             if (matcher.matches()) {
@@ -200,6 +200,25 @@ class MiscellaneousProcessor {
     void copyIngestedLoadsToIngestedFolder(File sourceFolder, File destinationFolder, File forReviewFolder,
                                            boolean createDestination, boolean moveFiles, LocalDate startingDate,
                                            LocalDate endingDate, boolean moveOrCopyEvenIfNoRosettaDoneFile) {
+        // Look for folders called 'content'. Does it have a 'mets.xml'?
+        // Does the parent have a 'done' file (and done is needed)
+        // Load the mets.xml to get the publication titleCode and date
+        // If moving and parent of content folder has no other subfolders after moving, then delete it, and so on
+
+
+    }
+
+    // Split
+    // See the README.md for a description of the file structures.
+    void copyAndSplitBetweenNonIngestedAndIngested(File sourceFolder, File destinationFolder, File forReviewFolder,
+                                           boolean createDestination, boolean moveFiles, LocalDate startingDate,
+                                           LocalDate endingDate, boolean moveOrCopyEvenIfNoRosettaDoneFile) {
+        // Look for folders called 'content'. Does it have a 'mets.xml'?
+        // Does the parent have a 'done' file.
+        // If it has a 'done' file it gets moved to the ingested folder.
+        // If it doesn't have a 'done' file it gets moved to the pre-process folder (or ready-for-ingestion??).
+        // Load the mets.xml to get the publication titleCode and date.
+        // If moving and parent of content folder has no other subfolders after moving, then delete it, and so on
 
 
     }
@@ -214,17 +233,17 @@ class MiscellaneousProcessor {
     void copyProdLoadToTestStructures(File sourceFolder, File destinationFolder, boolean createDestination,
                                       LocalDate startingDate, LocalDate endingDate) {
         // The source files are going to be in a subdirectory with the directory structure being:
-        // <name>_yyyyMMdd/content/streams/{files} with the mets.xml in the content directory.
+        // <titleCode>_yyyyMMdd/content/streams/{files} with the mets.xml in the content directory.
         // Find the source directories that are between the starting date and the ending date
         List<File> filteredDirectoriesList = findProdLoadDirectoriesBetweenDates(sourceFolder.getCanonicalPath(),
                 startingDate, endingDate)
 
-        // We need to copy the files to the groupByDateAndName structure AND the post-processByDate structure.
+        // We need to copy the files to the preProcess structure AND the readyForIngestion structure.
         boolean isRegexNotGlob = true
         boolean matchFilenameOnly = true
         boolean sortFiles = true
         String pattern = '\\w{6}-\\d{8}-.*?\\.pdf'
-        String directoryPattern = '(?<name>\\w{3,6})_(?<date>\\d{8})'
+        String directoryPattern = '(?<titleCode>\\w{3,6})_(?<date>\\d{8})'
 
         log.info("Processing filteredDirectories total=${filteredDirectoriesList.size()}")
         int filteredDirectoriesCount = 1
@@ -232,13 +251,13 @@ class MiscellaneousProcessor {
             log.info("Processing ${filteredDirectoriesCount}/${filteredDirectoriesList.size()}, current=${sourceDirectory.getCanonicalPath()}")
             Matcher matcher = sourceDirectory.getName() =~ /${directoryPattern}/
             String dateString
-            String nameString
+            String titleCodeString
             if (matcher.matches()) {
                 dateString = matcher.group('date')
-                nameString = matcher.group('name')
+                titleCodeString = matcher.group('titleCode')
             } else {
                 dateString = "UNKNOWN-DATE"
-                nameString = "UNKNOWN-NAME"
+                titleCodeString = "UNKNOWN-TITLE-CODE"
             }
             List<File> sourceFiles = []
             File contentFolder = new File(sourceDirectory, "content")
@@ -261,8 +280,8 @@ class MiscellaneousProcessor {
                 log.info("contentFolder=${contentFolder.getCanonicalPath()} does not exist -- SKIPPING")
             }
 
-            // Copy to the groupByDateAndName structure
-            File groupByDateAndNameDestinationFolder = new File(destinationFolder, "groupByDateAndName/${dateString}/${nameString}")
+            // Copy to the preProcess structure
+            File groupByDateAndNameDestinationFolder = new File(destinationFolder, "groupByDateAndName/${dateString}/${titleCodeString}")
             if (createDestination) {
                 groupByDateAndNameDestinationFolder.mkdirs()
             }
@@ -274,8 +293,8 @@ class MiscellaneousProcessor {
                 }
             }
 
-            /// Copy to the post-processByDate structure
-            File rosettaIngestFolder = new File(destinationFolder, "rosettaIngest/${dateString}/${nameString}_${dateString}")
+            /// Copy to the readyForIngestion structure
+            File rosettaIngestFolder = new File(destinationFolder, "rosettaIngest/${dateString}/${titleCodeString}_${dateString}")
             rosettaIngestFolder.mkdirs()
             sourceFiles.each { File sourceFile ->
                 File destinationFile = new File(rosettaIngestFolder, sourceFile.getName())

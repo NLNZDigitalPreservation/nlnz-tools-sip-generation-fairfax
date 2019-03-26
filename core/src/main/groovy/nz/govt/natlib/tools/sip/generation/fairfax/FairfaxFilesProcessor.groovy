@@ -177,10 +177,10 @@ class FairfaxFilesProcessor {
     }
 
     String formatSipProcessingStateIdentifier(FairfaxFileGroupKey fairfaxFileGroupKey) {
-        String title = fairfaxSpreadsheet.getTitleForNameEdition(fairfaxFileGroupKey.name, fairfaxFileGroupKey.edition)
+        String title = fairfaxSpreadsheet.getTitleParentForTitleCodeEditionCode(fairfaxFileGroupKey.titleCode, fairfaxFileGroupKey.editionCode)
         String titleWithUnderscores = title.trim().replace(' ', '_')
 
-        return "${fairfaxFileGroupKey.edition}_${titleWithUnderscores}"
+        return "${fairfaxFileGroupKey.editionCode}_${titleWithUnderscores}"
     }
 
     Sip getBlankSip() {
