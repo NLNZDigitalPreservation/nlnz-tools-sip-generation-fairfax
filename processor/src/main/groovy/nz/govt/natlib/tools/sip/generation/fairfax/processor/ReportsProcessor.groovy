@@ -9,6 +9,7 @@ import nz.govt.natlib.tools.sip.generation.fairfax.processor.support.TitleCodeBy
 import nz.govt.natlib.tools.sip.pdf.PdfInformationExtractor
 
 import java.time.LocalDate
+import java.time.Period
 
 @Slf4j
 class ReportsProcessor {
@@ -126,6 +127,7 @@ class ReportsProcessor {
 
     void statisticalAudit(File sourceFolder) {
         log.info("STARTING statisticalAudit")
+        StringBuilder summaryTextBuilder = new StringBuilder()
 
         // Clear the set of recognized and unrecognized names before processing begins
         recognizedTitleCodes = []
@@ -133,6 +135,7 @@ class ReportsProcessor {
         Set<FairfaxFileTitleEditionKey> recognizedTitleCodeEditionCodes = []
         Set<FairfaxFileTitleEditionKey> unrecognizedTitleCodeEditionCodes = []
         Set<File> invalidFiles = []
+        List<Tuple2<LocalDate, Integer>> totalsByDateList = [ ]
 
         log.info("sourceFolder=${sourceFolder}")
 
@@ -198,40 +201,58 @@ class ReportsProcessor {
         }
 
         log.info("* * * *")
-        log.info("Recognized tileCodes:")
+        logAndAppend(summaryTextBuilder, "Recognized tileCodes:")
         recognizedTitleCodes.each { String recognizedName ->
-            log.info("    ${recognizedName}")
+            logAndAppend(summaryTextBuilder, "${recognizedName}")
         }
         log.info("* * * *")
-        log.info("Recognized titleCodes and editionCodes:")
+        logAndAppend(summaryTextBuilder, "Recognized titleCode/editionCode:")
         recognizedTitleCodeEditionCodes.each { FairfaxFileTitleEditionKey fairfaxFileNameEditionKey ->
-            log.info("    ${fairfaxFileNameEditionKey}")
+            logAndAppend(summaryTextBuilder, "${fairfaxFileNameEditionKey.titleCode}/" +
+                    "${fairfaxFileNameEditionKey.editionCode}")
         }
         log.info("* * * *")
-        log.info("UNRECOGNIZED titleCodes:")
+        logAndAppend(summaryTextBuilder, "UNRECOGNIZED titleCodes:")
         unrecognizedTitleCodes.each { String recognizedName ->
-            log.info("    ${recognizedName}")
+            logAndAppend(summaryTextBuilder, "${recognizedName}")
         }
         log.info("* * * *")
-        log.info("UNRECOGNIZED titleCodes and editionCodes:")
+        logAndAppend(summaryTextBuilder, "UNRECOGNIZED titleCode/editionCode:")
         unrecognizedTitleCodeEditionCodes.each { FairfaxFileTitleEditionKey fairfaxFileNameEditionKey ->
-            log.info("    ${fairfaxFileNameEditionKey}")
+            logAndAppend(summaryTextBuilder, "${fairfaxFileNameEditionKey.titleCode}/" +
+                    "${fairfaxFileNameEditionKey.editionCode}")
         }
         log.info("* * * *")
-        log.info("INVALID files:")
+        logAndAppend(summaryTextBuilder, "INVALID files:")
         invalidFiles.each { File file ->
-            log.info("    ${file.getCanonicalPath()}")
+            logAndAppend(summaryTextBuilder, "${file.getCanonicalPath()}")
         }
         log.info("* * * *")
 
+        println("Processing detail for sourceFolder=${sourceFolder.getCanonicalPath()}:")
+        println()
         println("date|total_files|title_code|out-of-sequence-files|duplicate-files")
         String spreadsheetSeparator = "|"
         List<LocalDate> sortedDates = dateToTitleCodeMap.keySet().sort()
+        LocalDate lastDate
+        List<LocalDate> dateGaps = [ ]
         sortedDates.each { LocalDate dateKey ->
+            if (lastDate != null) {
+                Period sinceLastDate = Period.between(lastDate, dateKey)
+                if (sinceLastDate.getDays() > 1) {
+                    lastDate = lastDate.plusDays(1)
+                    dateGaps.add(lastDate)
+                    totalsByDateList.add(new Tuple2<LocalDate, Integer>(lastDate, 0))
+                    while ((lastDate = lastDate.plusDays(1)) != dateKey) {
+                        dateGaps.add(lastDate)
+                        totalsByDateList.add(new Tuple2<LocalDate, Integer>(lastDate, 0))
+                    }
+                }
+            }
             Map<String, TitleCodeByDateSummary> titleCodeToSummaryMap = dateToTitleCodeMap.get(dateKey)
             List<String> sortedTitleCodes = titleCodeToSummaryMap.keySet().sort()
             boolean firstForDate = true
-            long totalFilesForDate = 0L
+            int totalFilesForDate = 0
             sortedTitleCodes.each { String titleCode ->
                 TitleCodeByDateSummary titleCodeByDateSummary = titleCodeToSummaryMap.get(titleCode)
                 if (firstForDate) {
@@ -242,10 +263,40 @@ class ReportsProcessor {
                 totalFilesForDate += titleCodeByDateSummary.files.size()
             }
             println("${spreadsheetSeparator}${totalFilesForDate}")
+            totalsByDateList.add(new Tuple2<LocalDate, Integer>(dateKey, totalFilesForDate))
+            lastDate = dateKey
         }
+
+        if (dateGaps.size() > 0) {
+            log.info("* * * *")
+            logAndAppend(summaryTextBuilder, "DATE gaps (missing dates):")
+            dateGaps.each { LocalDate localDate ->
+                logAndAppend(summaryTextBuilder, "${localDate}")
+            }
+            log.info("* * * *")
+        }
+
+        println()
+        println("Processing exceptions summary for sourceFolder=${sourceFolder.getCanonicalPath()}:")
+        println()
+        println(summaryTextBuilder.toString())
+        println()
+
+        println("Date totals summary for sourceFolder=${sourceFolder.getCanonicalPath()}:")
+        println("Date|Total for date")
+        totalsByDateList.each { Tuple2<LocalDate, Integer> dateTotalTuple ->
+            println("${dateTotalTuple.first}|${dateTotalTuple.second}")
+        }
+        println()
 
         log.info("ENDING statisticalAudit")
         timekeeper.logElapsed()
+    }
+
+    void logAndAppend(StringBuilder stringBuilder, String message) {
+        stringBuilder.append(message)
+        stringBuilder.append(System.lineSeparator())
+        log.info(message)
     }
 
     void extractMetadata(File sourceFolder) {

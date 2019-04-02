@@ -27,6 +27,23 @@ class TitleCodeByDateSummary {
     }
 
     List<FairfaxFile> outOfSequenceFiles() {
+        List<FairfaxFile> outOfSequenceFiles = [ ]
+        List<FairfaxFile> sortedFiles = files.sort()
+        FairfaxFile lastFairfaxFile
+        sortedFiles.each { FairfaxFile fairfaxFile ->
+            if (lastFairfaxFile == null) {
+                if (fairfaxFile.sequenceNumber != 1) {
+                    outOfSequenceFiles.add(fairfaxFile)
+                }
+            } else {
+                if (!fairfaxFile.comesDirectlyAfter(lastFairfaxFile)) {
+                    outOfSequenceFiles.addAll([ lastFairfaxFile, fairfaxFile ])
+                }
+            }
+            lastFairfaxFile = fairfaxFile
+        }
+
+        return outOfSequenceFiles
 
     }
 

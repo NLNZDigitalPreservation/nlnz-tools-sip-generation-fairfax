@@ -99,4 +99,14 @@ class FairfaxFile {
     LocalDate dateAsLocalDate() {
         return new LocalDate(this.dateYear, this.dateMonthOfYear, this.dateDayOfMonth)
     }
+
+    boolean comesDirectlyAfter(FairfaxFile fairfaxFile) {
+        // this file's sequence number must be greater (or a letter starting at 1)
+        int sequenceDifference = this.sequenceNumber - fairfaxFile.sequenceNumber
+        if (this.sequenceLetter == fairfaxFile.sequenceLetter) {
+            return sequenceDifference == 1
+        } else {
+            return this.sequenceNumber == 1
+        }
+    }
 }
