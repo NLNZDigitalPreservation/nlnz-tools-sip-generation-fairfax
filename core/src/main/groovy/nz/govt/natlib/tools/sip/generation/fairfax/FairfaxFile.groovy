@@ -17,8 +17,11 @@ import java.util.regex.Matcher
 @ToString(includeNames=true, includePackage=false, excludes=[ ])
 @EqualsAndHashCode(excludes = [ 'file', 'filename', 'qualifier', 'sequenceNumberString', 'validForProcessing', 'validPdf' ])
 class FairfaxFile {
-    static String REGEX_PATTERN = "(?<titleCode>[a-zA-Z0-9]{3})(?<editionCode>[a-zA-Z0-9]{3})-(?<date>\\d{8})-" +
-            "(?<sequenceLetter>[A-Za-z]{0,2})(?<sequenceNumber>\\d{1,4})(?<qualifier>.*?)\\.pdf"
+    // Note that the titleCode appears to be, in some cases 4 characters long (eg. JAZZTAB), but for most cases it is 3.
+    // The populate() method attempts to correct any issues with the titleCode/editionCode grouping.
+    // Note that the pdf extension can be upper or lower case (and we handle the mixed case as well
+    static String REGEX_PATTERN = "(?<titleCode>[a-zA-Z0-9]{3,4})(?<editionCode>[a-zA-Z0-9]{2,3})-(?<date>\\d{8})-" +
+            "(?<sequenceLetter>[A-Za-z]{0,2})(?<sequenceNumber>\\d{1,4})(?<qualifier>.*?)\\.[pP]{1}[dD]{1}[fF]{1}"
     static final DateTimeFormatter LOCAL_DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyyMMdd")
 
     File file
@@ -51,6 +54,11 @@ class FairfaxFile {
         if (matcher.matches()) {
             this.titleCode = matcher.group('titleCode')
             this.editionCode = matcher.group('editionCode')
+            // In some situations the titleCode will take too many characters
+            if ((this.titleCode.length() == 4) && (this.editionCode.length() == 2)) {
+                this.editionCode = "${this.titleCode.substring(3, 4)}${this.editionCode}"
+                this.titleCode = this.titleCode.substring(0, 3)
+             }
             String dateString = matcher.group('date')
             LocalDate localDate = LocalDate.parse(dateString, LOCAL_DATE_TIME_FORMATTER)
             this.dateYear = localDate.year

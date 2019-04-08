@@ -67,7 +67,7 @@ class InvalidPageFilenameTest {
         boolean matchFilenameOnly = true
         boolean sortFiles = true
         List<File> filesForProcessing = TestHelper.getFilesForProcessingFromFileSystem(isRegexNotGlob, matchFilenameOnly,
-                sortFiles, testMethodState.localPath, ".*?\\.pdf")
+                sortFiles, testMethodState.localPath, ".*?\\.[pP]{1}[dD]{1}[fF]{1}")
 
         processFiles(filesForProcessing)
     }
@@ -82,7 +82,7 @@ class InvalidPageFilenameTest {
         boolean matchFilenameOnly = true
         boolean sortFiles = true
         List<File> filesForProcessing = TestHelper.getFilesForProcessingFromResource(isRegexNotGlob, matchFilenameOnly,
-                sortFiles, testMethodState.resourcePath, testMethodState.localPath, ".*?\\.pdf")
+                sortFiles, testMethodState.resourcePath, testMethodState.localPath, ".*?\\.[pP]{1}[dD]{1}[fF]{1}")
 
         processFiles(filesForProcessing)
     }

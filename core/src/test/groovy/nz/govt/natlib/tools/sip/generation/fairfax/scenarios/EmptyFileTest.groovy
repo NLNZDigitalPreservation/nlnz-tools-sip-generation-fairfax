@@ -67,7 +67,7 @@ class EmptyFileTest {
         boolean matchFilenameOnly = true
         boolean sortFiles = true
         List<File> filesForProcessing = TestHelper.getFilesForProcessingFromFileSystem(isRegexNotGlob, matchFilenameOnly,
-                sortFiles, testMethodState.localPath, ".*?\\.pdf")
+                sortFiles, testMethodState.localPath, ".*?\\.[pP]{1}[dD]{1}[fF]{1}")
 
         processFiles(filesForProcessing)
     }
@@ -82,7 +82,7 @@ class EmptyFileTest {
         boolean matchFilenameOnly = true
         boolean sortFiles = true
         List<File> filesForProcessing = TestHelper.getFilesForProcessingFromResource(isRegexNotGlob, matchFilenameOnly,
-                sortFiles, testMethodState.resourcePath, testMethodState.localPath, ".*?\\.pdf")
+                sortFiles, testMethodState.resourcePath, testMethodState.localPath, ".*?\\.[pP]{1}[dD]{1}[fF]{1}")
 
         processFiles(filesForProcessing)
     }
@@ -151,10 +151,10 @@ class EmptyFileTest {
         TestHelper.assertExpectedSipFileValues(sipForValidation, 6, "TSTPB1-20181123-006.pdf", "TSTPB1-20181123-006.pdf",
                 11430L, "MD5", "6b932154c4b004a2507d73dc3aaf0736", "006", "application/pdf")
 
-        TestHelper.assertExpectedSipFileValues(sipForValidation, 7, "TSTPB1-20181123-007.pdf", "TSTPB1-20181123-007.pdf",
+        TestHelper.assertExpectedSipFileValues(sipForValidation, 7, "TSTPB1-20181123-007.PDF", "TSTPB1-20181123-007.PDF",
                 11543L, "MD5", "a7ceb9001aab17e78cfaf1559f130071", "007", "application/pdf")
 
-        TestHelper.assertExpectedSipFileValues(sipForValidation, 8, "TSTPB1-20181123-008.pdf", "TSTPB1-20181123-008.pdf",
+        TestHelper.assertExpectedSipFileValues(sipForValidation, 8, "TSTPB1-20181123-008.PDF", "TSTPB1-20181123-008.PDF",
                 11436L, "MD5", "449dc86bd38979d10c8fb6c3b375a467", "008", "application/pdf")
 
         TestHelper.assertExpectedSipFileValues(sipForValidation, 9, "TSTPB1-20181123-009.pdf", "TSTPB1-20181123-009.pdf",

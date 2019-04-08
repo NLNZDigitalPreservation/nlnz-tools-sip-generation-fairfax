@@ -83,7 +83,7 @@ class PreProcessProcessor {
         boolean matchFilenameOnly = true
         boolean sortFiles = true
 
-        String pattern = '\\w{6}-\\d{8}-\\w{3,4}.*?\\.pdf'
+        String pattern = '\\w{5,7}-\\d{8}-\\w{3,4}.*?\\.[pP]{1}[dD]{1}[fF]{1}'
         // Given that we could be dealing with 60,000+ files in the source directory, it's probably more efficient to
         // get them all at once
         List<File> allFiles = ProcessorUtils.findFiles(sourceFolder.getAbsolutePath(), isRegexNotGlob,
@@ -94,7 +94,7 @@ class PreProcessProcessor {
             LocalDate currentDate = startingDate
             while (currentDate.isBefore(endingDate) || currentDate.isEqual(endingDate)) {
                 String dateString = FairfaxFile.LOCAL_DATE_TIME_FORMATTER.format(currentDate)
-                pattern = '\\w{6}-' + dateString + '-\\w{3,4}.*?\\.pdf'
+                pattern = '\\w{5,7}-' + dateString + '-\\w{3,4}.*?\\.[pP]{1}[dD]{1}[fF]{1}'
                 log.info("Searching for files matching pattern=${pattern}")
                 List<File> foundFiles = ProcessorUtils.matchFiles(allFiles, pattern)
                 log.info("Found total files=${foundFiles.size()} matching pattern=${pattern}")

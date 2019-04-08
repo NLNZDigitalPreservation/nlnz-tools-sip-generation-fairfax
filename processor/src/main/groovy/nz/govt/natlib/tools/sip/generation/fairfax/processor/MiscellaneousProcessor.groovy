@@ -43,7 +43,7 @@ class MiscellaneousProcessor {
         timekeeper.logElapsed()
 
         List<File> filteredDirectoriesList = []
-        String regexPattern = '(?<titleCode>\\w{3,6})_(?<date>\\d{8})'
+        String regexPattern = '(?<titleCode>\\w{3,7})_(?<date>\\d{8})'
         directoriesList.each { File directory ->
             Matcher matcher = directory.getName() =~ /${regexPattern}/
             if (matcher.matches()) {
@@ -104,8 +104,8 @@ class MiscellaneousProcessor {
         boolean isRegexNotGlob = true
         boolean matchFilenameOnly = true
         boolean sortFiles = true
-        String pattern = '\\w{6}-\\d{8}-.*?\\.pdf'
-        String directoryPattern = '(?<titleCode>\\w{3,6})_(?<date>\\d{8})'
+        String pattern = '\\w{5,7}-\\d{8}-.*?\\.[pP]{1}[dD]{1}[fF]{1}'
+        String directoryPattern = '(?<titleCode>\\w{3,7})_(?<date>\\d{8})'
 
         log.info("Processing filteredDirectories total=${filteredDirectoriesList.size()}")
         int filteredDirectoriesCount = 1

@@ -25,7 +25,8 @@ class ProcessorUtils {
     }
 
     static List<File> findFiles(String localPath, boolean isRegexNotGlob, boolean matchFilenameOnly,
-                                boolean sortFiles, String pattern, Timekeeper timekeeper) {
+                                boolean sortFiles, String pattern, Timekeeper timekeeper,
+                                boolean includeSubdirectories = true) {
         List<File> filesList = [ ]
         Path filesPath = Paths.get(localPath)
         if (!Files.exists(filesPath) || !Files.isDirectory(filesPath)) {
@@ -35,7 +36,9 @@ class ProcessorUtils {
 
         log.info("Finding files for path=${filesPath.toFile().getCanonicalPath()} and pattern=${pattern}")
         timekeeper.logElapsed()
-        filesList = FilesFinder.getMatchingFiles(filesPath, isRegexNotGlob, matchFilenameOnly, sortFiles, pattern)
+        boolean directoryOnly = false
+        filesList = FilesFinder.getMatchingFilesFull(filesPath, isRegexNotGlob, matchFilenameOnly, sortFiles,
+                includeSubdirectories, directoryOnly, pattern)
         log.info("Found total files=${filesList.size()} for path=${filesPath.toFile().getCanonicalPath()}")
         timekeeper.logElapsed()
 

@@ -40,7 +40,7 @@ class ReportsProcessor {
         boolean isRegexNotGlob = true
         boolean matchFilenameOnly = true
         boolean sortFiles = true
-        String pattern = ".*?\\.pdf"
+        String pattern = ".*?\\.[pP]{1}[dD]{1}[fF]{1}"
         List<File> foundFiles = ProcessorUtils.findFiles(sourceFolder.getAbsolutePath(), isRegexNotGlob,
                 matchFilenameOnly, sortFiles, pattern, timekeeper)
         List<FairfaxFile> fairfaxFiles = foundFiles.collect { File file ->
@@ -146,7 +146,7 @@ class ReportsProcessor {
         boolean isRegexNotGlob = true
         boolean matchFilenameOnly = true
         boolean sortFiles = true
-        String pattern = ".*?\\.pdf"
+        String pattern = ".*?\\.[pP]{1}[dD]{1}[fF]{1}"
         List<File> foundFiles = ProcessorUtils.findFiles(sourceFolder.getAbsolutePath(), isRegexNotGlob,
                 matchFilenameOnly, sortFiles, pattern, timekeeper)
         Map<LocalDate, Map<String, TitleCodeByDateSummary>> dateToTitleCodeMap = [ : ]
@@ -301,11 +301,13 @@ class ReportsProcessor {
 
     void extractMetadata(File sourceFolder) {
         log.info("STARTING extractMetadata doLast")
-        FileNameFinder fileNameFinder = new FileNameFinder()
-        List<String> filenames = fileNameFinder.getFileNames(sourceFolder.getAbsolutePath(), "**/*.pdf")
-        List<File> pdfFiles = filenames.collect { String filename ->
-            new File(filename)
-        }
+        boolean isRegexNotGlob = true
+        boolean matchFilenameOnly = true
+        boolean sortFiles = true
+        boolean includeSubdirectories = true
+        String pattern = ".*?\\.[pP]{1}[dD]{1}[fF]{1}"
+        List<File> pdfFiles = ProcessorUtils.findFiles(sourceFolder.getAbsolutePath(), isRegexNotGlob,
+                matchFilenameOnly, sortFiles, pattern, timekeeper, includeSubdirectories)
 
         pdfFiles.each { File pdfFile ->
             log.info("* * * * *")

@@ -86,6 +86,90 @@ class FairfaxFileTest {
     }
 
     @Test
+    void createsCorrectlyWithMixedCaseExtension() {
+        String originalFilename = "TSTED1-20181022-B024a qualifier.pDf"
+        when(mockFile.getName()).thenReturn(originalFilename)
+
+        FairfaxFile testFairfaxFile = new FairfaxFile(mockFile)
+
+        assertThat("Filename extracted correctly", testFairfaxFile.filename, is(originalFilename))
+        assertThat("TitleCode parsed correctly", testFairfaxFile.titleCode, is("TST"))
+        assertThat("EditionCode parsed correctly", testFairfaxFile.editionCode, is("ED1"))
+        assertNotNull("Year extracted", testFairfaxFile.dateYear)
+        assertThat("dateYear parsed correctly", testFairfaxFile.dateYear, is(new Integer(2018)))
+        assertThat("dateMonthOfYear parsed correctly", testFairfaxFile.dateMonthOfYear, is(new Integer(10)))
+        assertThat("dateDayOfMonth parsed correctly", testFairfaxFile.dateDayOfMonth, is(new Integer(22)))
+        assertThat("Prefix parsed correctly", testFairfaxFile.sequenceLetter, is("B"))
+        assertThat("Prefix parsed correctly", testFairfaxFile.sequenceNumberString, is("024"))
+        assertThat("Prefix parsed correctly", testFairfaxFile.sequenceNumber, is(24))
+        assertThat("Qualifier parsed correctly", testFairfaxFile.qualifier, is("a qualifier"))
+        assertTrue("FairfaxFile is valid", testFairfaxFile.isValidName())
+    }
+
+    @Test
+    void createsCorrectlyWithUpperCaseExtension() {
+        String originalFilename = "TSTED1-20181022-B024a qualifier.PDF"
+        when(mockFile.getName()).thenReturn(originalFilename)
+
+        FairfaxFile testFairfaxFile = new FairfaxFile(mockFile)
+
+        assertThat("Filename extracted correctly", testFairfaxFile.filename, is(originalFilename))
+        assertThat("TitleCode parsed correctly", testFairfaxFile.titleCode, is("TST"))
+        assertThat("EditionCode parsed correctly", testFairfaxFile.editionCode, is("ED1"))
+        assertNotNull("Year extracted", testFairfaxFile.dateYear)
+        assertThat("dateYear parsed correctly", testFairfaxFile.dateYear, is(new Integer(2018)))
+        assertThat("dateMonthOfYear parsed correctly", testFairfaxFile.dateMonthOfYear, is(new Integer(10)))
+        assertThat("dateDayOfMonth parsed correctly", testFairfaxFile.dateDayOfMonth, is(new Integer(22)))
+        assertThat("Prefix parsed correctly", testFairfaxFile.sequenceLetter, is("B"))
+        assertThat("Prefix parsed correctly", testFairfaxFile.sequenceNumberString, is("024"))
+        assertThat("Prefix parsed correctly", testFairfaxFile.sequenceNumber, is(24))
+        assertThat("Qualifier parsed correctly", testFairfaxFile.qualifier, is("a qualifier"))
+        assertTrue("FairfaxFile is valid", testFairfaxFile.isValidName())
+    }
+
+    @Test
+    void createsCorrectlyWithFourCharacterTitleCode() {
+        String originalFilename = "JAZZED1-20181022-B024a qualifier.pDf"
+        when(mockFile.getName()).thenReturn(originalFilename)
+
+        FairfaxFile testFairfaxFile = new FairfaxFile(mockFile)
+
+        assertThat("Filename extracted correctly", testFairfaxFile.filename, is(originalFilename))
+        assertThat("TitleCode parsed correctly", testFairfaxFile.titleCode, is("JAZZ"))
+        assertThat("EditionCode parsed correctly", testFairfaxFile.editionCode, is("ED1"))
+        assertNotNull("Year extracted", testFairfaxFile.dateYear)
+        assertThat("dateYear parsed correctly", testFairfaxFile.dateYear, is(new Integer(2018)))
+        assertThat("dateMonthOfYear parsed correctly", testFairfaxFile.dateMonthOfYear, is(new Integer(10)))
+        assertThat("dateDayOfMonth parsed correctly", testFairfaxFile.dateDayOfMonth, is(new Integer(22)))
+        assertThat("Prefix parsed correctly", testFairfaxFile.sequenceLetter, is("B"))
+        assertThat("Prefix parsed correctly", testFairfaxFile.sequenceNumberString, is("024"))
+        assertThat("Prefix parsed correctly", testFairfaxFile.sequenceNumber, is(24))
+        assertThat("Qualifier parsed correctly", testFairfaxFile.qualifier, is("a qualifier"))
+        assertTrue("FairfaxFile is valid", testFairfaxFile.isValidName())
+    }
+
+    @Test
+    void createsCorrectlyWithTwoCharacterEditionCode() {
+        String originalFilename = "TSTAB-20181022-B024a qualifier.pDf"
+        when(mockFile.getName()).thenReturn(originalFilename)
+
+        FairfaxFile testFairfaxFile = new FairfaxFile(mockFile)
+
+        assertThat("Filename extracted correctly", testFairfaxFile.filename, is(originalFilename))
+        assertThat("TitleCode parsed correctly", testFairfaxFile.titleCode, is("TST"))
+        assertThat("EditionCode parsed correctly", testFairfaxFile.editionCode, is("AB"))
+        assertNotNull("Year extracted", testFairfaxFile.dateYear)
+        assertThat("dateYear parsed correctly", testFairfaxFile.dateYear, is(new Integer(2018)))
+        assertThat("dateMonthOfYear parsed correctly", testFairfaxFile.dateMonthOfYear, is(new Integer(10)))
+        assertThat("dateDayOfMonth parsed correctly", testFairfaxFile.dateDayOfMonth, is(new Integer(22)))
+        assertThat("Prefix parsed correctly", testFairfaxFile.sequenceLetter, is("B"))
+        assertThat("Prefix parsed correctly", testFairfaxFile.sequenceNumberString, is("024"))
+        assertThat("Prefix parsed correctly", testFairfaxFile.sequenceNumber, is(24))
+        assertThat("Qualifier parsed correctly", testFairfaxFile.qualifier, is("a qualifier"))
+        assertTrue("FairfaxFile is valid", testFairfaxFile.isValidName())
+    }
+
+    @Test
     void createsCorrectlyWithNumberOnlySequenceQualifier() {
         String originalFilename = "t20ABC-20181022-024crop.pdf"
         when(mockFile.getName()).thenReturn(originalFilename)

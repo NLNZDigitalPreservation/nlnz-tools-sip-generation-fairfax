@@ -33,7 +33,7 @@ class ReadyForIngestionProcessor {
         boolean matchFilenameOnly = true
         boolean sortFiles = true
         // Only process PDF files
-        String pattern = '\\w{6}-\\d{8}-\\w{3,4}.*?\\.pdf'
+        String pattern = '\\w{5,7}-\\d{8}-\\w{3,4}.*?\\.[pP]{1}[dD]{1}[fF]{1}'
 
         log.info("START processTitleCodeFolder for pattern=${pattern}, titleCodeFolder=${titleCodeFolder.getCanonicalPath()}")
         timekeeper.logElapsed()
