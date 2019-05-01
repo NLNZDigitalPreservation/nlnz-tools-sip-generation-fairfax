@@ -1,7 +1,6 @@
 package nz.govt.natlib.tools.sip.generation.fairfax.processor
 
 import groovy.util.logging.Slf4j
-import nz.govt.natlib.m11n.tools.automation.logging.Timekeeper
 import nz.govt.natlib.tools.sip.files.FilesFinder
 
 import java.nio.file.Files
@@ -13,10 +12,10 @@ import java.util.regex.Matcher
 
 @Slf4j
 class MiscellaneousProcessor {
-    Timekeeper timekeeper
+    ProcessorConfiguration processorConfiguration
 
-    MiscellaneousProcessor(Timekeeper timekeeper) {
-        this.timekeeper = timekeeper
+    MiscellaneousProcessor(ProcessorConfiguration processorConfiguration) {
+        this.processorConfiguration = processorConfiguration
     }
 
     List<File> findProdLoadDirectoriesBetweenDates(String localPath, LocalDate startingDate, LocalDate endingDate) {
@@ -33,14 +32,16 @@ class MiscellaneousProcessor {
         boolean includeSubdirectories = true
         boolean directoryOnly = true
 
-        // Load directories have the structure <titleCode>_<yyyyMMdd> (and possibly <titleCode><editionCode>_<yyyyMMdd>
+        // See the README.md for this project for a description of the load directories file structure.
+        // Generally it's: TODO
+        // TODO: Incorrect: Load directories have the structure <titleCode>_<yyyyMMdd> (and possibly <titleCode><editionCode>_<yyyyMMdd>
         String pattern = '\\w{3,6}_\\d{8}'
         log.info("Finding directories for path=${filesPath.toFile().getCanonicalPath()} and pattern=${pattern}")
-        timekeeper.logElapsed()
+        processorConfiguration.timekeeper.logElapsed()
         directoriesList = FilesFinder.getMatchingFilesFull(filesPath, isRegexNotGlob, matchFilenameOnly, sortFiles,
                 includeSubdirectories, directoryOnly, pattern)
         log.info("Found total directories=${directoriesList.size()} for path=${filesPath.toFile().getCanonicalPath()}")
-        timekeeper.logElapsed()
+        processorConfiguration.timekeeper.logElapsed()
 
         List<File> filteredDirectoriesList = []
         String regexPattern = '(?<titleCode>\\w{3,7})_(?<date>\\d{8})'
@@ -58,31 +59,29 @@ class MiscellaneousProcessor {
         return filteredDirectoriesList
     }
 
-    // See the README.md for a description of the file structures.
-    void copyIngestedLoadsToIngestedFolder(File sourceFolder, File destinationFolder, File forReviewFolder,
-                                           boolean createDestination, boolean moveFiles, LocalDate startingDate,
-                                           LocalDate endingDate, boolean moveOrCopyEvenIfNoRosettaDoneFile) {
+    // See the README.md (Ingested stage) for a description of the file structures.
+    void copyIngestedLoadsToIngestedFolder() {
         // Look for folders called 'content'. Does it have a 'mets.xml'?
         // Does the parent have a 'done' file (and done is needed)
         // Load the mets.xml to get the publication titleCode and date
         // If moving and parent of content folder has no other subfolders after moving, then delete it, and so on
-
-
+        log.info("copyIngestedLoadsToIngestedFolder: Currently this work is being done by the python script:")
+        log.info("    fairfax-pre-and-post-process-grouper.py")
+        log.info("    See the github repository: https://github.com/NLNZDigitalPreservation/nlnz-tools-scripts-ingestion")
     }
 
     // Split
-    // See the README.md for a description of the file structures.
-    void copyAndSplitBetweenNonIngestedAndIngested(File sourceFolder, File destinationFolder, File forReviewFolder,
-                                           boolean createDestination, boolean moveFiles, LocalDate startingDate,
-                                           LocalDate endingDate, boolean moveOrCopyEvenIfNoRosettaDoneFile) {
+    // See the README.md (Ingested stage) for a description of the file structures.
+    void copyAndSplitBetweenNonIngestedAndIngested() {
         // Look for folders called 'content'. Does it have a 'mets.xml'?
         // Does the parent have a 'done' file.
         // If it has a 'done' file it gets moved to the ingested folder.
         // If it doesn't have a 'done' file it gets moved to the pre-process folder (or ready-for-ingestion??).
         // Load the mets.xml to get the publication titleCode and date.
         // If moving and parent of content folder has no other subfolders after moving, then delete it, and so on
-
-
+        log.info("copyAndSplitBetweenNonIngestedAndIngested: Currently this work is being done by the python script:")
+        log.info("    fairfax-pre-and-post-process-grouper.py")
+        log.info("    See the github repository: https://github.com/NLNZDigitalPreservation/nlnz-tools-scripts-ingestion")
     }
 
     // Copies the prod load structure to two structures:
@@ -92,13 +91,13 @@ class MiscellaneousProcessor {
     // See the README.md for a description of the folder structures
     //
     // These structures provide for testing the Fairfax processor, to see if its outputs match the work done previously.
-    void copyProdLoadToTestStructures(File sourceFolder, File destinationFolder, boolean createDestination,
-                                      LocalDate startingDate, LocalDate endingDate) {
+    void copyProdLoadToTestStructures() {
         // The source files are going to be in a subdirectory with the directory structure being:
         // <titleCode>_yyyyMMdd/content/streams/{files} with the mets.xml in the content directory.
         // Find the source directories that are between the starting date and the ending date
-        List<File> filteredDirectoriesList = findProdLoadDirectoriesBetweenDates(sourceFolder.getCanonicalPath(),
-                startingDate, endingDate)
+        List<File> filteredDirectoriesList = findProdLoadDirectoriesBetweenDates(
+                processorConfiguration.sourceFolder.getCanonicalPath(),
+                processorConfiguration.startingDate, processorConfiguration.endingDate)
 
         // We need to copy the files to the preProcess structure AND the readyForIngestion structure.
         boolean isRegexNotGlob = true
@@ -110,7 +109,8 @@ class MiscellaneousProcessor {
         log.info("Processing filteredDirectories total=${filteredDirectoriesList.size()}")
         int filteredDirectoriesCount = 1
         filteredDirectoriesList.each { File sourceDirectory ->
-            log.info("Processing ${filteredDirectoriesCount}/${filteredDirectoriesList.size()}, current=${sourceDirectory.getCanonicalPath()}")
+            log.info("Processing ${filteredDirectoriesCount}/${filteredDirectoriesList.size()}, " +
+                    "current=${processorConfiguration.sourceFolder.getCanonicalPath()}")
             Matcher matcher = sourceDirectory.getName() =~ /${directoryPattern}/
             String dateString
             String titleCodeString
@@ -133,7 +133,7 @@ class MiscellaneousProcessor {
                 File streamsFolder = new File(contentFolder, "streams")
                 if (streamsFolder.exists()) {
                     List<File> pdfFiles = ProcessorUtils.findFiles(streamsFolder.getAbsolutePath(), isRegexNotGlob,
-                            matchFilenameOnly, sortFiles, pattern, timekeeper)
+                            matchFilenameOnly, sortFiles, pattern, processorConfiguration.timekeeper)
                     sourceFiles.addAll(pdfFiles)
                 } else {
                     log.info("streamsFolder=${streamsFolder.getCanonicalPath()} does not exist -- SKIPPING")
@@ -143,8 +143,9 @@ class MiscellaneousProcessor {
             }
 
             // Copy to the preProcess structure
-            File groupByDateAndNameDestinationFolder = new File(destinationFolder, "groupByDateAndName/${dateString}/${titleCodeString}")
-            if (createDestination) {
+            File groupByDateAndNameDestinationFolder = new File(processorConfiguration.targetFolder,
+                    "groupByDateAndName/${dateString}/${titleCodeString}")
+            if (processorConfiguration.createDestination) {
                 groupByDateAndNameDestinationFolder.mkdirs()
             }
             groupByDateAndNameDestinationFolder.mkdirs()
@@ -156,7 +157,8 @@ class MiscellaneousProcessor {
             }
 
             /// Copy to the readyForIngestion structure
-            File rosettaIngestFolder = new File(destinationFolder, "rosettaIngest/${dateString}/${titleCodeString}_${dateString}")
+            File rosettaIngestFolder = new File(processorConfiguration.targetFolder,
+                    "rosettaIngest/${dateString}/${titleCodeString}_${dateString}")
             rosettaIngestFolder.mkdirs()
             sourceFiles.each { File sourceFile ->
                 File destinationFile = new File(rosettaIngestFolder, sourceFile.getName())

@@ -11,7 +11,7 @@ import java.util.concurrent.Callable
 
 @Slf4j
 @Command(description = 'Runs different processors based on command-line options.', name = 'processorRunner')
-class ProcessorRunner implements Callable<Void>{
+class ProcessorRunner implements ProcessorConfiguration, Callable<Void> {
     final static LocalDate DEFAULT_STARTING_DATE = LocalDate.of(2015, 1, 1)
     final static LocalDate DEFAULT_ENDING_DATE = LocalDate.now()
 
@@ -62,33 +62,61 @@ Default is copy (false).""")
 Default is no creation (false).""")
     boolean createDestination = false
 
-    @Option(names = ["--moveOrCopyEvenIfNoRosettaDoneFile" ], description = """Whether the move or copy takes place even if there is no Rosetta done file.
+    @Option(names = ["--parallelizeProcessing" ], description = """Run operations in parallel (if possible).
+Operations that have components that can run in parallel currently are:
+    --preProcess""")
+    boolean parallelizeProcessing = false
+
+    @Option(names = ["--numberOfThreads"], description = """Number of threads when running operations in parallel.
+The default is 1.""")
+    int numberOfThreads = 1
+
+    @Option(names = ["--moveOrCopyEvenIfNoRosettaDoneFile" ],
+            description = """Whether the move or copy takes place even if there is no Rosetta done file.
 The Rosetta done files is a file with a titleCode of 'done'.
 Default is no move or copy unless there IS a Rosetta done file (false).""")
     boolean moveOrCopyEvenIfNoRosettaDoneFile = false
 
+    @Option(names = ["verbose"], description = """Include verbose output""")
+    boolean verbose = false
+
     @Option(names = ["-h", "--help" ], usageHelp = true, description = 'Display a help message.')
     boolean helpRequested = false
 
-    @Option(names = ["-b", "--startingDate"], paramLabel = "STARTING_DATE", description = """Starting date in the format yyyy-MM-dd.
+    @Option(names = ["-b", "--startingDate"], paramLabel = "STARTING_DATE",
+            description = """Starting date in the format yyyy-MM-dd.
 Default is 2015-01-01.""")
     // TODO Need a custom converter
     LocalDate startingDate = DEFAULT_STARTING_DATE
 
-    @Option(names = ["-e", "--endingDate"], paramLabel = "ENDING_DATE", description = """Ending date in the format yyyy-MM-dd.
+    @Option(names = ["-e", "--endingDate"], paramLabel = "ENDING_DATE",
+            description = """Ending date in the format yyyy-MM-dd.
 Default is today.""")
     LocalDate endingDate = DEFAULT_ENDING_DATE
 
-    @Option(names = ["-s", "--sourceFolder"], paramLabel = "SOURCE_FOLDER", description = 'source folder in the format /path/to/folder')
+    @Option(names = ["-s", "--sourceFolder"], paramLabel = "SOURCE_FOLDER",
+            description = 'source folder in the format /path/to/folder')
     File sourceFolder
 
-    @Option(names = ["-t", "--targetFolder"], paramLabel = "TARGET_FOLDER", description = 'target folder in the format /path/to/folder')
+    @Option(names = ["--targetFolder"], paramLabel = "TARGET_FOLDER",
+            description = """target folder in the format /path/to/folder.
+This is the destination folder used when no other destination folders are specified.""")
     File targetFolder
+
+    @Option(names = ["--targetPreProcessingFolder"], paramLabel = "TARGET_PRE_PROCESS_FOLDER",
+            description = """target pre-processing folder in the format /path/to/folder""")
+    File targetPreProcessingFolder
+
+    @Option(names = ["--targetForIngestionFolder"], paramLabel = "TARGET_FOR_INGESTION_FOLDER",
+            description = """target for-ingestion folder in the format /path/to/folder""")
+    File targetForIngestionFolder
+
+    @Option(names = ["--targetPostProcessedFolder"], paramLabel = "TARGET_POST_PROCESSED_FOLDER",
+            description = """target post-processed folder in the format /path/to/folder""")
+    File targetPostProcessedFolder
 
     @Option(names = ["-r", "--forReviewFolder"], paramLabel = "FOR_REVIEW_FOLDER", description = 'for-review folder in the format /path/to/folder')
     File forReviewFolder
-
-    Timekeeper timekeeper = new Timekeeper()
 
     static void main(String[] args) {
         ProcessorRunner processorRunner = new ProcessorRunner()
@@ -101,8 +129,66 @@ Default is today.""")
 
     @Override
     Void call() throws Exception {
+        timekeeper = new Timekeeper()
+
+        showParameters()
+
         process()
         return null
+    }
+
+    void showParameters() {
+        log.info("")
+        log.info("Parameters as set:")
+        log.info("    Processing stages:")
+        log.info("        preProcess=${preProcess}")
+        log.info("        readyForIngestion=${readyForIngestion}")
+        log.info("        copyIngestedLoadsToIngestedFolder=${copyIngestedLoadsToIngestedFolder}")
+        log.info("    Other types of processing:")
+        log.info("        copyProdLoadToTestStructures=${copyProdLoadToTestStructures}")
+        log.info("    Reporting:")
+        log.info("        listFiles=${listFiles}")
+        log.info("        statisticalAudit=${statisticalAudit}")
+        log.info("        extractMetadata=${extractMetadata}")
+        log.info("    Source and target folders:")
+        log.info("        sourceFolder=${sourceFolder}")
+        log.info("        targetFolder=${targetFolder}")
+        log.info("        targetPreProcessingFolder=${targetPreProcessingFolder}")
+        log.info("        targetForIngestionFolder=${targetForIngestionFolder}")
+        log.info("        targetPostProcessedFolder=${targetPostProcessedFolder}")
+        log.info("        forReviewFolder=${forReviewFolder}")
+        log.info("    Date scoping:")
+        log.info("        startingDate=${startingDate}")
+        log.info("        endingDate=${endingDate}")
+        log.info("    Options:")
+        log.info("        moveFiles=${moveFiles}")
+        log.info("        createDestination=${createDestination}")
+        log.info("        parallelizeProcessing=${parallelizeProcessing}")
+        log.info("        numberOfThreads=${numberOfThreads}")
+        log.info("        moveOrCopyEvenIfNoRosettaDoneFile=${moveOrCopyEvenIfNoRosettaDoneFile}")
+        log.info("        verbose=${verbose}")
+        log.info("")
+    }
+
+    void displayProcessingLegend() {
+        log.info("")
+        log.info("Processing legend:")
+        log.info("    .  -- indicates a file has been processed (either moved or copied)")
+        log.info("    :  -- indicates a folder has been processed (either moved or copied)")
+        log.info("    +  -- indicates a duplicate pre-process file has been detected and is exactly the same as")
+        log.info("          the target file. If --moveFiles has been specified the source file is deleted.")
+        log.info("    #  -- indicates a duplicate folder has been detected and will be copied or moved with the name of the")
+        log.info("          folder with a '-<number>' appended to it.")
+        log.info("    *  -- indicates that a pre-process file already exists (and is the same) in the post-processing")
+        log.info("          target directory. In this case, the file is either not processed (if a copy) or deleted in the")
+        log.info("          source folder (if --moveFiles).")
+        log.info("    ?  -- indicates that a pre-process file already exists (and is NOT the same) in the post-processing")
+        log.info("          target directory. In this case, the file is either copied or moved to the for_review_folder")
+        log.info("    -  -- indicates that a source file has been deleted. This can happen when:")
+        log.info("              - When pre-processing and the file already exists and --moveFiles is specified.")
+        log.info("    =  -- indicates that a source folder has been deleted. This can happen when:")
+        log.info("              - When post-processing and --moveFiles, the parent folder of the 'done' file deleted.")
+        log.info("")
     }
 
     void process() {
@@ -119,8 +205,8 @@ Default is today.""")
                 log.error(message)
                 throw new ProcessorException(message)
             }
-            ReportsProcessor reportsProcessor = new ReportsProcessor(timekeeper)
-            reportsProcessor.listFiles(sourceFolder)
+            ReportsProcessor reportsProcessor = new ReportsProcessor(this)
+            reportsProcessor.listFiles()
             commandExecuted = true
         }
         if (statisticalAudit) {
@@ -129,8 +215,8 @@ Default is today.""")
                 log.error(message)
                 throw new ProcessorException(message)
             }
-            ReportsProcessor reportsProcessor = new ReportsProcessor(timekeeper)
-            reportsProcessor.statisticalAudit(sourceFolder)
+            ReportsProcessor reportsProcessor = new ReportsProcessor(this)
+            reportsProcessor.statisticalAudit()
             commandExecuted = true
         }
         if (extractMetadata) {
@@ -139,8 +225,8 @@ Default is today.""")
                 log.error(message)
                 throw new ProcessorException(message)
             }
-            ReportsProcessor reportsProcessor = new ReportsProcessor(timekeeper)
-            reportsProcessor.extractMetadata(sourceFolder)
+            ReportsProcessor reportsProcessor = new ReportsProcessor(this)
+            reportsProcessor.extractMetadata()
             commandExecuted = true
         }
         if (copyProdLoadToTestStructures) {
@@ -154,9 +240,9 @@ Default is today.""")
                 log.error(message)
                 throw new ProcessorException(message)
             }
-            MiscellaneousProcessor miscellaneousProcessor = new MiscellaneousProcessor(timekeeper)
-            miscellaneousProcessor.copyProdLoadToTestStructures(sourceFolder, targetFolder, createDestination,
-                                    startingDate, endingDate)
+            displayProcessingLegend()
+            MiscellaneousProcessor miscellaneousProcessor = new MiscellaneousProcessor(this)
+            miscellaneousProcessor.copyProdLoadToTestStructures()
             commandExecuted = true
         }
         if (preProcess) {
@@ -165,8 +251,8 @@ Default is today.""")
                 log.error(message)
                 throw new ProcessorException(message)
             }
-            if (targetFolder == null) {
-                String message = "preProcess requires targetFolder"
+            if (targetPreProcessingFolder == null) {
+                String message = "preProcess requires targetPreProcessingFolder"
                 log.error(message)
                 throw new ProcessorException(message)
             }
@@ -175,9 +261,9 @@ Default is today.""")
                 log.error(message)
                 throw new ProcessorException(message)
             }
-            PreProcessProcessor preProcessProcessor = new PreProcessProcessor(timekeeper)
-            preProcessProcessor.process(sourceFolder, targetFolder, forReviewFolder, createDestination, moveFiles,
-                    startingDate, endingDate)
+            displayProcessingLegend()
+            PreProcessProcessor preProcessProcessor = new PreProcessProcessor(this)
+            preProcessProcessor.process()
             commandExecuted = true
         }
         if (readyForIngestion) {
@@ -186,8 +272,8 @@ Default is today.""")
                 log.error(message)
                 throw new ProcessorException(message)
             }
-            if (targetFolder == null) {
-                String message = "readyForIngestion requires targetFolder"
+            if (targetForIngestionFolder == null) {
+                String message = "readyForIngestion requires targetForIngestionFolder"
                 log.error(message)
                 throw new ProcessorException(message)
             }
@@ -196,9 +282,9 @@ Default is today.""")
                 log.error(message)
                 throw new ProcessorException(message)
             }
-            ReadyForIngestionProcessor readyForIngestionProcessor = new ReadyForIngestionProcessor(timekeeper)
-            readyForIngestionProcessor.process(sourceFolder, targetFolder, forReviewFolder, createDestination,
-                    moveFiles, startingDate, endingDate)
+            displayProcessingLegend()
+            ReadyForIngestionProcessor readyForIngestionProcessor = new ReadyForIngestionProcessor(this)
+            readyForIngestionProcessor.process()
             commandExecuted = true
         }
         if (copyIngestedLoadsToIngestedFolder) {
@@ -207,8 +293,8 @@ Default is today.""")
                 log.error(message)
                 throw new ProcessorException(message)
             }
-            if (targetFolder == null) {
-                String message = "copyIngestedLoadsToIngestedFolder requires targetFolder"
+            if (targetPostProcessedFolder == null) {
+                String message = "copyIngestedLoadsToIngestedFolder requires targetPostProcessedFolder"
                 log.error(message)
                 throw new ProcessorException(message)
             }
@@ -217,9 +303,9 @@ Default is today.""")
                 log.error(message)
                 throw new ProcessorException(message)
             }
-            MiscellaneousProcessor miscellaneousProcessor = new MiscellaneousProcessor(timekeeper)
-            miscellaneousProcessor.copyIngestedLoadsToIngestedFolder(sourceFolder, targetFolder, forReviewFolder,
-                    createDestination, moveFiles, startingDate, endingDate, moveOrCopyEvenIfNoRosettaDoneFile)
+            displayProcessingLegend()
+            MiscellaneousProcessor miscellaneousProcessor = new MiscellaneousProcessor(this)
+            miscellaneousProcessor.copyIngestedLoadsToIngestedFolder()
             commandExecuted = true
         }
     }

@@ -1,7 +1,6 @@
 package nz.govt.natlib.tools.sip.generation.fairfax.processor
 
 import groovy.util.logging.Slf4j
-import nz.govt.natlib.m11n.tools.automation.logging.Timekeeper
 import nz.govt.natlib.tools.sip.generation.fairfax.FairfaxFile
 import nz.govt.natlib.tools.sip.generation.fairfax.FairfaxFilesProcessor
 import nz.govt.natlib.tools.sip.generation.fairfax.FairfaxSpreadsheet
@@ -16,15 +15,14 @@ import java.time.LocalDate
 @Slf4j
 class ReadyForIngestionProcessor {
     FairfaxSpreadsheet fairfaxSpreadsheet
-    Timekeeper timekeeper
+    ProcessorConfiguration processorConfiguration
 
-    ReadyForIngestionProcessor(Timekeeper timekeeper) {
-        this.timekeeper = timekeeper
+    ReadyForIngestionProcessor(ProcessorConfiguration processorConfiguration) {
+        this.processorConfiguration = processorConfiguration
     }
 
     SipProcessingState processTitleCodeFolder(File titleCodeFolder, File destinationFolder, File forReviewFolder,
-                                              String dateString, String titleCode, boolean createDestination,
-                                              boolean moveFilesToDestination) {
+                                              String dateString, String titleCode) {
         // Process the files in the titleCode folder
         ProcessLogger processLogger = new ProcessLogger()
         processLogger.startSplit()
@@ -36,10 +34,10 @@ class ReadyForIngestionProcessor {
         String pattern = '\\w{5,7}-\\d{8}-\\w{3,4}.*?\\.[pP]{1}[dD]{1}[fF]{1}'
 
         log.info("START processTitleCodeFolder for pattern=${pattern}, titleCodeFolder=${titleCodeFolder.getCanonicalPath()}")
-        timekeeper.logElapsed()
+        processorConfiguration.timekeeper.logElapsed()
 
-        List<File> allFiles = ProcessorUtils.findFiles(titleCodeFolder.getAbsolutePath(), isRegexNotGlob, matchFilenameOnly,
-                sortFiles, pattern, timekeeper)
+        List<File> allFiles = ProcessorUtils.findFiles(titleCodeFolder.getAbsolutePath(), isRegexNotGlob,
+                matchFilenameOnly, sortFiles, pattern, processorConfiguration.timekeeper)
 
         SipProcessingState sipProcessingState = new SipProcessingState()
         // Process the folder as a single collection of files
@@ -63,22 +61,22 @@ class ReadyForIngestionProcessor {
         // Move or copy the processed files to the destination folder
         if ((sipProcessingState.validFiles.size() > 0 || sipProcessingState.invalidFiles.size() > 0)) {
             hasSipAndFilesFolder = true
-            if (!sipAndFilesFolder.exists() && createDestination) {
+            if (!sipAndFilesFolder.exists() && processorConfiguration.createDestination) {
                 sipAndFilesFolder.mkdirs()
                 contentStreamsFolder.mkdirs()
             }
         }
-        ProcessorUtils.copyOrMoveFiles(sipProcessingState.validFiles, contentStreamsFolder, moveFilesToDestination)
-        ProcessorUtils.copyOrMoveFiles(sipProcessingState.invalidFiles, contentStreamsFolder, moveFilesToDestination)
+        ProcessorUtils.copyOrMoveFiles(sipProcessingState.validFiles, contentStreamsFolder, processorConfiguration.moveFiles)
+        ProcessorUtils.copyOrMoveFiles(sipProcessingState.invalidFiles, contentStreamsFolder, processorConfiguration.moveFiles)
 
         // If the files aren't recognized, then dump the files in an exception folder
         if (sipProcessingState.unrecognizedFiles.size() > 0) {
             hasUnrecognizedFilesFolder = true
-            if (!unrecognizedFilesFolder.exists() && createDestination) {
+            if (!unrecognizedFilesFolder.exists() && processorConfiguration.createDestination) {
                 unrecognizedFilesFolder.mkdirs()
             }
         }
-        ProcessorUtils.copyOrMoveFiles(sipProcessingState.unrecognizedFiles, unrecognizedFilesFolder, moveFilesToDestination)
+        ProcessorUtils.copyOrMoveFiles(sipProcessingState.unrecognizedFiles, unrecognizedFilesFolder, processorConfiguration.moveFiles)
 
         // Write out the SipProcessingState
         Date now = new Date()
@@ -91,7 +89,7 @@ class ReadyForIngestionProcessor {
         sipFile.write(sipAsXml)
 
         log.info("END processTitleCodeFolder for pattern=${pattern}, titleCodeFolder=${titleCodeFolder.getCanonicalPath()}")
-        timekeeper.logElapsed()
+        processorConfiguration.timekeeper.logElapsed()
 
         if (hasSipAndFilesFolder) {
             processLogger.copySplit(sipAndFilesFolder, "Process-Name-Folder", false)
@@ -103,25 +101,24 @@ class ReadyForIngestionProcessor {
     }
 
     // See README.md for folder descriptions and structures.
-    void process(File sourceFolder, File destinationFolder, File forReviewFolder, boolean createDestination,
-                 boolean moveFiles, LocalDate startingDate, LocalDate endingDate) {
-        if (createDestination) {
-            destinationFolder.mkdirs()
+    void process() {
+        if (processorConfiguration.createDestination) {
+            processorConfiguration.targetForIngestionFolder.mkdirs()
         }
 
         this.fairfaxSpreadsheet = FairfaxSpreadsheet.defaultInstance()
 
         // Loop through the dates in sequence, finding and processing files
-        LocalDate currentDate = startingDate
-        while (currentDate.isBefore(endingDate) || currentDate.equals(endingDate)) {
+        LocalDate currentDate = processorConfiguration.startingDate
+        while (currentDate <= processorConfiguration.endingDate) {
             String currentDateString = FairfaxFile.LOCAL_DATE_TIME_FORMATTER.format(currentDate)
-            File dateFolder = new File(sourceFolder, currentDateString)
+            File dateFolder = new File(processorConfiguration.sourceFolder, currentDateString)
             if (dateFolder.exists() && dateFolder.isDirectory()) {
                 dateFolder.listFiles().each { File subFile ->
                     if (subFile.isDirectory()) {
                         // we want to process this directory, which should be a <titleCode>
-                        processTitleCodeFolder(subFile, destinationFolder, forReviewFolder, currentDateString,
-                                subFile.getName(), createDestination, moveFiles)
+                        processTitleCodeFolder(subFile, processorConfiguration.targetForIngestionFolder,
+                                processorConfiguration.forReviewFolder, currentDateString, subFile.getName())
                     } else {
                         log.info("Skipping ${subFile.getCanonicalPath()} as not directory=${subFile.isDirectory()}")
                     }

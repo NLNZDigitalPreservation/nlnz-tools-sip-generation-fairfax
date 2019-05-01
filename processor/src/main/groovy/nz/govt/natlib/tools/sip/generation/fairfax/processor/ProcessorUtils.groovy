@@ -4,11 +4,13 @@ import groovy.util.logging.Slf4j
 import nz.govt.natlib.m11n.tools.automation.logging.Timekeeper
 import nz.govt.natlib.tools.sip.files.FilesFinder
 import nz.govt.natlib.tools.sip.generation.fairfax.FairfaxFile
+import org.apache.commons.io.FilenameUtils
 
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
 import java.nio.file.StandardCopyOption
+import java.security.MessageDigest
 import java.text.SimpleDateFormat
 import java.time.LocalDate
 
@@ -86,5 +88,43 @@ class ProcessorUtils {
                 Files.copy(file.toPath(), destinationFile.toPath(), StandardCopyOption.COPY_ATTRIBUTES)
             }
         }
+    }
+
+    // Hash the files to determine if they are the same file.
+    static boolean isSameFile(File file1, File file2) {
+        String file1Md5Hash = generateMD5(file1)
+        String file2Md5Hash = generateMD5(file2)
+
+        return file1Md5Hash.equals(file2Md5Hash)
+    }
+
+    static String generateMD5(File file) {
+        MessageDigest digest = MessageDigest.getInstance("MD5")
+        file.eachByte(4096) { byte[] buffer, int length ->
+            digest.update(buffer, 0, length)
+        }
+        return digest.digest().encodeHex() as String
+    }
+
+    static File nonDuplicateFile(File originalFile) {
+        String fileName = originalFile.name
+        String baseName = FilenameUtils.getBaseName(fileName)
+        String extension = FilenameUtils.getExtension(fileName)
+        File parentFile = originalFile.parentFile
+        File candidateFile = null
+        boolean alreadyExists = true
+        int duplicateIndexCount = 0
+        while (alreadyExists) {
+            String candidateFileName = baseName + "-DUPLICATE-" + duplicateIndexCount + "." + extension
+            candidateFile = new File(candidateFileName, parentFile)
+            alreadyExists = candidateFile.exists()
+            duplicateIndexCount += 1
+        }
+        return candidateFile
+    }
+
+    static void printAndFlush(String message) {
+        System.out.print(message)
+        System.out.flush()
     }
 }

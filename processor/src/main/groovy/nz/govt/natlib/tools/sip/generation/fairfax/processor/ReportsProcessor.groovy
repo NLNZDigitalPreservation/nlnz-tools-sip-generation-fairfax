@@ -1,7 +1,6 @@
 package nz.govt.natlib.tools.sip.generation.fairfax.processor
 
 import groovy.util.logging.Slf4j
-import nz.govt.natlib.m11n.tools.automation.logging.Timekeeper
 import nz.govt.natlib.tools.sip.generation.fairfax.FairfaxFile
 import nz.govt.natlib.tools.sip.generation.fairfax.FairfaxFileTitleEditionKey
 import nz.govt.natlib.tools.sip.generation.fairfax.FairfaxSpreadsheet
@@ -13,15 +12,15 @@ import java.time.Period
 
 @Slf4j
 class ReportsProcessor {
-    Timekeeper timekeeper
+    ProcessorConfiguration processorConfiguration
     Set<String> recognizedTitleCodes = []
     Set<String> unrecognizedTitleCodes = []
 
-    ReportsProcessor(Timekeeper timekeeper) {
-        this.timekeeper = timekeeper
+    ReportsProcessor(ProcessorConfiguration processorConfiguration) {
+        this.processorConfiguration = processorConfiguration
     }
 
-    void listFiles(File sourceFolder) {
+    void listFiles() {
         log.info("STARTING listFiles")
 
         // Clear the set of recognized and unrecognized names before processing begins
@@ -31,7 +30,7 @@ class ReportsProcessor {
         Set<FairfaxFileTitleEditionKey> unrecognizedTitleCodeEditionCodes = []
         Set<File> invalidFiles = []
 
-        log.info("sourceFolder=${sourceFolder}")
+        log.info("sourceFolder=${processorConfiguration.sourceFolder}")
 
         FairfaxSpreadsheet fairfaxSpreadsheet = FairfaxSpreadsheet.defaultInstance()
         Set<String> allNameKeys = fairfaxSpreadsheet.allTitleCodeKeys
@@ -41,8 +40,8 @@ class ReportsProcessor {
         boolean matchFilenameOnly = true
         boolean sortFiles = true
         String pattern = ".*?\\.[pP]{1}[dD]{1}[fF]{1}"
-        List<File> foundFiles = ProcessorUtils.findFiles(sourceFolder.getAbsolutePath(), isRegexNotGlob,
-                matchFilenameOnly, sortFiles, pattern, timekeeper)
+        List<File> foundFiles = ProcessorUtils.findFiles(processorConfiguration.sourceFolder.getAbsolutePath(),
+                isRegexNotGlob, matchFilenameOnly, sortFiles, pattern, processorConfiguration.timekeeper)
         List<FairfaxFile> fairfaxFiles = foundFiles.collect { File file ->
             new FairfaxFile(file)
         }
@@ -122,10 +121,10 @@ class ReportsProcessor {
         log.info("* * * *")
 
         log.info("ENDING listFiles")
-        timekeeper.logElapsed()
+        processorConfiguration.timekeeper.logElapsed()
     }
 
-    void statisticalAudit(File sourceFolder) {
+    void statisticalAudit() {
         log.info("STARTING statisticalAudit")
         StringBuilder summaryTextBuilder = new StringBuilder()
 
@@ -137,7 +136,7 @@ class ReportsProcessor {
         Set<File> invalidFiles = []
         List<Tuple2<LocalDate, Integer>> totalsByDateList = [ ]
 
-        log.info("sourceFolder=${sourceFolder}")
+        log.info("sourceFolder=${processorConfiguration.sourceFolder}")
 
         FairfaxSpreadsheet fairfaxSpreadsheet = FairfaxSpreadsheet.defaultInstance()
         Set<String> allNameKeys = fairfaxSpreadsheet.allTitleCodeKeys
@@ -147,8 +146,8 @@ class ReportsProcessor {
         boolean matchFilenameOnly = true
         boolean sortFiles = true
         String pattern = ".*?\\.[pP]{1}[dD]{1}[fF]{1}"
-        List<File> foundFiles = ProcessorUtils.findFiles(sourceFolder.getAbsolutePath(), isRegexNotGlob,
-                matchFilenameOnly, sortFiles, pattern, timekeeper)
+        List<File> foundFiles = ProcessorUtils.findFiles(processorConfiguration.sourceFolder.getAbsolutePath(),
+                isRegexNotGlob, matchFilenameOnly, sortFiles, pattern, processorConfiguration.timekeeper)
         Map<LocalDate, Map<String, TitleCodeByDateSummary>> dateToTitleCodeMap = [ : ]
         foundFiles.each { File file ->
             FairfaxFile fairfaxFile = new FairfaxFile(file)
@@ -229,7 +228,7 @@ class ReportsProcessor {
         }
         log.info("* * * *")
 
-        println("Processing detail for sourceFolder=${sourceFolder.getCanonicalPath()}:")
+        println("Processing detail for sourceFolder=${processorConfiguration.sourceFolder.getCanonicalPath()}:")
         println()
         println("date|total_files|title_code|out-of-sequence-files|duplicate-files")
         String spreadsheetSeparator = "|"
@@ -277,12 +276,12 @@ class ReportsProcessor {
         }
 
         println()
-        println("Processing exceptions summary for sourceFolder=${sourceFolder.getCanonicalPath()}:")
+        println("Processing exceptions summary for sourceFolder=${processorConfiguration.sourceFolder.getCanonicalPath()}:")
         println()
         println(summaryTextBuilder.toString())
         println()
 
-        println("Date totals summary for sourceFolder=${sourceFolder.getCanonicalPath()}:")
+        println("Date totals summary for sourceFolder=${processorConfiguration.sourceFolder.getCanonicalPath()}:")
         println("Date|Total for date")
         totalsByDateList.each { Tuple2<LocalDate, Integer> dateTotalTuple ->
             println("${dateTotalTuple.first}|${dateTotalTuple.second}")
@@ -290,7 +289,7 @@ class ReportsProcessor {
         println()
 
         log.info("ENDING statisticalAudit")
-        timekeeper.logElapsed()
+        processorConfiguration.timekeeper.logElapsed()
     }
 
     void logAndAppend(StringBuilder stringBuilder, String message) {
@@ -299,15 +298,16 @@ class ReportsProcessor {
         log.info(message)
     }
 
-    void extractMetadata(File sourceFolder) {
+    void extractMetadata() {
         log.info("STARTING extractMetadata doLast")
         boolean isRegexNotGlob = true
         boolean matchFilenameOnly = true
         boolean sortFiles = true
         boolean includeSubdirectories = true
         String pattern = ".*?\\.[pP]{1}[dD]{1}[fF]{1}"
-        List<File> pdfFiles = ProcessorUtils.findFiles(sourceFolder.getAbsolutePath(), isRegexNotGlob,
-                matchFilenameOnly, sortFiles, pattern, timekeeper, includeSubdirectories)
+        List<File> pdfFiles = ProcessorUtils.findFiles(processorConfiguration.sourceFolder.getAbsolutePath(),
+                isRegexNotGlob, matchFilenameOnly, sortFiles, pattern, processorConfiguration.timekeeper,
+                includeSubdirectories)
 
         pdfFiles.each { File pdfFile ->
             log.info("* * * * *")
@@ -326,7 +326,7 @@ class ReportsProcessor {
             log.info("")
         }
 
-        timekeeper.logElapsed()
+        processorConfiguration.timekeeper.logElapsed()
     }
 
 }

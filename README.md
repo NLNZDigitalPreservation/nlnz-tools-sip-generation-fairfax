@@ -13,7 +13,9 @@ We want to automate the generation of Fairfax SIPs from Fairfax files.
 
 ## Important
 
-At this time there is no important information to impart.
+Some of this scripting code code is related to the codebase *nlnz-tools-scripts-ingestion* found in the github
+repository: https://github.com/NLNZDigitalPreservation/nlnz-tools-scripts-ingestion and there is an expectation
+that the two codebases will work together.
 
 ## Requirements
 
@@ -73,9 +75,9 @@ Processing stages:
                               moveOrCopyEvenIfNoRosettaDoneFile
   -l, --listFiles           List the source files in an organized way.
                             Requires sourceFolder
-  --statisticalAudit    Statistical audit.
-                        Search through the source folder and provide a
-                          statistical audit of the files found.
+  --statisticalAudit        Statistical audit.
+                            Search through the source folder and provide a
+                              statistical audit of the files found.
   --extractMetadata         Extract and list the metadata from the source files.
                             Requires sourceFolder
   --copyProdLoadToTestStructures
@@ -149,8 +151,14 @@ java -jar sip-generation-fairfax-fat-all-<VERSION>.jar \
 Files are moved from the FTP stage folder into a folder structure that prepares them for processing. The folder
 structure for *Pre-processing* output is as follows:
 ```
-<targetFolder>/<date-in-yyyyMMdd>/<TitleCode>/{files for that titleCode and date}
+<targetPreProcessingFolder>/<date-in-yyyyMMdd>/<TitleCode>/{files for that titleCode and date}
 ```
+
+Note that the script `fairfax-pre-and-post-process-grouper.py` is generally used for taking the files from the ftp
+folder to the pre-processing stage. This script is found in the github repository
+https://github.com/NLNZDigitalPreservation/nlnz-tools-scripts-ingestion and the expectation that the two mechanisms
+(this processor and the Python script) will operate in the same way. Currently the Python script is the one being used
+to pre-process Fairfax files.
 
 ### Ready-for-ingestion stage
 
@@ -170,14 +178,16 @@ java -jar sip-generation-fairfax-fat-all-<VERSION>.jar \
 Files are processed and prepared for ingestion. The *Ready-for-ingestion* folder structure is how Rosetta ingests the
 files. Magazines and newspapers have different Material Flows, so ingestion of those different IEEntity types must
 be in different folders.
+
 Note that Rosetta ingestion requires that the `content` folder's parent parent be the folder used in Rosetta's
-Submission Format. In this case that folder is either `magazine` or `newspaper`, with the folder for an individual
+Submission Format. In this case that folder is either `magazines` or `newspapers`, with the folder for an individual
 publication's ingestion directly underneath:
 ```
-<targetFolder>/<magazine|newspaper>/<date-in-yyyyMMdd>_<TitleCode><EditionCode>_<full-name-of-publication>/content/streams/{files for that titleCode/editionCode}
+<targetFolder>/<magazines|newspapers>/<date-in-yyyyMMdd>_<TitleCode><EditionCode>_<full-name-of-publication>/content/streams/{files for that titleCode/editionCode}
 ```
 
-Note that the `mets.xml` file is placed in the `content` folder.
+Notes:
+- That the `mets.xml` file is placed in the `content` folder.
 Note that magazines and newspapers have different material flows, so they are processed from different root folders
 under the target folder.
 
@@ -198,11 +208,20 @@ java -jar sip-generation-fairfax-fat-all-<VERSION>.jar \
     --createDestination
 ```
 
-The folder structure for the ingested stage is as follows:
+The folder structure for the ingested (post-processed) stage is as follows:
 ```
-<targetFolder>/<full-name-of-publication>/<date-in-yyyyMMdd>/<TitleCode><EditionCode>/content/streams/{files for that titleCode/editionCode}
+<targetFolder>/<magazines|newspapers>/<TitleCode>/<yyyy>/<date-in-yyyyMMdd-format>
 ```
-Note that the `mets.xml` file is placed in the `content` folder. The `done` files is in the `<TitleCode><EditionCode>` folder.
+In this dated folder, the file structure matches the same structure that was ingested into Rosetta, namely:
+```
+<date-in-yyyyMMdd-format>
+   |- done
+   |- content/
+           |- mets.xml
+           |- streams/
+                   |- <pdf-files>
+```
+Note that the `mets.xml` file is placed in the `content` folder. The `done` files is in the root `yyyyMMdd` folder.
 
 ### For-review stage
 
