@@ -177,7 +177,7 @@ class ReportsProcessor {
                     }
                 }
 
-                LocalDate localDate = fairfaxFile.dateAsLocalDate()
+                LocalDate localDate = fairfaxFile.date
                 Map<String, TitleCodeByDateSummary> titleCodeToSummaryMap
                 if (dateToTitleCodeMap.containsKey(localDate)) {
                     titleCodeToSummaryMap = dateToTitleCodeMap.get(localDate)

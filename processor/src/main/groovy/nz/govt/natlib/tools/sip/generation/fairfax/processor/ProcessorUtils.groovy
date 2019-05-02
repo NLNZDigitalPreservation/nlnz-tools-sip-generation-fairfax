@@ -11,12 +11,15 @@ import java.nio.file.Path
 import java.nio.file.Paths
 import java.nio.file.StandardCopyOption
 import java.security.MessageDigest
+import java.text.DecimalFormat
 import java.text.SimpleDateFormat
 import java.time.LocalDate
 
 @Slf4j
 class ProcessorUtils {
-    static SimpleDateFormat FILE_TIMESTAMP_FORMATTER = new SimpleDateFormat('yyyy-MM-dd_HH-mm-SS')
+    static SimpleDateFormat FILE_TIMESTAMP_FORMATTER = new SimpleDateFormat('yyyy-MM-dd_HH-mm-ss')
+    static SimpleDateFormat TIMESTAMP_FORMATTER = new SimpleDateFormat('yyyy-MM-dd HH:mm:ss.SSS')
+    static final DecimalFormat TOTAL_FORMAT = new DecimalFormat("###,###,###,###,###")
 
     static LocalDate parseDate(String dateString) {
         LocalDate parsedDate = null
@@ -59,7 +62,7 @@ class ProcessorUtils {
         log.info("Finding files for path=${filesPath.toFile().getCanonicalPath()} and pattern=${pattern}")
         timekeeper.logElapsed()
         filesList = FilesFinder.getNonMatchingFiles(filesPath, isRegexNotGlob, matchFilenameOnly, sortFiles, pattern)
-        log.info("Found total files=${filesList.size()} for path=${filesPath.toFile().getCanonicalPath()}")
+        log.info("Found total files=${TOTAL_FORMAT.format(filesList.size())} for path=${filesPath.toFile().getCanonicalPath()}")
         timekeeper.logElapsed()
 
         return filesList

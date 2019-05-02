@@ -323,7 +323,7 @@ class FairfaxFileTest {
     }
 
     @Test
-    void correctlyCreatesLocalDateFromDate() {
+    void correctlyCreatesLocalDateFromFilename() {
         String filename1 = "NAMed1-20180101-M023.pdf"
         String filename2 = "NAMed1-20180630-A021.pdf"
         String filename3 = "NAMed1-20181231-C022.pdf"
@@ -338,8 +338,8 @@ class FairfaxFileTest {
         LocalDate january12018 = new LocalDate(2018, 1, 1)
         LocalDate june302018 = new LocalDate(2018, 6, 30)
         LocalDate december312018 = new LocalDate(2018, 12, 31)
-        assertThat("Creates date correctly for ${january12018}", fairfaxFile1.dateAsLocalDate(), is(january12018))
-        assertThat("Creates date correctly for ${june302018}", fairfaxFile2.dateAsLocalDate(), is(june302018))
-        assertThat("Creates date correctly for ${december312018}", fairfaxFile3.dateAsLocalDate(), is(december312018))
+        assertThat("Creates date correctly for ${january12018}", fairfaxFile1.date, is(january12018))
+        assertThat("Creates date correctly for ${june302018}", fairfaxFile2.date, is(june302018))
+        assertThat("Creates date correctly for ${december312018}", fairfaxFile3.date, is(december312018))
     }
 }

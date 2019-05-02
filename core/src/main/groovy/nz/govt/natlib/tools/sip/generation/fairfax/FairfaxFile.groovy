@@ -31,6 +31,7 @@ class FairfaxFile {
     Integer dateYear
     Integer dateMonthOfYear
     Integer dateDayOfMonth
+    LocalDate date
     String sequenceLetter
     String sequenceNumberString
     Integer sequenceNumber
@@ -60,10 +61,10 @@ class FairfaxFile {
                 this.titleCode = this.titleCode.substring(0, 3)
              }
             String dateString = matcher.group('date')
-            LocalDate localDate = LocalDate.parse(dateString, LOCAL_DATE_TIME_FORMATTER)
-            this.dateYear = localDate.year
-            this.dateMonthOfYear = localDate.monthValue
-            this.dateDayOfMonth = localDate.dayOfMonth
+            this.date = LocalDate.parse(dateString, LOCAL_DATE_TIME_FORMATTER)
+            this.dateYear = date.year
+            this.dateMonthOfYear = date.monthValue
+            this.dateDayOfMonth = date.dayOfMonth
             this.sequenceLetter = matcher.group('sequenceLetter')
             this.sequenceNumberString = matcher.group('sequenceNumber')
             this.sequenceNumber = Integer.parseInt(sequenceNumberString)
@@ -102,10 +103,6 @@ class FairfaxFile {
         } else {
             return false
         }
-    }
-
-    LocalDate dateAsLocalDate() {
-        return new LocalDate(this.dateYear, this.dateMonthOfYear, this.dateDayOfMonth)
     }
 
     boolean comesDirectlyAfter(FairfaxFile fairfaxFile) {

@@ -82,6 +82,9 @@ dependencies {
     compile "org.apache.commons:commons-lang3:+"
     compile "commons-io:commons-io:2.+"
 
+    // For parallel processing
+    compile "org.codehaus.gpars:gpars:1.2.1"
+
     compileOnly 'org.slf4j:slf4j-api:1.7.+'
 
     compile 'nz.govt.natlib.tools:sip-generation-core:1.0.0-SNAPSHOT'
