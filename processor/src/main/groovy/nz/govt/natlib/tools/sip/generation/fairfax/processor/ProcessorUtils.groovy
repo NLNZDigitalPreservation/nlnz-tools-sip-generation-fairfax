@@ -17,9 +17,10 @@ import java.time.LocalDate
 
 @Slf4j
 class ProcessorUtils {
-    static SimpleDateFormat FILE_TIMESTAMP_FORMATTER = new SimpleDateFormat('yyyy-MM-dd_HH-mm-ss')
-    static SimpleDateFormat TIMESTAMP_FORMATTER = new SimpleDateFormat('yyyy-MM-dd HH:mm:ss.SSS')
+    static final SimpleDateFormat FILE_TIMESTAMP_FORMATTER = new SimpleDateFormat('yyyy-MM-dd_HH-mm-ss')
+    static final SimpleDateFormat TIMESTAMP_FORMATTER = new SimpleDateFormat('yyyy-MM-dd HH:mm:ss.SSS')
     static final DecimalFormat TOTAL_FORMAT = new DecimalFormat("###,###,###,###,###")
+    static final String MD5_HASH_ZERO_LENGTH_FILE = "d41d8cd98f00b204e9800998ecf8427e"
 
     static LocalDate parseDate(String dateString) {
         LocalDate parsedDate = null
@@ -94,10 +95,28 @@ class ProcessorUtils {
     }
 
     // Hash the files to determine if they are the same file.
-    static boolean isSameFile(File file1, File file2) {
+    static boolean isSameFile(File file1, File file2, allowZeroLengthFiles = false) {
         String file1Md5Hash = generateMD5(file1)
         String file2Md5Hash = generateMD5(file2)
 
+        if (!allowZeroLengthFiles) {
+            boolean hasZeroLengthHashes = false
+            String message = ""
+            if (MD5_HASH_ZERO_LENGTH_FILE.equals(file1Md5Hash)) {
+                hasZeroLengthHashes = true
+                message += "file=${file1.getCanonicalPath()} has a prohibited zero-length file MD5 hash=${file1Md5Hash}"
+            }
+            if (MD5_HASH_ZERO_LENGTH_FILE.equals(file2Md5Hash)) {
+                hasZeroLengthHashes = true
+                if (message.length() > 0) {
+                    message += ", "
+                }
+                message += "file=${file2.getCanonicalPath()} has a prohibited zero-length file MD5 hash=${file2Md5Hash}"
+            }
+            if (hasZeroLengthHashes) {
+                throw new ProcessorException(message)
+            }
+        }
         return file1Md5Hash.equals(file2Md5Hash)
     }
 
