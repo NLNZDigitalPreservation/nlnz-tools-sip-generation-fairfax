@@ -45,7 +45,7 @@ class ProcessorUtils {
         boolean directoryOnly = false
         filesList = FilesFinder.getMatchingFilesFull(filesPath, isRegexNotGlob, matchFilenameOnly, sortFiles,
                 includeSubdirectories, directoryOnly, pattern)
-        log.info("Found total files=${filesList.size()} for path=${filesPath.toFile().getCanonicalPath()}")
+        log.info("Found total files=${TOTAL_FORMAT.format(filesList.size())} for path=${filesPath.toFile().getCanonicalPath()}")
         timekeeper.logElapsed()
 
         return filesList

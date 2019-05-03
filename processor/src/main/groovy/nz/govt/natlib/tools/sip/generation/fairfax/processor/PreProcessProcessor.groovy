@@ -220,6 +220,7 @@ class PreProcessProcessor {
         int allFilesFoundSize = allFiles.size()
 
         int numberOfThreads = processorConfiguration.parallelizeProcessing ? processorConfiguration.numberOfThreads : 1
+        log.info("Spreading processing over numberOfThreads=${numberOfThreads}")
 
         ProcessingCounter filesProcessedCounter = new ProcessingCounter()
         ProcessingCounter filesMovedOrCopiedCounter = new ProcessingCounter()
