@@ -174,6 +174,7 @@ This is the destination folder used when no other destination folders are specif
         log.info("")
         log.info("Processing legend:")
         log.info("    .  -- indicates a file has been processed (either moved or copied)")
+        log.info("    !  -- indicates a move or copy operation was not successful")
         log.info("    :  -- indicates a folder has been processed (either moved or copied)")
         log.info("    +  -- indicates a duplicate pre-process file has been detected and is exactly the same as")
         log.info("          the target file. If --moveFiles has been specified the source file is deleted.")

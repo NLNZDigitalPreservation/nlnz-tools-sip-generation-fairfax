@@ -6,6 +6,7 @@ import nz.govt.natlib.tools.sip.files.FilesFinder
 import nz.govt.natlib.tools.sip.generation.fairfax.FairfaxFile
 import org.apache.commons.io.FilenameUtils
 
+import java.nio.file.AtomicMoveNotSupportedException
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
@@ -128,7 +129,8 @@ class ProcessorUtils {
         return digest.digest().encodeHex() as String
     }
 
-    static File nonDuplicateFile(File originalFile) {
+    static File nonDuplicateFile(File originalFile, boolean usePreIndex = true, String preIndexString = "-DUPLICATE-",
+                                 boolean useAdditionalExtension = false, String additionalExtension = ".tmp") {
         String fileName = originalFile.name
         String baseName = FilenameUtils.getBaseName(fileName)
         String extension = FilenameUtils.getExtension(fileName)
@@ -137,12 +139,53 @@ class ProcessorUtils {
         boolean alreadyExists = true
         int duplicateIndexCount = 0
         while (alreadyExists) {
-            String candidateFileName = baseName + "-DUPLICATE-" + duplicateIndexCount + "." + extension
+            String preDuplicateIndexString = usePreIndex ? preIndexString : ""
+            String extraExtension = useAdditionalExtension ? additionalExtension : ""
+            String candidateFileName = baseName + preDuplicateIndexString + duplicateIndexCount + "." +
+                    extension + extraExtension
             candidateFile = new File(candidateFileName, parentFile)
             alreadyExists = candidateFile.exists()
             duplicateIndexCount += 1
         }
         return candidateFile
+    }
+
+    static boolean atomicMoveOrCopy(boolean moveFile, File sourceFile, File targetFile,
+                                    boolean useAtomicOption = true) {
+        // Handle the case of being interrupted by copying/moving to the destination file (which leads to a bunch
+        // partial copies -- especially in a multithreaded case -- that need to be manually checked to verify that
+        // they are incomplete versions.
+        // Instead, copy/move the file to a temporary-named file and then rename the file when the copy is complete.
+        boolean renameSuccessful = false
+        File temporaryDestinationFile = nonDuplicateFile(targetFile, true, "-",
+                true, ".tmpcopy")
+        if (moveFile) {
+            // The only valid move option is StandardCopyOption.REPLACE_EXISTING, which we don't want to do
+            if (useAtomicOption) {
+                try {
+                    Path resultingPath = Files.move(sourceFile.toPath(), targetFile.toPath(), StandardCopyOption.ATOMIC_MOVE)
+                    renameSuccessful = true
+                } catch (AtomicMoveNotSupportedException e) {
+                    log.debug("Attempt at atomic file move file sourceFile=${sourceFile.getCanonicalPath()} to " +
+                            "targetFile=${targetFile.getCanonicalPath()} failed, trying a non-atomic move approach.")
+                    renameSuccessful = atomicMoveOrCopy(moveFile, sourceFile, targetFile, false)
+                }
+            } else {
+                Files.move(sourceFile.toPath(), temporaryDestinationFile.toPath())
+            }
+        } else {
+            Files.copy(sourceFile.toPath(), temporaryDestinationFile.toPath(), StandardCopyOption.COPY_ATTRIBUTES)
+        }
+        // Copy operations are by definition not atomic
+        if (!useAtomicOption || !moveFile) {
+            renameSuccessful = temporaryDestinationFile.renameTo(targetFile)
+            if (!renameSuccessful) {
+                printAndFlush("\n")
+                log.error("Unable to rename temporaryDestinationFile=${temporaryDestinationFile.getCanonicalPath()} " +
+                        "to destinationFile=${targetFile.getCanonicalPath()}")
+            }
+        }
+        return renameSuccessful
     }
 
     static void printAndFlush(String message) {

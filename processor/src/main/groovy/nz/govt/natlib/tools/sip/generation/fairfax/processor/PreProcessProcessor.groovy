@@ -43,7 +43,7 @@ class PreProcessProcessor {
     void waitForNoInProcessDestinationFile(File file) {
         int waitCount = 0
         while (inProcessDestinationFiles.contains(file)) {
-            print("")
+            ProcessorUtils.printAndFlush("\n")
             log.warn("inProcessDestinationFiles (size=${inProcessDestinationFiles.size()}) (waitCount=${waitCount}) " +
                     "already contains file=${file.getCanonicalPath()}, waiting for it to clear.")
             sleep(2000)
@@ -56,7 +56,7 @@ class PreProcessProcessor {
         inProcessDestinationFilesLock.lock()
         try {
             if (inProcessDestinationFiles.contains(file)) {
-                print("")
+                ProcessorUtils.printAndFlush("\n")
                 log.warn("inProcessDestinationFiles already contains file=${file.getCanonicalPath()} (multiple threads checking the same file)")
             } else {
                 inProcessDestinationFiles.add(file)
@@ -72,7 +72,7 @@ class PreProcessProcessor {
             if (inProcessDestinationFiles.contains(file)) {
                 inProcessDestinationFiles.remove(file)
             } else {
-                print("")
+                ProcessorUtils.printAndFlush("\n")
                 log.warn("inProcessDestinationFiles DOES NOT contain file=${file.getCanonicalPath()} (multiple threads removing the same file)")
             }
         } finally {
@@ -91,7 +91,7 @@ class PreProcessProcessor {
             // Goes to '<date>/<titleCode>/<file>'
             if (!recognizedTitleCodes.contains(targetFile.titleCode)) {
                 recognizedTitleCodes.add(targetFile.titleCode)
-                print("")
+                ProcessorUtils.printAndFlush("\n")
                 log.info("copyOrMoveFileToPreProcessingDestination adding titleCode=${targetFile.titleCode}")
             }
             folderPath = "${destinationFolder.getCanonicalPath()}${File.separator}${dateFolderName}${File.separator}${titleCodeFolderName}"
@@ -100,7 +100,7 @@ class PreProcessProcessor {
             // Goes to 'UNKNOWN-TITLE-CODE/<date>/<file>'
             if (!unrecognizedTitleCodes.contains(targetFile.titleCode)) {
                 unrecognizedTitleCodes.add(targetFile.titleCode)
-                print("")
+                ProcessorUtils.printAndFlush("\n")
                 log.info("copyOrMoveFileToPreProcessingDestination adding unrecognizedName=${targetFile.titleCode}")
             }
             folderPath = "${forReviewFolder.getCanonicalPath()}${File.separator}UNKNOWN-TITLE-CODE${File.separator}${dateFolderName}"
@@ -131,7 +131,7 @@ class PreProcessProcessor {
                 boolean couldAlreadyExist = true
                 while (couldAlreadyExist) {
                     File nonDuplicateFile = ProcessorUtils.nonDuplicateFile(destinationFile)
-                    print("")
+                    ProcessorUtils.printAndFlush("\n")
                     log.info("moveFile=${moveFile} destinationFile=${destinationFile.getCanonicalPath()} -- same name but different file")
                     log.info("             moving to destinationFile=${nonDuplicateFile.getCanonicalPath()}")
                     File oldDestinationFile = destinationFile
@@ -148,13 +148,8 @@ class PreProcessProcessor {
             }
         }
         if (moveToDestination) {
-            if (moveFile) {
-                // The only valid move option is StandardCopyOption.REPLACE_EXISTING, which we don't want to do
-                Files.move(targetFile.file.toPath(), destinationFile.toPath())
-            } else {
-                Files.copy(targetFile.file.toPath(), destinationFile.toPath(), StandardCopyOption.COPY_ATTRIBUTES)
-            }
-            ProcessorUtils.printAndFlush(".")
+            boolean moveOrCopyResult = ProcessorUtils.atomicMoveOrCopy(moveFile, targetFile.file, destinationFile)
+            ProcessorUtils.printAndFlush(moveOrCopyResult ? "." : "!")
         }
         removeInProcessDestinationFile(destinationFile)
 
@@ -245,7 +240,7 @@ class PreProcessProcessor {
                     }
                     filesProcessedCounter.incrementCounter()
                     if (filesProcessedCounter.currentCount % 5000 == 0) {
-                        print("")
+                        ProcessorUtils.printAndFlush("\n")
                         processorConfiguration.timekeeper.logElapsed(false, filesProcessedCounter.currentCount,
                                 true)
                     }
