@@ -13,9 +13,38 @@ We want to automate the generation of Fairfax SIPs from Fairfax files.
 
 ## Important
 
-Some of this scripting code code is related to the codebase *nlnz-tools-scripts-ingestion* found in the github
+### Relationships with other scripting code
+Some of this scripting code is related to the codebase *nlnz-tools-scripts-ingestion* found in the github
 repository: https://github.com/NLNZDigitalPreservation/nlnz-tools-scripts-ingestion and there is an expectation
 that the two codebases will work together.
+
+### File copying
+File copies are done in 2 steps:
+- The file is copied to its new target with a file extension of `.tmpcopy`.
+- The file is renamed to the target name.
+
+This means that the target does not have its correct name until the copy is complete. Subsequent runs on the same source
+do checks to see if the target's MD5 hash is the same. If the hash is the same, the copy is not done.
+
+### Atomic file moves
+Some processing has a `--moveFiles` option. Note that when moving files *across* file systems (in other words, from
+one file system to another), it's not possible to have truly atomic operations. If the move operation is interrupted
+before it completes, what can happen is that a file of the same name will exist on both filesystems, with the target
+file system having an incomplete file.
+
+With that in mind, file moves have the following characteristics:
+- If a file move can be done atomicly (as determined by the Java runtime), it is done atomicly.
+- If the file move cannot be done atomicly (as determined by the Java runtime), the file moves take the following steps:
+    1. The file is copied across to the target file system with a `.tmpcopy` extension.
+    2. The file is renamed to the target file name.
+    3. The source file is deleted.
+
+This means that if at any point the operation is interrupted, a recovery can take place. A move when the file already
+exists in the target folder will trigger a MD5 hash comparison. If the source file and the target file are identical,
+the source file is deleted. Otherwise, the target file is moved across (using the steps above) with a `-DUPLICATE-#`
+in the filename. These `-DUPLICATE-#` files need to be checked manually to determine which file is correct.
+
+We hope these mitigations will prevent any data loss.
 
 ## Requirements
 

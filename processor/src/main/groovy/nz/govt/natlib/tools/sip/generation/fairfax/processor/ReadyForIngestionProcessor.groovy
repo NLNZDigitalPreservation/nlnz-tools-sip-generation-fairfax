@@ -1,6 +1,7 @@
 package nz.govt.natlib.tools.sip.generation.fairfax.processor
 
 import groovy.util.logging.Slf4j
+import groovyx.gpars.GParsPool
 import nz.govt.natlib.tools.sip.generation.fairfax.FairfaxFile
 import nz.govt.natlib.tools.sip.generation.fairfax.FairfaxFilesProcessor
 import nz.govt.natlib.tools.sip.generation.fairfax.FairfaxSpreadsheet
@@ -24,6 +25,8 @@ class ReadyForIngestionProcessor {
     SipProcessingState processTitleCodeFolder(File titleCodeFolder, File destinationFolder, File forReviewFolder,
                                               String dateString, String titleCode) {
         // Process the files in the titleCode folder
+        // TODO ProcessLogger won't be able to work in a multithreaded environment! -- if we could split the logging
+        // then we could probably do multithreading.
         ProcessLogger processLogger = new ProcessLogger()
         processLogger.startSplit()
 
@@ -66,8 +69,8 @@ class ReadyForIngestionProcessor {
                 contentStreamsFolder.mkdirs()
             }
         }
-        ProcessorUtils.copyOrMoveFiles(sipProcessingState.validFiles, contentStreamsFolder, processorConfiguration.moveFiles)
-        ProcessorUtils.copyOrMoveFiles(sipProcessingState.invalidFiles, contentStreamsFolder, processorConfiguration.moveFiles)
+        ProcessorUtils.copyOrMoveFiles(processorConfiguration.moveFiles, sipProcessingState.validFiles, contentStreamsFolder)
+        ProcessorUtils.copyOrMoveFiles(processorConfiguration.moveFiles, sipProcessingState.invalidFiles, contentStreamsFolder)
 
         // If the files aren't recognized, then dump the files in an exception folder
         if (sipProcessingState.unrecognizedFiles.size() > 0) {
@@ -76,7 +79,7 @@ class ReadyForIngestionProcessor {
                 unrecognizedFilesFolder.mkdirs()
             }
         }
-        ProcessorUtils.copyOrMoveFiles(sipProcessingState.unrecognizedFiles, unrecognizedFilesFolder, processorConfiguration.moveFiles)
+        ProcessorUtils.copyOrMoveFiles(processorConfiguration.moveFiles, sipProcessingState.unrecognizedFiles, unrecognizedFilesFolder)
 
         // Write out the SipProcessingState
         Date now = new Date()
@@ -102,11 +105,23 @@ class ReadyForIngestionProcessor {
 
     // See README.md for folder descriptions and structures.
     void process() {
+        log.info("START ready-for-ingestion with parameters:")
+        log.info("    startindDate=${processorConfiguration.startingDate}")
+        log.info("    endingDate=${processorConfiguration.endingDate}")
+        log.info("    sourceFolder=${processorConfiguration.sourceFolder.getCanonicalPath()}")
+        log.info("    targetForIngestionFolder=${processorConfiguration.targetForIngestionFolder.getCanonicalPath()}")
+        log.info("    forReviewFolder=${processorConfiguration.forReviewFolder.getCanonicalPath()}")
+        processorConfiguration.timekeeper.logElapsed()
+
         if (processorConfiguration.createDestination) {
             processorConfiguration.targetForIngestionFolder.mkdirs()
+            processorConfiguration.forReviewFolder.mkdirs()
         }
 
         this.fairfaxSpreadsheet = FairfaxSpreadsheet.defaultInstance()
+
+        // First, collect all the directories to process
+        List<Tuple2<File, String>> titleCodeFoldersAndDates = [ ]
 
         // Loop through the dates in sequence, finding and processing files
         LocalDate currentDate = processorConfiguration.startingDate
@@ -116,9 +131,8 @@ class ReadyForIngestionProcessor {
             if (dateFolder.exists() && dateFolder.isDirectory()) {
                 dateFolder.listFiles().each { File subFile ->
                     if (subFile.isDirectory()) {
-                        // we want to process this directory, which should be a <titleCode>
-                        processTitleCodeFolder(subFile, processorConfiguration.targetForIngestionFolder,
-                                processorConfiguration.forReviewFolder, currentDateString, subFile.getName())
+                        Tuple2<File, String> titleCodeFolderAndDate = new Tuple2<>(subFile, currentDateString)
+                        titleCodeFoldersAndDates.add(titleCodeFolderAndDate)
                     } else {
                         log.info("Skipping ${subFile.getCanonicalPath()} as not directory=${subFile.isDirectory()}")
                     }
@@ -127,6 +141,29 @@ class ReadyForIngestionProcessor {
                 log.info("Skipping ${dateFolder.getCanonicalPath()} as exists=${dateFolder.exists()}, directory=${dateFolder.isDirectory()}")
             }
             currentDate = currentDate.plusDays(1L)
+        }
+
+        log.info("Collected total titleCode directories to " +
+                "process=${ProcessorUtils.TOTAL_FORMAT.format(titleCodeFoldersAndDates.size())}")
+        int numberOfThreads = processorConfiguration.parallelizeProcessing ? processorConfiguration.numberOfThreads : 1
+        if (numberOfThreads > 1) {
+            numberOfThreads = 1
+            log.info("Currently multi-threading is not supported for ReadyForIngestionProcessor as ready-for-ingestion")
+            log.info("requires that each directory processed has an individual log of that processing stored with the files")
+            log.info("and there currently doesn't exist a way to differentiate console output by the thread that produced the message.")
+        }
+        // log.info("Processing over numberOfThreads=${numberOfThreads}")
+
+        // Process the collected directories across multiple threads
+        GParsPool.withPool(numberOfThreads) {
+            titleCodeFoldersAndDates.eachParallel { Tuple2<File, String> titleCodeFolderAndDateString ->
+                // we want to process this directory, which should be a <titleCode>
+                File titleCodeFolder = titleCodeFolderAndDateString.first
+                String titleCode = titleCodeFolder.getName()
+                String dateString = titleCodeFolderAndDateString.second
+                processTitleCodeFolder(titleCodeFolder, processorConfiguration.targetForIngestionFolder,
+                        processorConfiguration.forReviewFolder, dateString, titleCode)
+            }
         }
     }
 

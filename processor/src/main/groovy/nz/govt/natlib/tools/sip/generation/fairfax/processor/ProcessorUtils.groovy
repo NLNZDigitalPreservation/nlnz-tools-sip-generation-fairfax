@@ -81,18 +81,63 @@ class ProcessorUtils {
         return matchedFiles
     }
 
-    static void copyOrMoveFiles(List<File> files, File destination, boolean moveFiles) {
-        if (moveFiles) {
-            files.each { File file ->
-                File destinationFile = new File(destination, file.getName())
-                Files.move(file.toPath(), destinationFile.toPath(), StandardCopyOption.COPY_ATTRIBUTES)
-            }
-        } else {
-            files.each { File file ->
-                File destinationFile = new File(destination, file.getName())
-                Files.copy(file.toPath(), destinationFile.toPath(), StandardCopyOption.COPY_ATTRIBUTES)
+    static void copyOrMoveFiles(boolean moveFiles, List<File> sourceFiles, File destination) {
+        sourceFiles.each { File sourceFile ->
+            File destinationFile = new File(destination, sourceFile.getName())
+            atomicMoveOrCopy(moveFiles, sourceFile, destinationFile)
+        }
+    }
+
+    static boolean atomicMoveOrCopy(boolean moveFile, File sourceFile, File targetFile,
+                                    boolean useAtomicOption = true) {
+        // Handle the case of being interrupted by copying/moving to the destination file (which leads to a bunch
+        // partial copies -- especially in a multithreaded case -- that need to be manually checked to verify that
+        // they are incomplete versions).
+        // Instead, copy/move the file to a temporary-named file and then rename the file when the copy is complete.
+        //
+        // We only do a 'move' if we can do an atomic move, otherwise we do the following:
+        // 1. Copy the file across with a '.tmpcopy' extension.
+        // 2. Rename the file to the targetFile name.
+        // 3. Delete the sourceFile.
+        // This guarantees that we never delete the source file until the file has been copied and renamed.
+        boolean deleteSourceFile = moveFile && !useAtomicOption // because atomic move will automatically delete sourceFile
+        boolean doCopy = !moveFile
+        boolean renameSuccessful = false
+        File temporaryDestinationFile = nonDuplicateFile(targetFile, true, "-",
+                true, ".tmpcopy")
+        if (moveFile) {
+            // The only valid move option is StandardCopyOption.REPLACE_EXISTING, which we don't want to do
+            if (useAtomicOption) {
+                try {
+                    Path resultingPath = Files.move(sourceFile.toPath(), targetFile.toPath(), StandardCopyOption.ATOMIC_MOVE)
+                    renameSuccessful = true
+                } catch (AtomicMoveNotSupportedException e) {
+                    log.debug("Attempt at atomic file move file sourceFile=${sourceFile.getCanonicalPath()} to " +
+                            "targetFile=${targetFile.getCanonicalPath()} failed, trying a non-atomic move approach.")
+                    renameSuccessful = atomicMoveOrCopy(moveFile, sourceFile, targetFile, false)
+                }
+            } else {
+                doCopy = true
             }
         }
+        if (doCopy) {
+            Files.copy(sourceFile.toPath(), temporaryDestinationFile.toPath(), StandardCopyOption.COPY_ATTRIBUTES)
+            renameSuccessful = temporaryDestinationFile.renameTo(targetFile)
+            if (renameSuccessful) {
+                if (deleteSourceFile) {
+                    Files.delete(sourceFile.toPath())
+                }
+            } else {
+                printAndFlush("\n")
+                log.error("Unable to rename temporaryDestinationFile=${temporaryDestinationFile.getCanonicalPath()} " +
+                        "to destinationFile=${targetFile.getCanonicalPath()}")
+                if (deleteSourceFile) {
+                    log.error("Not deleting sourceFile=${sourceFile}, as rename was NOT successful")
+                }
+            }
+        }
+
+        return renameSuccessful
     }
 
     // Hash the files to determine if they are the same file.
@@ -148,44 +193,6 @@ class ProcessorUtils {
             duplicateIndexCount += 1
         }
         return candidateFile
-    }
-
-    static boolean atomicMoveOrCopy(boolean moveFile, File sourceFile, File targetFile,
-                                    boolean useAtomicOption = true) {
-        // Handle the case of being interrupted by copying/moving to the destination file (which leads to a bunch
-        // partial copies -- especially in a multithreaded case -- that need to be manually checked to verify that
-        // they are incomplete versions.
-        // Instead, copy/move the file to a temporary-named file and then rename the file when the copy is complete.
-        boolean renameSuccessful = false
-        File temporaryDestinationFile = nonDuplicateFile(targetFile, true, "-",
-                true, ".tmpcopy")
-        if (moveFile) {
-            // The only valid move option is StandardCopyOption.REPLACE_EXISTING, which we don't want to do
-            if (useAtomicOption) {
-                try {
-                    Path resultingPath = Files.move(sourceFile.toPath(), targetFile.toPath(), StandardCopyOption.ATOMIC_MOVE)
-                    renameSuccessful = true
-                } catch (AtomicMoveNotSupportedException e) {
-                    log.debug("Attempt at atomic file move file sourceFile=${sourceFile.getCanonicalPath()} to " +
-                            "targetFile=${targetFile.getCanonicalPath()} failed, trying a non-atomic move approach.")
-                    renameSuccessful = atomicMoveOrCopy(moveFile, sourceFile, targetFile, false)
-                }
-            } else {
-                Files.move(sourceFile.toPath(), temporaryDestinationFile.toPath())
-            }
-        } else {
-            Files.copy(sourceFile.toPath(), temporaryDestinationFile.toPath(), StandardCopyOption.COPY_ATTRIBUTES)
-        }
-        // Copy operations are by definition not atomic
-        if (!useAtomicOption || !moveFile) {
-            renameSuccessful = temporaryDestinationFile.renameTo(targetFile)
-            if (!renameSuccessful) {
-                printAndFlush("\n")
-                log.error("Unable to rename temporaryDestinationFile=${temporaryDestinationFile.getCanonicalPath()} " +
-                        "to destinationFile=${targetFile.getCanonicalPath()}")
-            }
-        }
-        return renameSuccessful
     }
 
     static void printAndFlush(String message) {
