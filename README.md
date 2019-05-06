@@ -80,39 +80,44 @@ java -jar sip-generation-fairfax-fat-all-<VERSION>.jar
 
 The basic parameters used by this runner are as follows (these parameters are discussed more in detail):
 ```
-Usage: processorRunner [-cghilmnpxy] [-b=STARTING_DATE] [-e=ENDING_DATE]
-                       [-r=FOR_REVIEW_FOLDER] [-s=SOURCE_FOLDER]
-                       [-t=TARGET_FOLDER]
 Runs different processors based on command-line options.
 
 Processing stages:
-  --preProcess              Group source files by date and titleCode.
+      --preProcess          Group source files by date and titleCode.
                             Output is used by readyForIngestion.
                             Requires sourceFolder, targetFolder, forReviewFolder.
                             Uses startingDate, endingDate.
                             Optional createDestination, moveFiles.
-  --readyForIngestion       Process the source files.
+                            This is a processing operation and must run exclusively of other processing operations.
+      --readyForIngestion   Process the source files.
                             Output is ready for ingestion by Rosetta.
                             Requires sourceFolder, targetFolder, forReviewFolder.
                             Uses startingDate, endingDate.
                             Optional createDestination, moveFiles.
-  --copyIngestedLoadsToIngestedFolder
+                            This is a processing operation and must run exclusively of other processing operations.
+      --copyIngestedLoadsToIngestedFolder
                             Copy the ingested loads to ingested folder.
                             Requires sourceFolder, targetFolder, forReviewFolder.
                             Uses startingDate, endingDate.
-                            Optional createDestination, moveFiles,
-                              moveOrCopyEvenIfNoRosettaDoneFile
-  -l, --listFiles           List the source files in an organized way.
-                            Requires sourceFolder
-  --statisticalAudit        Statistical audit.
-                            Search through the source folder and provide a
-                              statistical audit of the files found.
-  --extractMetadata         Extract and list the metadata from the source files.
-                            Requires sourceFolder
-  --copyProdLoadToTestStructures
+                            Optional createDestination, moveFiles, moveOrCopyEvenIfNoRosettaDoneFile.
+                            This is a processing operation and must run exclusively of other processing operations.
+      --copyProdLoadToTestStructures
                             Copy the production load to test structures.
                             Requires sourceFolder, targetFolder.
-                            Uses startingDate, endingDate
+                            Uses startingDate, endingDate.
+                            This is a processing operation and must run exclusively of other processing operations.
+
+Reports:
+  -l, --listFiles           List the source files in an organized way.
+                            Requires sourceFolder.
+                            This is a reporting operation and cannot be run with any processing operations.
+      --extractMetadata     Extract and list the metadata from the source files.
+                            Requires sourceFolder.
+                            This is a reporting operation and cannot be run with any processing operations.
+      --statisticalAudit    Statistical audit.
+                            Search through the source folder and provide a
+                              statistical audit of the files found.
+                            This is a reporting operation and cannot be run with any processing operations.
 
 Parameters:
   -b, --startingDate=STARTING_DATE
@@ -123,24 +128,36 @@ Parameters:
                             Default is today.
   -s, --sourceFolder=SOURCE_FOLDER
                             source folder in the format /path/to/folder
-  -t, --targetFolder=TARGET_FOLDER
-                            target folder in the format /path/to/folder
+      --targetFolder=TARGET_FOLDER
+                            target folder in the format /path/to/folder.
+                            This is the destination folder used when no other destination folders are specified.
+      --targetForIngestionFolder=TARGET_FOR_INGESTION_FOLDER
+                            target for-ingestion folder in the format /path/to/folder
+      --targetPostProcessedFolder=TARGET_POST_PROCESSED_FOLDER
+                            target post-processed folder in the format /path/to/folder
+      --targetPreProcessingFolder=TARGET_PRE_PROCESS_FOLDER
+                            target pre-processing folder in the format /path/to/folder
+      --numberOfThreads=<numberOfThreads>
+                            Number of threads when running operations in parallel.
+                            The default is 1.
   -r, --forReviewFolder=FOR_REVIEW_FOLDER
                             for-review folder in the format /path/to/folder
 
 Options:
   -c, --createDestination   Whether destination (or target) folders will be created.
                             Default is no creation (false).
-  -m, --moveFiles           Whether files will be moved or copied.
+      --moveFiles           Whether files will be moved or copied.
                             Default is copy (false).
-  -n, --moveOrCopyEvenIfNoRosettaDoneFile
-                            Whether the move or copy takes place even if there is no
-                              Rosetta done file.
-                            The Rosetta done files is a file with a titleCode of
-                              'done'.
-                            Default is no move or copy unless there IS a Rosetta
-                              done file (false).
+      --moveOrCopyEvenIfNoRosettaDoneFile
+                            Whether the move or copy takes place even if there is no Rosetta done file.
+                            The Rosetta done files is a file with a titleCode of 'done'.
+                            Default is no move or copy unless there IS a Rosetta done file (false).
+      --parallelizeProcessing
+                            Run operations in parallel (if possible).
+                            Operations that have components that can run in parallel currently are:
+                                --preProcess
   -h, --help                Display a help message.
+      --verbose               Include verbose output
 ```
 
 See the *Parameters* section for a discussion of the different parameters used.

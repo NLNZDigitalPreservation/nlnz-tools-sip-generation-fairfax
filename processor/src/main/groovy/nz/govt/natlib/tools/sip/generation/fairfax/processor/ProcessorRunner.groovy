@@ -21,37 +21,44 @@ class ProcessorRunner implements ProcessorConfiguration, Callable<Void> {
 Output is used by readyForIngestion.
 Requires sourceFolder, targetFolder, forReviewFolder.
 Uses startingDate, endingDate.
-Optional createDestination, moveFiles.""")
+Optional createDestination, moveFiles.
+This is a processing operation and must run exclusively of other processing operations.""")
     boolean preProcess = false
 
     @Option(names = ["--readyForIngestion"], description = """Process the source files.
 Output is ready for ingestion by Rosetta.
 Requires sourceFolder, targetFolder, forReviewFolder.
 Uses startingDate, endingDate.
-Optional createDestination, moveFiles.""")
+Optional createDestination, moveFiles.
+This is a processing operation and must run exclusively of other processing operations.""")
     boolean readyForIngestion = false
 
     @Option(names = ["-l", "--listFiles" ], description = """List the source files in an organized way.
-Requires sourceFolder""")
+Requires sourceFolder.
+This is a reporting operation and cannot be run with any processing operations.""")
     boolean listFiles = false
 
     @Option(names = ["--statisticalAudit" ], description = """Statistical audit.
-Search through the source folder and provide a statistical audit of the files found.""")
+Search through the source folder and provide a statistical audit of the files found.
+This is a reporting operation and cannot be run with any processing operations.""")
     boolean statisticalAudit
 
     @Option(names = ["--extractMetadata"], description = """Extract and list the metadata from the source files.
-Requires sourceFolder""")
+Requires sourceFolder.
+This is a reporting operation and cannot be run with any processing operations.""")
     boolean extractMetadata = false
 
     @Option(names = ["--copyIngestedLoadsToIngestedFolder" ], description = """Copy the ingested loads to ingested folder.
 Requires sourceFolder, targetFolder, forReviewFolder.
 Uses startingDate, endingDate.
-Optional createDestination, moveFiles, moveOrCopyEvenIfNoRosettaDoneFile""")
+Optional createDestination, moveFiles, moveOrCopyEvenIfNoRosettaDoneFile.
+This is a processing operation and must run exclusively of other processing operations.""")
     boolean copyIngestedLoadsToIngestedFolder = false
 
     @Option(names = ["--copyProdLoadToTestStructures" ], description = """Copy the production load to test structures.
 Requires sourceFolder, targetFolder.
-Uses startingDate, endingDate""")
+Uses startingDate, endingDate.
+This is a processing operation and must run exclusively of other processing operations.""")
     boolean copyProdLoadToTestStructures = false
 
     @Option(names = ["--moveFiles" ], description = """Whether files will be moved or copied.
@@ -77,7 +84,7 @@ The Rosetta done files is a file with a titleCode of 'done'.
 Default is no move or copy unless there IS a Rosetta done file (false).""")
     boolean moveOrCopyEvenIfNoRosettaDoneFile = false
 
-    @Option(names = ["verbose"], description = """Include verbose output""")
+    @Option(names = ["--verbose"], description = """Include verbose output""")
     boolean verbose = false
 
     @Option(names = ["-h", "--help" ], usageHelp = true, description = 'Display a help message.')
@@ -193,6 +200,21 @@ This is the destination folder used when no other destination folders are specif
     }
 
     void process() {
+        int totalProcessingOperations = (copyProdLoadToTestStructures ? 1 : 0) + (preProcess ? 1 : 0) +
+                (readyForIngestion ? 1 : 0) + (copyIngestedLoadsToIngestedFolder ? 1 : 0)
+        if (totalProcessingOperations > 1) {
+            String message = "Only 1 processing operation (copyProdLoadToTestStructures, preProcess, " +
+                    "readyForIngestion or copyIngestedLoadsToIngestedFolder) can run at a time. " +
+                    "Your command requests total processing operations=${totalProcessingOperations}. Please change your command."
+            log.error(message)
+            throw new ProcessorException(message)
+        }
+        int totalReportingOperations = (listFiles ? 1 : 0) + (statisticalAudit ? 1 : 0) + (extractMetadata ? 1 : 0)
+        if (totalReportingOperations > 0 && totalProcessingOperations > 0) {
+            String message = "Reporting operations (listFiles, statisticalAudit, extractMetadata) cannot be run with any processing operations."
+            log.error(message)
+            throw new ProcessorException(message)
+        }
         if (sourceFolder != null && (!sourceFolder.exists() || !sourceFolder.isDirectory())) {
             String message = "sourceFolder=${sourceFolder.getCanonicalPath()} must exist=${sourceFolder.exists()} and must be directory=${sourceFolder.isDirectory()}"
             log.error(message)
