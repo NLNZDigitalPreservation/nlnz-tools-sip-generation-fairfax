@@ -84,6 +84,9 @@ The Rosetta done files is a file with a titleCode of 'done'.
 Default is no move or copy unless there IS a Rosetta done file (false).""")
     boolean moveOrCopyEvenIfNoRosettaDoneFile = false
 
+    @Option(names = ["--detailedTimings"], description = """Include detailed timings (for specific operations).""")
+    boolean includeDetailedTimings = false
+
     @Option(names = ["--verbose"], description = """Include verbose output""")
     boolean verbose = false
 
@@ -173,6 +176,7 @@ This is the destination folder used when no other destination folders are specif
         log.info("        parallelizeProcessing=${parallelizeProcessing}")
         log.info("        numberOfThreads=${numberOfThreads}")
         log.info("        moveOrCopyEvenIfNoRosettaDoneFile=${moveOrCopyEvenIfNoRosettaDoneFile}")
+        log.info("        includeDetailedTimings=${includeDetailedTimings}")
         log.info("        verbose=${verbose}")
         log.info("")
     }

@@ -32,6 +32,8 @@ trait ProcessorConfiguration {
 
     boolean moveOrCopyEvenIfNoRosettaDoneFile
 
+    boolean includeDetailedTimings
+
     boolean verbose
 
     boolean helpRequested

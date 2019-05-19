@@ -156,6 +156,7 @@ Options:
                             Run operations in parallel (if possible).
                             Operations that have components that can run in parallel currently are:
                                 --preProcess
+      --detailedTimings     Include detailed timings (for specific operations).
   -h, --help                Display a help message.
       --verbose               Include verbose output
 ```

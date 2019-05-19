@@ -88,8 +88,15 @@ class ProcessorUtils {
         }
     }
 
+    static void markElapsed(Timekeeper theTimekeeper, String marker, String markerDescription = null) {
+        if (theTimekeeper != null) {
+            theTimekeeper.markElapsed(marker, markerDescription)
+        }
+    }
+
     static boolean atomicMoveOrCopy(boolean moveFile, File sourceFile, File targetFile,
-                                    boolean useAtomicOption = true) {
+                                    boolean useAtomicOption = true, boolean includeDetailedTimings = false,
+                                    Timekeeper atomicTimekeeper = null) {
         // Handle the case of being interrupted by copying/moving to the destination file (which leads to a bunch
         // partial copies -- especially in a multithreaded case -- that need to be manually checked to verify that
         // they are incomplete versions).
@@ -100,21 +107,34 @@ class ProcessorUtils {
         // 2. Rename the file to the targetFile name.
         // 3. Delete the sourceFile.
         // This guarantees that we never delete the source file until the file has been copied and renamed.
+        Timekeeper theTimekeeper = atomicTimekeeper
+        if (includeDetailedTimings && atomicTimekeeper == null) {
+            theTimekeeper = new Timekeeper()
+            theTimekeeper.start()
+        }
         boolean deleteSourceFile = moveFile && !useAtomicOption // because atomic move will automatically delete sourceFile
         boolean doCopy = !moveFile
         boolean renameSuccessful = false
         File temporaryDestinationFile = nonDuplicateFile(targetFile, true, "-",
                 true, ".tmpcopy")
+        if (includeDetailedTimings) {
+            markElapsed(theTimekeeper, "sourceFile=${sourceFile.getName()}",
+                    "Establish non-duplicate file for sourceFile path=" + sourceFile.getCanonicalPath())
+        }
         if (moveFile) {
             // The only valid move option is StandardCopyOption.REPLACE_EXISTING, which we don't want to do
             if (useAtomicOption) {
                 try {
                     Path resultingPath = Files.move(sourceFile.toPath(), targetFile.toPath(), StandardCopyOption.ATOMIC_MOVE)
+                    markElapsed(theTimekeeper, "sourceFile=${sourceFile.getName()}", "Atomic move completed")
                     renameSuccessful = true
                 } catch (AtomicMoveNotSupportedException e) {
                     log.debug("Attempt at atomic file move file sourceFile=${sourceFile.getCanonicalPath()} to " +
                             "targetFile=${targetFile.getCanonicalPath()} failed, trying a non-atomic move approach.")
-                    renameSuccessful = atomicMoveOrCopy(moveFile, sourceFile, targetFile, false)
+                    renameSuccessful = atomicMoveOrCopy(moveFile, sourceFile, targetFile, false,
+                                                        false, theTimekeeper)
+                    markElapsed(theTimekeeper, "sourceFile=${sourceFile.getName()}",
+                            "Non-atomic move completed")
                 }
             } else {
                 doCopy = true
@@ -122,10 +142,13 @@ class ProcessorUtils {
         }
         if (doCopy) {
             Files.copy(sourceFile.toPath(), temporaryDestinationFile.toPath(), StandardCopyOption.COPY_ATTRIBUTES)
+            markElapsed(theTimekeeper, "sourceFile=${sourceFile.getName()}", "Copy completed")
             renameSuccessful = temporaryDestinationFile.renameTo(targetFile)
+            markElapsed(theTimekeeper, "sourceFile=${sourceFile.getName()}", "Rename completed")
             if (renameSuccessful) {
                 if (deleteSourceFile) {
                     Files.delete(sourceFile.toPath())
+                    markElapsed(theTimekeeper, "sourceFile=${sourceFile.getName()}", "Delete completed")
                 }
             } else {
                 printAndFlush("\n")
@@ -137,6 +160,10 @@ class ProcessorUtils {
             }
         }
 
+        if (includeDetailedTimings && theTimekeeper != null) {
+            markElapsed(theTimekeeper, "sourceFile=${sourceFile.getName()}", "Operation completed.")
+            theTimekeeper.listMarkers()
+        }
         return renameSuccessful
     }
 

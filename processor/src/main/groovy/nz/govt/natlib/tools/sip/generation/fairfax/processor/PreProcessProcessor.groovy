@@ -147,7 +147,9 @@ class PreProcessProcessor {
             }
         }
         if (moveToDestination) {
-            boolean moveOrCopyResult = ProcessorUtils.atomicMoveOrCopy(moveFile, targetFile.file, destinationFile)
+            boolean useAtomicOption = true
+            boolean moveOrCopyResult = ProcessorUtils.atomicMoveOrCopy(moveFile, targetFile.file, destinationFile,
+                    useAtomicOption, processorConfiguration.includeDetailedTimings)
             ProcessorUtils.printAndFlush(moveOrCopyResult ? "." : "!")
         }
         removeInProcessDestinationFile(destinationFile)
