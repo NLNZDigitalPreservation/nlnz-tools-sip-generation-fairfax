@@ -107,7 +107,7 @@ class ProcessorUtils {
         // 2. Rename the file to the targetFile name.
         // 3. Delete the sourceFile.
         // This guarantees that we never delete the source file until the file has been copied and renamed.
-        if (Files.isSameFile(sourceFile.toPath(), targetFile.toPath())) {
+        if (sourceFile.exists() && targetFile.exists() && Files.isSameFile(sourceFile.toPath(), targetFile.toPath())) {
             log.warn("atomicMoveOrCopy: NO move/copy -- source and target are the same PHYSICAL file!")
             log.warn("    sourceFile=${sourceFile.getCanonicalPath()}")
             log.warn("    targetFile=${targetFile.getCanonicalPath()}")

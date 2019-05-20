@@ -111,7 +111,8 @@ class PreProcessProcessor {
         addInProcessDestinationFile(destinationFile)
         boolean moveToDestination = true
         if (destinationFile.exists()) {
-            if (Files.isSameFile(destinationFile.toPath(), targetFile.file.toPath())) {
+            if (destinationFile.exists() && targetFile.file.exists() &&
+                    Files.isSameFile(destinationFile.toPath(), targetFile.file.toPath())) {
                 moveToDestination = false
                 log.warn("copyOrMoveFileToPreProcessingDestination: NO move/copy -- source and target are the same " +
                         "PHYSICAL file!")
