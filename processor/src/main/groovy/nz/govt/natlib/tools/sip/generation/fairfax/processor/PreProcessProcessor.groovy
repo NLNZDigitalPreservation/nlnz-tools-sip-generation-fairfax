@@ -111,7 +111,13 @@ class PreProcessProcessor {
         addInProcessDestinationFile(destinationFile)
         boolean moveToDestination = true
         if (destinationFile.exists()) {
-            if (ProcessorUtils.isSameFile(targetFile.file, destinationFile)) {
+            if (Files.isSameFile(destinationFile.toPath(), targetFile.file.toPath())) {
+                moveToDestination = false
+                log.warn("copyOrMoveFileToPreProcessingDestination: NO move/copy -- source and target are the same " +
+                        "PHYSICAL file!")
+                log.warn("    sourceFile=${targetFile.file.getCanonicalPath()}")
+                log.warn("    targetFile=${destinationFile.getCanonicalPath()}")
+            } else if (ProcessorUtils.isSameFile(targetFile.file, destinationFile)) {
                 moveToDestination = false
                 if (processorConfiguration.verbose) {
                     log.info("Skipping moveFile=${moveFile} destinationFile=${destinationFile.getCanonicalPath()} -- it already exists and is same file")
