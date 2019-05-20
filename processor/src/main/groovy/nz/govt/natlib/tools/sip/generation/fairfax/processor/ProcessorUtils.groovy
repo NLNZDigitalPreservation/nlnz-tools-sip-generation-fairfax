@@ -175,6 +175,10 @@ class ProcessorUtils {
 
     // Hash the files to determine if they are the same file.
     static boolean isSameFile(File file1, File file2, allowZeroLengthFiles = false) {
+        // Skip MD5 hash if the files are the same physical file. Note that this will skip the zero-length file check.
+        if (Files.isSameFile(file1.toPath(), file2.toPath())) {
+            return true
+        }
         String file1Md5Hash = generateMD5(file1)
         String file2Md5Hash = generateMD5(file2)
 
