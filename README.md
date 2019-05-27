@@ -85,19 +85,19 @@ Runs different processors based on command-line options.
 Processing stages:
       --preProcess          Group source files by date and titleCode.
                             Output is used by readyForIngestion.
-                            Requires sourceFolder, targetFolder, forReviewFolder.
+                            Requires sourceFolder, targetPreProcessingFolder, forReviewFolder.
                             Uses startingDate, endingDate.
                             Optional createDestination, moveFiles.
                             This is a processing operation and must run exclusively of other processing operations.
       --readyForIngestion   Process the source files.
                             Output is ready for ingestion by Rosetta.
-                            Requires sourceFolder, targetFolder, forReviewFolder.
+                            Requires sourceFolder, targetForIngestionFolder, forReviewFolder.
                             Uses startingDate, endingDate.
                             Optional createDestination, moveFiles.
                             This is a processing operation and must run exclusively of other processing operations.
       --copyIngestedLoadsToIngestedFolder
                             Copy the ingested loads to ingested folder.
-                            Requires sourceFolder, targetFolder, forReviewFolder.
+                            Requires sourceFolder, targetPostProcessedFolder, forReviewFolder.
                             Uses startingDate, endingDate.
                             Optional createDestination, moveFiles, moveOrCopyEvenIfNoRosettaDoneFile.
                             This is a processing operation and must run exclusively of other processing operations.

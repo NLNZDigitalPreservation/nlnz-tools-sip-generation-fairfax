@@ -19,7 +19,7 @@ class ProcessorRunner implements ProcessorConfiguration, Callable<Void> {
 
     @Option(names = ["--preProcess"], description = """Group source files by date and titleCode.
 Output is used by readyForIngestion.
-Requires sourceFolder, targetFolder, forReviewFolder.
+Requires sourceFolder, targetPreProcessingFolder, forReviewFolder.
 Uses startingDate, endingDate.
 Optional createDestination, moveFiles.
 This is a processing operation and must run exclusively of other processing operations.""")
@@ -27,7 +27,7 @@ This is a processing operation and must run exclusively of other processing oper
 
     @Option(names = ["--readyForIngestion"], description = """Process the source files.
 Output is ready for ingestion by Rosetta.
-Requires sourceFolder, targetFolder, forReviewFolder.
+Requires sourceFolder, targetForIngestionFolder, forReviewFolder.
 Uses startingDate, endingDate.
 Optional createDestination, moveFiles.
 This is a processing operation and must run exclusively of other processing operations.""")
@@ -49,7 +49,7 @@ This is a reporting operation and cannot be run with any processing operations."
     boolean extractMetadata = false
 
     @Option(names = ["--copyIngestedLoadsToIngestedFolder" ], description = """Copy the ingested loads to ingested folder.
-Requires sourceFolder, targetFolder, forReviewFolder.
+Requires sourceFolder, targetPostProcessedFolder, forReviewFolder.
 Uses startingDate, endingDate.
 Optional createDestination, moveFiles, moveOrCopyEvenIfNoRosettaDoneFile.
 This is a processing operation and must run exclusively of other processing operations.""")

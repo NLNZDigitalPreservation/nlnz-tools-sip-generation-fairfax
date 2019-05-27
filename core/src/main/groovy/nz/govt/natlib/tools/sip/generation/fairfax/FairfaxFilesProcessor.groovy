@@ -151,9 +151,9 @@ class FairfaxFilesProcessor {
             sipProcessingState.setComplete(true)
             log.info("\n* * * SipProcessingState:")
             log.info(sipProcessingState.toString())
-            log.info("\n* * *   S I P   * * *")
-            log.info(sipAsXml)
-            log.info("\n* * *   E N D   O F   S I P   * * *")
+            log.debug("\n* * *   S I P   * * *")
+            log.debug(sipAsXml)
+            log.debug("\n* * *   E N D   O F   S I P   * * *")
         }
         sipProcessingState.totalFilesProcessed = filesProcessed
 
