@@ -44,6 +44,27 @@ project.ext {
             project.fairfaxSpreadsheetImportFilename : null
     fairfaxSpreadsheetExportFilenameValue = project.hasProperty('fairfaxSpreadsheetExportFilename') ?
             project.fairfaxSpreadsheetExportFilename : "core/src/main/resources/nz/govt/natlib/tools/sip/generation/fairfax/default-fairfax-import-parameters.json"
+
+    // Task updateDefaultFairfaxImportParameters
+    doExportDefaultFairfaxImportParameters = ProjectHelper.hasAnyTasks(project, [ "exportDefaultFairfaxImportParameters" ])
+    fairfaxSpreadsheetExportFilenameValue = project.hasProperty('fairfaxSpreadsheetExportFilename') ?
+            project.fairfaxSpreadsheetExportFilename : null
+
+    fairfaxSpreadsheetImportFilenameValue = null
+    defaultExportFilename = ""
+    if (doUpdateDefaultFairfaxImportParameters) {
+        defaultExportFilename = "default-fairfax-import-parameters.json"
+        fairfaxSpreadsheetImportFilenameValue = project.hasProperty('fairfaxSpreadsheetImportFilename') ?
+                project.fairfaxSpreadsheetImportFilename : null
+    } else if (doExportDefaultFairfaxImportParameters) {
+        defaultExportFilename = "fairfax-export-parameters.csv"
+        fairfaxSpreadsheetImportFilenameValue = project.hasProperty('fairfaxSpreadsheetImportFilename') ?
+                project.fairfaxSpreadsheetImportFilename :
+                "core/src/main/resources/nz/govt/natlib/tools/sip/generation/fairfax/default-fairfax-import-parameters.json"
+    }
+    fairfaxSpreadsheetExportFilenameValue = project.hasProperty('fairfaxSpreadsheetExportFilename') ?
+            project.fairfaxSpreadsheetExportFilename :
+            "core/src/main/resources/nz/govt/natlib/tools/sip/generation/" + defaultExportFilename
 }
 
 apply plugin: 'groovy'
@@ -134,7 +155,8 @@ task updateDefaultFairfaxImportParameters() {
         boolean allowDuplicateIds = true
         boolean allowRowsWithoutIds = true
         // TODO Make the separator configurable
-        Spreadsheet spreadsheet = SpreadsheetImporter.extractSpreadsheet(spreadsheetImportFile, "MMSID", "|", allowDuplicateIds, allowRowsWithoutIds)
+        // Note that the MMSID is not unique for each row, so we generate an id for each row
+        Spreadsheet spreadsheet = SpreadsheetImporter.extractSpreadsheet(spreadsheetImportFile, "GENERATE_ID_VALUE", "|", allowDuplicateIds, allowRowsWithoutIds)
         logger.info("spreadsheet values imported:")
         spreadsheet.rows.each { Map<String, String> spreadsheetLine ->
             StringBuilder line = new StringBuilder()
@@ -146,6 +168,43 @@ task updateDefaultFairfaxImportParameters() {
         JsonBuilder jsonBuilder = new JsonBuilder()
 
         spreadsheetExportFile.write(JsonOutput.prettyPrint(spreadsheet.asJsonString()))
+    }
+}
+
+// Export the fairfax import parameters JSON as a CSV spreadsheet
+task exportDefaultFairfaxImportParameters() {
+    File spreadsheetImportFile
+    if (project.doExportDefaultFairfaxImportParameters) {
+        if (project.fairfaxSpreadsheetImportFilenameValue == null) {
+            throw new BuildException("fairfaxSpreadsheetImportFilename=${project.fairfaxSpreadsheetImportFilenameValue} must be set when calling task 'exportDefaultFairfaxImportParameters'.")
+        } else {
+            spreadsheetImportFile = new File((String) project.fairfaxSpreadsheetImportFilenameValue)
+        }
+        if (!spreadsheetImportFile.exists()) {
+            throw new BuildException("File=${spreadsheetImportFile.getCanonicalPath()} must exist.")
+        }
+        if (!spreadsheetImportFile.isFile()) {
+            throw new BuildException("File=${spreadsheetImportFile.getCanonicalPath()} must be a file.")
+        }
+    }
+    doLast {
+        File spreadsheetExportFile = new File(project.fairfaxSpreadsheetExportFilenameValue)
+        logger.info("Writing spreadsheet-import-file=${spreadsheetImportFile.getCanonicalPath()} to spreadsheet-export-file=${spreadsheetExportFile.getCanonicalPath()}")
+        boolean allowDuplicateIds = true
+        boolean allowRowsWithoutIds = true
+        // TODO Make the separator configurable
+        // Note that the MMSID is not unique for each row, so we generate an id for each row
+        Spreadsheet spreadsheet = Spreadsheet.fromJson("GENERATE_ID_VALUE", spreadsheetImportFile, allowDuplicateIds, allowRowsWithoutIds)
+        logger.info("spreadsheet values imported:")
+        spreadsheet.rows.each { Map<String, String> spreadsheetLine ->
+            StringBuilder line = new StringBuilder()
+            spreadsheetLine.each { String key, String value ->
+                line.append("${key}:${value}|")
+            }
+            logger.info(line.toString())
+        }
+
+        spreadsheetExportFile.write(spreadsheet.asCsvString("|"))
     }
 }
 

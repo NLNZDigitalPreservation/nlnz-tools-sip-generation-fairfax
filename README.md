@@ -410,8 +410,21 @@ Copy the exported csv spreadsheet to:
 Execute the gradle task `updateDefaultFairfaxImportParameters`, which takes the csv spreadsheet and converts it to a
 JSON file, which is then used for the actual processing:
 ```
-gradle updateDefaultFairfaxImportParameters -PfairfaxSpreadsheetImportFilename="core/src/main/resources/nz/govt/natlib/tools/sip/generation/fairfax/default-fairfax-import-spreadsheet.csv"
+gradle updateDefaultFairfaxImportParameters \
+  -PfairfaxSpreadsheetImportFilename="core/src/main/resources/nz/govt/natlib/tools/sip/generation/fairfax/default-fairfax-import-spreadsheet.csv" \
+  -PfairfaxSpreadsheetExportFilename="core/src/main/resources/nz/govt/natlib/tools/sip/generation/fairfax/default-fairfax-import-parameters.json"
 ```
+
+### Execute the build task exportDefaultFairfaxImportParameters
+Execute the gradle task `exportDefaultFairfaxImportParameters`, which takes a JSON file and converts it to a
+csv spreadsheet file, which makes it easier for user editing:
+```
+gradle exportDefaultFairfaxImportParameters \
+  -PfairfaxSpreadsheetImportFilename="core/src/main/resources/nz/govt/natlib/tools/sip/generation/fairfax/default-fairfax-import-parameters.json" \
+  -PfairfaxSpreadsheetExportFilename="core/src/main/resources/nz/govt/natlib/tools/sip/generation/fairfax/default-fairfax-import-spreadsheet.csv"
+```
+
+The edited spreadsheet can be loaded back into json using the build task `updateDefaultFairfaxImportParameters`.
 
 ### Check in the changes and build a new version of the jar
 Changes should then be checked in and a new version of this jar built, which will have the new JSON processing resource
