@@ -102,6 +102,8 @@ dependencies {
     // Use the latest version
     compile "org.apache.commons:commons-lang3:+"
     compile "commons-io:commons-io:2.+"
+    // Latest version
+    compile "org.apache.commons:commons-collections4:4.3"
 
     // For parallel processing
     compile "org.codehaus.gpars:gpars:1.2.1"

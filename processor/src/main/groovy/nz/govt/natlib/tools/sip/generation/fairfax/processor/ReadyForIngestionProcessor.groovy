@@ -4,7 +4,9 @@ import groovy.util.logging.Slf4j
 import groovyx.gpars.GParsPool
 import nz.govt.natlib.tools.sip.generation.fairfax.FairfaxFile
 import nz.govt.natlib.tools.sip.generation.fairfax.FairfaxFilesProcessor
+import nz.govt.natlib.tools.sip.generation.fairfax.FairfaxProcessingParameters
 import nz.govt.natlib.tools.sip.generation.fairfax.FairfaxSpreadsheet
+import nz.govt.natlib.tools.sip.generation.fairfax.parameters.ProcessingRule
 import nz.govt.natlib.tools.sip.processing.ProcessLogger
 import nz.govt.natlib.tools.sip.state.SipProcessingState
 
@@ -23,7 +25,7 @@ class ReadyForIngestionProcessor {
     }
 
     SipProcessingState processTitleCodeFolder(File titleCodeFolder, File destinationFolder, File forReviewFolder,
-                                              String dateString, String titleCode) {
+                                              String dateString, FairfaxProcessingParameters processingParameters) {
         // Process the files in the titleCode folder
         // TODO ProcessLogger won't be able to work in a multithreaded environment! -- if we could split the logging
         // then we could probably do multithreading.
@@ -44,20 +46,23 @@ class ReadyForIngestionProcessor {
 
         SipProcessingState sipProcessingState = new SipProcessingState()
         // Process the folder as a single collection of files
-        // TODO Note that there may be multiple destinations (as there could be different editions of the same titleCode for a given day).
-        String sipAsXml = FairfaxFilesProcessor.processCollectedFiles(sipProcessingState, fairfaxSpreadsheet, allFiles)
+        // Note that the folder is processed for a single processingType (so there could be multiple passes, one for
+        // each processingType).
+        String sipAsXml = FairfaxFilesProcessor.processCollectedFiles(sipProcessingState, processingParameters, allFiles)
 
         File sipAndFilesFolder
+        String folderName = "${dateString}_${processingParameters.processingType.getFieldValue()}_${processingParameters.titleCode}${sipProcessingState.identifier}"
         if (sipProcessingState.complete && sipProcessingState.successful) {
             sipAndFilesFolder = new File(destinationFolder,
-                    "${sipProcessingState.ieEntityType.getDisplayName()}/${dateString}_${titleCode}${sipProcessingState.identifier}")
+                    "${sipProcessingState.ieEntityType.getDisplayName()}/${folderName}")
         } else {
             sipAndFilesFolder = new File(forReviewFolder,
-                    "${sipProcessingState.ieEntityType.getDisplayName()}/${dateString}_${titleCode}${sipProcessingState.identifier}")
+                    "${sipProcessingState.ieEntityType.getDisplayName()}/${folderName}")
         }
         // TODO may need to adjust logic for creation of content/streams folder
+        // TODO unrecognized doesn't work in the context of processingType
         File contentStreamsFolder = new File(sipAndFilesFolder, "content/streams")
-        File unrecognizedFilesFolder = new File(forReviewFolder, "UNRECOGNIZED/${dateString}/${titleCode}")
+        File unrecognizedFilesFolder = new File(forReviewFolder, "UNRECOGNIZED/${dateString}/${processingParameters.titleCode}")
 
         boolean hasSipAndFilesFolder
         boolean hasUnrecognizedFilesFolder
@@ -70,17 +75,22 @@ class ReadyForIngestionProcessor {
             }
         }
         ProcessorUtils.copyOrMoveFiles(processorConfiguration.moveFiles, sipProcessingState.validFiles, contentStreamsFolder)
-        ProcessorUtils.copyOrMoveFiles(processorConfiguration.moveFiles, sipProcessingState.invalidFiles, contentStreamsFolder)
-
-        // If the files aren't recognized, then dump the files in an exception folder
-        if (sipProcessingState.unrecognizedFiles.size() > 0) {
-            hasUnrecognizedFilesFolder = true
-            if (!unrecognizedFilesFolder.exists() && processorConfiguration.createDestination) {
-                unrecognizedFilesFolder.mkdirs()
-            }
+        if (processingParameters.processingRules.contains(ProcessingRule.HandleInvalid)) {
+            ProcessorUtils.copyOrMoveFiles(processorConfiguration.moveFiles, sipProcessingState.invalidFiles, contentStreamsFolder)
         }
-        ProcessorUtils.copyOrMoveFiles(processorConfiguration.moveFiles, sipProcessingState.unrecognizedFiles, unrecognizedFilesFolder)
 
+        if (processingParameters.processingRules.contains(ProcessingRule.HandleUnrecognised)) {
+            // If the files aren't recognized, then dump the files in an exception folder
+            if (sipProcessingState.unrecognizedFiles.size() > 0) {
+                hasUnrecognizedFilesFolder = true
+                if (!unrecognizedFilesFolder.exists() && processorConfiguration.createDestination) {
+                    unrecognizedFilesFolder.mkdirs()
+                }
+            }
+            ProcessorUtils.copyOrMoveFiles(processorConfiguration.moveFiles, sipProcessingState.unrecognizedFiles, unrecognizedFilesFolder)
+        }
+
+        // TODO Need to write out the processingType file as well
         // Write out the SipProcessingState
         Date now = new Date()
         File sipProcessingStateFile = new File(sipAndFilesFolder,
@@ -95,7 +105,7 @@ class ReadyForIngestionProcessor {
         processorConfiguration.timekeeper.logElapsed()
 
         if (hasSipAndFilesFolder) {
-            processLogger.copySplit(sipAndFilesFolder, "Process-Name-Folder", false)
+            processLogger.copySplit(sipAndFilesFolder, "Process-Name-Folder", !hasUnrecognizedFilesFolder)
         }
         if (hasUnrecognizedFilesFolder) {
             processLogger.copySplit(unrecognizedFilesFolder, "Process-Name-Folder", true)
@@ -161,8 +171,20 @@ class ReadyForIngestionProcessor {
                 File titleCodeFolder = titleCodeFolderAndDateString.first
                 String titleCode = titleCodeFolder.getName()
                 String dateString = titleCodeFolderAndDateString.second
-                processTitleCodeFolder(titleCodeFolder, processorConfiguration.targetForIngestionFolder,
-                        processorConfiguration.forReviewFolder, dateString, titleCode)
+                LocalDate processingDate = LocalDate.parse(dateString, FairfaxFile.LOCAL_DATE_TIME_FORMATTER)
+                FairfaxProcessingParameters processingParameters = FairfaxProcessingParameters.build(titleCode,
+                        processorConfiguration.forIngestionProcessingType, processingDate, fairfaxSpreadsheet)
+                if (processingParameters.processingRules.contains(ProcessingRule.MultipleEditions)) {
+                    processingParameters.editionDiscriminators.each { String editionDiscriminator ->
+                        FairfaxProcessingParameters editionParameters = processingParameters.clone()
+                        editionParameters.currentEdition = editionDiscriminator
+                        processTitleCodeFolder(titleCodeFolder, processorConfiguration.targetForIngestionFolder,
+                                processorConfiguration.forReviewFolder, dateString, editionParameters)
+                    }
+                } else {
+                    processTitleCodeFolder(titleCodeFolder, processorConfiguration.targetForIngestionFolder,
+                            processorConfiguration.forReviewFolder, dateString, processingParameters)
+                }
             }
         }
     }

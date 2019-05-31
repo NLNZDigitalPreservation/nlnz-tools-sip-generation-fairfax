@@ -19,7 +19,9 @@ class FairfaxSpreadsheetTest {
         FairfaxSpreadsheet fairfaxSpreadsheet = FairfaxSpreadsheet.defaultInstance()
 
         assertTrue("Spreadsheet is valid", fairfaxSpreadsheet.spreadsheet.isValid(false, false))
-        List<Map<String, String>> mapsForCountryLivingList = fairfaxSpreadsheet.spreadsheet.mapsForId("9918150268002836")
+        List<Map<String, String>> mapsForCountryLivingList =
+                fairfaxSpreadsheet.spreadsheet.mapsForColumn(FairfaxSpreadsheet.MMSID_COLUMN_NAME,
+                        "9918150268002836")
 
         assertThat("Country Living only has one entry", mapsForCountryLivingList.size(), is(new Integer(1)))
         Map<String, String> mapsForCountryLiving = mapsForCountryLivingList.first()
@@ -30,6 +32,7 @@ class FairfaxSpreadsheetTest {
 
         assertThat("titleParent for titleCode: CL4 editionCode: ED1 is 'Country Living'", fairfaxSpreadsheet.getTitleParentForTitleCodeEditionCode('CL4', 'ED1'),
                 is('Country Living'))
-        assertTrue("isMagazine is true for Country Living", fairfaxSpreadsheet.isMagazineForTitleCodeEditionCode("CL4", "ED1"))
+        assertTrue("isMagazine is true for Country Living",
+                FairfaxSpreadsheet.extractBooleanValue(mapsForCountryLiving, FairfaxSpreadsheet.IS_MAGAZINE_KEY))
     }
 }

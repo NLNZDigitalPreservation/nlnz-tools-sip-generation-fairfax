@@ -5,6 +5,9 @@ import nz.govt.natlib.tools.sip.IEEntityType
 import nz.govt.natlib.tools.sip.Sip
 import nz.govt.natlib.tools.sip.SipFileWrapperFactory
 import nz.govt.natlib.tools.sip.generation.SipXmlGenerator
+import nz.govt.natlib.tools.sip.generation.fairfax.parameters.ProcessingType
+import nz.govt.natlib.tools.sip.generation.fairfax.processors.ParentGroupingProcessor
+import nz.govt.natlib.tools.sip.generation.fairfax.processors.SipForFolderProcessor
 import nz.govt.natlib.tools.sip.pdf.PdfValidator
 import nz.govt.natlib.tools.sip.pdf.PdfValidatorFactory
 import nz.govt.natlib.tools.sip.pdf.PdfValidatorType
@@ -13,141 +16,173 @@ import nz.govt.natlib.tools.sip.state.SipProcessingExceptionReason
 import nz.govt.natlib.tools.sip.state.SipProcessingExceptionReasonType
 import nz.govt.natlib.tools.sip.state.SipProcessingState
 
+import java.time.LocalDate
+
 @Slf4j
 class FairfaxFilesProcessor {
     SipProcessingState sipProcessingState
-    FairfaxSpreadsheet fairfaxSpreadsheet
+    FairfaxProcessingParameters processingParameters
     List<File> filesForProcessing
 
-    Map<FairfaxFileGroupKey, FairfaxFileGroup> fairfaxFileGroupMap
     Map<FairfaxFile, FairfaxFile> processedFairfaxFiles
 
-    static String processCollectedFiles(SipProcessingState sipProcessingState, FairfaxSpreadsheet fairfaxSpreadsheet,
-                                        List<File> filesForProcessing) {
-        FairfaxFilesProcessor fairfaxFilesProcessor = new FairfaxFilesProcessor(sipProcessingState, fairfaxSpreadsheet,
-                filesForProcessing)
-        return fairfaxFilesProcessor.process()
+    static Sip getBlankSip() {
+        Sip sip = new Sip(title: 'UNKNOWN_TITLE', ieEntityType: IEEntityType.UNKNOWN,
+                objectIdentifierType: 'UNKNOWN_OBJECT_IDENTIFIER_TYPE',
+                objectIdentifierValue: 'UNKNOWN_OBJECT_IDENTIFIER_VALUE', policyId: 'UNKNOWN_POLICY_ID',
+                preservationType: 'UNKNOWN_PRESERVATION_TYPE', usageType: 'UNKNOWN_USAGE_TYPE',
+                digitalOriginal: true, revisionNumber: 1,
+                year: 2038, month: 12, dayOfMonth: 31)
 
     }
 
-    FairfaxFilesProcessor(SipProcessingState sipProcessingState, FairfaxSpreadsheet fairfaxSpreadsheet,
+    static String processCollectedFiles(SipProcessingState sipProcessingState,
+                                        FairfaxProcessingParameters processingParameters,
+                                        List<File> filesForProcessing) {
+        FairfaxFilesProcessor fairfaxFilesProcessor = new FairfaxFilesProcessor(sipProcessingState,
+                processingParameters, filesForProcessing)
+        return fairfaxFilesProcessor.process()
+    }
+
+    FairfaxFilesProcessor(SipProcessingState sipProcessingState, FairfaxProcessingParameters processingParameters,
                           List<File> filesForProcessing) {
         this.sipProcessingState = sipProcessingState
-        this.fairfaxSpreadsheet = fairfaxSpreadsheet
+        this.processingParameters = processingParameters
         this.filesForProcessing = filesForProcessing
     }
 
+    // TODO Write out processed files for processing type:
+    // TODO For each processing type, create a file in the yyyy-MM-dd/title_code folder <yyyyyMMdd>_<title_code>_<processing-type>_<maybe-timestamp?>.log
     String process() {
-        log.info("STARTING process")
-        fairfaxFileGroupMap = [ : ]
+        log.info("STARTING process for processingParameters=${processingParameters}")
         processedFairfaxFiles = [ : ]
 
-        filesForProcessing.each { File rawFile ->
-            FairfaxFile fairfaxFile = new FairfaxFile(rawFile)
-            processFile(fairfaxFile)
-        }
-        String sipAsXml = generateSipAsXml()
-        log.info("ENDING process")
-
-        return sipAsXml
-    }
-
-    void processFile(FairfaxFile fairfaxFile) {
-        log.info("Processing fairfaxFile=${fairfaxFile}")
-        if (fairfaxFile.isValidName()) {
-            FairfaxFileGroupKey fairfaxFileKey = FairfaxFileGroupKey.fromFairfaxFile(fairfaxFile)
-            log.info("fairfaxFileKey=${fairfaxFileKey}")
-            FairfaxFileGroup fairfaxFileGroup = fairfaxFileGroupMap.get(fairfaxFileKey)
-            if (fairfaxFileGroup == null) {
-                fairfaxFileGroup = new FairfaxFileGroup(fairfaxFileKey)
-                fairfaxFileGroupMap.put(fairfaxFileKey, fairfaxFileGroup)
+        if (this.processingParameters.valid) {
+            List<FairfaxFile> fairfaxFilesForProcessing = filesForProcessing.collect { File rawFile ->
+                new FairfaxFile(rawFile)
             }
-            if (processedFairfaxFiles.containsKey(fairfaxFile)) {
-                // We have a duplicate file -- possibly a different qualifier
-                // We use the fairfax file as a key, but we'll get the duplicate back
-                FairfaxFile firstVersion = processedFairfaxFiles.get(fairfaxFile)
-                SipProcessingExceptionReason exceptionReason = new SipProcessingExceptionReason(
-                        SipProcessingExceptionReasonType.DUPLICATE_FILE, null,
-                        firstVersion.file.getCanonicalPath(), fairfaxFile.file.getCanonicalPath())
-                sipProcessingState.addException(SipProcessingException.createWithReason(exceptionReason))
-            } else {
-                processedFairfaxFiles.put(fairfaxFile, fairfaxFile)
-                if (fairfaxFile.file.length() == 0) {
-                    SipProcessingExceptionReason exceptionReason = new SipProcessingExceptionReason(
-                            SipProcessingExceptionReasonType.FILE_OF_LENGTH_ZERO, null,
-                            fairfaxFile.file.getCanonicalPath())
-                    sipProcessingState.addException(SipProcessingException.createWithReason(exceptionReason))
-                } else {
-                    // We use the Jhove validator as it is the same type used by Rosetta.
-                    // There is also a PDF/A validator using the PdfValidatorType.PDF_BOX_VALIDATOR
-                    PdfValidator pdfValidator = PdfValidatorFactory.getValidator(PdfValidatorType.JHOVE_VALIDATOR)
-                    SipProcessingException sipProcessingException = pdfValidator.validatePdf(fairfaxFile.file.toPath())
-                    if (sipProcessingException != null) {
-                        sipProcessingState.addException(sipProcessingException)
-                    } else {
-                        fairfaxFile.validPdf = true
-                        fairfaxFile.validForProcessing = true
+            List<FairfaxFile> validNamedFiles = extractValidNamedFiles(fairfaxFilesForProcessing)
+
+            List<FairfaxFile> sortedFilesForProcessing
+            switch (processingParameters.processingType) {
+                case ProcessingType.ParentGrouping:
+                    sortedFilesForProcessing = ParentGroupingProcessor.selectAndSort(processingParameters, validNamedFiles)
+                    break
+                case ProcessingType.CreateSipForFolder:
+                    sortedFilesForProcessing = SipForFolderProcessor.selectAndSort(processingParameters, validNamedFiles)
+                    break
+                default:
+                    sortedFilesForProcessing = []
+                    break
+            }
+
+            sipProcessingState.ignoredFiles = FairfaxFile.differences(validNamedFiles, sortedFilesForProcessing).
+                    collect { FairfaxFile fairfaxFile ->
+                        fairfaxFile.file
                     }
+
+            List<FairfaxFile> successfulFiles = [ ]
+            sortedFilesForProcessing.each { FairfaxFile fileForProcessing ->
+                if (processFile(fileForProcessing)) {
+                    successfulFiles.add(fileForProcessing)
                 }
             }
-            if (fairfaxFile.validPdf && fairfaxFile.validForProcessing) {
-                sipProcessingState.validFiles.add(fairfaxFile.file)
-            } else {
-                sipProcessingState.invalidFiles.add(fairfaxFile.file)
-            }
-            fairfaxFileGroup.addFile(fairfaxFile)
+            // The valid files should be filtered and sorted already
+            String sipAsXml = generateSipAsXml(successfulFiles, processingParameters.processingDate)
+            log.info("ENDING process for processingParameters=${processingParameters}")
+
+            return sipAsXml
         } else {
-            SipProcessingExceptionReason exceptionReason = new SipProcessingExceptionReason(
-                    SipProcessingExceptionReasonType.INVALID_PAGE_FILENAME, null,
-                    fairfaxFile.file.getCanonicalPath())
-            SipProcessingException sipProcessingException = SipProcessingException.createWithReason(exceptionReason)
-            sipProcessingState.addException(sipProcessingException)
-            log.warn(sipProcessingException.toString())
-            sipProcessingState.unrecognizedFiles.add(fairfaxFile.file)
+            processingParameters.sipProcessingExceptions.each { SipProcessingException sipProcessingException ->
+                this.sipProcessingState.addException(sipProcessingException)
+            }
+            return ""
         }
     }
 
-    String generateSipAsXml() {
-        String sipAsXml
-        // Find the publication (ultimately the MMSID) associated with this set of files.
-        log.info("FINDING publication associated with the files")
-        Integer filesProcessed = 0
-        boolean allowZeroRatio = true
-        fairfaxFileGroupMap.each { FairfaxFileGroupKey fairfaxFileGroupKey, FairfaxFileGroup fairfaxFileGroup ->
-            log.info("Checking fairfaxFileGroupKey=${fairfaxFileGroupKey}, fairfaxFileGroup=${fairfaxFileGroup}")
-            FairfaxFileGroupMatcher fairfaxFileGroupMatcher = new FairfaxFileGroupMatcher(sipProcessingState)
-            FairfaxFileGroupMatch fairfaxFileGroupMatch = fairfaxFileGroupMatcher.mostLikelyMatch(fairfaxFileGroup,
-                    fairfaxSpreadsheet, allowZeroRatio)
-            if (fairfaxFileGroupMatch != null) {
-                log.info("Will process fairfaxFileGroup=${fairfaxFileGroup} according to sip=${fairfaxFileGroupMatch.sip}")
-                sipProcessingState.ieEntityType = fairfaxFileGroupMatch.sip.ieEntityType
-                sipProcessingState.identifier = formatSipProcessingStateIdentifier(fairfaxFileGroupKey)
-                List<FairfaxFile> fairfaxFiles = fairfaxFileGroup.files.sort()
-                List<File> filesForSip = fairfaxFiles.collect() { FairfaxFile fairfaxFile ->
-                    fairfaxFile.file
-                }
-                Sip testSip = fairfaxFileGroupMatch.sip.clone()
-                sipAsXml = generateSipAsXml(testSip, filesForSip)
-                filesProcessed = filesForSip.size()
+    List<FairfaxFile> extractValidNamedFiles(List<FairfaxFile> originalList) {
+        List<FairfaxFile> cleanedList = [ ]
+        originalList.each { FairfaxFile fairfaxFile ->
+            if (fairfaxFile.isValidName()) {
+                cleanedList.add(fairfaxFile)
             } else {
-                String detailedReason = "Unable to process fairfaxFileGroup=${fairfaxFileGroup}: No matching sip definition in Fairfax spreadsheet."
                 SipProcessingExceptionReason exceptionReason = new SipProcessingExceptionReason(
-                        SipProcessingExceptionReasonType.NO_MATCHING_SIP_DEFINITION, null,
-                        detailedReason)
+                        SipProcessingExceptionReasonType.INVALID_PAGE_FILENAME, null,
+                        fairfaxFile.file.getCanonicalPath())
                 SipProcessingException sipProcessingException = SipProcessingException.createWithReason(exceptionReason)
                 sipProcessingState.addException(sipProcessingException)
-                log.warn(detailedReason)
-                // Move the files from validFiles to invalidFiles
-                List<File> sortedFiles = this.filesForProcessing.sort(false) { File a, b ->
-                    a.name <=> b.name
-                }
-                sortedFiles.each { File file ->
-                    filesProcessed += 1
-                    sipProcessingState.validFiles.remove(file)
-                    sipProcessingState.invalidFiles.add(file)
-                }
-                sipAsXml = generateSipAsXml(getBlankSip(), sortedFiles)
+                log.warn(sipProcessingException.toString())
+                sipProcessingState.unrecognizedFiles.add(fairfaxFile.file)
             }
+        }
+        return cleanedList
+    }
+
+    boolean processFile(FairfaxFile fairfaxFile) {
+        log.info("Processing fairfaxFile=${fairfaxFile}")
+        // We generally include all files whether they are valid or invalid. We don't include duplicate files.
+        boolean includeFileInSip = true
+        if (processedFairfaxFiles.containsKey(fairfaxFile)) {
+            // We have a duplicate file -- possibly a different qualifier
+            // We use the fairfax file as a key, but we'll get the duplicate back
+            FairfaxFile firstVersion = processedFairfaxFiles.get(fairfaxFile)
+            SipProcessingExceptionReason exceptionReason = new SipProcessingExceptionReason(
+                    SipProcessingExceptionReasonType.DUPLICATE_FILE, null,
+                    firstVersion.file.getCanonicalPath(), fairfaxFile.file.getCanonicalPath())
+            sipProcessingState.addException(SipProcessingException.createWithReason(exceptionReason))
+            includeFileInSip = false
+        } else {
+            processedFairfaxFiles.put(fairfaxFile, fairfaxFile)
+            if (fairfaxFile.file.length() == 0) {
+                SipProcessingExceptionReason exceptionReason = new SipProcessingExceptionReason(
+                        SipProcessingExceptionReasonType.FILE_OF_LENGTH_ZERO, null,
+                        fairfaxFile.file.getCanonicalPath())
+                sipProcessingState.addException(SipProcessingException.createWithReason(exceptionReason))
+            } else {
+                // We use the Jhove validator as it is the same type used by Rosetta.
+                // There is also a PDF/A validator using the PdfValidatorType.PDF_BOX_VALIDATOR
+                PdfValidator pdfValidator = PdfValidatorFactory.getValidator(PdfValidatorType.JHOVE_VALIDATOR)
+                SipProcessingException sipProcessingException = pdfValidator.validatePdf(fairfaxFile.file.toPath())
+                if (sipProcessingException != null) {
+                    sipProcessingState.addException(sipProcessingException)
+                } else {
+                    fairfaxFile.validPdf = true
+                    fairfaxFile.validForProcessing = true
+                }
+            }
+        }
+        if (fairfaxFile.validPdf && fairfaxFile.validForProcessing) {
+            sipProcessingState.validFiles.add(fairfaxFile.file)
+        } else {
+            sipProcessingState.invalidFiles.add(fairfaxFile.file)
+        }
+        return includeFileInSip
+    }
+
+    String generateSipAsXml(List<FairfaxFile> sortedFairfaxFiles, LocalDate sipDate) {
+        String sipAsXml = ""
+        if (sortedFairfaxFiles.isEmpty()) {
+            String detailedReason = "Unable to process processingParameters=${processingParameters}: No matching files."
+            SipProcessingExceptionReason exceptionReason = new SipProcessingExceptionReason(
+                    SipProcessingExceptionReasonType.NO_MATCHING_SIP_DEFINITION, null,
+                    detailedReason)
+            SipProcessingException sipProcessingException = SipProcessingException.createWithReason(exceptionReason)
+            sipProcessingState.addException(sipProcessingException)
+            log.warn(detailedReason)
+        } else {
+            Sip sip = SipFactory.fromMap(processingParameters.spreadsheetRow)
+            sip.year = sipDate.year
+            sip.month = sipDate.monthValue
+            sip.dayOfMonth = sipDate.dayOfMonth
+            sipProcessingState.ieEntityType = sip.ieEntityType
+            sipProcessingState.identifier = formatSipProcessingStateIdentifier()
+
+            List<File> filesForSip = sortedFairfaxFiles.collect() { FairfaxFile fairfaxFile ->
+                fairfaxFile.file
+            }
+            Sip testSip = sip.clone()
+            sipAsXml = generateSipAsXml(testSip, filesForSip)
+            sipProcessingState.totalFilesProcessed = filesForSip.size()
             sipProcessingState.setComplete(true)
             log.info("\n* * * SipProcessingState:")
             log.info(sipProcessingState.toString())
@@ -155,7 +190,6 @@ class FairfaxFilesProcessor {
             log.debug(sipAsXml)
             log.debug("\n* * *   E N D   O F   S I P   * * *")
         }
-        sipProcessingState.totalFilesProcessed = filesProcessed
 
         return sipAsXml
     }
@@ -166,7 +200,7 @@ class FairfaxFilesProcessor {
         }
         int sequenceNumber = 1
         fileWrappers.each { Sip.FileWrapper fileWrapper ->
-            String label = String.format("%03d", sequenceNumber)
+            String label = String.format("%04d", sequenceNumber)
             fileWrapper.label = label
             sequenceNumber += 1
         }
@@ -176,20 +210,11 @@ class FairfaxFilesProcessor {
         return sipXmlGenerator.getSipAsXml()
     }
 
-    String formatSipProcessingStateIdentifier(FairfaxFileGroupKey fairfaxFileGroupKey) {
-        String title = fairfaxSpreadsheet.getTitleParentForTitleCodeEditionCode(fairfaxFileGroupKey.titleCode, fairfaxFileGroupKey.editionCode)
+    // TODO If we were doing multiple editions, that would need to be in the identifier as well
+    String formatSipProcessingStateIdentifier() {
+        String title = processingParameters.getTitleParent()
         String titleWithUnderscores = title.trim().replace(' ', '_')
 
-        return "${fairfaxFileGroupKey.editionCode}_${titleWithUnderscores}"
-    }
-
-    Sip getBlankSip() {
-        Sip sip = new Sip(title: 'UNKNOWN_TITLE', ieEntityType: IEEntityType.UNKNOWN,
-                objectIdentifierType: 'UNKNOWN_OBJECT_IDENTIFIER_TYPE',
-                objectIdentifierValue: 'UNKNOWN_OBJECT_IDENTIFIER_VALUE', policyId: 'UNKNOWN_POLICY_ID',
-                preservationType: 'UNKNOWN_PRESERVATION_TYPE', usageType: 'UNKNOWN_USAGE_TYPE',
-                digitalOriginal: true, revisionNumber: 1,
-                year: 2038, month: 12, dayOfMonth: 31)
-
+        return "_${titleWithUnderscores}"
     }
 }

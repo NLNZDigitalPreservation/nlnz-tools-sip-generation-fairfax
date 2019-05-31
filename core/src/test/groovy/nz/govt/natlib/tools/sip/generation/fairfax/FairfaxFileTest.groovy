@@ -342,4 +342,191 @@ class FairfaxFileTest {
         assertThat("Creates date correctly for ${june302018}", fairfaxFile2.date, is(june302018))
         assertThat("Creates date correctly for ${december312018}", fairfaxFile3.date, is(december312018))
     }
+
+    @Test
+    void sortsCorrectlyUsingNumericBeforeAlpha() {
+        File file1 = new File("NAMed1-20180131-M023.pdf")
+        File file2 = new File("NAMed1-20180131-A01.pdf")
+        File file3 = new File("NAMed1-20180131-A02.pdf")
+        File file4 = new File("NAMed1-20180131-02.pdf")
+        File file5 = new File("NAMed1-20180131-01.pdf")
+        File file6 = new File("NAMed1-20180131-C1.pdf")
+        File file7 = new File("NAMed1-20180131-C2.pdf")
+
+        FairfaxFile fairfaxFile1 = new FairfaxFile(file1)
+        FairfaxFile fairfaxFile2 = new FairfaxFile(file2)
+        FairfaxFile fairfaxFile3 = new FairfaxFile(file3)
+        FairfaxFile fairfaxFile4 = new FairfaxFile(file4)
+        FairfaxFile fairfaxFile5 = new FairfaxFile(file5)
+        FairfaxFile fairfaxFile6 = new FairfaxFile(file6)
+        FairfaxFile fairfaxFile7 = new FairfaxFile(file7)
+
+        List<FairfaxFile> unsorted = [ fairfaxFile1, fairfaxFile2, fairfaxFile3, fairfaxFile4, fairfaxFile5,
+                                       fairfaxFile6, fairfaxFile7 ]
+        List<FairfaxFile> expected = [ fairfaxFile5, fairfaxFile4, fairfaxFile2, fairfaxFile3, fairfaxFile6,
+                                       fairfaxFile7, fairfaxFile1 ]
+        List<FairfaxFile> sorted = FairfaxFile.sortAlphaAndNumeric(unsorted, true)
+        assertThat("Numeric comes before alpha for sorted=${sorted}", sorted, is(expected))
+    }
+
+    @Test
+    void sortsCorrectlyUsingAlphaBeforeNumeric() {
+        File file1 = new File("NAMed1-20180131-M023.pdf")
+        File file2 = new File("NAMed1-20180131-A01.pdf")
+        File file3 = new File("NAMed1-20180131-A02.pdf")
+        File file4 = new File("NAMed1-20180131-02.pdf")
+        File file5 = new File("NAMed1-20180131-01.pdf")
+        File file6 = new File("NAMed1-20180131-C1.pdf")
+        File file7 = new File("NAMed1-20180131-C2.pdf")
+
+        FairfaxFile fairfaxFile1 = new FairfaxFile(file1)
+        FairfaxFile fairfaxFile2 = new FairfaxFile(file2)
+        FairfaxFile fairfaxFile3 = new FairfaxFile(file3)
+        FairfaxFile fairfaxFile4 = new FairfaxFile(file4)
+        FairfaxFile fairfaxFile5 = new FairfaxFile(file5)
+        FairfaxFile fairfaxFile6 = new FairfaxFile(file6)
+        FairfaxFile fairfaxFile7 = new FairfaxFile(file7)
+
+        List<FairfaxFile> unsorted = [ fairfaxFile1, fairfaxFile2, fairfaxFile3, fairfaxFile4, fairfaxFile5,
+                                       fairfaxFile6, fairfaxFile7 ]
+        List<FairfaxFile> expected = [ fairfaxFile2, fairfaxFile3, fairfaxFile6, fairfaxFile7, fairfaxFile1,
+                                       fairfaxFile5, fairfaxFile4 ]
+        List<FairfaxFile> sorted = FairfaxFile.sortAlphaAndNumeric(unsorted, false)
+        assertThat("Numeric comes before alpha for sorted=${sorted}", sorted, is(expected))
+    }
+
+    @Test
+    void correctlyFiltersSubstitutesAndSortsOnFirstEditionCode() {
+        File file1 = new File("NAMed1-20180131-A01.pdf")
+        File file2 = new File("NAMed1-20180131-A02.pdf")
+        File file3 = new File("NAMed1-20180131-A03.pdf")
+        File file4 = new File("NAMed2-20180131-A02.pdf")
+        File file5 = new File("NAMed1-20180131-A04.pdf")
+        File file6 = new File("NAMed1-20180131-01.pdf")
+        File file7 = new File("NAMed2-20180131-01.pdf")
+        File file8 = new File("NAMed2-20180131-02.pdf")
+        File file9 = new File("NAMed2-20180131-03.pdf")
+        File file10 = new File("NAMed3-20180131-A01.pdf")
+        File file11 = new File("NAMFEE-20180131-A01.pdf")
+        File file12 = new File("NAMFEE-20180131-A02.pdf")
+        File file13 = new File("NAMNOT-20180131-A01.pdf")
+        File file14 = new File("NAMNOT-20180131-A02.pdf")
+
+        FairfaxFile fairfaxFile1 = new FairfaxFile(file1)
+        FairfaxFile fairfaxFile2 = new FairfaxFile(file2)
+        FairfaxFile fairfaxFile3 = new FairfaxFile(file3)
+        FairfaxFile fairfaxFile4 = new FairfaxFile(file4)
+        FairfaxFile fairfaxFile5 = new FairfaxFile(file5)
+        FairfaxFile fairfaxFile6 = new FairfaxFile(file6)
+        FairfaxFile fairfaxFile7 = new FairfaxFile(file7)
+        FairfaxFile fairfaxFile8 = new FairfaxFile(file8)
+        FairfaxFile fairfaxFile9 = new FairfaxFile(file9)
+        FairfaxFile fairfaxFile10 = new FairfaxFile(file10)
+        FairfaxFile fairfaxFile11 = new FairfaxFile(file11)
+        FairfaxFile fairfaxFile12 = new FairfaxFile(file12)
+        FairfaxFile fairfaxFile13 = new FairfaxFile(file13)
+        FairfaxFile fairfaxFile14 = new FairfaxFile(file14)
+
+        FairfaxProcessingParameters processingParameters = new FairfaxProcessingParameters(currentEdition: "ed1",
+                editionDiscriminators: [ "ed1", "ed2", "ed3" ], editionCodes: [ "ed1", "TWO", "FEE" ])
+
+        List<FairfaxFile> original = [ fairfaxFile14, fairfaxFile13, fairfaxFile12, fairfaxFile11, fairfaxFile10,
+                                       fairfaxFile9, fairfaxFile8, fairfaxFile7, fairfaxFile6, fairfaxFile5,
+                                       fairfaxFile4, fairfaxFile3, fairfaxFile2, fairfaxFile1 ]
+        List<FairfaxFile> expected = [ fairfaxFile1, fairfaxFile2, fairfaxFile3, fairfaxFile5, fairfaxFile6,
+                                       fairfaxFile11, fairfaxFile12 ]
+        List<FairfaxFile> substituted = FairfaxFile.filterSubstituteAndSort(processingParameters, original)
+        assertTrue("There are substitutions possible", FairfaxFile.hasSubstitutions("ed1", original))
+        assertThat("Filter substitute and sort done correctly from=${original} to=${substituted}", substituted,
+                is(expected))
+    }
+
+    @Test
+    void correctlyFiltersSubstitutesAndSortsWithSecondEditionCode() {
+        File file1 = new File("NAMed1-20180131-A01.pdf")
+        File file2 = new File("NAMed1-20180131-A02.pdf")
+        File file3 = new File("NAMed1-20180131-A03.pdf")
+        File file4 = new File("NAMed2-20180131-A02.pdf")
+        File file5 = new File("NAMed1-20180131-A04.pdf")
+        File file6 = new File("NAMed1-20180131-01.pdf")
+        File file7 = new File("NAMed2-20180131-01.pdf")
+        File file8 = new File("NAMed2-20180131-02.pdf")
+        File file9 = new File("NAMed2-20180131-03.pdf")
+        File file10 = new File("NAMed3-20180131-A01.pdf")
+        File file11 = new File("NAMFEE-20180131-A01.pdf")
+        File file12 = new File("NAMFEE-20180131-A02.pdf")
+        File file13 = new File("NAMNOT-20180131-A01.pdf")
+        File file14 = new File("NAMNOT-20180131-A02.pdf")
+
+        FairfaxFile fairfaxFile1 = new FairfaxFile(file1)
+        FairfaxFile fairfaxFile2 = new FairfaxFile(file2)
+        FairfaxFile fairfaxFile3 = new FairfaxFile(file3)
+        FairfaxFile fairfaxFile4 = new FairfaxFile(file4)
+        FairfaxFile fairfaxFile5 = new FairfaxFile(file5)
+        FairfaxFile fairfaxFile6 = new FairfaxFile(file6)
+        FairfaxFile fairfaxFile7 = new FairfaxFile(file7)
+        FairfaxFile fairfaxFile8 = new FairfaxFile(file8)
+        FairfaxFile fairfaxFile9 = new FairfaxFile(file9)
+        FairfaxFile fairfaxFile10 = new FairfaxFile(file10)
+        FairfaxFile fairfaxFile11 = new FairfaxFile(file11)
+        FairfaxFile fairfaxFile12 = new FairfaxFile(file12)
+        FairfaxFile fairfaxFile13 = new FairfaxFile(file13)
+        FairfaxFile fairfaxFile14 = new FairfaxFile(file14)
+
+        FairfaxProcessingParameters processingParameters = new FairfaxProcessingParameters(currentEdition: "ed2",
+                editionDiscriminators: [ "ed1", "ed2", "ed3" ], editionCodes: [ "ed1", "TWO", "FEE" ])
+
+        List<FairfaxFile> original = [ fairfaxFile14, fairfaxFile13, fairfaxFile12, fairfaxFile11, fairfaxFile10,
+                                       fairfaxFile9, fairfaxFile8, fairfaxFile7, fairfaxFile6, fairfaxFile5,
+                                       fairfaxFile4, fairfaxFile3, fairfaxFile2, fairfaxFile1 ]
+        List<FairfaxFile> expected = [ fairfaxFile1, fairfaxFile4, fairfaxFile3, fairfaxFile5, fairfaxFile7,
+                                       fairfaxFile8, fairfaxFile9, fairfaxFile11, fairfaxFile12 ]
+        List<FairfaxFile> substituted = FairfaxFile.filterSubstituteAndSort(processingParameters, original)
+        assertTrue("There are substitutions possible", FairfaxFile.hasSubstitutions("ed1", original))
+        assertThat("Filter substitute and sort done correctly from=${original} to=${substituted}", substituted,
+                is(expected))
+    }
+
+    @Test
+    void correctlyFiltersSubstitutesAndSortsWhenThereAreNoSubstitutes() {
+        File file1 = new File("NAMed1-20180131-A01.pdf")
+        File file2 = new File("NAMed1-20180131-A02.pdf")
+        File file3 = new File("NAMed1-20180131-A03.pdf")
+        File file4 = new File("NAMed2-20180131-A02.pdf")
+        File file5 = new File("NAMed1-20180131-A04.pdf")
+        File file6 = new File("NAMed1-20180131-01.pdf")
+        File file7 = new File("NAMed2-20180131-01.pdf")
+        File file8 = new File("NAMed2-20180131-02.pdf")
+        File file9 = new File("NAMed2-20180131-03.pdf")
+        File file11 = new File("NAMFEE-20180131-A01.pdf")
+        File file12 = new File("NAMFEE-20180131-A02.pdf")
+        File file13 = new File("NAMNOT-20180131-A01.pdf")
+        File file14 = new File("NAMNOT-20180131-A02.pdf")
+
+        FairfaxFile fairfaxFile1 = new FairfaxFile(file1)
+        FairfaxFile fairfaxFile2 = new FairfaxFile(file2)
+        FairfaxFile fairfaxFile3 = new FairfaxFile(file3)
+        FairfaxFile fairfaxFile4 = new FairfaxFile(file4)
+        FairfaxFile fairfaxFile5 = new FairfaxFile(file5)
+        FairfaxFile fairfaxFile6 = new FairfaxFile(file6)
+        FairfaxFile fairfaxFile7 = new FairfaxFile(file7)
+        FairfaxFile fairfaxFile8 = new FairfaxFile(file8)
+        FairfaxFile fairfaxFile9 = new FairfaxFile(file9)
+        FairfaxFile fairfaxFile11 = new FairfaxFile(file11)
+        FairfaxFile fairfaxFile12 = new FairfaxFile(file12)
+        FairfaxFile fairfaxFile13 = new FairfaxFile(file13)
+        FairfaxFile fairfaxFile14 = new FairfaxFile(file14)
+
+        FairfaxProcessingParameters processingParameters = new FairfaxProcessingParameters(currentEdition: "ed3",
+                editionDiscriminators: [ "ed1", "ed2", "ed3" ], editionCodes: [ "ed1", "TWO", "FEE" ])
+
+        List<FairfaxFile> original = [ fairfaxFile14, fairfaxFile13, fairfaxFile12, fairfaxFile11,
+                                       fairfaxFile9, fairfaxFile8, fairfaxFile7, fairfaxFile6, fairfaxFile5,
+                                       fairfaxFile4, fairfaxFile3, fairfaxFile2, fairfaxFile1 ]
+        List<FairfaxFile> expected = [ ]
+        List<FairfaxFile> substituted = FairfaxFile.filterSubstituteAndSort(processingParameters, original)
+        assertFalse("There are substitutions possible", FairfaxFile.hasSubstitutions("ed3", original))
+        assertThat("Filter substitute and sort done correctly from=${original} to=${substituted}", substituted,
+                is(expected))
+    }
 }

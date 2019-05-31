@@ -3,7 +3,9 @@ package nz.govt.natlib.tools.sip.generation.fairfax.scenarios
 import groovy.util.logging.Slf4j
 import nz.govt.natlib.tools.sip.IEEntityType
 import nz.govt.natlib.tools.sip.extraction.SipXmlExtractor
+import nz.govt.natlib.tools.sip.generation.fairfax.FairfaxFile
 import nz.govt.natlib.tools.sip.generation.fairfax.FairfaxFilesProcessor
+import nz.govt.natlib.tools.sip.generation.fairfax.FairfaxProcessingParameters
 import nz.govt.natlib.tools.sip.generation.fairfax.TestHelper
 import nz.govt.natlib.tools.sip.generation.fairfax.TestHelper.TestMethodState
 import nz.govt.natlib.tools.sip.state.SipProcessingExceptionReasonType
@@ -14,6 +16,7 @@ import org.junit.runner.RunWith
 import org.mockito.junit.MockitoJUnitRunner
 
 import java.nio.file.Path
+import java.time.LocalDate
 
 import static org.hamcrest.core.Is.is
 import static org.junit.Assert.assertThat
@@ -88,8 +91,14 @@ class InvalidPdfTest {
     }
 
     void processFiles(List<File> filesForProcessing) {
+        String dateString = "20181123"
+        LocalDate processingDate = LocalDate.parse(dateString, FairfaxFile.LOCAL_DATE_TIME_FORMATTER)
+
+        FairfaxProcessingParameters processingParameters = FairfaxProcessingParameters.build("TST",
+                "parent_grouping", processingDate, testMethodState.fairfaxSpreadsheet)
+
         String sipAsXml = FairfaxFilesProcessor.processCollectedFiles(testMethodState.sipProcessingState,
-                testMethodState.fairfaxSpreadsheet, filesForProcessing)
+                processingParameters, filesForProcessing)
 
         log.info("START SipProcessingState:")
         log.info(testMethodState.sipProcessingState.toString())
@@ -99,10 +108,10 @@ class InvalidPdfTest {
         assertThat("${expectedNumberOfFilesProcessed} files should have been processed",
                 testMethodState.sipProcessingState.totalFilesProcessed, is(expectedNumberOfFilesProcessed))
         int expectedNumberOfValidFiles = 7
-        assertThat("${expectedNumberOfValidFiles} files should have been processed",
+        assertThat("${expectedNumberOfValidFiles} valid files should have been processed",
                 testMethodState.sipProcessingState.validFiles.size(), is(expectedNumberOfValidFiles))
         int expectedNumberOfInvalidFiles = 3
-        assertThat("${expectedNumberOfInvalidFiles} files should have been processed",
+        assertThat("${expectedNumberOfInvalidFiles} invalid files should have been processed",
                 testMethodState.sipProcessingState.invalidFiles.size(), is(expectedNumberOfInvalidFiles))
         assertThat("First invalid file is 'TSTPB1-20181123-003.pdf'",
                 testMethodState.sipProcessingState.invalidFiles.get(0).getName(), is("TSTPB1-20181123-003.pdf"))
@@ -110,8 +119,11 @@ class InvalidPdfTest {
                 testMethodState.sipProcessingState.invalidFiles.get(1).getName(), is("TSTPB1-20181123-006.pdf"))
         assertThat("Third invalid file is 'TSTPB1-20181123-009.pdf'",
                 testMethodState.sipProcessingState.invalidFiles.get(2).getName(), is("TSTPB1-20181123-009.pdf"))
+        int expectedNumberOfIgnoredFiles = 0
+        assertThat("${expectedNumberOfIgnoredFiles} ignored files should have been processed",
+                testMethodState.sipProcessingState.ignoredFiles.size(), is(expectedNumberOfIgnoredFiles))
         int expectedNumberOfUnrecognizedFiles = 0
-        assertThat("${expectedNumberOfUnrecognizedFiles} files should have been processed",
+        assertThat("${expectedNumberOfUnrecognizedFiles} unrecognized files should have been processed",
                 testMethodState.sipProcessingState.unrecognizedFiles.size(), is(expectedNumberOfUnrecognizedFiles))
 
         log.info("SIP validation")
@@ -138,34 +150,34 @@ class InvalidPdfTest {
                 "PRESERVATION_MASTER", "VIEW", true, 1)
 
         TestHelper.assertExpectedSipFileValues(sipForValidation, 1, "TSTPB1-20181123-001.pdf", "TSTPB1-20181123-001.pdf",
-                11438L, "MD5", "b8b673eeaa076ff19501318a27f85e9c", "001", "application/pdf")
+                11438L, "MD5", "b8b673eeaa076ff19501318a27f85e9c", "0001", "application/pdf")
 
         TestHelper.assertExpectedSipFileValues(sipForValidation, 2, "TSTPB1-20181123-002.pdf", "TSTPB1-20181123-002.pdf",
-                11437L, "MD5", "df39cff17991188d9994ff94bddf3985", "002", "application/pdf")
+                11437L, "MD5", "df39cff17991188d9994ff94bddf3985", "0002", "application/pdf")
 
         TestHelper.assertExpectedSipFileValues(sipForValidation, 3, "TSTPB1-20181123-003.pdf", "TSTPB1-20181123-003.pdf",
-                636L, "MD5", "01b66094b1e9e942269c7c816e912672", "003", "application/pdf")
+                636L, "MD5", "01b66094b1e9e942269c7c816e912672", "0003", "application/pdf")
 
         TestHelper.assertExpectedSipFileValues(sipForValidation, 4, "TSTPB1-20181123-004.pdf", "TSTPB1-20181123-004.pdf",
-                11554L, "MD5", "857326c06870577255acd4b21e1a64d7", "004", "application/pdf")
+                11554L, "MD5", "857326c06870577255acd4b21e1a64d7", "0004", "application/pdf")
 
         TestHelper.assertExpectedSipFileValues(sipForValidation, 5, "TSTPB1-20181123-005.pdf", "TSTPB1-20181123-005.pdf",
-                11605L, "MD5", "02e254147945f60a6a2be1c35ae0689e", "005", "application/pdf")
+                11605L, "MD5", "02e254147945f60a6a2be1c35ae0689e", "0005", "application/pdf")
 
         TestHelper.assertExpectedSipFileValues(sipForValidation, 6, "TSTPB1-20181123-006.pdf", "TSTPB1-20181123-006.pdf",
-                634L, "MD5", "edaeadde4a4800425e1d392451f17467", "006", "application/pdf")
+                634L, "MD5", "edaeadde4a4800425e1d392451f17467", "0006", "application/pdf")
 
         TestHelper.assertExpectedSipFileValues(sipForValidation, 7, "TSTPB1-20181123-007.pdf", "TSTPB1-20181123-007.pdf",
-                11543L, "MD5", "a7ceb9001aab17e78cfaf1559f130071", "007", "application/pdf")
+                11543L, "MD5", "a7ceb9001aab17e78cfaf1559f130071", "0007", "application/pdf")
 
         TestHelper.assertExpectedSipFileValues(sipForValidation, 8, "TSTPB1-20181123-008.pdf", "TSTPB1-20181123-008.pdf",
-                11436L, "MD5", "449dc86bd38979d10c8fb6c3b375a467", "008", "application/pdf")
+                11436L, "MD5", "449dc86bd38979d10c8fb6c3b375a467", "0008", "application/pdf")
 
         TestHelper.assertExpectedSipFileValues(sipForValidation, 9, "TSTPB1-20181123-009.pdf", "TSTPB1-20181123-009.pdf",
-                634L, "MD5", "3a6b097736755399bfa9dccb9fef2323", "009", "application/pdf")
+                634L, "MD5", "3a6b097736755399bfa9dccb9fef2323", "0009", "application/pdf")
 
         TestHelper.assertExpectedSipFileValues(sipForValidation, 10, "TSTPB1-20181123-010.pdf", "TSTPB1-20181123-010.pdf",
-                11440L, "MD5", "f621c3081711e895d8fa3d2dd5e49ffa", "010", "application/pdf")
+                11440L, "MD5", "f621c3081711e895d8fa3d2dd5e49ffa", "0010", "application/pdf")
     }
 
 }

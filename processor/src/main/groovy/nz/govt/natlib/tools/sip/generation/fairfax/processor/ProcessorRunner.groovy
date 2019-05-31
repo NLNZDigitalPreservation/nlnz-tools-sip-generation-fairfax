@@ -27,9 +27,9 @@ This is a processing operation and must run exclusively of other processing oper
 
     @Option(names = ["--readyForIngestion"], description = """Process the source files.
 Output is ready for ingestion by Rosetta.
-Requires sourceFolder, targetForIngestionFolder, forReviewFolder.
+Requires sourceFolder, targetForIngestionFolder, forReviewFolder, processingType.
 Uses startingDate, endingDate.
-Optional createDestination, moveFiles.
+Optional createDestination. Note that moveFiles is not supported at this time.
 This is a processing operation and must run exclusively of other processing operations.""")
     boolean readyForIngestion = false
 
@@ -125,6 +125,11 @@ This is the destination folder used when no other destination folders are specif
             description = """target post-processed folder in the format /path/to/folder""")
     File targetPostProcessedFolder
 
+    @Option(names = ["--forIngestionProcessingType"], paramLabel = "PROCESSING_TYPE",
+            description = """For-ingestion processing type.
+A pre-processing titleCode folder can only be processed once for a single processing type.""")
+    String forIngestionProcessingType
+
     @Option(names = ["-r", "--forReviewFolder"], paramLabel = "FOR_REVIEW_FOLDER", description = 'for-review folder in the format /path/to/folder')
     File forReviewFolder
 
@@ -167,6 +172,8 @@ This is the destination folder used when no other destination folders are specif
         log.info("        targetForIngestionFolder=${targetForIngestionFolder}")
         log.info("        targetPostProcessedFolder=${targetPostProcessedFolder}")
         log.info("        forReviewFolder=${forReviewFolder}")
+        log.info("    Processing parameters:")
+        log.info("        forIngestionProcessingType=${forIngestionProcessingType}")
         log.info("    Date scoping:")
         log.info("        startingDate=${startingDate}")
         log.info("        endingDate=${endingDate}")
@@ -305,7 +312,17 @@ This is the destination folder used when no other destination folders are specif
                 throw new ProcessorException(message)
             }
             if (forReviewFolder == null) {
-                String message = "preProcess requires forReviewFolder"
+                String message = "readyForIngestion requires forReviewFolder"
+                log.error(message)
+                throw new ProcessorException(message)
+            }
+            if (moveFiles) {
+                String message = "readyForIngestion does not support moving files at this time."
+                log.error(message)
+                throw new ProcessorException(message)
+            }
+            if (forIngestionProcessingType == null || forIngestionProcessingType.strip().isEmpty()) {
+                String message = "preProcess requires forIngestionProcessingType"
                 log.error(message)
                 throw new ProcessorException(message)
             }
