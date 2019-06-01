@@ -12,13 +12,16 @@ enum ProcessingType {
     private final String fieldValue
 
     static {
-        ProcessingType.values().each { ProcessingType processingType ->
+        values().each { ProcessingType processingType ->
             LOOKUP_BY_FIELD_VALUE.put(processingType.fieldValue, processingType)
         }
     }
 
     static List<ProcessingType> extract(String list, String separator = ",") {
         List<ProcessingType> processingTypes = [ ]
+        if (list == null || list.strip().isEmpty()) {
+            return processingTypes
+        }
         List<String> separatedList = list.split(separator)
         separatedList.each { String value ->
             String strippedValue = value.strip()
@@ -36,7 +39,11 @@ enum ProcessingType {
     }
 
     static forFieldValue(String fieldValue) {
-        return LOOKUP_BY_FIELD_VALUE.get(fieldValue.strip())
+        if (fieldValue != null && !fieldValue.strip().isEmpty()) {
+            return LOOKUP_BY_FIELD_VALUE.get(fieldValue.strip())
+        } else {
+            return null
+        }
     }
 
     ProcessingType(String fieldValue) {

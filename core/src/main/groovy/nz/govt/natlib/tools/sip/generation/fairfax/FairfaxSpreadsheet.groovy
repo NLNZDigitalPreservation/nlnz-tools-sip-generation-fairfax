@@ -3,7 +3,11 @@ package nz.govt.natlib.tools.sip.generation.fairfax
 import groovy.util.logging.Slf4j
 import nz.govt.natlib.tools.sip.IEEntityType
 import nz.govt.natlib.tools.sip.Sip
+import nz.govt.natlib.tools.sip.generation.fairfax.parameters.ProcessingType
 import nz.govt.natlib.tools.sip.generation.parameters.Spreadsheet
+import nz.govt.natlib.tools.sip.state.SipProcessingException
+import nz.govt.natlib.tools.sip.state.SipProcessingExceptionReason
+import nz.govt.natlib.tools.sip.state.SipProcessingExceptionReasonType
 
 @Slf4j
 class FairfaxSpreadsheet {
@@ -142,5 +146,19 @@ class FairfaxSpreadsheet {
         }
     }
 
+    List<SipProcessingException> validate() {
+        List<SipProcessingException> validationErrors = [ ]
+        spreadsheet.rows.each { Map<String, String> rowMap ->
+            String processingTypeString = rowMap.get(PROCESSING_TYPE_KEY)
+            ProcessingType processingType = ProcessingType.forFieldValue(processingTypeString)
+            if (processingType == null && processingTypeString.strip().isEmpty()) {
+                String message = "No acceptable value for ProcessingType=${processingTypeString}, row=${rowMap}".toString()
+                SipProcessingException exception = new SipProcessingExceptionReason(
+                        SipProcessingExceptionReasonType.INVALID_PARAMETERS, null, message)
+                validationErrors.add(exception)
+            }
+        }
+        return validationErrors
+    }
 
 }

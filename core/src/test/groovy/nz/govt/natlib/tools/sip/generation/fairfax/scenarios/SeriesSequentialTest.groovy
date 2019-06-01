@@ -95,10 +95,9 @@ class SeriesSequentialTest {
         LocalDate processingDate = LocalDate.parse(dateString, FairfaxFile.LOCAL_DATE_TIME_FORMATTER)
 
         FairfaxProcessingParameters processingParameters = FairfaxProcessingParameters.build("TST",
-                "parent_grouping", processingDate, testMethodState.fairfaxSpreadsheet)
-
-        String sipAsXml = FairfaxFilesProcessor.processCollectedFiles(testMethodState.sipProcessingState,
-                processingParameters, filesForProcessing)
+                ProcessingType.ParentGrouping, processingDate, testMethodState.fairfaxSpreadsheet)
+        processingParameters.sipProcessingState = testMethodState.sipProcessingState
+        String sipAsXml = FairfaxFilesProcessor.processCollectedFiles(processingParameters, filesForProcessing)
 
         log.info("START SipProcessingState:")
         log.info(testMethodState.sipProcessingState.toString())

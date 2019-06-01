@@ -23,6 +23,9 @@ enum ProcessingOption {
 
     static List<ProcessingOption> extract(String list, String separator = ",", boolean exceptionIfUnrecognized = false) {
         List<ProcessingOption> processingOptions = [ ]
+        if (list == null || list.strip().isEmpty()) {
+            return processingOptions
+        }
         List<String> separatedList = list.split(separator)
         separatedList.each { String value ->
             String strippedValue = value.strip()

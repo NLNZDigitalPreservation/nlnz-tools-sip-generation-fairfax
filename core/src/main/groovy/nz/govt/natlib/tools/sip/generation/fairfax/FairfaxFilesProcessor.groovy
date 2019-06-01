@@ -20,7 +20,6 @@ import java.time.LocalDate
 
 @Slf4j
 class FairfaxFilesProcessor {
-    SipProcessingState sipProcessingState
     FairfaxProcessingParameters processingParameters
     List<File> filesForProcessing
 
@@ -36,17 +35,14 @@ class FairfaxFilesProcessor {
 
     }
 
-    static String processCollectedFiles(SipProcessingState sipProcessingState,
-                                        FairfaxProcessingParameters processingParameters,
+    static String processCollectedFiles(FairfaxProcessingParameters processingParameters,
                                         List<File> filesForProcessing) {
-        FairfaxFilesProcessor fairfaxFilesProcessor = new FairfaxFilesProcessor(sipProcessingState,
-                processingParameters, filesForProcessing)
+        FairfaxFilesProcessor fairfaxFilesProcessor = new FairfaxFilesProcessor(processingParameters,
+                filesForProcessing)
         return fairfaxFilesProcessor.process()
     }
 
-    FairfaxFilesProcessor(SipProcessingState sipProcessingState, FairfaxProcessingParameters processingParameters,
-                          List<File> filesForProcessing) {
-        this.sipProcessingState = sipProcessingState
+    FairfaxFilesProcessor(FairfaxProcessingParameters processingParameters, List<File> filesForProcessing) {
         this.processingParameters = processingParameters
         this.filesForProcessing = filesForProcessing
     }
@@ -76,8 +72,9 @@ class FairfaxFilesProcessor {
                     break
             }
 
-            sipProcessingState.ignoredFiles = FairfaxFile.differences(validNamedFiles, sortedFilesForProcessing).
-                    collect { FairfaxFile fairfaxFile ->
+            processingParameters.sipProcessingState.ignoredFiles =
+                    FairfaxFile.differences(validNamedFiles, sortedFilesForProcessing).
+                            collect { FairfaxFile fairfaxFile ->
                         fairfaxFile.file
                     }
 
@@ -94,7 +91,7 @@ class FairfaxFilesProcessor {
             return sipAsXml
         } else {
             processingParameters.sipProcessingExceptions.each { SipProcessingException sipProcessingException ->
-                this.sipProcessingState.addException(sipProcessingException)
+                this.processingParameters.sipProcessingState.addException(sipProcessingException)
             }
             return ""
         }
@@ -110,9 +107,9 @@ class FairfaxFilesProcessor {
                         SipProcessingExceptionReasonType.INVALID_PAGE_FILENAME, null,
                         fairfaxFile.file.getCanonicalPath())
                 SipProcessingException sipProcessingException = SipProcessingException.createWithReason(exceptionReason)
-                sipProcessingState.addException(sipProcessingException)
+                processingParameters.sipProcessingState.addException(sipProcessingException)
                 log.warn(sipProcessingException.toString())
-                sipProcessingState.unrecognizedFiles.add(fairfaxFile.file)
+                processingParameters.sipProcessingState.unrecognizedFiles.add(fairfaxFile.file)
             }
         }
         return cleanedList
@@ -129,7 +126,7 @@ class FairfaxFilesProcessor {
             SipProcessingExceptionReason exceptionReason = new SipProcessingExceptionReason(
                     SipProcessingExceptionReasonType.DUPLICATE_FILE, null,
                     firstVersion.file.getCanonicalPath(), fairfaxFile.file.getCanonicalPath())
-            sipProcessingState.addException(SipProcessingException.createWithReason(exceptionReason))
+            processingParameters.sipProcessingState.addException(SipProcessingException.createWithReason(exceptionReason))
             includeFileInSip = false
         } else {
             processedFairfaxFiles.put(fairfaxFile, fairfaxFile)
@@ -137,14 +134,14 @@ class FairfaxFilesProcessor {
                 SipProcessingExceptionReason exceptionReason = new SipProcessingExceptionReason(
                         SipProcessingExceptionReasonType.FILE_OF_LENGTH_ZERO, null,
                         fairfaxFile.file.getCanonicalPath())
-                sipProcessingState.addException(SipProcessingException.createWithReason(exceptionReason))
+                processingParameters.sipProcessingState.addException(SipProcessingException.createWithReason(exceptionReason))
             } else {
                 // We use the Jhove validator as it is the same type used by Rosetta.
                 // There is also a PDF/A validator using the PdfValidatorType.PDF_BOX_VALIDATOR
                 PdfValidator pdfValidator = PdfValidatorFactory.getValidator(PdfValidatorType.JHOVE_VALIDATOR)
                 SipProcessingException sipProcessingException = pdfValidator.validatePdf(fairfaxFile.file.toPath())
                 if (sipProcessingException != null) {
-                    sipProcessingState.addException(sipProcessingException)
+                    processingParameters.sipProcessingState.addException(sipProcessingException)
                 } else {
                     fairfaxFile.validPdf = true
                     fairfaxFile.validForProcessing = true
@@ -152,9 +149,9 @@ class FairfaxFilesProcessor {
             }
         }
         if (fairfaxFile.validPdf && fairfaxFile.validForProcessing) {
-            sipProcessingState.validFiles.add(fairfaxFile.file)
+            processingParameters.sipProcessingState.validFiles.add(fairfaxFile.file)
         } else {
-            sipProcessingState.invalidFiles.add(fairfaxFile.file)
+            processingParameters.sipProcessingState.invalidFiles.add(fairfaxFile.file)
         }
         return includeFileInSip
     }
@@ -167,25 +164,25 @@ class FairfaxFilesProcessor {
                     SipProcessingExceptionReasonType.NO_MATCHING_SIP_DEFINITION, null,
                     detailedReason)
             SipProcessingException sipProcessingException = SipProcessingException.createWithReason(exceptionReason)
-            sipProcessingState.addException(sipProcessingException)
+            processingParameters.sipProcessingState.addException(sipProcessingException)
             log.warn(detailedReason)
         } else {
             Sip sip = SipFactory.fromMap(processingParameters.spreadsheetRow)
             sip.year = sipDate.year
             sip.month = sipDate.monthValue
             sip.dayOfMonth = sipDate.dayOfMonth
-            sipProcessingState.ieEntityType = sip.ieEntityType
-            sipProcessingState.identifier = formatSipProcessingStateIdentifier()
+            processingParameters.sipProcessingState.ieEntityType = sip.ieEntityType
+            processingParameters.sipProcessingState.identifier = formatSipProcessingStateIdentifier()
 
             List<File> filesForSip = sortedFairfaxFiles.collect() { FairfaxFile fairfaxFile ->
                 fairfaxFile.file
             }
             Sip testSip = sip.clone()
             sipAsXml = generateSipAsXml(testSip, filesForSip)
-            sipProcessingState.totalFilesProcessed = filesForSip.size()
-            sipProcessingState.setComplete(true)
+            processingParameters.sipProcessingState.totalFilesProcessed = filesForSip.size()
+            processingParameters.sipProcessingState.setComplete(true)
             log.info("\n* * * SipProcessingState:")
-            log.info(sipProcessingState.toString())
+            log.info(processingParameters.sipProcessingState.toString())
             log.debug("\n* * *   S I P   * * *")
             log.debug(sipAsXml)
             log.debug("\n* * *   E N D   O F   S I P   * * *")

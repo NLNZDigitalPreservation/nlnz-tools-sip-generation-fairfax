@@ -15,10 +15,9 @@ enum ProcessingRule {
     private static final Map<String, ProcessingRule> LOOKUP_BY_FIELD_VALUE = [ : ]
     private static final Map<ProcessingRule, List<ProcessingRule>> OVERRIDES_MAP = [ : ]
     private final String fieldValue
-    private final List<ProcessingRule> possibleOverrides
 
     static {
-        ProcessingRule.values().each { ProcessingRule processingRule ->
+        values().each { ProcessingRule processingRule ->
             LOOKUP_BY_FIELD_VALUE.put(processingRule.fieldValue, processingRule)
             OVERRIDES_MAP.put(MultipleEditions, [ SingleEdition ])
             OVERRIDES_MAP.put(SingleEdition, [ MultipleEditions ])
@@ -27,6 +26,9 @@ enum ProcessingRule {
 
     static List<ProcessingRule> extract(String list, String separator = ",", boolean exceptionIfUnrecognized = false) {
         List<ProcessingRule> processingRules = [ ]
+        if (list == null || list.strip().isEmpty()) {
+            return processingRules
+        }
         List<String> separatedList = list.split(separator)
         separatedList.each { String value ->
             String strippedValue = value.strip()

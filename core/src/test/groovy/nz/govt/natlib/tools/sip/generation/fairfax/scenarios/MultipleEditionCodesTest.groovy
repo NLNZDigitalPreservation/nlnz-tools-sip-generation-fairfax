@@ -8,6 +8,7 @@ import nz.govt.natlib.tools.sip.generation.fairfax.FairfaxFilesProcessor
 import nz.govt.natlib.tools.sip.generation.fairfax.FairfaxProcessingParameters
 import nz.govt.natlib.tools.sip.generation.fairfax.TestHelper
 import nz.govt.natlib.tools.sip.generation.fairfax.TestHelper.TestMethodState
+import nz.govt.natlib.tools.sip.generation.fairfax.parameters.ProcessingType
 import org.junit.Before
 import org.junit.Ignore
 import org.junit.Test
@@ -94,13 +95,13 @@ class MultipleEditionCodesTest {
         LocalDate processingDate = LocalDate.parse(dateString, FairfaxFile.LOCAL_DATE_TIME_FORMATTER)
 
         FairfaxProcessingParameters processingParameters = FairfaxProcessingParameters.build("TST",
-                "parent_grouping", processingDate, testMethodState.fairfaxSpreadsheet)
+                ProcessingType.ParentGrouping, processingDate, testMethodState.fairfaxSpreadsheet)
 
         assertThat("Multiple edition codes: 'PB1', 'BOO', 'ZOO', 'AAT'", processingParameters.editionCodes,
                 is([ 'PB1', 'BOO', 'ZOO', 'AAT' ]))
 
-        String sipAsXml = FairfaxFilesProcessor.processCollectedFiles(testMethodState.sipProcessingState,
-                processingParameters, filesForProcessing)
+        processingParameters.sipProcessingState = testMethodState.sipProcessingState
+        String sipAsXml = FairfaxFilesProcessor.processCollectedFiles(processingParameters, filesForProcessing)
 
         log.info("START SipProcessingState:")
         log.info(testMethodState.sipProcessingState.toString())

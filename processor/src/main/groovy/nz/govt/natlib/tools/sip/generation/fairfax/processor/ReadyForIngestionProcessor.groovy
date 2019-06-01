@@ -8,7 +8,11 @@ import nz.govt.natlib.tools.sip.generation.fairfax.FairfaxProcessingParameters
 import nz.govt.natlib.tools.sip.generation.fairfax.FairfaxSpreadsheet
 import nz.govt.natlib.tools.sip.generation.fairfax.parameters.ProcessingOption
 import nz.govt.natlib.tools.sip.generation.fairfax.parameters.ProcessingRule
+import nz.govt.natlib.tools.sip.generation.fairfax.parameters.ProcessingType
 import nz.govt.natlib.tools.sip.processing.ProcessLogger
+import nz.govt.natlib.tools.sip.state.SipProcessingException
+import nz.govt.natlib.tools.sip.state.SipProcessingExceptionReason
+import nz.govt.natlib.tools.sip.state.SipProcessingExceptionReasonType
 import nz.govt.natlib.tools.sip.state.SipProcessingState
 
 import java.time.LocalDate
@@ -20,21 +24,23 @@ import java.time.LocalDate
 class ReadyForIngestionProcessor {
     FairfaxSpreadsheet fairfaxSpreadsheet
     ProcessorConfiguration processorConfiguration
+    ProcessingType processingType
     List<ProcessingRule> processingRules = [ ]
     List<ProcessingOption> processingOptions = [ ]
 
     ReadyForIngestionProcessor(ProcessorConfiguration processorConfiguration) {
         this.processorConfiguration = processorConfiguration
-        if (this.processorConfiguration.forIngestionProcessingRules != null &&
-                !this.processorConfiguration.forIngestionProcessingRules.strip().isEmpty()) {
-            processingRules = ProcessingRule.extract(this.processorConfiguration.forIngestionProcessingRules,
-                    ",", true)
+        this.processingType = ProcessingType.forFieldValue(this.processorConfiguration.forIngestionProcessingType)
+        if (processingType == null) {
+            String message = "No acceptable value for processingType=${this.processorConfiguration.forIngestionProcessingType}".toString()
+            SipProcessingException exception = new SipProcessingExceptionReason(
+                    SipProcessingExceptionReasonType.INVALID_PARAMETERS, null, message)
+            throw exception
         }
-        if (this.processorConfiguration.forIngestionProcessingOptions != null &&
-                !this.processorConfiguration.forIngestionProcessingOptions.strip().isEmpty()) {
-            processingOptions = ProcessingOption.extract(this.processorConfiguration.forIngestionProcessingOptions,
-                    ",", true)
-        }
+        this.processingRules = ProcessingRule.extract(this.processorConfiguration.forIngestionProcessingRules,
+                ",", true)
+        this.processingOptions = ProcessingOption.extract(this.processorConfiguration.forIngestionProcessingOptions,
+                ",", true)
     }
 
     SipProcessingState processTitleCodeFolder(File titleCodeFolder, File destinationFolder, File forReviewFolder,
@@ -57,11 +63,11 @@ class ReadyForIngestionProcessor {
         List<File> allFiles = ProcessorUtils.findFiles(titleCodeFolder.getAbsolutePath(), isRegexNotGlob,
                 matchFilenameOnly, sortFiles, pattern, processorConfiguration.timekeeper)
 
-        SipProcessingState sipProcessingState = new SipProcessingState()
+        SipProcessingState sipProcessingState = processingParameters.sipProcessingState
         // Process the folder as a single collection of files
         // Note that the folder is processed for a single processingType (so there could be multiple passes, one for
         // each processingType).
-        String sipAsXml = FairfaxFilesProcessor.processCollectedFiles(sipProcessingState, processingParameters, allFiles)
+        String sipAsXml = FairfaxFilesProcessor.processCollectedFiles(processingParameters, allFiles)
 
         File sipAndFilesFolder
         String folderName = "${dateString}_${processingParameters.processingType.getFieldValue()}_${processingParameters.titleCode}${sipProcessingState.identifier}"
@@ -186,7 +192,7 @@ class ReadyForIngestionProcessor {
                 String dateString = titleCodeFolderAndDateString.second
                 LocalDate processingDate = LocalDate.parse(dateString, FairfaxFile.LOCAL_DATE_TIME_FORMATTER)
                 FairfaxProcessingParameters processingParameters = FairfaxProcessingParameters.build(titleCode,
-                        processorConfiguration.forIngestionProcessingType, processingDate, fairfaxSpreadsheet)
+                        this.processingType, processingDate, fairfaxSpreadsheet)
                 processingParameters.overrideProcessingRules(this.processingRules)
                 processingParameters.overrideProcessingOptions(this.processingOptions)
                 if (processingParameters.processingRules.contains(ProcessingRule.MultipleEditions)) {

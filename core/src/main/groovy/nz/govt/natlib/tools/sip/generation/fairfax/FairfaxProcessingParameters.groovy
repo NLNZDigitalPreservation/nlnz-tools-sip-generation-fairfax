@@ -9,11 +9,12 @@ import nz.govt.natlib.tools.sip.generation.fairfax.parameters.ProcessingType
 import nz.govt.natlib.tools.sip.state.SipProcessingException
 import nz.govt.natlib.tools.sip.state.SipProcessingExceptionReason
 import nz.govt.natlib.tools.sip.state.SipProcessingExceptionReasonType
+import nz.govt.natlib.tools.sip.state.SipProcessingState
 
 import java.time.LocalDate
 
 @Canonical
-@ToString(includeNames=true, includePackage=false, excludes=[ 'spreadsheetRow' ])
+@ToString(includeNames=true, includePackage=false, excludes=[ 'spreadsheetRow', 'sipProcessingState' ])
 @AutoClone(excludes = [ 'currentEdition' ])
 class FairfaxProcessingParameters {
     boolean valid = true
@@ -27,15 +28,18 @@ class FairfaxProcessingParameters {
     List<String> editionDiscriminators = [ ]
     boolean isMagazine = false
     String currentEdition
+    SipProcessingState sipProcessingState = new SipProcessingState()
     List<SipProcessingException> sipProcessingExceptions = [ ]
 
-    static FairfaxProcessingParameters build(String titleCode, String processingTypeString, LocalDate processingDate,
+    static FairfaxProcessingParameters build(String titleCode, ProcessingType processingType, LocalDate processingDate,
                                              FairfaxSpreadsheet spreadsheet) {
-        ProcessingType processingType = ProcessingType.forFieldValue(processingTypeString)
-        List<Map<String, String>> matchingRows = spreadsheet.matchingProcessingTypeParameterMaps(processingTypeString, titleCode)
+        List<Map<String, String>> matchingRows = spreadsheet.matchingProcessingTypeParameterMaps(
+                processingType.fieldValue, titleCode)
         if (matchingRows.size() > 1) {
-            // TODO Might want to construct using SipProcessingExceptionReason|Type
-            throw new SipProcessingException("Multiple spreadsheet rows for processingType=${processingTypeString} and titleCode=${titleCode}. Unable to generate parameters")
+            String message = "Multiple spreadsheet rows for processingType=${processingType.fieldValue} and titleCode=${titleCode}. Unable to generate parameters".toString()
+            SipProcessingException exception = new SipProcessingExceptionReason(
+                    SipProcessingExceptionReasonType.INVALID_PARAMETERS, null, message)
+            throw exception
         } else if (matchingRows.size() == 0) {
             if (ProcessingType.CreateSipForFolder == processingType) {
                 Map<String, String> BLANK_ROW = [ : ]
