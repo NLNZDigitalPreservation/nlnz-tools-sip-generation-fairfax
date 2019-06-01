@@ -4,7 +4,7 @@ import groovy.util.logging.Slf4j
 
 @Slf4j
 enum ProcessingOption {
-    NumericBeforeAlpha("numeric_before_alpha"),
+    AlphaBeforeNumericSequencing("alpha_before_numeric"),
     AnyFirstEditionCode("any_first_edition_code")
 
     private static final Map<String, ProcessingOption> LOOKUP_BY_FIELD_VALUE = [ : ]

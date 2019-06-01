@@ -82,10 +82,10 @@ class FairfaxFile {
             }
         }
         // NEXT: Sort each editionCode by numberAndAlpha
-        boolean numericBeforeAlpha = processingParameters.processingOptions.contains(ProcessingOption.NumericBeforeAlpha)
+        boolean alphaBeforeNumeric = processingParameters.processingOptions.contains(ProcessingOption.AlphaBeforeNumericSequencing)
         processingParameters.editionCodes.each { String editionCode ->
             List<FairfaxFile> editionFiles = filesByEdition.get(editionCode)
-            editionFiles = sortAlphaAndNumeric(editionFiles, numericBeforeAlpha)
+            editionFiles = sortNumericAndAlpha(editionFiles, alphaBeforeNumeric)
             filesByEdition.put(editionCode, editionFiles)
         }
         List<FairfaxFile> sorted = [ ]
@@ -185,22 +185,22 @@ class FairfaxFile {
     }
 
     // The assumption is that all these files share the same: title_code, edition_code and date
-    static List<FairfaxFile> sortAlphaAndNumeric(List<FairfaxFile> files, boolean numericBeforeAlpha) {
+    static List<FairfaxFile> sortNumericAndAlpha(List<FairfaxFile> files, boolean alphaBeforeNumeric = false) {
         List<FairfaxFile> sorted = files.sort() { FairfaxFile file1, FairfaxFile file2 ->
             // TODO Not taking into account editionCode (or date, for that matter)
-            if (numericBeforeAlpha) {
+            if (alphaBeforeNumeric) {
                 if (file1.sequenceLetter.isEmpty()) {
                     if (file2.sequenceLetter.isEmpty()) {
                         // file1 and file2 are numeric
                         file1.sequenceNumber <=> file2.sequenceNumber
                     } else {
                         // file1 is numeric-only, file2 is alpha-numeric
-                        -1
+                        +1
                     }
                 } else {
                     if (file2.sequenceLetter.isEmpty()) {
                         // file1 is alpha-numeric, file2 is numeric
-                        +1
+                        -1
                     } else {
                         // file1 and file2 are alpha-numeric
                         file1.sequenceLetter <=> file2.sequenceLetter ?: file1.sequenceNumber <=> file2.sequenceNumber
@@ -213,12 +213,12 @@ class FairfaxFile {
                         file1.sequenceNumber <=> file2.sequenceNumber
                     } else {
                         // file1 is numeric-only, file2 is alpha-numeric
-                        +1
+                        -1
                     }
                 } else {
                     if (file2.sequenceLetter.isEmpty()) {
                         // file1 is alpha-numeric, file2 is numeric
-                        -1
+                        +1
                     } else {
                         // file1 and file2 are alpha-numeric
                         file1.sequenceLetter <=> file2.sequenceLetter ?: file1.sequenceNumber <=> file2.sequenceNumber

@@ -147,25 +147,25 @@ class MultipleEditionCodesTest {
                 IEEntityType.NewspaperIE, "ALMAMMS", "test-mms-id-one", "200",
                 "PRESERVATION_MASTER", "VIEW", true, 1)
 
-        TestHelper.assertExpectedSipFileValues(sipForValidation, 1, "TSTPB1-20181123-A01with-a-qualifier.pdf", "TSTPB1-20181123-A01with-a-qualifier.pdf",
+        TestHelper.assertExpectedSipFileValues(sipForValidation, 1, "TSTPB1-20181123-001.pdf", "TSTPB1-20181123-001.pdf",
                 739L, "MD5", "b5808604069f9f61d94e0660409616ba", "0001", "application/pdf")
 
-        TestHelper.assertExpectedSipFileValues(sipForValidation, 2, "TSTPB1-20181123-A02.pdf", "TSTPB1-20181123-A02.pdf",
+        TestHelper.assertExpectedSipFileValues(sipForValidation, 2, "TSTPB1-20181123-002.pdf", "TSTPB1-20181123-002.pdf",
                 739L, "MD5", "b5808604069f9f61d94e0660409616ba", "0002", "application/pdf")
 
-        TestHelper.assertExpectedSipFileValues(sipForValidation, 3, "TSTPB1-20181123-B01.pdf", "TSTPB1-20181123-B01.pdf",
+        TestHelper.assertExpectedSipFileValues(sipForValidation, 3, "TSTPB1-20181123-A01with-a-qualifier.pdf", "TSTPB1-20181123-A01with-a-qualifier.pdf",
                 739L, "MD5", "b5808604069f9f61d94e0660409616ba", "0003", "application/pdf")
 
-        TestHelper.assertExpectedSipFileValues(sipForValidation, 4, "TSTPB1-20181123-B02.pdf", "TSTPB1-20181123-B02.pdf",
+        TestHelper.assertExpectedSipFileValues(sipForValidation, 4, "TSTPB1-20181123-A02.pdf", "TSTPB1-20181123-A02.pdf",
                 739L, "MD5", "b5808604069f9f61d94e0660409616ba", "0004", "application/pdf")
 
-        TestHelper.assertExpectedSipFileValues(sipForValidation, 5, "TSTPB1-20181123-C01.pdf", "TSTPB1-20181123-C01.pdf",
+        TestHelper.assertExpectedSipFileValues(sipForValidation, 5, "TSTPB1-20181123-B01.pdf", "TSTPB1-20181123-B01.pdf",
                 739L, "MD5", "b5808604069f9f61d94e0660409616ba", "0005", "application/pdf")
 
-        TestHelper.assertExpectedSipFileValues(sipForValidation, 6, "TSTPB1-20181123-001.pdf", "TSTPB1-20181123-001.pdf",
+        TestHelper.assertExpectedSipFileValues(sipForValidation, 6, "TSTPB1-20181123-B02.pdf", "TSTPB1-20181123-B02.pdf",
                 739L, "MD5", "b5808604069f9f61d94e0660409616ba", "0006", "application/pdf")
 
-        TestHelper.assertExpectedSipFileValues(sipForValidation, 7, "TSTPB1-20181123-002.pdf", "TSTPB1-20181123-002.pdf",
+        TestHelper.assertExpectedSipFileValues(sipForValidation, 7, "TSTPB1-20181123-C01.pdf", "TSTPB1-20181123-C01.pdf",
                 739L, "MD5", "b5808604069f9f61d94e0660409616ba", "0007", "application/pdf")
 
         TestHelper.assertExpectedSipFileValues(sipForValidation, 8, "TSTBOO-20181123-001.pdf", "TSTBOO-20181123-001.pdf",

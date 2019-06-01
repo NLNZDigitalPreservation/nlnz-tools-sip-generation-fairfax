@@ -5,7 +5,7 @@
       "title_parent": "Test Publication One",
       "processing_type": "parent_grouping",
       "processing_rule": "",
-      "processing_option": "numeric_before_alpha",
+      "processing_option": "alpha_before_numeric",
       "publication_key": "title_code",
       "title_code": "TST",
       "edition_discriminator": "PB1+PB2+PB3",
