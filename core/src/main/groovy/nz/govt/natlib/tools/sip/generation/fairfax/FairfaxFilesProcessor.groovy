@@ -90,9 +90,6 @@ class FairfaxFilesProcessor {
 
             return sipAsXml
         } else {
-            processingParameters.sipProcessingExceptions.each { SipProcessingException sipProcessingException ->
-                this.processingParameters.sipProcessingState.addException(sipProcessingException)
-            }
             return ""
         }
     }

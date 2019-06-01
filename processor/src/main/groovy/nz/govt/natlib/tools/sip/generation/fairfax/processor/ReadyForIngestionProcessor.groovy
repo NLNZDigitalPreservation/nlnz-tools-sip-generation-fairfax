@@ -114,6 +114,8 @@ class ReadyForIngestionProcessor {
         Date now = new Date()
         File sipProcessingStateFile = new File(sipAndFilesFolder,
                 "sipProcessingState_${ProcessorUtils.FILE_TIMESTAMP_FORMATTER.format(now)}.txt")
+        sipProcessingStateFile.write(processingParameters.detailedDisplay())
+        sipProcessingStateFile.write(System.lineSeparator())
         sipProcessingStateFile.write(sipProcessingState.toString())
 
         // Write out the SIP file

@@ -10,8 +10,10 @@ import nz.govt.natlib.tools.sip.state.SipProcessingException
 import nz.govt.natlib.tools.sip.state.SipProcessingExceptionReason
 import nz.govt.natlib.tools.sip.state.SipProcessingExceptionReasonType
 import nz.govt.natlib.tools.sip.state.SipProcessingState
+import org.apache.commons.lang3.StringUtils
 
 import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 @Canonical
 @ToString(includeNames=true, includePackage=false, excludes=[ 'spreadsheetRow', 'sipProcessingState' ])
@@ -29,7 +31,6 @@ class FairfaxProcessingParameters {
     boolean isMagazine = false
     String currentEdition
     SipProcessingState sipProcessingState = new SipProcessingState()
-    List<SipProcessingException> sipProcessingExceptions = [ ]
 
     static FairfaxProcessingParameters build(String titleCode, ProcessingType processingType, LocalDate processingDate,
                                              FairfaxSpreadsheet spreadsheet) {
@@ -50,8 +51,10 @@ class FairfaxProcessingParameters {
             SipProcessingExceptionReason exceptionReason = new SipProcessingExceptionReason(
                     SipProcessingExceptionReasonType.INVALID_PARAMETERS, null,
                     "ProcessingType must be set.")
+            SipProcessingState replacementSipProcessingState = new SipProcessingState()
+            replacementSipProcessingState.exceptions = [ SipProcessingException.createWithReason(exceptionReason) ]
             return new FairfaxProcessingParameters(valid: false,
-                    sipProcessingExceptions: [ SipProcessingException.createWithReason(exceptionReason) ])
+                    sipProcessingState: replacementSipProcessingState)
         } else {
             Map<String, String> matchingRow = matchingRows.first()
             String rules = matchingRow.get(FairfaxSpreadsheet.PROCESSING_RULES_KEY)
@@ -122,4 +125,34 @@ class FairfaxProcessingParameters {
         }
         return validEditionCodes
     }
+
+    String detailedDisplay(int offset = 0) {
+        String initialOffset = StringUtils.repeat(' ', offset)
+        StringBuilder stringBuilder = new StringBuilder(initialOffset)
+        stringBuilder.append(this.getClass().getName())
+        stringBuilder.append(":")
+        stringBuilder.append("${initialOffset}    processingType=${processingType.fieldValue}")
+        stringBuilder.append(System.lineSeparator())
+        stringBuilder.append("${initialOffset}    processingDate=${processingDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))}")
+        stringBuilder.append(System.lineSeparator())
+        stringBuilder.append("${initialOffset}    processingRules=${processingRules}, processingOptions=${processingOptions}")
+        stringBuilder.append(System.lineSeparator())
+        stringBuilder.append("${initialOffset}    valid=${valid}")
+        stringBuilder.append(System.lineSeparator())
+        stringBuilder.append("${initialOffset}    titleCode=${titleCode}")
+        stringBuilder.append(System.lineSeparator())
+        stringBuilder.append("${initialOffset}    editionCodes=${editionCodes}")
+        stringBuilder.append(System.lineSeparator())
+        stringBuilder.append("${initialOffset}    editionDiscriminators=${editionDiscriminators}")
+        stringBuilder.append(System.lineSeparator())
+        stringBuilder.append("${initialOffset}    currentEdition=${currentEdition}")
+        stringBuilder.append(System.lineSeparator())
+        stringBuilder.append("${initialOffset}    isMagazine=${isMagazine}")
+        stringBuilder.append(System.lineSeparator())
+        stringBuilder.append("${initialOffset}    spreadsheetRow=${spreadsheetRow}")
+        stringBuilder.append(System.lineSeparator())
+
+        return stringBuilder.toString()
+    }
+
 }
