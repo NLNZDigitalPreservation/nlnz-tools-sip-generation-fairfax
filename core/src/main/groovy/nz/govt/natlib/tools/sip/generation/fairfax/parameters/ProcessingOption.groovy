@@ -1,22 +1,27 @@
 package nz.govt.natlib.tools.sip.generation.fairfax.parameters
 
 import groovy.util.logging.Slf4j
+import nz.govt.natlib.tools.sip.state.SipProcessingException
 
 @Slf4j
 enum ProcessingOption {
     AlphaBeforeNumericSequencing("alpha_before_numeric"),
+    NumericBeforeAlphaSequencing("numeric_before_alpha"),
     AnyFirstEditionCode("any_first_edition_code")
 
     private static final Map<String, ProcessingOption> LOOKUP_BY_FIELD_VALUE = [ : ]
+    private static final Map<ProcessingOption, List<ProcessingOption>> OVERRIDES_MAP = [ : ]
     private final String fieldValue
 
     static {
-        ProcessingOption.values().each { ProcessingOption processingOption ->
+        values().each { ProcessingOption processingOption ->
             LOOKUP_BY_FIELD_VALUE.put(processingOption.fieldValue, processingOption)
         }
+        OVERRIDES_MAP.put(AlphaBeforeNumericSequencing, [ NumericBeforeAlphaSequencing ])
+        OVERRIDES_MAP.put(NumericBeforeAlphaSequencing, [ AlphaBeforeNumericSequencing ])
     }
 
-    static List<ProcessingOption> extract(String list, String separator = ",") {
+    static List<ProcessingOption> extract(String list, String separator = ",", boolean exceptionIfUnrecognized = false) {
         List<ProcessingOption> processingOptions = [ ]
         List<String> separatedList = list.split(separator)
         separatedList.each { String value ->
@@ -24,7 +29,11 @@ enum ProcessingOption {
             ProcessingOption processingOption = forFieldValue(strippedValue)
             if (processingOption == null) {
                 if (!strippedValue.isEmpty()) {
-                    log.warn("Unable to match processing option=${strippedValue} to a ProcessingOption enum value.")
+                    String message = "Unable to match processing option=${strippedValue} to a ProcessingOption enum value."
+                    log.warn(message)
+                    if (exceptionIfUnrecognized) {
+                        throw new SipProcessingException(message)
+                    }
                 }
             } else {
                 processingOptions.add(processingOption)
@@ -32,6 +41,21 @@ enum ProcessingOption {
         }
 
         return processingOptions
+    }
+
+    static List<ProcessingOption> mergeOverrides(List<ProcessingOption> current, List<ProcessingOption> overrides) {
+        List<ProcessingOption> merged = [ ]
+        current.each { ProcessingOption option ->
+            ProcessingOption override = overrides.find { ProcessingOption possibleOverride ->
+                option.isOverride(possibleOverride)
+            }
+            if (override == null) {
+                merged.add(option)
+            } else {
+                merged.add(override)
+            }
+        }
+        return merged.unique()
     }
 
     static forFieldValue(String fieldValue) {
@@ -44,6 +68,15 @@ enum ProcessingOption {
 
     String getFieldValue() {
         return this.fieldValue
+    }
+
+    boolean isOverride(ProcessingOption otherOption) {
+        return overrides().contains(otherOption)
+    }
+
+    List<ProcessingOption> overrides() {
+        List<ProcessingOption> overrides = OVERRIDES_MAP.get(this)
+        return overrides == null ? [ ] : overrides
     }
 
     String toString() {

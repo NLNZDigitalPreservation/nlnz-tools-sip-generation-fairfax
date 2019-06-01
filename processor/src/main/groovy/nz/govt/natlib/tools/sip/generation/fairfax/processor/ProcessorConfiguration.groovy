@@ -51,4 +51,6 @@ trait ProcessorConfiguration {
     File forReviewFolder
 
     String forIngestionProcessingType
+    String forIngestionProcessingRules
+    String forIngestionProcessingOptions
 }

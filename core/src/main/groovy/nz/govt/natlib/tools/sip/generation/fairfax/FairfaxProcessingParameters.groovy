@@ -72,6 +72,14 @@ class FairfaxProcessingParameters {
         return extractedValues
     }
 
+    void overrideProcessingRules(List<ProcessingRule> overrides) {
+        processingRules = ProcessingRule.mergeOverrides(processingRules, overrides)
+    }
+
+    void overrideProcessingOptions(List<ProcessingOption> overrides) {
+        processingOptions = ProcessingOption.mergeOverrides(processingOptions, overrides)
+    }
+
     String getTitleParent() {
         String titleParent = spreadsheetRow.get(FairfaxSpreadsheet.TITLE_PARENT_KEY)
         if (titleParent == null || titleParent.strip().isEmpty()) {

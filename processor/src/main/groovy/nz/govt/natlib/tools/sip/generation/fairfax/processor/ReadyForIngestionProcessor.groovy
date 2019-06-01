@@ -6,6 +6,7 @@ import nz.govt.natlib.tools.sip.generation.fairfax.FairfaxFile
 import nz.govt.natlib.tools.sip.generation.fairfax.FairfaxFilesProcessor
 import nz.govt.natlib.tools.sip.generation.fairfax.FairfaxProcessingParameters
 import nz.govt.natlib.tools.sip.generation.fairfax.FairfaxSpreadsheet
+import nz.govt.natlib.tools.sip.generation.fairfax.parameters.ProcessingOption
 import nz.govt.natlib.tools.sip.generation.fairfax.parameters.ProcessingRule
 import nz.govt.natlib.tools.sip.processing.ProcessLogger
 import nz.govt.natlib.tools.sip.state.SipProcessingState
@@ -19,9 +20,21 @@ import java.time.LocalDate
 class ReadyForIngestionProcessor {
     FairfaxSpreadsheet fairfaxSpreadsheet
     ProcessorConfiguration processorConfiguration
+    List<ProcessingRule> processingRules = [ ]
+    List<ProcessingOption> processingOptions = [ ]
 
     ReadyForIngestionProcessor(ProcessorConfiguration processorConfiguration) {
         this.processorConfiguration = processorConfiguration
+        if (this.processorConfiguration.forIngestionProcessingRules != null &&
+                !this.processorConfiguration.forIngestionProcessingRules.strip().isEmpty()) {
+            processingRules = ProcessingRule.extract(this.processorConfiguration.forIngestionProcessingRules,
+                    ",", true)
+        }
+        if (this.processorConfiguration.forIngestionProcessingOptions != null &&
+                !this.processorConfiguration.forIngestionProcessingOptions.strip().isEmpty()) {
+            processingOptions = ProcessingOption.extract(this.processorConfiguration.forIngestionProcessingOptions,
+                    ",", true)
+        }
     }
 
     SipProcessingState processTitleCodeFolder(File titleCodeFolder, File destinationFolder, File forReviewFolder,
@@ -174,6 +187,8 @@ class ReadyForIngestionProcessor {
                 LocalDate processingDate = LocalDate.parse(dateString, FairfaxFile.LOCAL_DATE_TIME_FORMATTER)
                 FairfaxProcessingParameters processingParameters = FairfaxProcessingParameters.build(titleCode,
                         processorConfiguration.forIngestionProcessingType, processingDate, fairfaxSpreadsheet)
+                processingParameters.overrideProcessingRules(this.processingRules)
+                processingParameters.overrideProcessingOptions(this.processingOptions)
                 if (processingParameters.processingRules.contains(ProcessingRule.MultipleEditions)) {
                     processingParameters.editionDiscriminators.each { String editionDiscriminator ->
                         FairfaxProcessingParameters editionParameters = processingParameters.clone()

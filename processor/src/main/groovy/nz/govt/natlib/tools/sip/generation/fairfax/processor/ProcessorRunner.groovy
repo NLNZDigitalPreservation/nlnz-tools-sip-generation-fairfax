@@ -1,5 +1,8 @@
 package nz.govt.natlib.tools.sip.generation.fairfax.processor
 
+import nz.govt.natlib.tools.sip.generation.fairfax.parameters.ProcessingOption
+import nz.govt.natlib.tools.sip.generation.fairfax.parameters.ProcessingRule
+import nz.govt.natlib.tools.sip.state.SipProcessingException
 import picocli.CommandLine
 import picocli.CommandLine.Command
 import picocli.CommandLine.Option
@@ -130,6 +133,16 @@ This is the destination folder used when no other destination folders are specif
 A pre-processing titleCode folder can only be processed once for a single processing type.""")
     String forIngestionProcessingType
 
+    @Option(names = ["--forIngestionProcessingRules"], paramLabel = "PROCESSING_RULES",
+            description = """For-ingestion processing rules.
+A comma-separated list of rules. These rules will override any contradictory rules.""")
+    String forIngestionProcessingRules
+
+    @Option(names = ["--forIngestionProcessingType"], paramLabel = "PROCESSING_OPTIONS",
+            description = """For-ingestion processing options.
+A comma-separated list of options. These options will override any contraditory options.""")
+    String forIngestionProcessingOptions
+
     @Option(names = ["-r", "--forReviewFolder"], paramLabel = "FOR_REVIEW_FOLDER", description = 'for-review folder in the format /path/to/folder')
     File forReviewFolder
 
@@ -174,6 +187,8 @@ A pre-processing titleCode folder can only be processed once for a single proces
         log.info("        forReviewFolder=${forReviewFolder}")
         log.info("    Processing parameters:")
         log.info("        forIngestionProcessingType=${forIngestionProcessingType}")
+        log.info("        forIngestionProcessingRules=${forIngestionProcessingRules}")
+        log.info("        forIngestionProcessingOptions=${forIngestionProcessingOptions}")
         log.info("    Date scoping:")
         log.info("        startingDate=${startingDate}")
         log.info("        endingDate=${endingDate}")
@@ -301,6 +316,8 @@ A pre-processing titleCode folder can only be processed once for a single proces
             commandExecuted = true
         }
         if (readyForIngestion) {
+            List<ProcessingRule> processingRules = [ ]
+            List<ProcessingOption> processingOptions = [ ]
             if (sourceFolder == null) {
                 String message = "readyForIngestion requires sourceFolder"
                 log.error(message)
