@@ -164,7 +164,7 @@ class FairfaxProcessingParameters {
         stringBuilder.append("${initialOffset}    spreadsheetRow=${spreadsheetRow}")
         stringBuilder.append(System.lineSeparator())
         if (includeSipProcessingState) {
-            stringBuilder.append(this.sipProcessingState.toString())
+            stringBuilder.append(this.sipProcessingState.toString(offset))
         }
 
         return stringBuilder.toString()
