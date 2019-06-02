@@ -3,7 +3,6 @@ package nz.govt.natlib.tools.sip.generation.fairfax.processor
 import groovy.util.logging.Slf4j
 import groovyx.gpars.GParsPool
 import nz.govt.natlib.tools.sip.generation.fairfax.FairfaxFile
-import nz.govt.natlib.tools.sip.generation.fairfax.FairfaxFilesProcessor
 import nz.govt.natlib.tools.sip.generation.fairfax.FairfaxProcessingParameters
 import nz.govt.natlib.tools.sip.generation.fairfax.FairfaxSpreadsheet
 import nz.govt.natlib.tools.sip.generation.fairfax.parameters.ProcessingOption

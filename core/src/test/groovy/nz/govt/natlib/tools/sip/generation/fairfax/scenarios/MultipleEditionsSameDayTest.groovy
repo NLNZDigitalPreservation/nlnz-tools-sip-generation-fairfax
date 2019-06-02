@@ -4,7 +4,7 @@ import groovy.util.logging.Slf4j
 import nz.govt.natlib.tools.sip.IEEntityType
 import nz.govt.natlib.tools.sip.extraction.SipXmlExtractor
 import nz.govt.natlib.tools.sip.generation.fairfax.FairfaxFile
-import nz.govt.natlib.tools.sip.generation.fairfax.FairfaxFilesProcessor
+import nz.govt.natlib.tools.sip.generation.fairfax.processor.FairfaxFilesProcessor
 import nz.govt.natlib.tools.sip.generation.fairfax.FairfaxProcessingParameters
 import nz.govt.natlib.tools.sip.generation.fairfax.TestHelper
 import nz.govt.natlib.tools.sip.generation.fairfax.TestHelper.TestMethodState

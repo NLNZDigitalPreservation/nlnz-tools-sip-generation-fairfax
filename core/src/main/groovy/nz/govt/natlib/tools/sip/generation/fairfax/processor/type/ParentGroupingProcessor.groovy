@@ -1,4 +1,4 @@
-package nz.govt.natlib.tools.sip.generation.fairfax.processors
+package nz.govt.natlib.tools.sip.generation.fairfax.processor.type
 
 import nz.govt.natlib.tools.sip.generation.fairfax.FairfaxFile
 import nz.govt.natlib.tools.sip.generation.fairfax.FairfaxProcessingParameters

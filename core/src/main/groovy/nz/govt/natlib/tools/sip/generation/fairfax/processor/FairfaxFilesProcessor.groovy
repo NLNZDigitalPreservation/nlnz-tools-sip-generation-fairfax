@@ -1,14 +1,17 @@
-package nz.govt.natlib.tools.sip.generation.fairfax
+package nz.govt.natlib.tools.sip.generation.fairfax.processor
 
 import groovy.util.logging.Slf4j
 import nz.govt.natlib.tools.sip.IEEntityType
 import nz.govt.natlib.tools.sip.Sip
 import nz.govt.natlib.tools.sip.SipFileWrapperFactory
 import nz.govt.natlib.tools.sip.generation.SipXmlGenerator
+import nz.govt.natlib.tools.sip.generation.fairfax.FairfaxFile
+import nz.govt.natlib.tools.sip.generation.fairfax.FairfaxProcessingParameters
+import nz.govt.natlib.tools.sip.generation.fairfax.SipFactory
 import nz.govt.natlib.tools.sip.generation.fairfax.parameters.ProcessingRule
 import nz.govt.natlib.tools.sip.generation.fairfax.parameters.ProcessingType
-import nz.govt.natlib.tools.sip.generation.fairfax.processors.ParentGroupingProcessor
-import nz.govt.natlib.tools.sip.generation.fairfax.processors.SipForFolderProcessor
+import nz.govt.natlib.tools.sip.generation.fairfax.processor.type.ParentGroupingProcessor
+import nz.govt.natlib.tools.sip.generation.fairfax.processor.type.SipForFolderProcessor
 import nz.govt.natlib.tools.sip.pdf.PdfValidator
 import nz.govt.natlib.tools.sip.pdf.PdfValidatorFactory
 import nz.govt.natlib.tools.sip.pdf.PdfValidatorType
