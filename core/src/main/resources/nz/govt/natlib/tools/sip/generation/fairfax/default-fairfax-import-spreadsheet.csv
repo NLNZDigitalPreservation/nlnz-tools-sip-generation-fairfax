@@ -11,8 +11,18 @@
 # (or will that be section_codes??)
 #
 # processing_type: There can be only 1 processing type for a given row
+#     Current processing types: parent_grouping, supplement_grouping, create_sip_for_folder (usually used on command-line)
 # processing_rule: There can be multiple processing rules for a given row
+#     Current processing rules:
+#         handle_unprocessed, handle_unrecognised, handle_invalid,
+#         single_edition, multiple_edition, manual,
+#         required_all_sections_in_sip, optional_all_sections_in_sip
 # processing_option: There can be multiple processing options for a given row
+#     Current procession options: alpha_before_numeric, numeric_before_alpha, any_first_section_code
+# Certain processing types have default rules and options:
+#     parent_grouping: required_all_sections_in_sip, numeric_before_alpha
+#     supplement_grouping: numeric_before_alpha
+#     create_sip_for_folder: required_all_sections_in_sip, numeric_before_alpha
 #
 # A single file can be grouped with multiple processing types
 #
