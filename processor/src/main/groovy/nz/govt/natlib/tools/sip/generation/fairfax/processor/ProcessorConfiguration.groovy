@@ -1,6 +1,6 @@
 package nz.govt.natlib.tools.sip.generation.fairfax.processor
 
-import groovy.util.logging.Slf4j
+import groovy.util.logging.Log4j2
 import nz.govt.natlib.m11n.tools.automation.logging.Timekeeper
 import picocli.CommandLine
 import picocli.CommandLine.Command
@@ -9,7 +9,7 @@ import picocli.CommandLine.Option
 import java.time.LocalDate
 import java.util.concurrent.Callable
 
-@Slf4j
+@Log4j2
 trait ProcessorConfiguration {
     final static LocalDate DEFAULT_STARTING_DATE = LocalDate.of(2015, 1, 1)
     final static LocalDate DEFAULT_ENDING_DATE = LocalDate.now()

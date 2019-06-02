@@ -1,6 +1,6 @@
 package nz.govt.natlib.tools.sip.generation.fairfax
 
-import groovy.util.logging.Slf4j
+import groovy.util.logging.Log4j2
 import nz.govt.natlib.tools.sip.IEEntityType
 import nz.govt.natlib.tools.sip.Sip
 import nz.govt.natlib.tools.sip.generation.fairfax.parameters.ProcessingType
@@ -9,7 +9,7 @@ import nz.govt.natlib.tools.sip.state.SipProcessingException
 import nz.govt.natlib.tools.sip.state.SipProcessingExceptionReason
 import nz.govt.natlib.tools.sip.state.SipProcessingExceptionReasonType
 
-@Slf4j
+@Log4j2
 class FairfaxSpreadsheet {
     // Note that the CSV 'standard' generally only allows 1 character as a separator
     static String DEFAULT_FIELD_SEPARATOR = "|"

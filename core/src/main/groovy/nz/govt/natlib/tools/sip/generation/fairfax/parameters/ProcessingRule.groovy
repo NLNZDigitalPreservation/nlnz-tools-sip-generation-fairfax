@@ -1,9 +1,9 @@
 package nz.govt.natlib.tools.sip.generation.fairfax.parameters
 
-import groovy.util.logging.Slf4j
+import groovy.util.logging.Log4j2
 import nz.govt.natlib.tools.sip.state.SipProcessingException
 
-@Slf4j
+@Log4j2
 enum ProcessingRule {
     HandleUnprocessed("handle_unprocessed"),
     HandleUnrecognised("handle_unrecognised"),

@@ -1,18 +1,15 @@
 package nz.govt.natlib.tools.sip.generation.fairfax.processor
 
-import nz.govt.natlib.tools.sip.generation.fairfax.parameters.ProcessingOption
-import nz.govt.natlib.tools.sip.generation.fairfax.parameters.ProcessingRule
-import nz.govt.natlib.tools.sip.state.SipProcessingException
 import picocli.CommandLine
 import picocli.CommandLine.Command
 import picocli.CommandLine.Option
-import groovy.util.logging.Slf4j
+import groovy.util.logging.Log4j2
 import nz.govt.natlib.m11n.tools.automation.logging.Timekeeper
 
 import java.time.LocalDate
 import java.util.concurrent.Callable
 
-@Slf4j
+@Log4j2
 @Command(description = 'Runs different processors based on command-line options.', name = 'processorRunner')
 class ProcessorRunner implements ProcessorConfiguration, Callable<Void> {
     final static LocalDate DEFAULT_STARTING_DATE = LocalDate.of(2015, 1, 1)
@@ -138,9 +135,9 @@ A pre-processing titleCode folder can only be processed once for a single proces
 A comma-separated list of rules. These rules will override any contradictory rules.""")
     String forIngestionProcessingRules
 
-    @Option(names = ["--forIngestionProcessingType"], paramLabel = "PROCESSING_OPTIONS",
+    @Option(names = ["--forIngestionProcessingOptions"], paramLabel = "PROCESSING_OPTIONS",
             description = """For-ingestion processing options.
-A comma-separated list of options. These options will override any contraditory options.""")
+A comma-separated list of options. These options will override any contradictory options.""")
     String forIngestionProcessingOptions
 
     @Option(names = ["-r", "--forReviewFolder"], paramLabel = "FOR_REVIEW_FOLDER", description = 'for-review folder in the format /path/to/folder')

@@ -1,6 +1,6 @@
 package nz.govt.natlib.tools.sip.generation.fairfax.processor
 
-import groovy.util.logging.Slf4j
+import groovy.util.logging.Log4j2
 import nz.govt.natlib.m11n.tools.automation.logging.Timekeeper
 import nz.govt.natlib.tools.sip.files.FilesFinder
 import nz.govt.natlib.tools.sip.generation.fairfax.FairfaxFile
@@ -16,7 +16,7 @@ import java.text.DecimalFormat
 import java.text.SimpleDateFormat
 import java.time.LocalDate
 
-@Slf4j
+@Log4j2
 class ProcessorUtils {
     static final SimpleDateFormat FILE_TIMESTAMP_FORMATTER = new SimpleDateFormat('yyyy-MM-dd_HH-mm-ss-SSS')
     static final SimpleDateFormat TIMESTAMP_FORMATTER = new SimpleDateFormat('yyyy-MM-dd HH:mm:ss.SSS')

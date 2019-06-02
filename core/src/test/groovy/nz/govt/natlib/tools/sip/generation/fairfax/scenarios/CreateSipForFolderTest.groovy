@@ -1,6 +1,6 @@
 package nz.govt.natlib.tools.sip.generation.fairfax.scenarios
 
-import groovy.util.logging.Slf4j
+import groovy.util.logging.Log4j2
 import nz.govt.natlib.tools.sip.IEEntityType
 import nz.govt.natlib.tools.sip.extraction.SipXmlExtractor
 import nz.govt.natlib.tools.sip.generation.fairfax.FairfaxFile
@@ -31,7 +31,7 @@ import static org.junit.Assert.*
  * ignored for builds.
  */
 @RunWith(MockitoJUnitRunner.class)
-@Slf4j
+@Log4j2
 class CreateSipForFolderTest {
     // TODO Make this processing simpler
     // - given a starting folder

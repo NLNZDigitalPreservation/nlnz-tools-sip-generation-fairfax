@@ -1,6 +1,6 @@
 package nz.govt.natlib.tools.sip.generation.fairfax.processor
 
-import groovy.util.logging.Slf4j
+import groovy.util.logging.Log4j2
 import nz.govt.natlib.tools.sip.files.FilesFinder
 
 import java.nio.file.Files
@@ -10,7 +10,7 @@ import java.nio.file.StandardCopyOption
 import java.time.LocalDate
 import java.util.regex.Matcher
 
-@Slf4j
+@Log4j2
 class MiscellaneousProcessor {
     ProcessorConfiguration processorConfiguration
 

@@ -1,6 +1,6 @@
 package nz.govt.natlib.tools.sip.generation.fairfax.processor
 
-import groovy.util.logging.Slf4j
+import groovy.util.logging.Log4j2
 import groovyx.gpars.GParsPool
 import nz.govt.natlib.tools.sip.generation.fairfax.FairfaxFile
 import nz.govt.natlib.tools.sip.generation.fairfax.FairfaxSpreadsheet
@@ -12,7 +12,7 @@ import java.time.format.DateTimeFormatter
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.locks.ReentrantLock
 
-@Slf4j
+@Log4j2
 class PreProcessProcessor {
     static final DateTimeFormatter LOCAL_DATE_FOLDER_FORMATTER = DateTimeFormatter.ofPattern("yyyyMMdd")
 

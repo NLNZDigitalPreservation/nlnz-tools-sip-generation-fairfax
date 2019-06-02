@@ -1,6 +1,6 @@
 package nz.govt.natlib.tools.sip.generation.fairfax
 
-import groovy.util.logging.Slf4j
+import groovy.util.logging.Log4j2
 import groovy.util.slurpersupport.GPathResult
 import nz.govt.natlib.tools.sip.IEEntityType
 import nz.govt.natlib.tools.sip.extraction.SipXmlExtractor
@@ -25,7 +25,7 @@ import static org.junit.Assert.assertTrue
  * Useful methods for use across different unit tests.
  *
  */
-@Slf4j
+@Log4j2
 class TestHelper {
     static final String RESOURCES_FOLDER = "nz/govt/natlib/tools/sip/generation/fairfax"
 

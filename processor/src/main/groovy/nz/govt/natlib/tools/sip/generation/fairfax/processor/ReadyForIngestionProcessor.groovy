@@ -1,6 +1,6 @@
 package nz.govt.natlib.tools.sip.generation.fairfax.processor
 
-import groovy.util.logging.Slf4j
+import groovy.util.logging.Log4j2
 import groovyx.gpars.GParsPool
 import nz.govt.natlib.tools.sip.generation.fairfax.FairfaxFile
 import nz.govt.natlib.tools.sip.generation.fairfax.FairfaxProcessingParameters
@@ -19,7 +19,7 @@ import java.time.LocalDate
 /**
  * For calling from gradle build scripts.
  */
-@Slf4j
+@Log4j2
 class ReadyForIngestionProcessor {
     FairfaxSpreadsheet fairfaxSpreadsheet
     ProcessorConfiguration processorConfiguration

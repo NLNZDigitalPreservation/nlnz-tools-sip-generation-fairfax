@@ -4,7 +4,7 @@ import groovy.transform.Canonical
 import groovy.transform.EqualsAndHashCode
 import groovy.transform.Sortable
 import groovy.transform.ToString
-import groovy.util.logging.Slf4j
+import groovy.util.logging.Log4j2
 import nz.govt.natlib.tools.sip.Sip
 import nz.govt.natlib.tools.sip.SipFileWrapperFactory
 import nz.govt.natlib.tools.sip.generation.fairfax.parameters.ProcessingOption
@@ -19,7 +19,7 @@ import java.util.regex.Matcher
         'sequenceNumber', 'qualifier' ])
 @ToString(includeNames=true, includePackage=false, excludes=[ ])
 @EqualsAndHashCode(excludes = [ 'file', 'filename', 'qualifier', 'sequenceNumberString', 'validForProcessing', 'validPdf' ])
-@Slf4j
+@Log4j2
 class FairfaxFile {
     // Note that the titleCode appears to be, in some cases 4 characters long (eg. JAZZTAB), but for most cases it is 3.
     // The populate() method attempts to correct any issues with the titleCode/sectionCode grouping.

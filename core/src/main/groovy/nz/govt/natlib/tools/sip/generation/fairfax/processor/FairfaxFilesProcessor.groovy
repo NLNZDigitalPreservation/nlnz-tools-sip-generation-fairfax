@@ -1,6 +1,6 @@
 package nz.govt.natlib.tools.sip.generation.fairfax.processor
 
-import groovy.util.logging.Slf4j
+import groovy.util.logging.Log4j2
 import nz.govt.natlib.tools.sip.IEEntityType
 import nz.govt.natlib.tools.sip.Sip
 import nz.govt.natlib.tools.sip.SipFileWrapperFactory
@@ -21,7 +21,7 @@ import nz.govt.natlib.tools.sip.state.SipProcessingExceptionReasonType
 
 import java.time.LocalDate
 
-@Slf4j
+@Log4j2
 class FairfaxFilesProcessor {
     FairfaxProcessingParameters processingParameters
     List<File> filesForProcessing

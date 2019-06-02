@@ -3,7 +3,7 @@ package nz.govt.natlib.tools.sip.generation.fairfax.processor.support
 import groovy.transform.Canonical
 import groovy.transform.EqualsAndHashCode
 import groovy.transform.Sortable
-import groovy.util.logging.Slf4j
+import groovy.util.logging.Log4j2
 import nz.govt.natlib.tools.sip.generation.fairfax.FairfaxFile
 
 import java.time.LocalDate
@@ -11,7 +11,7 @@ import java.time.LocalDate
 @Canonical
 @EqualsAndHashCode(includes = [ 'localDate', 'titleCode' ])
 @Sortable(includes = [ 'localDate', 'titleCode' ])
-@Slf4j
+@Log4j2
 class TitleCodeByDateSummary {
     LocalDate localDate
     String titleCode

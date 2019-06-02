@@ -1,6 +1,6 @@
 package nz.govt.natlib.tools.sip.generation.fairfax.scenarios
 
-import groovy.util.logging.Slf4j
+import groovy.util.logging.Log4j2
 import nz.govt.natlib.tools.sip.generation.fairfax.FairfaxFile
 import nz.govt.natlib.tools.sip.generation.fairfax.processor.FairfaxFilesProcessor
 import nz.govt.natlib.tools.sip.generation.fairfax.FairfaxProcessingParameters
@@ -30,7 +30,7 @@ import static org.junit.Assert.assertTrue
  * ignored for builds.
  */
 @RunWith(MockitoJUnitRunner.class)
-@Slf4j
+@Log4j2
 class NoMatchingSipDefinitionTest {
     // TODO Make this processing simpler
     // - given a starting folder

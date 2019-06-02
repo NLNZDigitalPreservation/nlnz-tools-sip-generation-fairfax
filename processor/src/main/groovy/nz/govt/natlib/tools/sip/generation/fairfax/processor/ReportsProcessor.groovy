@@ -1,6 +1,6 @@
 package nz.govt.natlib.tools.sip.generation.fairfax.processor
 
-import groovy.util.logging.Slf4j
+import groovy.util.logging.Log4j2
 import nz.govt.natlib.tools.sip.generation.fairfax.FairfaxFile
 import nz.govt.natlib.tools.sip.generation.fairfax.FairfaxFileTitleEditionKey
 import nz.govt.natlib.tools.sip.generation.fairfax.FairfaxSpreadsheet
@@ -10,7 +10,7 @@ import nz.govt.natlib.tools.sip.pdf.PdfInformationExtractor
 import java.time.LocalDate
 import java.time.Period
 
-@Slf4j
+@Log4j2
 class ReportsProcessor {
     ProcessorConfiguration processorConfiguration
     Set<String> recognizedTitleCodes = []

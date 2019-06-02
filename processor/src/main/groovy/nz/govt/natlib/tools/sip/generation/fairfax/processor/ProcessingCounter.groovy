@@ -1,11 +1,11 @@
 package nz.govt.natlib.tools.sip.generation.fairfax.processor
 
 import groovy.transform.Canonical
-import groovy.util.logging.Slf4j
+import groovy.util.logging.Log4j2
 
 import java.util.concurrent.locks.ReentrantLock
 
-@Slf4j
+@Log4j2
 @Canonical
 class ProcessingCounter {
     long currentCount = 0

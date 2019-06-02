@@ -1,8 +1,8 @@
 package nz.govt.natlib.tools.sip.generation.fairfax.parameters
 
-import groovy.util.logging.Slf4j
+import groovy.util.logging.Log4j2
 
-@Slf4j
+@Log4j2
 enum ProcessingType {
     ParentGrouping("parent_grouping",
             [ ProcessingRule.AllSectionsInSipRequired ],
