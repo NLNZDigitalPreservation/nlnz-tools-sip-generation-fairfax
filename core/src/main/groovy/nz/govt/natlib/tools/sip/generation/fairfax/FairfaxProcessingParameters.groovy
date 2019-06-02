@@ -26,7 +26,7 @@ class FairfaxProcessingParameters {
     List<ProcessingOption> processingOptions = [ ]
     LocalDate processingDate
     Map<String, String> spreadsheetRow = [ : ]
-    List<String> editionCodes = [ ]
+    List<String> sectionCodes = [ ]
     List<String> editionDiscriminators = [ ]
     boolean isMagazine = false
     String currentEdition
@@ -64,7 +64,7 @@ class FairfaxProcessingParameters {
                     processingRules: ProcessingRule.extract(rules, ","),
                     processingOptions: ProcessingOption.extract(options, ","),
                     processingDate: processingDate, spreadsheetRow: matchingRow,
-                    editionCodes: extractSeparatedValues(matchingRow, FairfaxSpreadsheet.EDITION_CODE_KEY),
+                    sectionCodes: extractSeparatedValues(matchingRow, FairfaxSpreadsheet.SECTION_CODE_KEY),
                     editionDiscriminators: extractSeparatedValues(matchingRow, FairfaxSpreadsheet.EDITION_DISCRIMINATOR_KEY),
                     isMagazine: FairfaxSpreadsheet.extractBooleanValue(matchingRow, FairfaxSpreadsheet.IS_MAGAZINE_KEY))
         }
@@ -99,31 +99,31 @@ class FairfaxProcessingParameters {
         return (currentEdition != null && !currentEdition.isEmpty())
     }
 
-    boolean matchesCurrentEdition(String matchEditionCode, String fileEditionCode) {
+    boolean matchesCurrentSection(String matchSectionCode, String fileSectionCode) {
         if (this.hasCurrentEdition()) {
-            return this.editionDiscriminators.first() == matchEditionCode &&
-                    (editionDiscriminators.first() == fileEditionCode ||
-                            this.currentEdition == fileEditionCode)
+            return this.editionDiscriminators.first() == matchSectionCode &&
+                    (editionDiscriminators.first() == fileSectionCode ||
+                            this.currentEdition == fileSectionCode)
         } else {
             return false
         }
     }
 
-    List<String> validEditionCodes() {
+    List<String> validSectionCodes() {
         if (!hasCurrentEdition()) {
-            return this.editionCodes.clone()
+            return this.sectionCodes.clone()
         }
-        List<String> validEditionCodes = [ ]
+        List<String> validSectionCodes = [ ]
         if (this.currentEdition != this.editionDiscriminators.first()) {
-            validEditionCodes.add(this.editionDiscriminators.first())
+            validSectionCodes.add(this.editionDiscriminators.first())
         }
-        validEditionCodes.add(this.currentEdition)
-        this.editionCodes.each { String editionCode ->
-            if (editionCode != currentEdition && editionCode != editionDiscriminators.first()) {
-                validEditionCodes.add(editionCode)
+        validSectionCodes.add(this.currentEdition)
+        this.sectionCodes.each { String sectionCode ->
+            if (sectionCode != currentEdition && sectionCode != editionDiscriminators.first()) {
+                validSectionCodes.add(sectionCode)
             }
         }
-        return validEditionCodes
+        return validSectionCodes
     }
 
     String detailedDisplay(int offset = 0) {
@@ -141,7 +141,7 @@ class FairfaxProcessingParameters {
         stringBuilder.append(System.lineSeparator())
         stringBuilder.append("${initialOffset}    titleCode=${titleCode}")
         stringBuilder.append(System.lineSeparator())
-        stringBuilder.append("${initialOffset}    editionCodes=${editionCodes}")
+        stringBuilder.append("${initialOffset}    sectionCodes=${sectionCodes}")
         stringBuilder.append(System.lineSeparator())
         stringBuilder.append("${initialOffset}    editionDiscriminators=${editionDiscriminators}")
         stringBuilder.append(System.lineSeparator())

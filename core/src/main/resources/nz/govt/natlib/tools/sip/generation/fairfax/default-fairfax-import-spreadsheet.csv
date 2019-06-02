@@ -8,7 +8,7 @@
 # magazine (1 for magazine, 0 for newspaper)
 # edition_discriminator: section_code used to discriminate between different editions
 # section_codes: An ordered list of sections, separated by ‘,’ or ‘-’ or ‘+’, that couples all the sections in a publication
-# (or will that be edition_codes??)
+# (or will that be section_codes??)
 #
 # processing_type: There can be only 1 processing type for a given row
 # processing_rule: There can be multiple processing rules for a given row
@@ -19,9 +19,9 @@
 #
 #
 #
-MMSID|title_parent|processing_type|processing_rule|processing_option|publication_key|title_code|edition_discriminator|edition_code|Access|Magazine|ingest_status|Frequency|entity_type|title_mets|ISSN online|Bib ID|Access condition|Date catalogued|Collector_folder|Cataloguer|Notes|first_issue_starting_page|last_issue_starting_page|has_volume_md|has_issue_md|has_number_md|previous_volume|previous_volume_date|previous_volume_frequency|previous_issue|previous_issue_date|previous_issue_frequency|previous_number|previous_number_date|previous_number_frequency
-9918147749902836|Admire|parent_grouping|||title_code_edition_code|ADM||NEL|200|1|STA||PER|Admire. Nelson-Tasman||||17/05/2017|Admire|Christina|Supplement to Nelson mail - If we aren't adding numbering to designations no problem.|||0|0|0|||||||||
-9918148070202836|Admire|parent_grouping|||title_code_edition_code|ADM||MEX|200|1|STA||PER|Admire. Marlborough||||17/05/2017|Admire|Christina|Supplement to Marlborough Express - if we are not doing numbering in designations, then no problem with this.|||0|0|0|||||||||
+MMSID|title_parent|processing_type|processing_rule|processing_option|publication_key|title_code|edition_discriminator|section_code|Access|Magazine|ingest_status|Frequency|entity_type|title_mets|ISSN online|Bib ID|Access condition|Date catalogued|Collector_folder|Cataloguer|Notes|first_issue_starting_page|last_issue_starting_page|has_volume_md|has_issue_md|has_number_md|previous_volume|previous_volume_date|previous_volume_frequency|previous_issue|previous_issue_date|previous_issue_frequency|previous_number|previous_number_date|previous_number_frequency
+9918147749902836|Admire|parent_grouping|||title_code_section_code|ADM||NEL|200|1|STA||PER|Admire. Nelson-Tasman||||17/05/2017|Admire|Christina|Supplement to Nelson mail - If we aren't adding numbering to designations no problem.|||0|0|0|||||||||
+9918148070202836|Admire|parent_grouping|||title_code_section_code|ADM||MEX|200|1|STA||PER|Admire. Marlborough||||17/05/2017|Admire|Christina|Supplement to Marlborough Express - if we are not doing numbering in designations, then no problem with this.|||0|0|0|||||||||
 9917982733502836|Ag Trader|parent_grouping|||title_code|AGT||ED1|200|1|STA||PER|Ag Trader||1798273|100-P|30/06/2016|Ag_Trader|Denise||||0|0|0|||||||||
 9917982813502836|Ag Trader|supplement_grouping||||AGT||SHP+SPC|200|1|TEC|Annual|SS|Shop||1798281|100-P|30/06/2016|Ag_Trader|Denise|Serial supplement with different editions|||0|0|0|||||||||
 9917982663502836|Auckland City Harbour News|parent_grouping|||title_code|AHN||ED1|200|0|STA||PER|Auckland City Harbour News|2463-6789|1798266|100-P|30/06/2016|Auckland_City_Harbour_News|Denise||||0|0|0|||||||||
@@ -196,12 +196,12 @@ MMSID|title_parent|processing_type|processing_rule|processing_option|publication
 9917906003502836|The Press|supplement_grouping||||PRS||YWE|200|0|SUP||SS|Your weekend||1790600|200|27/05/2016|The_Press|Andrew R|Fairfax updated title code|||0|0|0|||||||||
 9918647057402836|The Press|parent_grouping|||title_code|PRS||TAB|200|0|TEC||PER|Homed|||||TBD||New title. Need missing pages. May be a continuation of At home (The Press)|||0|0|0|||||||||
 9918647057502836|Property weekly|parent_grouping|||title_code|PWM||ED1|200|0|TEC||PER|Property weekly|||||TBD||New title. Need missing pages|||0|0|0|||||||||
-9917975563502836|Mirror|parent_grouping|manual||title_code_edition_code|QCM||ED1|200|0|STC||PER|Mirror (Queenstown)||1797556|100-P|24/06/2016|Mirror|Jenny|This edition has largely same content as Queenstown, with a few pages specific to this edition, fairfax files only show specific otago ed pages.|||0|0|0|||||||||
-9917975673502836|Mirror|parent_grouping|manual||title_code_edition_code|QCM||ED2|200|0|STC||PER|Mirror (Central Otago)||1797567|100-P|24/06/2016|Mirror|Jenny|This edition has largely same content as Queenstown, with a few pages specific to this edition, fairfax files only show specific Wanaka ed pages.|||0|0|0|||||||||
-9917975753502836|Mirror|parent_grouping|manual||title_code_edition_code|QCM||ED3|200|0|STC||PER|Mirror (Wanaka)||1797575|100-P|24/06/2016|Mirror|Jenny|Advised JG - Too hard for this iteration because of the versioning/editions stuff 22/9/17|||0|0|0|||||||||
-9917975563502836|Mirror|parent_grouping|manual||title_code_edition_code|QUM||ED1|200|0|STC||PER|Mirror (Queenstown)||1797556|100-P|24/06/2016|Mirror|Jenny|This edition has largely same content as Queenstown, with a few pages specific to this edition, fairfax files only show specific otago ed pages.|||0|0|0|||||||||
-9917975673502836|Mirror|parent_grouping|manual||title_code_edition_code|QUM||ED2|200|0|STC||PER|Mirror (Central Otago)||1797567|100-P|24/06/2016|Mirror|Jenny|This edition has largely same content as Queenstown, with a few pages specific to this edition, fairfax files only show specific Wanaka ed pages.|||0|0|0|||||||||
-9917975753502836|Mirror|parent_grouping|manual||title_code_edition_code|QUM||ED3|200|0|STC||PER|Mirror (Wanaka)||1797575|100-P|24/06/2016|Mirror|Jenny|Advised JG - Too hard for this iteration because of the versioning/editions stuff 22/9/17|||0|0|0|||||||||
+9917975563502836|Mirror|parent_grouping|manual||title_code_section_code|QCM||ED1|200|0|STC||PER|Mirror (Queenstown)||1797556|100-P|24/06/2016|Mirror|Jenny|This edition has largely same content as Queenstown, with a few pages specific to this edition, fairfax files only show specific otago ed pages.|||0|0|0|||||||||
+9917975673502836|Mirror|parent_grouping|manual||title_code_section_code|QCM||ED2|200|0|STC||PER|Mirror (Central Otago)||1797567|100-P|24/06/2016|Mirror|Jenny|This edition has largely same content as Queenstown, with a few pages specific to this edition, fairfax files only show specific Wanaka ed pages.|||0|0|0|||||||||
+9917975753502836|Mirror|parent_grouping|manual||title_code_section_code|QCM||ED3|200|0|STC||PER|Mirror (Wanaka)||1797575|100-P|24/06/2016|Mirror|Jenny|Advised JG - Too hard for this iteration because of the versioning/editions stuff 22/9/17|||0|0|0|||||||||
+9917975563502836|Mirror|parent_grouping|manual||title_code_section_code|QUM||ED1|200|0|STC||PER|Mirror (Queenstown)||1797556|100-P|24/06/2016|Mirror|Jenny|This edition has largely same content as Queenstown, with a few pages specific to this edition, fairfax files only show specific otago ed pages.|||0|0|0|||||||||
+9917975673502836|Mirror|parent_grouping|manual||title_code_section_code|QUM||ED2|200|0|STC||PER|Mirror (Central Otago)||1797567|100-P|24/06/2016|Mirror|Jenny|This edition has largely same content as Queenstown, with a few pages specific to this edition, fairfax files only show specific Wanaka ed pages.|||0|0|0|||||||||
+9917975753502836|Mirror|parent_grouping|manual||title_code_section_code|QUM||ED3|200|0|STC||PER|Mirror (Wanaka)||1797575|100-P|24/06/2016|Mirror|Jenny|Advised JG - Too hard for this iteration because of the versioning/editions stuff 22/9/17|||0|0|0|||||||||
 9917966493502836|Rodney Times|parent_grouping|||title_code|RDT||ED1|200|0|STA||PER|Rodney Times|||||Rodney_Times||Fairfax updated title code|||0|0|0|||||||||
 9918150135402836|Visitor handbook : Central Districts Field Days|parent_grouping|||title_code|RLP||FDH|200|1|STA|Annual|PER|Visitor handbook : Central Districts Field Days||||9/06/2017|Central_Districts_Field_Days_Visitor_Handbook|Denise||||0|0|0|||||||||
 9917966493502836|Rodney Times|parent_grouping|||title_code|ROD||ED1|200|0|STA||PER|Rodney Times||1796649|100-P|17/06/2016|Rodney_Times|Denise||||0|0|0|||||||||

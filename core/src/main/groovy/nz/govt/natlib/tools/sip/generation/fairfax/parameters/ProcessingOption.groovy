@@ -7,7 +7,7 @@ import nz.govt.natlib.tools.sip.state.SipProcessingException
 enum ProcessingOption {
     AlphaBeforeNumericSequencing("alpha_before_numeric"),
     NumericBeforeAlphaSequencing("numeric_before_alpha"),
-    AnyFirstEditionCode("any_first_edition_code")
+    AnyFirstSectionCode("any_first_section_code")
 
     private static final Map<String, ProcessingOption> LOOKUP_BY_FIELD_VALUE = [ : ]
     private static final Map<ProcessingOption, List<ProcessingOption>> OVERRIDES_MAP = [ : ]

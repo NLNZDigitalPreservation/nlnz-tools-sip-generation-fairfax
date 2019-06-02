@@ -35,7 +35,7 @@ class FairfaxFileTest {
 
         assertThat("Filename extracted correctly", testFairfaxFile.filename, is(originalFilename))
         assertThat("TitleCode parsed correctly", testFairfaxFile.titleCode, is("TST"))
-        assertThat("EditionCode parsed correctly", testFairfaxFile.editionCode, is("ED1"))
+        assertThat("SectionCode parsed correctly", testFairfaxFile.sectionCode, is("ED1"))
         assertNotNull("Year extracted", testFairfaxFile.dateYear)
         assertThat("dateYear parsed correctly", testFairfaxFile.dateYear, is(new Integer(2018)))
         assertThat("dateMonthOfYear parsed correctly", testFairfaxFile.dateMonthOfYear, is(new Integer(10)))
@@ -56,7 +56,7 @@ class FairfaxFileTest {
 
         assertThat("filename extracted correctly", testFairfaxFile.filename, is(originalFilename))
         assertThat("TitleCode parsed correctly", testFairfaxFile.titleCode, is("t20"))
-        assertThat("EditionCode parsed correctly", testFairfaxFile.editionCode, is("ABC"))
+        assertThat("SectionCode parsed correctly", testFairfaxFile.sectionCode, is("ABC"))
         assertThat("dateYear parsed correctly", testFairfaxFile.dateYear, is(new Integer(2018)))
         assertThat("dateMonthOfYear parsed correctly", testFairfaxFile.dateMonthOfYear, is(new Integer(10)))
         assertThat("dateDayOfMonth parsed correctly", testFairfaxFile.dateDayOfMonth, is(new Integer(22)))
@@ -75,7 +75,7 @@ class FairfaxFileTest {
 
         assertThat("Filename extracted correctly", testFairfaxFile.filename, is(originalFilename))
         assertThat("TitleCode parsed correctly", testFairfaxFile.titleCode, is("TST"))
-        assertThat("EditionCode parsed correctly", testFairfaxFile.editionCode, is("ED1"))
+        assertThat("SectionCode parsed correctly", testFairfaxFile.sectionCode, is("ED1"))
         assertNotNull("Year extracted", testFairfaxFile.dateYear)
         assertThat("dateYear parsed correctly", testFairfaxFile.dateYear, is(new Integer(2018)))
         assertThat("dateMonthOfYear parsed correctly", testFairfaxFile.dateMonthOfYear, is(new Integer(10)))
@@ -96,7 +96,7 @@ class FairfaxFileTest {
 
         assertThat("Filename extracted correctly", testFairfaxFile.filename, is(originalFilename))
         assertThat("TitleCode parsed correctly", testFairfaxFile.titleCode, is("TST"))
-        assertThat("EditionCode parsed correctly", testFairfaxFile.editionCode, is("ED1"))
+        assertThat("SectionCode parsed correctly", testFairfaxFile.sectionCode, is("ED1"))
         assertNotNull("Year extracted", testFairfaxFile.dateYear)
         assertThat("dateYear parsed correctly", testFairfaxFile.dateYear, is(new Integer(2018)))
         assertThat("dateMonthOfYear parsed correctly", testFairfaxFile.dateMonthOfYear, is(new Integer(10)))
@@ -117,7 +117,7 @@ class FairfaxFileTest {
 
         assertThat("Filename extracted correctly", testFairfaxFile.filename, is(originalFilename))
         assertThat("TitleCode parsed correctly", testFairfaxFile.titleCode, is("TST"))
-        assertThat("EditionCode parsed correctly", testFairfaxFile.editionCode, is("ED1"))
+        assertThat("SectionCode parsed correctly", testFairfaxFile.sectionCode, is("ED1"))
         assertNotNull("Year extracted", testFairfaxFile.dateYear)
         assertThat("dateYear parsed correctly", testFairfaxFile.dateYear, is(new Integer(2018)))
         assertThat("dateMonthOfYear parsed correctly", testFairfaxFile.dateMonthOfYear, is(new Integer(10)))
@@ -138,7 +138,7 @@ class FairfaxFileTest {
 
         assertThat("Filename extracted correctly", testFairfaxFile.filename, is(originalFilename))
         assertThat("TitleCode parsed correctly", testFairfaxFile.titleCode, is("JAZZ"))
-        assertThat("EditionCode parsed correctly", testFairfaxFile.editionCode, is("ED1"))
+        assertThat("SectionCode parsed correctly", testFairfaxFile.sectionCode, is("ED1"))
         assertNotNull("Year extracted", testFairfaxFile.dateYear)
         assertThat("dateYear parsed correctly", testFairfaxFile.dateYear, is(new Integer(2018)))
         assertThat("dateMonthOfYear parsed correctly", testFairfaxFile.dateMonthOfYear, is(new Integer(10)))
@@ -151,7 +151,7 @@ class FairfaxFileTest {
     }
 
     @Test
-    void createsCorrectlyWithTwoCharacterEditionCode() {
+    void createsCorrectlyWithTwoCharacterSectionCode() {
         String originalFilename = "TSTAB-20181022-B024a qualifier.pDf"
         when(mockFile.getName()).thenReturn(originalFilename)
 
@@ -159,7 +159,7 @@ class FairfaxFileTest {
 
         assertThat("Filename extracted correctly", testFairfaxFile.filename, is(originalFilename))
         assertThat("TitleCode parsed correctly", testFairfaxFile.titleCode, is("TST"))
-        assertThat("EditionCode parsed correctly", testFairfaxFile.editionCode, is("AB"))
+        assertThat("SectionCode parsed correctly", testFairfaxFile.sectionCode, is("AB"))
         assertNotNull("Year extracted", testFairfaxFile.dateYear)
         assertThat("dateYear parsed correctly", testFairfaxFile.dateYear, is(new Integer(2018)))
         assertThat("dateMonthOfYear parsed correctly", testFairfaxFile.dateMonthOfYear, is(new Integer(10)))
@@ -180,7 +180,7 @@ class FairfaxFileTest {
 
         assertThat("filename extracted correctly", testFairfaxFile.filename, is(originalFilename))
         assertThat("TitleCode parsed correctly", testFairfaxFile.titleCode, is("t20"))
-        assertThat("EditionCode parsed correctly", testFairfaxFile.editionCode, is("ABC"))
+        assertThat("SectionCode parsed correctly", testFairfaxFile.sectionCode, is("ABC"))
         assertThat("dateYear parsed correctly", testFairfaxFile.dateYear, is(new Integer(2018)))
         assertThat("dateMonthOfYear parsed correctly", testFairfaxFile.dateMonthOfYear, is(new Integer(10)))
         assertThat("dateDayOfMonth parsed correctly", testFairfaxFile.dateDayOfMonth, is(new Integer(22)))
@@ -398,7 +398,7 @@ class FairfaxFileTest {
     }
 
     @Test
-    void correctlyFiltersSubstitutesAndSortsOnFirstEditionCode() {
+    void correctlyFiltersSubstitutesAndSortsOnFirstSectionCode() {
         File file1 = new File("NAMed1-20180131-A01.pdf")
         File file2 = new File("NAMed1-20180131-A02.pdf")
         File file3 = new File("NAMed1-20180131-A03.pdf")
@@ -430,7 +430,7 @@ class FairfaxFileTest {
         FairfaxFile fairfaxFile14 = new FairfaxFile(file14)
 
         FairfaxProcessingParameters processingParameters = new FairfaxProcessingParameters(currentEdition: "ed1",
-                editionDiscriminators: [ "ed1", "ed2", "ed3" ], editionCodes: [ "ed1", "TWO", "FEE" ])
+                editionDiscriminators: [ "ed1", "ed2", "ed3" ], sectionCodes: [ "ed1", "TWO", "FEE" ])
 
         List<FairfaxFile> original = [ fairfaxFile14, fairfaxFile13, fairfaxFile12, fairfaxFile11, fairfaxFile10,
                                        fairfaxFile9, fairfaxFile8, fairfaxFile7, fairfaxFile6, fairfaxFile5,
@@ -444,7 +444,7 @@ class FairfaxFileTest {
     }
 
     @Test
-    void correctlyFiltersSubstitutesAndSortsWithSecondEditionCode() {
+    void correctlyFiltersSubstitutesAndSortsWithSecondSectionCode() {
         File file1 = new File("NAMed1-20180131-A01.pdf")
         File file2 = new File("NAMed1-20180131-A02.pdf")
         File file3 = new File("NAMed1-20180131-A03.pdf")
@@ -476,7 +476,7 @@ class FairfaxFileTest {
         FairfaxFile fairfaxFile14 = new FairfaxFile(file14)
 
         FairfaxProcessingParameters processingParameters = new FairfaxProcessingParameters(currentEdition: "ed2",
-                editionDiscriminators: [ "ed1", "ed2", "ed3" ], editionCodes: [ "ed1", "TWO", "FEE" ])
+                editionDiscriminators: [ "ed1", "ed2", "ed3" ], sectionCodes: [ "ed1", "TWO", "FEE" ])
 
         List<FairfaxFile> original = [ fairfaxFile14, fairfaxFile13, fairfaxFile12, fairfaxFile11, fairfaxFile10,
                                        fairfaxFile9, fairfaxFile8, fairfaxFile7, fairfaxFile6, fairfaxFile5,
@@ -490,7 +490,7 @@ class FairfaxFileTest {
     }
 
     @Test
-    void correctlyFiltersSubstitutesAndSortsWithSecondEditionCodeAndAlphaBeforeNumeric() {
+    void correctlyFiltersSubstitutesAndSortsWithSecondSectionCodeAndAlphaBeforeNumeric() {
         File file1 = new File("NAMed1-20180131-A01.pdf")
         File file2 = new File("NAMed1-20180131-A02.pdf")
         File file3 = new File("NAMed1-20180131-A03.pdf")
@@ -522,7 +522,7 @@ class FairfaxFileTest {
         FairfaxFile fairfaxFile14 = new FairfaxFile(file14)
 
         FairfaxProcessingParameters processingParameters = new FairfaxProcessingParameters(currentEdition: "ed2",
-                editionDiscriminators: [ "ed1", "ed2", "ed3" ], editionCodes: [ "ed1", "TWO", "FEE" ],
+                editionDiscriminators: [ "ed1", "ed2", "ed3" ], sectionCodes: [ "ed1", "TWO", "FEE" ],
                 processingOptions: [ ProcessingOption.AlphaBeforeNumericSequencing ] )
 
         List<FairfaxFile> original = [ fairfaxFile14, fairfaxFile13, fairfaxFile12, fairfaxFile11, fairfaxFile10,
@@ -567,7 +567,7 @@ class FairfaxFileTest {
         FairfaxFile fairfaxFile14 = new FairfaxFile(file14)
 
         FairfaxProcessingParameters processingParameters = new FairfaxProcessingParameters(currentEdition: "ed3",
-                editionDiscriminators: [ "ed1", "ed2", "ed3" ], editionCodes: [ "ed1", "TWO", "FEE" ])
+                editionDiscriminators: [ "ed1", "ed2", "ed3" ], sectionCodes: [ "ed1", "TWO", "FEE" ])
 
         List<FairfaxFile> original = [ fairfaxFile14, fairfaxFile13, fairfaxFile12, fairfaxFile11,
                                        fairfaxFile9, fairfaxFile8, fairfaxFile7, fairfaxFile6, fairfaxFile5,

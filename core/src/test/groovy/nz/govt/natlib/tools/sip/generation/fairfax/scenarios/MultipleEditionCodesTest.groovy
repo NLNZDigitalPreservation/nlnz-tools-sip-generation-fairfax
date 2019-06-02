@@ -63,7 +63,7 @@ class MultipleEditionCodesTest {
     @Ignore
     void correctlyAssembleSipFromFilesOnFilesystem() {
         boolean forLocalFilesystem = true
-        TestHelper.initializeTestMethod(testMethodState, "MultipleEditionCodesTest-", forLocalFilesystem)
+        TestHelper.initializeTestMethod(testMethodState, "MultipleSectionCodesTest-", forLocalFilesystem)
 
         // TODO A more complicated pattern -- date and other masks?
         boolean isRegexNotGlob = true
@@ -78,7 +78,7 @@ class MultipleEditionCodesTest {
     @Test
     void correctlyAssembleSipFromFiles() {
         boolean forLocalFilesystem = false
-        TestHelper.initializeTestMethod(testMethodState, "MultipleEditionCodesTest-", forLocalFilesystem)
+        TestHelper.initializeTestMethod(testMethodState, "MultipleSectionCodesTest-", forLocalFilesystem)
 
         // TODO A more complicated pattern -- date and other masks?
         boolean isRegexNotGlob = true
@@ -97,7 +97,7 @@ class MultipleEditionCodesTest {
         FairfaxProcessingParameters processingParameters = FairfaxProcessingParameters.build("TST",
                 ProcessingType.ParentGrouping, processingDate, testMethodState.fairfaxSpreadsheet)
 
-        assertThat("Multiple edition codes: 'PB1', 'BOO', 'ZOO', 'AAT'", processingParameters.editionCodes,
+        assertThat("Multiple section codes: 'PB1', 'BOO', 'ZOO', 'AAT'", processingParameters.sectionCodes,
                 is([ 'PB1', 'BOO', 'ZOO', 'AAT' ]))
 
         processingParameters.sipProcessingState = testMethodState.sipProcessingState

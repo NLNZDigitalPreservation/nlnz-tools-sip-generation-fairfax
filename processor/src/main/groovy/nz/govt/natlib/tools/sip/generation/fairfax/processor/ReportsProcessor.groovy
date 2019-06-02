@@ -26,15 +26,15 @@ class ReportsProcessor {
         // Clear the set of recognized and unrecognized names before processing begins
         recognizedTitleCodes = []
         unrecognizedTitleCodes = []
-        Set<FairfaxFileTitleEditionKey> recognizedTitleCodeEditionCodes = []
-        Set<FairfaxFileTitleEditionKey> unrecognizedTitleCodeEditionCodes = []
+        Set<FairfaxFileTitleEditionKey> recognizedTitleCodeSectionCodes = []
+        Set<FairfaxFileTitleEditionKey> unrecognizedTitleCodeSectionCodes = []
         Set<File> invalidFiles = []
 
         log.info("sourceFolder=${processorConfiguration.sourceFolder}")
 
         FairfaxSpreadsheet fairfaxSpreadsheet = FairfaxSpreadsheet.defaultInstance()
         Set<String> allNameKeys = fairfaxSpreadsheet.allTitleCodeKeys
-        Set<FairfaxFileTitleEditionKey> allNameEditionKeys = fairfaxSpreadsheet.allTitleCodeEditionCodeKeys
+        Set<FairfaxFileTitleEditionKey> allNameEditionKeys = fairfaxSpreadsheet.allTitleCodeSectionCodeKeys
 
         boolean isRegexNotGlob = true
         boolean matchFilenameOnly = true
@@ -61,16 +61,16 @@ class ReportsProcessor {
                     }
                 }
                 FairfaxFileTitleEditionKey fairfaxFileTitleEditionKey = new FairfaxFileTitleEditionKey(
-                        titleCode: fairfaxFile.titleCode, editionCode: fairfaxFile.editionCode)
+                        titleCode: fairfaxFile.titleCode, sectionCode: fairfaxFile.sectionCode)
                 if (allNameEditionKeys.contains(fairfaxFileTitleEditionKey)) {
-                    if (!recognizedTitleCodeEditionCodes.contains(fairfaxFileTitleEditionKey)) {
-                        recognizedTitleCodeEditionCodes.add(fairfaxFileTitleEditionKey)
-                        log.info("listFiles adding recognizedTitleCodeEditionCodes=${fairfaxFileTitleEditionKey}")
+                    if (!recognizedTitleCodeSectionCodes.contains(fairfaxFileTitleEditionKey)) {
+                        recognizedTitleCodeSectionCodes.add(fairfaxFileTitleEditionKey)
+                        log.info("listFiles adding recognizedTitleCodeSectionCodes=${fairfaxFileTitleEditionKey}")
                     }
                 } else {
-                    if (!unrecognizedTitleCodeEditionCodes.contains(fairfaxFileTitleEditionKey)) {
-                        unrecognizedTitleCodeEditionCodes.add(fairfaxFileTitleEditionKey)
-                        log.info("listFiles adding unrecognizedTitleCodeEditionCodes=${fairfaxFileTitleEditionKey}")
+                    if (!unrecognizedTitleCodeSectionCodes.contains(fairfaxFileTitleEditionKey)) {
+                        unrecognizedTitleCodeSectionCodes.add(fairfaxFileTitleEditionKey)
+                        log.info("listFiles adding unrecognizedTitleCodeSectionCodes=${fairfaxFileTitleEditionKey}")
                     }
                 }
             } else {
@@ -80,8 +80,8 @@ class ReportsProcessor {
             if (previousFile != null) {
                 if (previousFile.titleCode != fairfaxFile.titleCode) {
                     println("* * * CHANGE OF PREFIX * * *")
-                } else if (previousFile.editionCode != fairfaxFile.editionCode) {
-                    println("* * * CHANGE OF EDITION * * *")
+                } else if (previousFile.sectionCode != fairfaxFile.sectionCode) {
+                    println("* * * CHANGE OF SECTION * * *")
                 } else if (previousFile.dateYear != fairfaxFile.dateYear &&
                         previousFile.dateMonthOfYear != fairfaxFile.dateMonthOfYear &&
                         previousFile.dateDayOfMonth != fairfaxFile.dateDayOfMonth) {
@@ -99,8 +99,8 @@ class ReportsProcessor {
             log.info("    ${recognizedName}")
         }
         log.info("* * * *")
-        log.info("Recognized titleCodes and editionCodes:")
-        recognizedTitleCodeEditionCodes.each { FairfaxFileTitleEditionKey fairfaxFileNameEditionKey ->
+        log.info("Recognized titleCodes and sectionCodes:")
+        recognizedTitleCodeSectionCodes.each { FairfaxFileTitleEditionKey fairfaxFileNameEditionKey ->
             log.info("    ${fairfaxFileNameEditionKey}")
         }
         log.info("* * * *")
@@ -109,8 +109,8 @@ class ReportsProcessor {
             log.info("    ${recognizedName}")
         }
         log.info("* * * *")
-        log.info("UNRECOGNIZED titleCodes and editionCodes:")
-        unrecognizedTitleCodeEditionCodes.each { FairfaxFileTitleEditionKey fairfaxFileNameEditionKey ->
+        log.info("UNRECOGNIZED titleCodes and sectionCodes:")
+        unrecognizedTitleCodeSectionCodes.each { FairfaxFileTitleEditionKey fairfaxFileNameEditionKey ->
             log.info("    ${fairfaxFileNameEditionKey}")
         }
         log.info("* * * *")
@@ -131,8 +131,8 @@ class ReportsProcessor {
         // Clear the set of recognized and unrecognized names before processing begins
         recognizedTitleCodes = []
         unrecognizedTitleCodes = []
-        Set<FairfaxFileTitleEditionKey> recognizedTitleCodeEditionCodes = []
-        Set<FairfaxFileTitleEditionKey> unrecognizedTitleCodeEditionCodes = []
+        Set<FairfaxFileTitleEditionKey> recognizedTitleCodeSectionCodes = []
+        Set<FairfaxFileTitleEditionKey> unrecognizedTitleCodeSectionCodes = []
         Set<File> invalidFiles = []
         List<Tuple2<LocalDate, Integer>> totalsByDateList = [ ]
 
@@ -140,7 +140,7 @@ class ReportsProcessor {
 
         FairfaxSpreadsheet fairfaxSpreadsheet = FairfaxSpreadsheet.defaultInstance()
         Set<String> allNameKeys = fairfaxSpreadsheet.allTitleCodeKeys
-        Set<FairfaxFileTitleEditionKey> allNameEditionKeys = fairfaxSpreadsheet.allTitleCodeEditionCodeKeys
+        Set<FairfaxFileTitleEditionKey> allNameEditionKeys = fairfaxSpreadsheet.allTitleCodeSectionCodeKeys
 
         boolean isRegexNotGlob = true
         boolean matchFilenameOnly = true
@@ -164,16 +164,16 @@ class ReportsProcessor {
                     }
                 }
                 FairfaxFileTitleEditionKey fairfaxFileTitleEditionKey = new FairfaxFileTitleEditionKey(
-                        titleCode: fairfaxFile.titleCode, editionCode: fairfaxFile.editionCode)
+                        titleCode: fairfaxFile.titleCode, sectionCode: fairfaxFile.sectionCode)
                 if (allNameEditionKeys.contains(fairfaxFileTitleEditionKey)) {
-                    if (!recognizedTitleCodeEditionCodes.contains(fairfaxFileTitleEditionKey)) {
-                        recognizedTitleCodeEditionCodes.add(fairfaxFileTitleEditionKey)
-                        //log.info("listFiles adding recognizedTitleCodeEditionCodes=${fairfaxFileTitleEditionKey}")
+                    if (!recognizedTitleCodeSectionCodes.contains(fairfaxFileTitleEditionKey)) {
+                        recognizedTitleCodeSectionCodes.add(fairfaxFileTitleEditionKey)
+                        //log.info("listFiles adding recognizedTitleCodeSectionCodes=${fairfaxFileTitleEditionKey}")
                     }
                 } else {
-                    if (!unrecognizedTitleCodeEditionCodes.contains(fairfaxFileTitleEditionKey)) {
-                        unrecognizedTitleCodeEditionCodes.add(fairfaxFileTitleEditionKey)
-                        //log.info("listFiles adding unrecognizedTitleCodeEditionCodes=${fairfaxFileTitleEditionKey}")
+                    if (!unrecognizedTitleCodeSectionCodes.contains(fairfaxFileTitleEditionKey)) {
+                        unrecognizedTitleCodeSectionCodes.add(fairfaxFileTitleEditionKey)
+                        //log.info("listFiles adding unrecognizedTitleCodeSectionCodes=${fairfaxFileTitleEditionKey}")
                     }
                 }
 
@@ -205,10 +205,10 @@ class ReportsProcessor {
             logAndAppend(summaryTextBuilder, "${recognizedName}")
         }
         log.info("* * * *")
-        logAndAppend(summaryTextBuilder, "Recognized titleCode/editionCode:")
-        recognizedTitleCodeEditionCodes.each { FairfaxFileTitleEditionKey fairfaxFileNameEditionKey ->
+        logAndAppend(summaryTextBuilder, "Recognized titleCode/sectionCode:")
+        recognizedTitleCodeSectionCodes.each { FairfaxFileTitleEditionKey fairfaxFileNameEditionKey ->
             logAndAppend(summaryTextBuilder, "${fairfaxFileNameEditionKey.titleCode}/" +
-                    "${fairfaxFileNameEditionKey.editionCode}")
+                    "${fairfaxFileNameEditionKey.sectionCode}")
         }
         log.info("* * * *")
         logAndAppend(summaryTextBuilder, "UNRECOGNIZED titleCodes:")
@@ -216,10 +216,10 @@ class ReportsProcessor {
             logAndAppend(summaryTextBuilder, "${recognizedName}")
         }
         log.info("* * * *")
-        logAndAppend(summaryTextBuilder, "UNRECOGNIZED titleCode/editionCode:")
-        unrecognizedTitleCodeEditionCodes.each { FairfaxFileTitleEditionKey fairfaxFileNameEditionKey ->
+        logAndAppend(summaryTextBuilder, "UNRECOGNIZED titleCode/sectionCode:")
+        unrecognizedTitleCodeSectionCodes.each { FairfaxFileTitleEditionKey fairfaxFileNameEditionKey ->
             logAndAppend(summaryTextBuilder, "${fairfaxFileNameEditionKey.titleCode}/" +
-                    "${fairfaxFileNameEditionKey.editionCode}")
+                    "${fairfaxFileNameEditionKey.sectionCode}")
         }
         log.info("* * * *")
         logAndAppend(summaryTextBuilder, "INVALID files:")

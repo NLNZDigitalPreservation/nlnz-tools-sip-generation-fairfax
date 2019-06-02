@@ -15,23 +15,23 @@ import java.time.format.DateTimeFormatter
 import java.util.regex.Matcher
 
 @Canonical
-@Sortable(includes = ['titleCode', 'editionCode', 'dateYear', 'dateMonthOfYear', 'dateDayOfMonth', 'sequenceLetter',
+@Sortable(includes = ['titleCode', 'sectionCode', 'dateYear', 'dateMonthOfYear', 'dateDayOfMonth', 'sequenceLetter',
         'sequenceNumber', 'qualifier' ])
 @ToString(includeNames=true, includePackage=false, excludes=[ ])
 @EqualsAndHashCode(excludes = [ 'file', 'filename', 'qualifier', 'sequenceNumberString', 'validForProcessing', 'validPdf' ])
 @Slf4j
 class FairfaxFile {
     // Note that the titleCode appears to be, in some cases 4 characters long (eg. JAZZTAB), but for most cases it is 3.
-    // The populate() method attempts to correct any issues with the titleCode/editionCode grouping.
+    // The populate() method attempts to correct any issues with the titleCode/sectionCode grouping.
     // Note that the pdf extension can be upper or lower case (and we handle the mixed case as well
-    static String REGEX_PATTERN = "(?<titleCode>[a-zA-Z0-9]{3,4})(?<editionCode>[a-zA-Z0-9]{2,3})-(?<date>\\d{8})-" +
+    static String REGEX_PATTERN = "(?<titleCode>[a-zA-Z0-9]{3,4})(?<sectionCode>[a-zA-Z0-9]{2,3})-(?<date>\\d{8})-" +
             "(?<sequenceLetter>[A-Za-z]{0,2})(?<sequenceNumber>\\d{1,4})(?<qualifier>.*?)\\.[pP]{1}[dD]{1}[fF]{1}"
     static final DateTimeFormatter LOCAL_DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyyMMdd")
 
     File file
     String filename
     String titleCode
-    String editionCode
+    String sectionCode
     Integer dateYear
     Integer dateMonthOfYear
     Integer dateDayOfMonth
@@ -53,44 +53,44 @@ class FairfaxFile {
         return differences
     }
 
-    static Set<String> allEditionCodes(List<FairfaxFile> files) {
-        Set<String> editionCodes = [ ]
+    static Set<String> allSectionCodes(List<FairfaxFile> files) {
+        Set<String> sectionCodes = [ ]
         files.each { FairfaxFile fairfaxFile ->
-            if (fairfaxFile.editionCode != null && !fairfaxFile.editionCode.isEmpty()) {
-                editionCodes.add(fairfaxFile.editionCode)
+            if (fairfaxFile.sectionCode != null && !fairfaxFile.sectionCode.isEmpty()) {
+                sectionCodes.add(fairfaxFile.sectionCode)
             }
         }
-        return editionCodes
+        return sectionCodes
     }
 
-    // The assumption here is that the list of files is only different in editionCode, sequenceLetter, sequenceNumber
+    // The assumption here is that the list of files is only different in sectionCode, sequenceLetter, sequenceNumber
     // and qualifier.
-    // Except in the case of a substitution, where the original editionCode and the substitute editionCode are treated
+    // Except in the case of a substitution, where the original sectionCode and the substitute sectionCode are treated
     // as if they are the same.
     static List<FairfaxFile> sortWithSameTitleCodeAndDate(List<FairfaxFile> files,
                                                           FairfaxProcessingParameters processingParameters) {
-        // FIRST: Order by editionCode as per processingParameters
-        Map<String, List<FairfaxFile>> filesByEdition = [ : ]
-        processingParameters.editionCodes.each { String editionCode ->
-            List<FairfaxFile> editionFiles = [ ]
-            filesByEdition.put(editionCode, editionFiles)
+        // FIRST: Order by sectionCode as per processingParameters
+        Map<String, List<FairfaxFile>> filesBySection = [ : ]
+        processingParameters.sectionCodes.each { String sectionCode ->
+            List<FairfaxFile> sectionFiles = [ ]
+            filesBySection.put(sectionCode, sectionFiles)
             files.each { FairfaxFile fairfaxFile ->
-                if (editionCode == fairfaxFile.editionCode ||
-                        processingParameters.matchesCurrentEdition(editionCode, fairfaxFile.editionCode)) {
-                    editionFiles.add(fairfaxFile)
+                if (sectionCode == fairfaxFile.sectionCode ||
+                        processingParameters.matchesCurrentSection(sectionCode, fairfaxFile.sectionCode)) {
+                    sectionFiles.add(fairfaxFile)
                 }
             }
         }
-        // NEXT: Sort each editionCode by numberAndAlpha
+        // NEXT: Sort each sectionCode by numberAndAlpha
         boolean alphaBeforeNumeric = processingParameters.processingOptions.contains(ProcessingOption.AlphaBeforeNumericSequencing)
-        processingParameters.editionCodes.each { String editionCode ->
-            List<FairfaxFile> editionFiles = filesByEdition.get(editionCode)
-            editionFiles = sortNumericAndAlpha(editionFiles, alphaBeforeNumeric)
-            filesByEdition.put(editionCode, editionFiles)
+        processingParameters.sectionCodes.each { String sectionCode ->
+            List<FairfaxFile> sectionFiles = filesBySection.get(sectionCode)
+            sectionFiles = sortNumericAndAlpha(sectionFiles, alphaBeforeNumeric)
+            filesBySection.put(sectionCode, sectionFiles)
         }
         List<FairfaxFile> sorted = [ ]
-        processingParameters.editionCodes.each { String editionCode ->
-            sorted.addAll(filesByEdition.get(editionCode))
+        processingParameters.sectionCodes.each { String sectionCode ->
+            sorted.addAll(filesBySection.get(sectionCode))
         }
         if (sorted.size() != files.size()) {
             log.warn("Not all sorted files exist in final list, differences=${differences(sorted, files)}")
@@ -98,21 +98,21 @@ class FairfaxFile {
         return sorted
     }
 
-    static FairfaxFile substituteFor(String sourceEditionCode, String replacementEditionCode, FairfaxFile fairfaxFile,
+    static FairfaxFile substituteFor(String sourceSectionCode, String replacementSectionCode, FairfaxFile fairfaxFile,
                                        List<FairfaxFile> possibleFiles) {
-        if (fairfaxFile.editionCode == sourceEditionCode) {
+        if (fairfaxFile.sectionCode == sourceSectionCode) {
             FairfaxFile replacementFile = possibleFiles.find { FairfaxFile candidateFile ->
-                if (candidateFile.editionCode == replacementEditionCode) {
+                if (candidateFile.sectionCode == replacementSectionCode) {
                     candidateFile.canSubstituteFor(fairfaxFile)
                 } else {
                     false
                 }
             }
             return replacementFile == null ? fairfaxFile : replacementFile
-        } else if (fairfaxFile.editionCode == replacementEditionCode) {
+        } else if (fairfaxFile.sectionCode == replacementSectionCode) {
             // We add it if the substitution does not exist (in other words, the substitute doesn't map to the source
             FairfaxFile replacementFile = possibleFiles.find { FairfaxFile candidateFile ->
-                if (candidateFile.editionCode == sourceEditionCode) {
+                if (candidateFile.sectionCode == sourceSectionCode) {
                     candidateFile.canSubstituteFor(fairfaxFile)
                 } else {
                     false
@@ -124,15 +124,15 @@ class FairfaxFile {
         }
     }
 
-    static List<FairfaxFile> substituteAllFor(String sourceEditionCode, String replacementEditionCode,
-                                                         List<String> allEditionCodes, List<FairfaxFile> possibleFiles) {
+    static List<FairfaxFile> substituteAllFor(String sourceSectionCode, String replacementSectionCode,
+                                                         List<String> allSectionCodes, List<FairfaxFile> possibleFiles) {
         List<FairfaxFile> substituted = []
-        List<String> otherEditionCodes = allEditionCodes.findAll { String editionCode ->
-            editionCode != sourceEditionCode && editionCode != replacementEditionCode
+        List<String> otherSectionCodes = allSectionCodes.findAll { String sectionCode ->
+            sectionCode != sourceSectionCode && sectionCode != replacementSectionCode
         }
         possibleFiles.each { FairfaxFile fairfaxFile ->
-            if (!otherEditionCodes.contains(fairfaxFile.editionCode)) {
-                FairfaxFile replacementFile = substituteFor(sourceEditionCode, replacementEditionCode, fairfaxFile,
+            if (!otherSectionCodes.contains(fairfaxFile.sectionCode)) {
+                FairfaxFile replacementFile = substituteFor(sourceSectionCode, replacementSectionCode, fairfaxFile,
                         possibleFiles)
                 if (replacementFile != null) {
                     substituted.add(replacementFile)
@@ -142,15 +142,15 @@ class FairfaxFile {
         return substituted
     }
 
-    static boolean hasSubstitutions(String replacementEditionCode, List<FairfaxFile> possibleFiles) {
+    static boolean hasSubstitutions(String replacementSectionCode, List<FairfaxFile> possibleFiles) {
         return possibleFiles.any { FairfaxFile fairfaxFile ->
-            fairfaxFile.editionCode == replacementEditionCode
+            fairfaxFile.sectionCode == replacementSectionCode
         }
     }
 
-    static List<FairfaxFile> filterAllFor(List<String> editionCodes, List<FairfaxFile> possibleFiles) {
+    static List<FairfaxFile> filterAllFor(List<String> sectionCodes, List<FairfaxFile> possibleFiles) {
         List<FairfaxFile> filtered = possibleFiles.findAll { FairfaxFile fairfaxFile ->
-            editionCodes.contains(fairfaxFile.editionCode)
+            sectionCodes.contains(fairfaxFile.sectionCode)
         }
         if (possibleFiles.size() != filtered.size()) {
             log.warn("Not all filtered files exist in final list, differences=${differences(possibleFiles, filtered)}")
@@ -161,10 +161,9 @@ class FairfaxFile {
     static List<FairfaxFile> filterSubstituteAndSort(FairfaxProcessingParameters processingParameters,
                                                      List<FairfaxFile> allPossibleFiles) {
         List<FairfaxFile> filteredSubstitutedAndSorted
-        // TODO Need to be able to add in extra edition substitutions.
         if (processingParameters.currentEdition != null && !processingParameters.editionDiscriminators.isEmpty()) {
             // First we filter so we only have the files we want to process
-            List<FairfaxFile> filtered = filterAllFor(processingParameters.validEditionCodes(), allPossibleFiles)
+            List<FairfaxFile> filtered = filterAllFor(processingParameters.validSectionCodes(), allPossibleFiles)
             // Then we do the substitutions
             // Substitutions happen if the FIRST editionDiscriminator has a substitution with the same date/sequenceLetter/sequenceNumber
             String firstDiscriminatorCode = processingParameters.editionDiscriminators.first()
@@ -184,10 +183,10 @@ class FairfaxFile {
         return filteredSubstitutedAndSorted
     }
 
-    // The assumption is that all these files share the same: title_code, edition_code and date
+    // The assumption is that all these files share the same: title_code, section_code and date
     static List<FairfaxFile> sortNumericAndAlpha(List<FairfaxFile> files, boolean alphaBeforeNumeric = false) {
         List<FairfaxFile> sorted = files.sort() { FairfaxFile file1, FairfaxFile file2 ->
-            // TODO Not taking into account editionCode (or date, for that matter)
+            // TODO Not taking into account sectionCode (or date, for that matter)
             if (alphaBeforeNumeric) {
                 if (file1.sequenceLetter.isEmpty()) {
                     if (file2.sequenceLetter.isEmpty()) {
@@ -244,10 +243,10 @@ class FairfaxFile {
         Matcher matcher = filename =~ /${REGEX_PATTERN}/
         if (matcher.matches()) {
             this.titleCode = matcher.group('titleCode')
-            this.editionCode = matcher.group('editionCode')
+            this.sectionCode = matcher.group('sectionCode')
             // In some situations the titleCode will take too many characters
-            if ((this.titleCode.length() == 4) && (this.editionCode.length() == 2)) {
-                this.editionCode = "${this.titleCode.substring(3, 4)}${this.editionCode}"
+            if ((this.titleCode.length() == 4) && (this.sectionCode.length() == 2)) {
+                this.sectionCode = "${this.titleCode.substring(3, 4)}${this.sectionCode}"
                 this.titleCode = this.titleCode.substring(0, 3)
              }
             String dateString = matcher.group('date')
@@ -263,19 +262,19 @@ class FairfaxFile {
     }
 
     boolean isValidName() {
-        return this.file != null && this.titleCode != null && this.editionCode != null && this.dateYear != null &&
+        return this.file != null && this.titleCode != null && this.sectionCode != null && this.dateYear != null &&
                 this.dateMonthOfYear != null && this.dateDayOfMonth != null && this.sequenceNumber != null
     }
 
     boolean matches(FairfaxFile fairfaxFile) {
-        return this.matches(fairfaxFile.titleCode, fairfaxFile.editionCode, fairfaxFile.dateYear, fairfaxFile.dateMonthOfYear,
+        return this.matches(fairfaxFile.titleCode, fairfaxFile.sectionCode, fairfaxFile.dateYear, fairfaxFile.dateMonthOfYear,
             fairfaxFile.dateDayOfMonth)
     }
 
-    boolean matches(String comparisonTitleCode, String comparisonEditionCode, Integer comparisonYear,
+    boolean matches(String comparisonTitleCode, String comparisonSectionCode, Integer comparisonYear,
                     Integer comparisonMonthOfYear, Integer comparisonDayOfMonth) {
         if (isValidName()) {
-            if (this.titleCode == comparisonTitleCode && this.editionCode == comparisonEditionCode) {
+            if (this.titleCode == comparisonTitleCode && this.sectionCode == comparisonSectionCode) {
                 return (this.dateYear == comparisonYear && this.dateMonthOfYear == comparisonMonthOfYear &&
                         this.dateDayOfMonth == comparisonDayOfMonth)
             } else {

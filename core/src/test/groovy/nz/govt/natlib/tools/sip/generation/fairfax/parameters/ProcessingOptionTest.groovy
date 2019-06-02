@@ -10,11 +10,11 @@ class ProcessingOptionTest {
 
     @Test
     void correctlyMergesOverrides() {
-        List<ProcessingOption> current = [ ProcessingOption.AlphaBeforeNumericSequencing, ProcessingOption.AnyFirstEditionCode ]
+        List<ProcessingOption> current = [ ProcessingOption.AlphaBeforeNumericSequencing, ProcessingOption.AnyFirstSectionCode ]
         List<ProcessingOption> overrides = [ ProcessingOption.NumericBeforeAlphaSequencing ]
         List<ProcessingOption> merged = ProcessingOption.mergeOverrides(current, overrides)
 
-        List<ProcessingOption> expected = [ ProcessingOption.NumericBeforeAlphaSequencing, ProcessingOption.AnyFirstEditionCode ]
+        List<ProcessingOption> expected = [ ProcessingOption.NumericBeforeAlphaSequencing, ProcessingOption.AnyFirstSectionCode ]
         assertThat("ProcessingOption merges correctly", merged, is(expected))
     }
 

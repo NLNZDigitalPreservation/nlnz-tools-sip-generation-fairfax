@@ -171,7 +171,7 @@ recommend running a single stages at a time.
 
 PDF filenames have the following structure:
 ```
-<TitleCode><EditionCode>-yyyyMMdd-<optional-sequence-letter><optional-sequence-number><optional-qualifier>.pdf
+<TitleCode><SectionCode>-yyyyMMdd-<optional-sequence-letter><optional-sequence-number><optional-qualifier>.pdf
 ```
 
 For example, `SHMED1-20181108-011.pdf` and `WHMED1-20181108-G012new-page.pdf` are valid filenames.
@@ -230,7 +230,7 @@ Note that Rosetta ingestion requires that the `content` folder's parent parent b
 Submission Format. In this case that folder is either `magazines` or `newspapers`, with the folder for an individual
 publication's ingestion directly underneath:
 ```
-<targetFolder>/<magazines|newspapers>/<date-in-yyyyMMdd>_<TitleCode><EditionCode>_<full-name-of-publication>/content/streams/{files for that titleCode/editionCode}
+<targetFolder>/<magazines|newspapers>/<date-in-yyyyMMdd>_<TitleCode><SectionCode>_<full-name-of-publication>/content/streams/{files for that titleCode/sectionCode}
 ```
 
 Notes:
@@ -241,7 +241,7 @@ under the target folder.
 ### Ingested stage
 
 Once files have been ingested into Rosetta, a file with the name of `done` is placed in the root folder (in this case,
-that folder is `<TitleCode><EditionCode>_<full-name-of-publication>`). This means that folder can be moved to the
+that folder is `<TitleCode><SectionCode>_<full-name-of-publication>`). This means that folder can be moved to the
 *Ingested* folder. Note that the `--moveFiles` option is not included in the example. Note also that the `done` file
 must exist, otherwise `--moveOrCopyEvenIfNoRosettaDoneFile` needs to be specified.
 ```
@@ -302,19 +302,19 @@ the files are not recognized, then they're placed in the following structure:
 If the files come from the *Pre-processing* stage but cannot be processed into the *Ready-for-ingestion* stage because
 of some error in processing, then they're placed in the following structure:
 ```
-<forReviewFolder>/<unknown|newspaper|magazine><date-in-yyyyMMdd>/<TitleCode><EditionCode>_<full-name-of-publication>/content/streams/{files for that titleCode/editionCode}
+<forReviewFolder>/<unknown|newspaper|magazine><date-in-yyyyMMdd>/<TitleCode><SectionCode>_<full-name-of-publication>/content/streams/{files for that titleCode/sectionCode}
 ```
 
 If the files come from the *Ready-for-ingestion* stage but are not ingested into Rosetta properly, then they're placed in the
 following structure:
 ```
-<forReviewFolder>/<date-in-yyyyMMdd>/<TitleCode><EditionCode>_<full-name-of-publication>/content/streams/{files for that titleCode/editionCode}
+<forReviewFolder>/<date-in-yyyyMMdd>/<TitleCode><SectionCode>_<full-name-of-publication>/content/streams/{files for that titleCode/sectionCode}
 ```
 
 ### Other stages (reporting, diagnosis and testing)
 
 #### listFiles: list files based on source folder
-`listFiles` simply lists files by titleCode, editionCode and date:
+`listFiles` simply lists files by titleCode, sectionCode and date:
 ```
 java -jar sip-generation-fairfax-fat-all-<VERSION>.jar \
     --listFiles \
@@ -360,7 +360,7 @@ Parameters and their usage. See the `--help` output shown previously if the para
 The starting date for file processing (inclusive). Files before this date are ignored. Note that the `startingDate` is
 based on the file name, and not the time stamp of the file. Files usually have the format:
 ```
-<TitleCode><EditionCode>-yyyyMMdd-<optional-sequence-letter><optional-sequence-number>
+<TitleCode><SectionCode>-yyyyMMdd-<optional-sequence-letter><optional-sequence-number>
 ```
 
 The format of the starting date `yyyy-MM-dd`.

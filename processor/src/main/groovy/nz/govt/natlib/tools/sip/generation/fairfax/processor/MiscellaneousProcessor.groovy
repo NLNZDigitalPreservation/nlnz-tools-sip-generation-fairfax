@@ -34,7 +34,7 @@ class MiscellaneousProcessor {
 
         // See the README.md for this project for a description of the load directories file structure.
         // Generally it's: TODO
-        // TODO: Incorrect: Load directories have the structure <titleCode>_<yyyyMMdd> (and possibly <titleCode><editionCode>_<yyyyMMdd>
+        // TODO: Incorrect: Load directories have the structure <titleCode>_<yyyyMMdd> (and possibly <titleCode><sectionCode>_<yyyyMMdd>
         String pattern = '\\w{3,6}_\\d{8}'
         log.info("Finding directories for path=${filesPath.toFile().getCanonicalPath()} and pattern=${pattern}")
         processorConfiguration.timekeeper.logElapsed()

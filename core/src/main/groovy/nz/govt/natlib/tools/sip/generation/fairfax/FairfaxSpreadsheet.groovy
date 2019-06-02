@@ -18,15 +18,15 @@ class FairfaxSpreadsheet {
     static String PROCESSING_RULES_KEY = "processing_rule"
     static String PROCESSING_OPTIONS_KEY = "processing_option"
     static String TITLE_CODE_KEY = "title_code"
-    static String EDITION_CODE_KEY = "edition_code"
+    static String SECTION_CODE_KEY = "section_code"
     static String TITLE_PARENT_KEY = "title_parent"
     static String EDITION_DISCRIMINATOR_KEY = "edition_discriminator"
     static String IS_MAGAZINE_KEY = "Magazine"
 
     Spreadsheet spreadsheet
-    Map<FairfaxFileTitleEditionKey, List<Map<String, String>>> titleCodeEditionCodeToRowsMap = [ : ]
+    Map<FairfaxFileTitleEditionKey, List<Map<String, String>>> titleCodeSectionCodeToRowsMap = [ : ]
     Map<String, List<Map<String, String>>> titleCodeToRowsMap = [ : ]
-    Set<FairfaxFileTitleEditionKey> allTitleCodeEditionCodeKeys = [ ]
+    Set<FairfaxFileTitleEditionKey> allTitleCodeSectionCodeKeys = [ ]
     Set<String> allTitleCodeKeys = [ ]
 
     static Map<String, String> BLANK_ROW = [
@@ -38,7 +38,7 @@ class FairfaxSpreadsheet {
         "publication_key": "",
         "title_code": "NO_TITLE_CODE_GIVEN",
         "edition_discriminator": "",
-        "edition_code": "",
+        "section_code": "",
         "Access": "200",
         "Magazine": "1"
     ]
@@ -81,10 +81,10 @@ class FairfaxSpreadsheet {
         index()
     }
 
-    List<Map<String, String>> matchingParameterMaps(String titleCode, String editionCode) {
+    List<Map<String, String>> matchingParameterMaps(String titleCode, String sectionCode) {
         List<Map<String, String>> matchingMaps = [ ]
         spreadsheet.rows.each { Map<String, String> rowMap ->
-            if (titleCode == rowMap.get(TITLE_CODE_KEY) && editionCode == rowMap.get(EDITION_CODE_KEY)) {
+            if (titleCode == rowMap.get(TITLE_CODE_KEY) && sectionCode == rowMap.get(SECTION_CODE_KEY)) {
                 matchingMaps.add(rowMap)
             }
         }
@@ -102,21 +102,21 @@ class FairfaxSpreadsheet {
         return matchingMaps
     }
 
-    List<String> getTitleParentsForTitleCodeEditionCode(String titleCode, String editionCode) {
+    List<String> getTitleParentsForTitleCodeSectionCode(String titleCode, String sectionCode) {
         List<String> titles = [ ]
-        matchingParameterMaps(titleCode, editionCode).each { Map<String, String> rowMap ->
+        matchingParameterMaps(titleCode, sectionCode).each { Map<String, String> rowMap ->
             titles.add(rowMap.get(TITLE_PARENT_KEY))
         }
 
         return titles
     }
 
-    String getTitleParentForTitleCodeEditionCode(String titleCode, String editionCode) {
-        List<String> titles = getTitleParentsForTitleCodeEditionCode(titleCode, editionCode)
+    String getTitleParentForTitleCodeSectionCode(String titleCode, String sectionCode) {
+        List<String> titles = getTitleParentsForTitleCodeSectionCode(titleCode, sectionCode)
         if (titles.size() == 1) {
             return titles.first()
         } else if (titles.size() > 1) {
-            log.info("Found multiple titles for titleCode=${titleCode}, editionCode=${editionCode}, titles=${titles}. Using first title.")
+            log.info("Found multiple titles for titleCode=${titleCode}, sectionCode=${sectionCode}, titles=${titles}. Using first title.")
             return titles.first()
         } else {
             return "NO-TITLE-GIVEN"
@@ -126,16 +126,16 @@ class FairfaxSpreadsheet {
     void index() {
         spreadsheet.rows.each { Map<String, String> rowMap ->
             String titleCode = rowMap.get(TITLE_CODE_KEY)
-            String editionCode = rowMap.get(EDITION_CODE_KEY)
+            String sectionCode = rowMap.get(SECTION_CODE_KEY)
             FairfaxFileTitleEditionKey fairfaxFileTitleEditionKey = new FairfaxFileTitleEditionKey(
-                    titleCode: titleCode, editionCode: editionCode)
-            if (titleCodeEditionCodeToRowsMap.containsKey(fairfaxFileTitleEditionKey)) {
-                List<Map<String, String>> rowsForNameEdition = titleCodeEditionCodeToRowsMap.get(fairfaxFileTitleEditionKey)
+                    titleCode: titleCode, sectionCode: sectionCode)
+            if (titleCodeSectionCodeToRowsMap.containsKey(fairfaxFileTitleEditionKey)) {
+                List<Map<String, String>> rowsForNameEdition = titleCodeSectionCodeToRowsMap.get(fairfaxFileTitleEditionKey)
                 rowsForNameEdition.add(rowMap)
             } else {
-                titleCodeEditionCodeToRowsMap.put(fairfaxFileTitleEditionKey, [rowMap ])
+                titleCodeSectionCodeToRowsMap.put(fairfaxFileTitleEditionKey, [rowMap ])
             }
-            allTitleCodeEditionCodeKeys.add(fairfaxFileTitleEditionKey)
+            allTitleCodeSectionCodeKeys.add(fairfaxFileTitleEditionKey)
             if (titleCodeToRowsMap.containsKey(titleCode)) {
                 List<Map<String, String>> rowsForName = titleCodeToRowsMap.get(titleCode)
                 rowsForName.add(rowMap)

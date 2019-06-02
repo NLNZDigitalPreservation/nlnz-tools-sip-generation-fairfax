@@ -100,7 +100,7 @@ class MultipleEditionsSameDayTest {
         FairfaxProcessingParameters processingParameters = FairfaxProcessingParameters.build("TST",
                 ProcessingType.ParentGrouping, processingDate, testMethodState.fairfaxSpreadsheet)
 
-        assertThat("Multiple edition codes: 'PB1', 'BOO', 'ZOO', 'AAT'", processingParameters.editionCodes,
+        assertThat("Multiple section codes: 'PB1', 'BOO', 'ZOO', 'AAT'", processingParameters.sectionCodes,
                 is([ 'PB1', 'BOO', 'ZOO', 'AAT' ]))
         assertThat("Multiple discriminator codes: 'PB1', 'PB2', 'PB3'", processingParameters.editionDiscriminators,
                 is([ 'PB1', 'PB2', 'PB3' ]))
