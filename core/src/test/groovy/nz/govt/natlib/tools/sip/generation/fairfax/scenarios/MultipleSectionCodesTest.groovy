@@ -8,6 +8,7 @@ import nz.govt.natlib.tools.sip.generation.fairfax.FairfaxFilesProcessor
 import nz.govt.natlib.tools.sip.generation.fairfax.FairfaxProcessingParameters
 import nz.govt.natlib.tools.sip.generation.fairfax.TestHelper
 import nz.govt.natlib.tools.sip.generation.fairfax.TestHelper.TestMethodState
+import nz.govt.natlib.tools.sip.generation.fairfax.parameters.ProcessingRule
 import nz.govt.natlib.tools.sip.generation.fairfax.parameters.ProcessingType
 import org.junit.Before
 import org.junit.Ignore
@@ -23,7 +24,7 @@ import static org.junit.Assert.assertThat
 import static org.junit.Assert.assertTrue
 
 /**
- * Tests the {@code multiple-edition-codes} scenario.
+ * Tests the {@code multiple-section-codes} scenario.
  *
  * Note that this test is complicated by the files either being part of a directory structure or in a resource file (jar),
  * so the {@link TestHelper} class is used to handle both scenarios. In real-life processing the files would be on the
@@ -33,14 +34,14 @@ import static org.junit.Assert.assertTrue
  */
 @RunWith(MockitoJUnitRunner.class)
 @Slf4j
-class MultipleEditionCodesTest {
+class MultipleSectionCodesTest {
     // TODO Make this processing simpler
     // - given a starting folder
     // - and a set of selection criteria
     // - create SIPs for the given files
     static String ID_COLUMN_NAME = "MMSID"
 
-    static final String RESOURCES_FOLDER = "ingestion-files-tests/scenario-multiple-edition-codes"
+    static final String RESOURCES_FOLDER = "ingestion-files-tests/scenario-multiple-section-codes"
     static final String IMPORT_PARAMETERS_FILENAME = "test-fairfax-import-parameters.json"
 
     TestMethodState testMethodState
@@ -96,6 +97,8 @@ class MultipleEditionCodesTest {
 
         FairfaxProcessingParameters processingParameters = FairfaxProcessingParameters.build("TST",
                 ProcessingType.ParentGrouping, processingDate, testMethodState.fairfaxSpreadsheet)
+        processingParameters.processingRules = ProcessingRule.mergeOverrides(processingParameters.processingRules,
+                [ ProcessingRule.AllSectionsInSipOptional ])
 
         assertThat("Multiple section codes: 'PB1', 'BOO', 'ZOO', 'AAT'", processingParameters.sectionCodes,
                 is([ 'PB1', 'BOO', 'ZOO', 'AAT' ]))
@@ -103,9 +106,9 @@ class MultipleEditionCodesTest {
         processingParameters.sipProcessingState = testMethodState.sipProcessingState
         String sipAsXml = FairfaxFilesProcessor.processCollectedFiles(processingParameters, filesForProcessing)
 
-        log.info("START SipProcessingState:")
-        log.info(testMethodState.sipProcessingState.toString())
-        log.info("END SipProcessingState")
+        log.info("START FairfaxProcessingParameters and SipProcessingState:")
+        log.info(processingParameters.detailedDisplay(0, true))
+        log.info("END FairfaxProcessingParameters and SipProcessingState")
 
         int expectedNumberOfFilesProcessed = 11
         assertThat("${expectedNumberOfFilesProcessed} files should have been processed",

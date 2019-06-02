@@ -5,6 +5,7 @@ import nz.govt.natlib.tools.sip.IEEntityType
 import nz.govt.natlib.tools.sip.Sip
 import nz.govt.natlib.tools.sip.SipFileWrapperFactory
 import nz.govt.natlib.tools.sip.generation.SipXmlGenerator
+import nz.govt.natlib.tools.sip.generation.fairfax.parameters.ProcessingRule
 import nz.govt.natlib.tools.sip.generation.fairfax.parameters.ProcessingType
 import nz.govt.natlib.tools.sip.generation.fairfax.processors.ParentGroupingProcessor
 import nz.govt.natlib.tools.sip.generation.fairfax.processors.SipForFolderProcessor
@@ -14,7 +15,6 @@ import nz.govt.natlib.tools.sip.pdf.PdfValidatorType
 import nz.govt.natlib.tools.sip.state.SipProcessingException
 import nz.govt.natlib.tools.sip.state.SipProcessingExceptionReason
 import nz.govt.natlib.tools.sip.state.SipProcessingExceptionReasonType
-import nz.govt.natlib.tools.sip.state.SipProcessingState
 
 import java.time.LocalDate
 
@@ -77,6 +77,25 @@ class FairfaxFilesProcessor {
                             collect { FairfaxFile fairfaxFile ->
                         fairfaxFile.file
                     }
+
+            if (processingParameters.sipProcessingState.ignoredFiles.size() > 0 &&
+                    processingParameters.processingRules.contains(ProcessingRule.AllSectionsInSipRequired)) {
+                // Strip the ignored of any editionDiscriminator files
+                List<FairfaxFile> withoutEditionFiles = processingParameters.sipProcessingState.ignoredFiles.findAll {
+                    File file ->
+                        FairfaxFile fairfaxFile = new FairfaxFile(file)
+                        !processingParameters.editionDiscriminators.contains(fairfaxFile.sectionCode)
+                }
+                if (!withoutEditionFiles.isEmpty()) {
+                    String detailedReason = "${ProcessingRule.AllSectionsInSipRequired.fieldValue} but these files are not processed=${withoutEditionFiles}".toString()
+                    SipProcessingExceptionReason exceptionReason = new SipProcessingExceptionReason(
+                            SipProcessingExceptionReasonType.ALL_FILES_CANNOT_BE_PROCESSED, null,
+                            detailedReason)
+                    SipProcessingException sipProcessingException = SipProcessingException.createWithReason(exceptionReason)
+                    processingParameters.sipProcessingState.addException(sipProcessingException)
+                    log.warn(detailedReason)
+                }
+            }
 
             List<FairfaxFile> successfulFiles = [ ]
             sortedFilesForProcessing.each { FairfaxFile fileForProcessing ->
@@ -209,6 +228,10 @@ class FairfaxFilesProcessor {
         String title = processingParameters.getTitleParent()
         String titleWithUnderscores = title.trim().replace(' ', '_')
 
-        return "_${titleWithUnderscores}"
+        if (processingParameters.currentEdition == null) {
+            return "_${titleWithUnderscores}"
+        } else {
+            return "_${processingParameters.currentEdition}_${titleWithUnderscores}"
+        }
     }
 }

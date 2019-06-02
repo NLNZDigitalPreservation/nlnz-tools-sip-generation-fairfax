@@ -99,9 +99,9 @@ class SeriesSectionsTest {
         processingParameters.sipProcessingState = testMethodState.sipProcessingState
         String sipAsXml = FairfaxFilesProcessor.processCollectedFiles(processingParameters, filesForProcessing)
 
-        log.info("START SipProcessingState:")
-        log.info(testMethodState.sipProcessingState.toString())
-        log.info("END SipProcessingState")
+        log.info("START FairfaxProcessingParameters and SipProcessingState:")
+        log.info(processingParameters.detailedDisplay(0, true))
+        log.info("END FairfaxProcessingParameters and SipProcessingState")
 
         int expectedNumberOfFilesProcessed = 10
         assertThat("${expectedNumberOfFilesProcessed} files should have been processed",

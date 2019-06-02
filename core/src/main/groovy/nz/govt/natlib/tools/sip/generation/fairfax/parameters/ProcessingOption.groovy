@@ -21,10 +21,11 @@ enum ProcessingOption {
         OVERRIDES_MAP.put(NumericBeforeAlphaSequencing, [ AlphaBeforeNumericSequencing ])
     }
 
-    static List<ProcessingOption> extract(String list, String separator = ",", boolean exceptionIfUnrecognized = false) {
+    static List<ProcessingOption> extract(String list, String separator = ",", List<ProcessingOption> defaults = [ ],
+                                          boolean exceptionIfUnrecognized = false) {
         List<ProcessingOption> processingOptions = [ ]
         if (list == null || list.strip().isEmpty()) {
-            return processingOptions
+            return mergeOverrides(defaults, processingOptions)
         }
         List<String> separatedList = list.split(separator)
         separatedList.each { String value ->
@@ -43,7 +44,7 @@ enum ProcessingOption {
             }
         }
 
-        return processingOptions
+        return mergeOverrides(defaults, processingOptions)
     }
 
     static List<ProcessingOption> mergeOverrides(List<ProcessingOption> current, List<ProcessingOption> overrides) {
@@ -58,7 +59,13 @@ enum ProcessingOption {
                 merged.add(override)
             }
         }
-        return merged.unique()
+        merged = merged.unique()
+        overrides.each { ProcessingOption override ->
+            if (!merged.contains(override)) {
+                merged.add(override)
+            }
+        }
+        return merged
     }
 
     static forFieldValue(String fieldValue) {

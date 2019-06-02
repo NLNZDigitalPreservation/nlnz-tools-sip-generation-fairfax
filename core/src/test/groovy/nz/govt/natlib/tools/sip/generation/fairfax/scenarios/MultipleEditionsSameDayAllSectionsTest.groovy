@@ -11,6 +11,7 @@ import nz.govt.natlib.tools.sip.generation.fairfax.TestHelper.TestMethodState
 import nz.govt.natlib.tools.sip.generation.fairfax.parameters.ProcessingOption
 import nz.govt.natlib.tools.sip.generation.fairfax.parameters.ProcessingRule
 import nz.govt.natlib.tools.sip.generation.fairfax.parameters.ProcessingType
+import nz.govt.natlib.tools.sip.state.SipProcessingExceptionReasonType
 import nz.govt.natlib.tools.sip.state.SipProcessingState
 import org.junit.Before
 import org.junit.Ignore
@@ -22,12 +23,10 @@ import java.nio.file.Path
 import java.time.LocalDate
 
 import static org.hamcrest.core.Is.is
-import static org.junit.Assert.assertFalse
-import static org.junit.Assert.assertThat
-import static org.junit.Assert.assertTrue
+import static org.junit.Assert.*
 
 /**
- * Tests the {@code multiple-editions-same-day} scenario.
+ * Tests the {@code multiple-editions-same-day-all-sections-required} scenario.
  *
  * Note that this test is complicated by the files either being part of a directory structure or in a resource file (jar),
  * so the {@link TestHelper} class is used to handle both scenarios. In real-life processing the files would be on the
@@ -37,7 +36,7 @@ import static org.junit.Assert.assertTrue
  */
 @RunWith(MockitoJUnitRunner.class)
 @Slf4j
-class MultipleEditionsSameDayTest {
+class MultipleEditionsSameDayAllSectionsTest {
     // TODO Make this processing simpler
     // - given a starting folder
     // - and a set of selection criteria
@@ -67,7 +66,7 @@ class MultipleEditionsSameDayTest {
     @Ignore
     void correctlyAssembleSipFromFilesOnFilesystem() {
         boolean forLocalFilesystem = true
-        TestHelper.initializeTestMethod(testMethodState, "MultipleEditionSameDayTest-", forLocalFilesystem)
+        TestHelper.initializeTestMethod(testMethodState, "MultipleEditionsSameDayAllSectionsTest-", forLocalFilesystem)
 
         // TODO A more complicated pattern -- date and other masks?
         boolean isRegexNotGlob = true
@@ -82,7 +81,7 @@ class MultipleEditionsSameDayTest {
     @Test
     void correctlyAssembleSipFromFiles() {
         boolean forLocalFilesystem = false
-        TestHelper.initializeTestMethod(testMethodState, "MultipleEditionSameDayTest-", forLocalFilesystem)
+        TestHelper.initializeTestMethod(testMethodState, "MultipleEditionsSameDayAllSectionsTest-", forLocalFilesystem)
 
         // TODO A more complicated pattern -- date and other masks?
         boolean isRegexNotGlob = true
@@ -101,7 +100,7 @@ class MultipleEditionsSameDayTest {
         FairfaxProcessingParameters processingParameters = FairfaxProcessingParameters.build("TST",
                 ProcessingType.ParentGrouping, processingDate, testMethodState.fairfaxSpreadsheet)
         processingParameters.processingRules = ProcessingRule.mergeOverrides(processingParameters.processingRules,
-                [ ProcessingRule.AllSectionsInSipOptional ])
+                [ ProcessingRule.AllSectionsInSipRequired ])
 
         assertThat("Multiple section codes: 'PB1', 'BOO', 'ZOO', 'AAT'", processingParameters.sectionCodes,
                 is([ 'PB1', 'BOO', 'ZOO', 'AAT' ]))
@@ -219,7 +218,7 @@ class MultipleEditionsSameDayTest {
         assertTrue("SipXmlExtractor has content", sipForValidation.xml.length() > 0)
 
         assertTrue("SipProcessingState is complete", testMethodState.sipProcessingState.isComplete())
-        assertTrue("SipProcessingState is successful", testMethodState.sipProcessingState.isSuccessful())
+        TestHelper.assertExpectedExceptionReason(testMethodState.sipProcessingState, SipProcessingExceptionReasonType.ALL_FILES_CANNOT_BE_PROCESSED)
 
         TestHelper.assertExpectedSipMetadataValues(sipForValidation, "Test Publication One", 2018, 11, 23,
                 IEEntityType.NewspaperIE, "ALMAMMS", "test-mms-id-one", "200",
@@ -265,7 +264,7 @@ class MultipleEditionsSameDayTest {
         assertTrue("SipXmlExtractor has content", sipForValidation.xml.length() > 0)
 
         assertTrue("SipProcessingState is complete", testMethodState.sipProcessingState.isComplete())
-        assertTrue("SipProcessingState is successful", testMethodState.sipProcessingState.isSuccessful())
+        TestHelper.assertExpectedExceptionReason(testMethodState.sipProcessingState, SipProcessingExceptionReasonType.ALL_FILES_CANNOT_BE_PROCESSED)
 
         TestHelper.assertExpectedSipMetadataValues(sipForValidation, "Test Publication One", 2018, 11, 23,
                 IEEntityType.NewspaperIE, "ALMAMMS", "test-mms-id-one", "200",

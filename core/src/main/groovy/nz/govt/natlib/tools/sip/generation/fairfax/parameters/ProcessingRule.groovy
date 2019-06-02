@@ -10,7 +10,9 @@ enum ProcessingRule {
     HandleInvalid("handle_invalid"),
     Manual("manual"),
     MultipleEditions("multiple_editions"),
-    SingleEdition("single_edition")
+    SingleEdition("single_edition"),
+    AllSectionsInSipRequired("required_all_sections_in_sip"),
+    AllSectionsInSipOptional("optional_all_sections_in_sip")
 
     private static final Map<String, ProcessingRule> LOOKUP_BY_FIELD_VALUE = [ : ]
     private static final Map<ProcessingRule, List<ProcessingRule>> OVERRIDES_MAP = [ : ]
@@ -21,13 +23,16 @@ enum ProcessingRule {
             LOOKUP_BY_FIELD_VALUE.put(processingRule.fieldValue, processingRule)
             OVERRIDES_MAP.put(MultipleEditions, [ SingleEdition ])
             OVERRIDES_MAP.put(SingleEdition, [ MultipleEditions ])
+            OVERRIDES_MAP.put(AllSectionsInSipRequired, [ AllSectionsInSipOptional ])
+            OVERRIDES_MAP.put(AllSectionsInSipOptional, [ AllSectionsInSipRequired ])
         }
     }
 
-    static List<ProcessingRule> extract(String list, String separator = ",", boolean exceptionIfUnrecognized = false) {
+    static List<ProcessingRule> extract(String list, String separator = ",", List<ProcessingRule> defaults = [ ],
+                                        boolean exceptionIfUnrecognized = false) {
         List<ProcessingRule> processingRules = [ ]
         if (list == null || list.strip().isEmpty()) {
-            return processingRules
+            return mergeOverrides(defaults, processingRules)
         }
         List<String> separatedList = list.split(separator)
         separatedList.each { String value ->
@@ -46,7 +51,7 @@ enum ProcessingRule {
             }
         }
 
-        return processingRules
+        return mergeOverrides(defaults, processingRules)
     }
 
     static List<ProcessingRule> mergeOverrides(List<ProcessingRule> current, List<ProcessingRule> overrides) {
@@ -61,7 +66,13 @@ enum ProcessingRule {
                 merged.add(override)
             }
         }
-        return merged.unique()
+        merged = merged.unique()
+        overrides.each { ProcessingRule override ->
+            if (!merged.contains(override)) {
+                merged.add(override)
+            }
+        }
+        return merged
     }
 
     static forFieldValue(String fieldValue) {

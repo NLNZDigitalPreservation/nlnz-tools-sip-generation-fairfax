@@ -19,6 +19,7 @@ import java.time.format.DateTimeFormatter
 @ToString(includeNames=true, includePackage=false, excludes=[ 'spreadsheetRow', 'sipProcessingState' ])
 @AutoClone(excludes = [ 'currentEdition' ])
 class FairfaxProcessingParameters {
+    static DateTimeFormatter READABLE_DATE_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd")
     boolean valid = true
     String titleCode
     ProcessingType processingType
@@ -61,8 +62,8 @@ class FairfaxProcessingParameters {
             String options = matchingRow.get(FairfaxSpreadsheet.PROCESSING_OPTIONS_KEY)
             // TODO Throw exception if processingType is null?
             return new FairfaxProcessingParameters(titleCode: titleCode, processingType: processingType,
-                    processingRules: ProcessingRule.extract(rules, ","),
-                    processingOptions: ProcessingOption.extract(options, ","),
+                    processingRules: ProcessingRule.extract(rules, ",", processingType.defaultRules),
+                    processingOptions: ProcessingOption.extract(options, ",", processingType.defaultOptions),
                     processingDate: processingDate, spreadsheetRow: matchingRow,
                     sectionCodes: extractSeparatedValues(matchingRow, FairfaxSpreadsheet.SECTION_CODE_KEY),
                     editionDiscriminators: extractSeparatedValues(matchingRow, FairfaxSpreadsheet.EDITION_DISCRIMINATOR_KEY),
@@ -126,16 +127,27 @@ class FairfaxProcessingParameters {
         return validSectionCodes
     }
 
-    String detailedDisplay(int offset = 0) {
+    String processingDifferentiator() {
+        String baseDifferentiator = "${titleCode}_${processingDate.format(READABLE_DATE_FORMAT)}_${processingType.fieldValue}"
+        if (currentEdition == null) {
+            return baseDifferentiator
+        } else {
+            return "${baseDifferentiator}_${currentEdition}"
+        }
+    }
+
+    String detailedDisplay(int offset = 0, boolean includeSipProcessingState = false) {
         String initialOffset = StringUtils.repeat(' ', offset)
         StringBuilder stringBuilder = new StringBuilder(initialOffset)
-        stringBuilder.append(this.getClass().getName())
-        stringBuilder.append(":")
+        stringBuilder.append("${this.getClass().getName()}:")
+        stringBuilder.append(System.lineSeparator())
         stringBuilder.append("${initialOffset}    processingType=${processingType.fieldValue}")
         stringBuilder.append(System.lineSeparator())
-        stringBuilder.append("${initialOffset}    processingDate=${processingDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))}")
+        stringBuilder.append("${initialOffset}    processingDate=${processingDate.format(READABLE_DATE_FORMAT)}")
         stringBuilder.append(System.lineSeparator())
-        stringBuilder.append("${initialOffset}    processingRules=${processingRules}, processingOptions=${processingOptions}")
+        stringBuilder.append("${initialOffset}    processingRules=${processingRules}")
+        stringBuilder.append(System.lineSeparator())
+        stringBuilder.append("${initialOffset}    processingOptions=${processingOptions}")
         stringBuilder.append(System.lineSeparator())
         stringBuilder.append("${initialOffset}    valid=${valid}")
         stringBuilder.append(System.lineSeparator())
@@ -151,6 +163,9 @@ class FairfaxProcessingParameters {
         stringBuilder.append(System.lineSeparator())
         stringBuilder.append("${initialOffset}    spreadsheetRow=${spreadsheetRow}")
         stringBuilder.append(System.lineSeparator())
+        if (includeSipProcessingState) {
+            stringBuilder.append(this.sipProcessingState.toString())
+        }
 
         return stringBuilder.toString()
     }

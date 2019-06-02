@@ -99,7 +99,7 @@ class FairfaxFile {
     }
 
     static FairfaxFile substituteFor(String sourceSectionCode, String replacementSectionCode, FairfaxFile fairfaxFile,
-                                       List<FairfaxFile> possibleFiles) {
+                                     List<FairfaxFile> possibleFiles) {
         if (fairfaxFile.sectionCode == sourceSectionCode) {
             FairfaxFile replacementFile = possibleFiles.find { FairfaxFile candidateFile ->
                 if (candidateFile.sectionCode == replacementSectionCode) {
@@ -125,7 +125,7 @@ class FairfaxFile {
     }
 
     static List<FairfaxFile> substituteAllFor(String sourceSectionCode, String replacementSectionCode,
-                                                         List<String> allSectionCodes, List<FairfaxFile> possibleFiles) {
+                                              List<String> allSectionCodes, List<FairfaxFile> possibleFiles) {
         List<FairfaxFile> substituted = []
         List<String> otherSectionCodes = allSectionCodes.findAll { String sectionCode ->
             sectionCode != sourceSectionCode && sectionCode != replacementSectionCode

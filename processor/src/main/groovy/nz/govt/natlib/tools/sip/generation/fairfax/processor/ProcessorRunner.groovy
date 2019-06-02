@@ -316,8 +316,6 @@ A comma-separated list of options. These options will override any contraditory 
             commandExecuted = true
         }
         if (readyForIngestion) {
-            List<ProcessingRule> processingRules = [ ]
-            List<ProcessingOption> processingOptions = [ ]
             if (sourceFolder == null) {
                 String message = "readyForIngestion requires sourceFolder"
                 log.error(message)
@@ -339,7 +337,7 @@ A comma-separated list of options. These options will override any contraditory 
                 throw new ProcessorException(message)
             }
             if (forIngestionProcessingType == null || forIngestionProcessingType.strip().isEmpty()) {
-                String message = "preProcess requires forIngestionProcessingType"
+                String message = "readyForIngestion requires forIngestionProcessingType"
                 log.error(message)
                 throw new ProcessorException(message)
             }

@@ -4,12 +4,20 @@ import groovy.util.logging.Slf4j
 
 @Slf4j
 enum ProcessingType {
-    ParentGrouping("parent_grouping"),
-    SupplementGrouping("supplement_grouping"),
-    CreateSipForFolder("create_sip_for_folder")
+    ParentGrouping("parent_grouping",
+            [ ProcessingRule.AllSectionsInSipRequired ],
+            [ ProcessingOption.NumericBeforeAlphaSequencing ]),
+    SupplementGrouping("supplement_grouping",
+            [ ],
+            [ ProcessingOption.NumericBeforeAlphaSequencing ]),
+    CreateSipForFolder("create_sip_for_folder",
+            [ ProcessingRule.AllSectionsInSipRequired ],
+            [ ProcessingOption.NumericBeforeAlphaSequencing ])
 
     private static final Map<String, ProcessingType> LOOKUP_BY_FIELD_VALUE = [ : ]
     private final String fieldValue
+    private final List<ProcessingRule> defaultRules
+    private final List<ProcessingOption> defaultOptions
 
     static {
         values().each { ProcessingType processingType ->
@@ -46,12 +54,22 @@ enum ProcessingType {
         }
     }
 
-    ProcessingType(String fieldValue) {
+    ProcessingType(String fieldValue, List<ProcessingRule> defaultRules, List<ProcessingOption> defaultOptions) {
         this.fieldValue = fieldValue
+        this.defaultRules = defaultRules
+        this.defaultOptions = defaultOptions
     }
 
     String getFieldValue() {
         return this.fieldValue
+    }
+
+    List<ProcessingRule> getDefaultRules() {
+        return this.defaultRules
+    }
+
+    List<ProcessingOption> getDefaultOptions() {
+        return this.defaultOptions
     }
 
     String toString() {

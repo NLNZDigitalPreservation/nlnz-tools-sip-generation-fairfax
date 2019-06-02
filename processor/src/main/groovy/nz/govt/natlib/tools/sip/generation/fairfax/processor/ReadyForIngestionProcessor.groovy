@@ -38,9 +38,9 @@ class ReadyForIngestionProcessor {
             throw exception
         }
         this.processingRules = ProcessingRule.extract(this.processorConfiguration.forIngestionProcessingRules,
-                ",", true)
+                ",", processingType.defaultRules, true)
         this.processingOptions = ProcessingOption.extract(this.processorConfiguration.forIngestionProcessingOptions,
-                ",", true)
+                ",", processingType.defaultOptions, true)
     }
 
     SipProcessingState processTitleCodeFolder(File titleCodeFolder, File destinationFolder, File forReviewFolder,
@@ -70,7 +70,7 @@ class ReadyForIngestionProcessor {
         String sipAsXml = FairfaxFilesProcessor.processCollectedFiles(processingParameters, allFiles)
 
         File sipAndFilesFolder
-        String folderName = "${dateString}_${processingParameters.processingType.getFieldValue()}_${processingParameters.titleCode}${sipProcessingState.identifier}"
+        String folderName = "${dateString}_${processingParameters.titleCode}_${processingParameters.processingType.getFieldValue()}_${sipProcessingState.identifier}"
         if (sipProcessingState.complete && sipProcessingState.successful) {
             sipAndFilesFolder = new File(destinationFolder,
                     "${sipProcessingState.ieEntityType.getDisplayName()}/${folderName}")
@@ -78,9 +78,8 @@ class ReadyForIngestionProcessor {
             sipAndFilesFolder = new File(forReviewFolder,
                     "${sipProcessingState.ieEntityType.getDisplayName()}/${folderName}")
         }
-        // TODO may need to adjust logic for creation of content/streams folder
-        // TODO unrecognized doesn't work in the context of processingType
         File contentStreamsFolder = new File(sipAndFilesFolder, "content/streams")
+        // Note that unrecognized only gets moved/copied if ProcessingRule.HandleUnrecognised
         File unrecognizedFilesFolder = new File(forReviewFolder, "UNRECOGNIZED/${dateString}/${processingParameters.titleCode}")
 
         boolean hasSipAndFilesFolder
@@ -109,14 +108,13 @@ class ReadyForIngestionProcessor {
             ProcessorUtils.copyOrMoveFiles(processorConfiguration.moveFiles, sipProcessingState.unrecognizedFiles, unrecognizedFilesFolder)
         }
 
-        // TODO Need to write out the processingType file as well
-        // Write out the SipProcessingState
+        // Write out the FairfaxProcessingParameters and SipProcessingState
         Date now = new Date()
-        File sipProcessingStateFile = new File(sipAndFilesFolder,
-                "sipProcessingState_${ProcessorUtils.FILE_TIMESTAMP_FORMATTER.format(now)}.txt")
-        sipProcessingStateFile.write(processingParameters.detailedDisplay())
-        sipProcessingStateFile.write(System.lineSeparator())
-        sipProcessingStateFile.write(sipProcessingState.toString())
+        // We will assume that millisecond timestamps ensures that the filename will be unique
+        File processingStateFile = new File(titleCodeFolder,
+                "${processingParameters.processingDifferentiator()}_parameters-and-state_${ProcessorUtils.FILE_TIMESTAMP_FORMATTER.format(now)}.txt")
+        processingStateFile.write(processingParameters.detailedDisplay(0, true))
+        ProcessorUtils.copyOrMoveFiles(false, [ processingStateFile ], sipAndFilesFolder)
 
         // Write out the SIP file
         File sipFile = new File(sipAndFilesFolder, "content/mets.xml")

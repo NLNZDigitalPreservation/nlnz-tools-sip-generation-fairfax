@@ -277,7 +277,7 @@ class TestHelper {
     }
 
     static void assertExpectedExceptionReason(SipProcessingState sipProcessingState, SipProcessingExceptionReasonType type) {
-        assertFalse("SipProcessingState is successful", sipProcessingState.isSuccessful())
+        assertFalse("SipProcessingState is NOT successful", sipProcessingState.isSuccessful())
         assertTrue("SipProcessingState has exceptions", sipProcessingState.exceptions.size() > 0)
         SipProcessingException firstException = sipProcessingState.exceptions.first()
         assertTrue("SipProcessingException has reasons", firstException.reasons.size() > 0)
