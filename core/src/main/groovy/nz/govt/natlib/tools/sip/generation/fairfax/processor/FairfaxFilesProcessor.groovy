@@ -50,8 +50,6 @@ class FairfaxFilesProcessor {
         this.filesForProcessing = filesForProcessing
     }
 
-    // TODO Write out processed files for processing type:
-    // TODO For each processing type, create a file in the yyyy-MM-dd/title_code folder <yyyyyMMdd>_<title_code>_<processing-type>_<maybe-timestamp?>.log
     String process() {
         log.info("STARTING process for processingParameters=${processingParameters}")
         processedFairfaxFiles = [ : ]
@@ -200,7 +198,7 @@ class FairfaxFilesProcessor {
             sipAsXml = generateSipAsXml(testSip, filesForSip)
             processingParameters.sipProcessingState.totalFilesProcessed = filesForSip.size()
             processingParameters.sipProcessingState.setComplete(true)
-            log.info("\n* * * FairfaxProcessingParameters and SipProcessingState:")
+            log.info("\nFairfaxProcessingParameters and SipProcessingState:")
             log.info(processingParameters.detailedDisplay(0, true))
             log.debug("\n* * *   S I P   * * *")
             log.debug(sipAsXml)
@@ -226,7 +224,6 @@ class FairfaxFilesProcessor {
         return sipXmlGenerator.getSipAsXml()
     }
 
-    // TODO If we were doing multiple editions, that would need to be in the identifier as well
     String formatSipProcessingStateIdentifier() {
         String title = processingParameters.getTitleParent()
         String titleWithUnderscores = title.trim().replace(' ', '_')

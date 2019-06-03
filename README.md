@@ -190,7 +190,7 @@ java -jar sip-generation-fairfax-fat-all-<VERSION>.jar \
     --startingDate="yyyy-MM-dd" \
     --endingDate="yyyy-MM-dd" \
     --sourceFolder="/path/to/source/folder" \
-    --targetFolder="/path/to/target/folder" \
+    --targetPreProcessingFolder="/path/to/target/folder" \
     --forReviewFolder="/path/to/for-review/folder" \
     --createDestination
 ```
@@ -217,9 +217,10 @@ java -jar sip-generation-fairfax-fat-all-<VERSION>.jar \
     --startingDate="yyyy-MM-dd" \
     --endingDate="yyyy-MM-dd" \
     --sourceFolder="/path/to/source/folder" \
-    --targetFolder="/path/to/target/folder" \
+    --targetForIngestionFolder="/path/to/target/folder" \
     --forReviewFolder="/path/to/for-review/folder" \
-    --createDestination
+    --createDestination \
+    --forIngestionProcessingType="parent_grouping"
 ```
 
 Files are processed and prepared for ingestion. The *Ready-for-ingestion* folder structure is how Rosetta ingests the
@@ -250,7 +251,7 @@ java -jar sip-generation-fairfax-fat-all-<VERSION>.jar \
     --startingDate="yyyy-MM-dd" \
     --endingDate="yyyy-MM-dd" \
     --sourceFolder="/path/to/source/folder" \
-    --targetFolder="/path/to/target/folder" \
+    --targetPostProcessedFolder="/path/to/target/folder" \
     --forReviewFolder="/path/to/for-review/folder" \
     --createDestination
 ```

@@ -47,29 +47,25 @@ class ReadyForIngestionProcessor {
         // Process the files in the titleCode folder
         // TODO ProcessLogger won't be able to work in a multithreaded environment! -- if we could split the logging
         // then we could probably do multithreading.
-        ProcessLogger processLogger = new ProcessLogger()
-        processLogger.startSplit()
+        //ProcessLogger processLogger = new ProcessLogger()
+        //processLogger.startSplit()
 
-        boolean isRegexNotGlob = true
-        boolean matchFilenameOnly = true
-        boolean sortFiles = true
-        // Only process PDF files
-        String pattern = '\\w{5,7}-\\d{8}-\\w{3,4}.*?\\.[pP]{1}[dD]{1}[fF]{1}'
-
-        log.info("START processTitleCodeFolder for pattern=${pattern}, titleCodeFolder=${titleCodeFolder.getCanonicalPath()}")
+        log.info("START Processing titleCodeFolder=${titleCodeFolder.getCanonicalPath()}")
         processorConfiguration.timekeeper.logElapsed()
 
-        List<File> allFiles = ProcessorUtils.findFiles(titleCodeFolder.getAbsolutePath(), isRegexNotGlob,
-                matchFilenameOnly, sortFiles, pattern, processorConfiguration.timekeeper)
+        String sipAsXml = ""
+        if (processingParameters.valid) {
+            sipAsXml = processValidTitleCodeFolder(titleCodeFolder, destinationFolder, forReviewFolder, dateString,
+                    processingParameters)
+        }
 
         SipProcessingState sipProcessingState = processingParameters.sipProcessingState
-        // Process the folder as a single collection of files
-        // Note that the folder is processed for a single processingType (so there could be multiple passes, one for
-        // each processingType).
-        String sipAsXml = FairfaxFilesProcessor.processCollectedFiles(processingParameters, allFiles)
 
         File sipAndFilesFolder
-        String folderName = "${dateString}_${processingParameters.titleCode}_${processingParameters.processingType.getFieldValue()}_${sipProcessingState.identifier}"
+        String folderName = "${dateString}_${processingParameters.titleCode}_${processingParameters.processingType.getFieldValue()}"
+        if (sipProcessingState.identifier != null) {
+            folderName = "${folderName}_${sipProcessingState.identifier}"
+        }
         if (sipProcessingState.complete && sipProcessingState.successful) {
             sipAndFilesFolder = new File(destinationFolder,
                     "${sipProcessingState.ieEntityType.getDisplayName()}/${folderName}")
@@ -90,6 +86,11 @@ class ReadyForIngestionProcessor {
                 sipAndFilesFolder.mkdirs()
                 contentStreamsFolder.mkdirs()
             }
+        } else {
+            hasSipAndFilesFolder = true
+            if (!sipAndFilesFolder.exists() && processorConfiguration.createDestination) {
+                sipAndFilesFolder.mkdirs()
+            }
         }
         ProcessorUtils.copyOrMoveFiles(processorConfiguration.moveFiles, sipProcessingState.validFiles, contentStreamsFolder)
         if (processingParameters.processingRules.contains(ProcessingRule.HandleInvalid)) {
@@ -107,28 +108,54 @@ class ReadyForIngestionProcessor {
             ProcessorUtils.copyOrMoveFiles(processorConfiguration.moveFiles, sipProcessingState.unrecognizedFiles, unrecognizedFilesFolder)
         }
 
+        // Write out the SIP file
+        if (processingParameters.valid && !sipAsXml.isEmpty()) {
+            File sipFile = new File(sipAndFilesFolder, "content/mets.xml")
+            sipFile.write(sipAsXml)
+        }
+
         // Write out the FairfaxProcessingParameters and SipProcessingState
         Date now = new Date()
         // We will assume that millisecond timestamps ensures that the filename will be unique
         File processingStateFile = new File(titleCodeFolder,
                 "${processingParameters.processingDifferentiator()}_parameters-and-state_${ProcessorUtils.FILE_TIMESTAMP_FORMATTER.format(now)}.txt")
         processingStateFile.write(processingParameters.detailedDisplay(0, true))
-        ProcessorUtils.copyOrMoveFiles(false, [ processingStateFile ], sipAndFilesFolder)
+        if (sipAndFilesFolder.exists()) {
+            ProcessorUtils.copyOrMoveFiles(false, [processingStateFile], sipAndFilesFolder)
+        }
 
-        // Write out the SIP file
-        File sipFile = new File(sipAndFilesFolder, "content/mets.xml")
-        sipFile.write(sipAsXml)
+//        if (hasSipAndFilesFolder) {
+//            processLogger.copySplit(sipAndFilesFolder, "Process-Name-Folder", !hasUnrecognizedFilesFolder)
+//        }
+//        if (hasUnrecognizedFilesFolder) {
+//            processLogger.copySplit(unrecognizedFilesFolder, "Process-Name-Folder", true)
+//        }
 
-        log.info("END processTitleCodeFolder for pattern=${pattern}, titleCodeFolder=${titleCodeFolder.getCanonicalPath()}")
+        log.info("END Processing titleCodeFolder=${titleCodeFolder.getCanonicalPath()}")
         processorConfiguration.timekeeper.logElapsed()
 
-        if (hasSipAndFilesFolder) {
-            processLogger.copySplit(sipAndFilesFolder, "Process-Name-Folder", !hasUnrecognizedFilesFolder)
-        }
-        if (hasUnrecognizedFilesFolder) {
-            processLogger.copySplit(unrecognizedFilesFolder, "Process-Name-Folder", true)
-        }
-        return sipProcessingState
+        return processingParameters.sipProcessingState
+    }
+
+    String processValidTitleCodeFolder(File titleCodeFolder, File destinationFolder, File forReviewFolder,
+                                                   String dateString, FairfaxProcessingParameters processingParameters) {
+        boolean isRegexNotGlob = true
+        boolean matchFilenameOnly = true
+        boolean sortFiles = true
+        // Only process PDF files
+        String pattern = '\\w{5,7}-\\d{8}-\\w{3,4}.*?\\.[pP]{1}[dD]{1}[fF]{1}'
+
+        log.info("Processing for pattern=${pattern}, titleCodeFolder=${titleCodeFolder.getCanonicalPath()}")
+
+        List<File> allFiles = ProcessorUtils.findFiles(titleCodeFolder.getAbsolutePath(), isRegexNotGlob,
+                matchFilenameOnly, sortFiles, pattern, processorConfiguration.timekeeper)
+
+        // Process the folder as a single collection of files
+        // Note that the folder is processed for a single processingType (so there could be multiple passes, one for
+        // each processingType).
+        String sipAsXml = FairfaxFilesProcessor.processCollectedFiles(processingParameters, allFiles)
+
+        return sipAsXml
     }
 
     // See README.md for folder descriptions and structures.
@@ -161,6 +188,7 @@ class ReadyForIngestionProcessor {
                     if (subFile.isDirectory()) {
                         Tuple2<File, String> titleCodeFolderAndDate = new Tuple2<>(subFile, currentDateString)
                         titleCodeFoldersAndDates.add(titleCodeFolderAndDate)
+                        log.info("Adding ${subFile.getCanonicalPath()} to list of titleCodeFolderAndDate")
                     } else {
                         log.info("Skipping ${subFile.getCanonicalPath()} as not directory=${subFile.isDirectory()}")
                     }
@@ -182,6 +210,7 @@ class ReadyForIngestionProcessor {
         }
         // log.info("Processing over numberOfThreads=${numberOfThreads}")
 
+        List<File> invalidFolders = Collections.synchronizedList([ ])
         // Process the collected directories across multiple threads
         GParsPool.withPool(numberOfThreads) {
             titleCodeFoldersAndDates.eachParallel { Tuple2<File, String> titleCodeFolderAndDateString ->
@@ -194,6 +223,9 @@ class ReadyForIngestionProcessor {
                         this.processingType, processingDate, fairfaxSpreadsheet)
                 processingParameters.overrideProcessingRules(this.processingRules)
                 processingParameters.overrideProcessingOptions(this.processingOptions)
+                if (!processingParameters.valid) {
+                    invalidFolders.add(titleCodeFolder)
+                }
                 if (processingParameters.processingRules.contains(ProcessingRule.MultipleEditions)) {
                     processingParameters.editionDiscriminators.each { String editionDiscriminator ->
                         FairfaxProcessingParameters editionParameters = processingParameters.clone()
@@ -205,6 +237,13 @@ class ReadyForIngestionProcessor {
                     processTitleCodeFolder(titleCodeFolder, processorConfiguration.targetForIngestionFolder,
                             processorConfiguration.forReviewFolder, dateString, processingParameters)
                 }
+            }
+        }
+        if (invalidFolders.size() > 0) {
+            log.warn("Summary of invalid folders:")
+            invalidFolders.each { File folder ->
+                String titleCode = folder.getName()
+                log.warn("    titleCode=${titleCode}, invalid folder=${folder.getCanonicalPath()}")
             }
         }
     }

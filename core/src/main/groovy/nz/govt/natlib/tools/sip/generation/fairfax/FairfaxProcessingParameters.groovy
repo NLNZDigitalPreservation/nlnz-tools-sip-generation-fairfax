@@ -3,6 +3,7 @@ package nz.govt.natlib.tools.sip.generation.fairfax
 import groovy.transform.AutoClone
 import groovy.transform.Canonical
 import groovy.transform.ToString
+import groovy.util.logging.Log4j2
 import nz.govt.natlib.tools.sip.generation.fairfax.parameters.ProcessingOption
 import nz.govt.natlib.tools.sip.generation.fairfax.parameters.ProcessingRule
 import nz.govt.natlib.tools.sip.generation.fairfax.parameters.ProcessingType
@@ -18,6 +19,7 @@ import java.time.format.DateTimeFormatter
 @Canonical
 @ToString(includeNames=true, includePackage=false, excludes=[ 'spreadsheetRow', 'sipProcessingState' ])
 @AutoClone(excludes = [ 'currentEdition' ])
+@Log4j2
 class FairfaxProcessingParameters {
     static DateTimeFormatter READABLE_DATE_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd")
     boolean valid = true
@@ -39,23 +41,38 @@ class FairfaxProcessingParameters {
                 processingType.fieldValue, titleCode)
         if (matchingRows.size() > 1) {
             String message = "Multiple spreadsheet rows for processingType=${processingType.fieldValue} and titleCode=${titleCode}. Unable to generate parameters".toString()
-            SipProcessingException exception = new SipProcessingExceptionReason(
+            SipProcessingExceptionReason exceptionReason = new SipProcessingExceptionReason(
                     SipProcessingExceptionReasonType.INVALID_PARAMETERS, null, message)
-            throw exception
+            SipProcessingState replacementSipProcessingState = new SipProcessingState()
+            replacementSipProcessingState.exceptions = [ SipProcessingException.createWithReason(exceptionReason) ]
+            log.warn(message)
+            return new FairfaxProcessingParameters(valid: false, titleCode: titleCode, processingType: processingType,
+                    processingDate: processingDate, sipProcessingState: replacementSipProcessingState)
         } else if (matchingRows.size() == 0) {
             if (ProcessingType.CreateSipForFolder == processingType) {
                 Map<String, String> BLANK_ROW = [ : ]
                 return new FairfaxProcessingParameters(titleCode: titleCode, processingType: processingType,
                         processingDate: processingDate, spreadsheetRow: BLANK_ROW)
+            } else {
+                String message = "Unable to create processing parameters: No matching row for titleCode=${titleCode}".toString()
+                SipProcessingExceptionReason exceptionReason = new SipProcessingExceptionReason(
+                        SipProcessingExceptionReasonType.INVALID_PARAMETERS, null, message)
+                SipProcessingState replacementSipProcessingState = new SipProcessingState()
+                replacementSipProcessingState.exceptions = [ SipProcessingException.createWithReason(exceptionReason) ]
+                log.warn(message)
+                return new FairfaxProcessingParameters(valid: false, titleCode: titleCode,
+                        processingType: processingType, processingDate: processingDate,
+                        sipProcessingState: replacementSipProcessingState)
             }
         } else if (processingType == null) {
+            String message = "ProcessingType must be set."
             SipProcessingExceptionReason exceptionReason = new SipProcessingExceptionReason(
-                    SipProcessingExceptionReasonType.INVALID_PARAMETERS, null,
-                    "ProcessingType must be set.")
+                    SipProcessingExceptionReasonType.INVALID_PARAMETERS, null, message)
             SipProcessingState replacementSipProcessingState = new SipProcessingState()
             replacementSipProcessingState.exceptions = [ SipProcessingException.createWithReason(exceptionReason) ]
-            return new FairfaxProcessingParameters(valid: false,
-                    sipProcessingState: replacementSipProcessingState)
+            log.warn(message)
+            return new FairfaxProcessingParameters(valid: false, titleCode: titleCode, processingType: processingType,
+                    processingDate: processingDate, sipProcessingState: replacementSipProcessingState)
         } else {
             Map<String, String> matchingRow = matchingRows.first()
             String rules = matchingRow.get(FairfaxSpreadsheet.PROCESSING_RULES_KEY)
