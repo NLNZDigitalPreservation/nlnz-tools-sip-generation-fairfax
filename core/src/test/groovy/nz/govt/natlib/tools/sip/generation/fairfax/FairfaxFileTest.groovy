@@ -523,7 +523,7 @@ class FairfaxFileTest {
 
         FairfaxProcessingParameters processingParameters = new FairfaxProcessingParameters(currentEdition: "ed2",
                 editionDiscriminators: [ "ed1", "ed2", "ed3" ], sectionCodes: [ "ed1", "TWO", "FEE" ],
-                processingOptions: [ ProcessingOption.AlphaBeforeNumericSequencing ] )
+                options: [ ProcessingOption.AlphaBeforeNumericSequencing ] )
 
         List<FairfaxFile> original = [ fairfaxFile14, fairfaxFile13, fairfaxFile12, fairfaxFile11, fairfaxFile10,
                                        fairfaxFile9, fairfaxFile8, fairfaxFile7, fairfaxFile6, fairfaxFile5,

@@ -82,7 +82,7 @@ class FairfaxFile {
             }
         }
         // NEXT: Sort each sectionCode by numberAndAlpha
-        boolean alphaBeforeNumeric = processingParameters.processingOptions.contains(ProcessingOption.AlphaBeforeNumericSequencing)
+        boolean alphaBeforeNumeric = processingParameters.options.contains(ProcessingOption.AlphaBeforeNumericSequencing)
         processingParameters.sectionCodes.each { String sectionCode ->
             List<FairfaxFile> sectionFiles = filesBySection.get(sectionCode)
             sectionFiles = sortNumericAndAlpha(sectionFiles, alphaBeforeNumeric)

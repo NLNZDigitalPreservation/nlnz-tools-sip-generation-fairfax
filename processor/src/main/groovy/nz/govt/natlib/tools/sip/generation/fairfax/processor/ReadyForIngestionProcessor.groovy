@@ -8,7 +8,6 @@ import nz.govt.natlib.tools.sip.generation.fairfax.FairfaxSpreadsheet
 import nz.govt.natlib.tools.sip.generation.fairfax.parameters.ProcessingOption
 import nz.govt.natlib.tools.sip.generation.fairfax.parameters.ProcessingRule
 import nz.govt.natlib.tools.sip.generation.fairfax.parameters.ProcessingType
-import nz.govt.natlib.tools.sip.processing.ProcessLogger
 import nz.govt.natlib.tools.sip.state.SipProcessingException
 import nz.govt.natlib.tools.sip.state.SipProcessingExceptionReason
 import nz.govt.natlib.tools.sip.state.SipProcessingExceptionReasonType
@@ -42,27 +41,28 @@ class ReadyForIngestionProcessor {
                 ",", processingType.defaultOptions, true)
     }
 
-    SipProcessingState processTitleCodeFolder(File titleCodeFolder, File destinationFolder, File forReviewFolder,
-                                              String dateString, FairfaxProcessingParameters processingParameters) {
+    SipProcessingState processTitleCodeFolder(FairfaxProcessingParameters processingParameters, File destinationFolder,
+                                              File forReviewFolder, String dateString) {
         // Process the files in the titleCode folder
         // TODO ProcessLogger won't be able to work in a multithreaded environment! -- if we could split the logging
         // then we could probably do multithreading.
         //ProcessLogger processLogger = new ProcessLogger()
         //processLogger.startSplit()
 
-        log.info("START Processing titleCodeFolder=${titleCodeFolder.getCanonicalPath()}")
+        File sourceFolder = processingParameters.sourceFolder
+
+        log.info("START Processing sourceFolder=${processingParameters.sourceFolderPath()}")
         processorConfiguration.timekeeper.logElapsed()
 
         String sipAsXml = ""
         if (processingParameters.valid) {
-            sipAsXml = processValidTitleCodeFolder(titleCodeFolder, destinationFolder, forReviewFolder, dateString,
-                    processingParameters)
+            sipAsXml = processValidTitleCodeFolder(processingParameters)
         }
 
         SipProcessingState sipProcessingState = processingParameters.sipProcessingState
 
         File sipAndFilesFolder
-        String folderName = "${dateString}_${processingParameters.titleCode}_${processingParameters.processingType.getFieldValue()}"
+        String folderName = "${dateString}_${processingParameters.titleCode}_${processingParameters.type.getFieldValue()}"
         if (sipProcessingState.identifier != null) {
             folderName = "${folderName}_${sipProcessingState.identifier}"
         }
@@ -93,11 +93,11 @@ class ReadyForIngestionProcessor {
             }
         }
         ProcessorUtils.copyOrMoveFiles(processorConfiguration.moveFiles, sipProcessingState.validFiles, contentStreamsFolder)
-        if (processingParameters.processingRules.contains(ProcessingRule.HandleInvalid)) {
+        if (processingParameters.rules.contains(ProcessingRule.HandleInvalid)) {
             ProcessorUtils.copyOrMoveFiles(processorConfiguration.moveFiles, sipProcessingState.invalidFiles, contentStreamsFolder)
         }
 
-        if (processingParameters.processingRules.contains(ProcessingRule.HandleUnrecognised)) {
+        if (processingParameters.rules.contains(ProcessingRule.HandleUnrecognised)) {
             // If the files aren't recognized, then dump the files in an exception folder
             if (sipProcessingState.unrecognizedFiles.size() > 0) {
                 hasUnrecognizedFilesFolder = true
@@ -117,7 +117,7 @@ class ReadyForIngestionProcessor {
         // Write out the FairfaxProcessingParameters and SipProcessingState
         Date now = new Date()
         // We will assume that millisecond timestamps ensures that the filename will be unique
-        File processingStateFile = new File(titleCodeFolder,
+        File processingStateFile = new File(sourceFolder,
                 "${processingParameters.processingDifferentiator()}_parameters-and-state_${ProcessorUtils.FILE_TIMESTAMP_FORMATTER.format(now)}.txt")
         processingStateFile.write(processingParameters.detailedDisplay(0, true))
         if (sipAndFilesFolder.exists()) {
@@ -131,24 +131,23 @@ class ReadyForIngestionProcessor {
 //            processLogger.copySplit(unrecognizedFilesFolder, "Process-Name-Folder", true)
 //        }
 
-        log.info("END Processing titleCodeFolder=${titleCodeFolder.getCanonicalPath()}")
+        log.info("END Processing sourceFolder=${processingParameters.sourceFolderPath()}")
         processorConfiguration.timekeeper.logElapsed()
 
         return processingParameters.sipProcessingState
     }
 
-    String processValidTitleCodeFolder(File titleCodeFolder, File destinationFolder, File forReviewFolder,
-                                                   String dateString, FairfaxProcessingParameters processingParameters) {
+    String processValidTitleCodeFolder(FairfaxProcessingParameters processingParameters) {
         boolean isRegexNotGlob = true
         boolean matchFilenameOnly = true
         boolean sortFiles = true
         // Only process PDF files
         String pattern = '\\w{5,7}-\\d{8}-\\w{3,4}.*?\\.[pP]{1}[dD]{1}[fF]{1}'
 
-        log.info("Processing for pattern=${pattern}, titleCodeFolder=${titleCodeFolder.getCanonicalPath()}")
+        log.info("Processing for pattern=${pattern}, titleCodeFolder=${processingParameters.sourceFolderPath()}")
 
-        List<File> allFiles = ProcessorUtils.findFiles(titleCodeFolder.getAbsolutePath(), isRegexNotGlob,
-                matchFilenameOnly, sortFiles, pattern, processorConfiguration.timekeeper)
+        List<File> allFiles = ProcessorUtils.findFiles(processingParameters.sourceFolder.getAbsolutePath(),
+                isRegexNotGlob, matchFilenameOnly, sortFiles, pattern, processorConfiguration.timekeeper)
 
         // Process the folder as a single collection of files
         // Note that the folder is processed for a single processingType (so there could be multiple passes, one for
@@ -220,22 +219,22 @@ class ReadyForIngestionProcessor {
                 String dateString = titleCodeFolderAndDateString.second
                 LocalDate processingDate = LocalDate.parse(dateString, FairfaxFile.LOCAL_DATE_TIME_FORMATTER)
                 FairfaxProcessingParameters processingParameters = FairfaxProcessingParameters.build(titleCode,
-                        this.processingType, processingDate, fairfaxSpreadsheet)
+                        this.processingType, titleCodeFolder, processingDate, fairfaxSpreadsheet)
                 processingParameters.overrideProcessingRules(this.processingRules)
                 processingParameters.overrideProcessingOptions(this.processingOptions)
                 if (!processingParameters.valid) {
                     invalidFolders.add(titleCodeFolder)
                 }
-                if (processingParameters.processingRules.contains(ProcessingRule.MultipleEditions)) {
+                if (processingParameters.rules.contains(ProcessingRule.MultipleEditions)) {
                     processingParameters.editionDiscriminators.each { String editionDiscriminator ->
                         FairfaxProcessingParameters editionParameters = processingParameters.clone()
                         editionParameters.currentEdition = editionDiscriminator
-                        processTitleCodeFolder(titleCodeFolder, processorConfiguration.targetForIngestionFolder,
-                                processorConfiguration.forReviewFolder, dateString, editionParameters)
+                        processTitleCodeFolder(editionParameters, processorConfiguration.targetForIngestionFolder,
+                                processorConfiguration.forReviewFolder, dateString)
                     }
                 } else {
-                    processTitleCodeFolder(titleCodeFolder, processorConfiguration.targetForIngestionFolder,
-                            processorConfiguration.forReviewFolder, dateString, processingParameters)
+                    processTitleCodeFolder(processingParameters, processorConfiguration.targetForIngestionFolder,
+                            processorConfiguration.forReviewFolder, dateString)
                 }
             }
         }

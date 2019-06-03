@@ -61,7 +61,7 @@ class FairfaxFilesProcessor {
             List<FairfaxFile> validNamedFiles = extractValidNamedFiles(fairfaxFilesForProcessing)
 
             List<FairfaxFile> sortedFilesForProcessing
-            switch (processingParameters.processingType) {
+            switch (processingParameters.type) {
                 case ProcessingType.ParentGrouping:
                     sortedFilesForProcessing = ParentGroupingProcessor.selectAndSort(processingParameters, validNamedFiles)
                     break
@@ -80,7 +80,7 @@ class FairfaxFilesProcessor {
                     }
 
             if (processingParameters.sipProcessingState.ignoredFiles.size() > 0 &&
-                    processingParameters.processingRules.contains(ProcessingRule.AllSectionsInSipRequired)) {
+                    processingParameters.rules.contains(ProcessingRule.AllSectionsInSipRequired)) {
                 // Strip the ignored of any editionDiscriminator files
                 List<FairfaxFile> withoutEditionFiles = processingParameters.sipProcessingState.ignoredFiles.findAll {
                     File file ->
@@ -105,7 +105,7 @@ class FairfaxFilesProcessor {
                 }
             }
             // The valid files should be filtered and sorted already
-            String sipAsXml = generateSipAsXml(successfulFiles, processingParameters.processingDate)
+            String sipAsXml = generateSipAsXml(successfulFiles, processingParameters.date)
             log.info("ENDING process for processingParameters=${processingParameters}")
 
             return sipAsXml

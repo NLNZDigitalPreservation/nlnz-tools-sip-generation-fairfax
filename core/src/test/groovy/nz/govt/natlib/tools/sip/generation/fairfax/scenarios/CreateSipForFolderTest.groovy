@@ -93,8 +93,9 @@ class CreateSipForFolderTest {
         String dateString = "20181123"
         LocalDate processingDate = LocalDate.parse(dateString, FairfaxFile.LOCAL_DATE_TIME_FORMATTER)
 
+        File sourceFolder = new File(testMethodState.localPath)
         FairfaxProcessingParameters processingParameters = FairfaxProcessingParameters.build("TST",
-                ProcessingType.CreateSipForFolder, processingDate, testMethodState.fairfaxSpreadsheet)
+                ProcessingType.CreateSipForFolder, sourceFolder, processingDate, testMethodState.fairfaxSpreadsheet)
         processingParameters.sipProcessingState = testMethodState.sipProcessingState
         String sipAsXml = FairfaxFilesProcessor.processCollectedFiles(processingParameters, filesForProcessing)
 

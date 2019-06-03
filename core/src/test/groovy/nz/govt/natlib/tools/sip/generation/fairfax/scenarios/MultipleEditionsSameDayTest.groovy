@@ -98,9 +98,10 @@ class MultipleEditionsSameDayTest {
         String dateString = "20181123"
         LocalDate processingDate = LocalDate.parse(dateString, FairfaxFile.LOCAL_DATE_TIME_FORMATTER)
 
+        File sourceFolder = new File(testMethodState.localPath)
         FairfaxProcessingParameters processingParameters = FairfaxProcessingParameters.build("TST",
-                ProcessingType.ParentGrouping, processingDate, testMethodState.fairfaxSpreadsheet)
-        processingParameters.processingRules = ProcessingRule.mergeOverrides(processingParameters.processingRules,
+                ProcessingType.ParentGrouping, sourceFolder, processingDate, testMethodState.fairfaxSpreadsheet)
+        processingParameters.rules = ProcessingRule.mergeOverrides(processingParameters.rules,
                 [ ProcessingRule.AllSectionsInSipOptional ])
 
         assertThat("Multiple section codes: 'PB1', 'BOO', 'ZOO', 'AAT'", processingParameters.sectionCodes,
@@ -108,7 +109,7 @@ class MultipleEditionsSameDayTest {
         assertThat("Multiple discriminator codes: 'PB1', 'PB2', 'PB3'", processingParameters.editionDiscriminators,
                 is([ 'PB1', 'PB2', 'PB3' ]))
         assertTrue("Alpha before numeric sorting",
-                processingParameters.processingOptions.contains(ProcessingOption.AlphaBeforeNumericSequencing))
+                processingParameters.options.contains(ProcessingOption.AlphaBeforeNumericSequencing))
 
         SipProcessingState originalSipProcessingState = testMethodState.sipProcessingState
 

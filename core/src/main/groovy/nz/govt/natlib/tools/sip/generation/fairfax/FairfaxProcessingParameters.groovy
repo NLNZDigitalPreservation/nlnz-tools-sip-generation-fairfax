@@ -24,10 +24,11 @@ class FairfaxProcessingParameters {
     static DateTimeFormatter READABLE_DATE_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd")
     boolean valid = true
     String titleCode
-    ProcessingType processingType
-    List<ProcessingRule> processingRules = [ ]
-    List<ProcessingOption> processingOptions = [ ]
-    LocalDate processingDate
+    File sourceFolder
+    ProcessingType type
+    List<ProcessingRule> rules = [ ]
+    List<ProcessingOption> options = [ ]
+    LocalDate date
     Map<String, String> spreadsheetRow = [ : ]
     List<String> sectionCodes = [ ]
     List<String> editionDiscriminators = [ ]
@@ -35,8 +36,8 @@ class FairfaxProcessingParameters {
     String currentEdition
     SipProcessingState sipProcessingState = new SipProcessingState()
 
-    static FairfaxProcessingParameters build(String titleCode, ProcessingType processingType, LocalDate processingDate,
-                                             FairfaxSpreadsheet spreadsheet) {
+    static FairfaxProcessingParameters build(String titleCode, ProcessingType processingType, File sourceFolder,
+                                             LocalDate processingDate, FairfaxSpreadsheet spreadsheet) {
         List<Map<String, String>> matchingRows = spreadsheet.matchingProcessingTypeParameterMaps(
                 processingType.fieldValue, titleCode)
         if (matchingRows.size() > 1) {
@@ -46,13 +47,13 @@ class FairfaxProcessingParameters {
             SipProcessingState replacementSipProcessingState = new SipProcessingState()
             replacementSipProcessingState.exceptions = [ SipProcessingException.createWithReason(exceptionReason) ]
             log.warn(message)
-            return new FairfaxProcessingParameters(valid: false, titleCode: titleCode, processingType: processingType,
-                    processingDate: processingDate, sipProcessingState: replacementSipProcessingState)
+            return new FairfaxProcessingParameters(valid: false, titleCode: titleCode, type: processingType,
+                    sourceFolder: sourceFolder, date: processingDate, sipProcessingState: replacementSipProcessingState)
         } else if (matchingRows.size() == 0) {
             if (ProcessingType.CreateSipForFolder == processingType) {
-                Map<String, String> BLANK_ROW = [ : ]
-                return new FairfaxProcessingParameters(titleCode: titleCode, processingType: processingType,
-                        processingDate: processingDate, spreadsheetRow: BLANK_ROW)
+                Map<String, String> blankRow = [ : ]
+                return new FairfaxProcessingParameters(titleCode: titleCode, type: processingType,
+                        sourceFolder: sourceFolder, date: processingDate, spreadsheetRow: blankRow)
             } else {
                 String message = "Unable to create processing parameters: No matching row for titleCode=${titleCode}".toString()
                 SipProcessingExceptionReason exceptionReason = new SipProcessingExceptionReason(
@@ -60,8 +61,8 @@ class FairfaxProcessingParameters {
                 SipProcessingState replacementSipProcessingState = new SipProcessingState()
                 replacementSipProcessingState.exceptions = [ SipProcessingException.createWithReason(exceptionReason) ]
                 log.warn(message)
-                return new FairfaxProcessingParameters(valid: false, titleCode: titleCode,
-                        processingType: processingType, processingDate: processingDate,
+                return new FairfaxProcessingParameters(valid: false, titleCode: titleCode, type: processingType,
+                        sourceFolder: sourceFolder, date: processingDate,
                         sipProcessingState: replacementSipProcessingState)
             }
         } else if (processingType == null) {
@@ -71,17 +72,17 @@ class FairfaxProcessingParameters {
             SipProcessingState replacementSipProcessingState = new SipProcessingState()
             replacementSipProcessingState.exceptions = [ SipProcessingException.createWithReason(exceptionReason) ]
             log.warn(message)
-            return new FairfaxProcessingParameters(valid: false, titleCode: titleCode, processingType: processingType,
-                    processingDate: processingDate, sipProcessingState: replacementSipProcessingState)
+            return new FairfaxProcessingParameters(valid: false, titleCode: titleCode, type: processingType,
+                    sourceFolder: sourceFolder, date: processingDate, sipProcessingState: replacementSipProcessingState)
         } else {
             Map<String, String> matchingRow = matchingRows.first()
             String rules = matchingRow.get(FairfaxSpreadsheet.PROCESSING_RULES_KEY)
             String options = matchingRow.get(FairfaxSpreadsheet.PROCESSING_OPTIONS_KEY)
             // TODO Throw exception if processingType is null?
-            return new FairfaxProcessingParameters(titleCode: titleCode, processingType: processingType,
-                    processingRules: ProcessingRule.extract(rules, ",", processingType.defaultRules),
-                    processingOptions: ProcessingOption.extract(options, ",", processingType.defaultOptions),
-                    processingDate: processingDate, spreadsheetRow: matchingRow,
+            return new FairfaxProcessingParameters(titleCode: titleCode, type: processingType,
+                    rules: ProcessingRule.extract(rules, ",", processingType.defaultRules),
+                    options: ProcessingOption.extract(options, ",", processingType.defaultOptions),
+                    sourceFolder: sourceFolder, date: processingDate, spreadsheetRow: matchingRow,
                     sectionCodes: extractSeparatedValues(matchingRow, FairfaxSpreadsheet.SECTION_CODE_KEY),
                     editionDiscriminators: extractSeparatedValues(matchingRow, FairfaxSpreadsheet.EDITION_DISCRIMINATOR_KEY),
                     isMagazine: FairfaxSpreadsheet.extractBooleanValue(matchingRow, FairfaxSpreadsheet.IS_MAGAZINE_KEY))
@@ -98,11 +99,11 @@ class FairfaxProcessingParameters {
     }
 
     void overrideProcessingRules(List<ProcessingRule> overrides) {
-        processingRules = ProcessingRule.mergeOverrides(processingRules, overrides)
+        rules = ProcessingRule.mergeOverrides(rules, overrides)
     }
 
     void overrideProcessingOptions(List<ProcessingOption> overrides) {
-        processingOptions = ProcessingOption.mergeOverrides(processingOptions, overrides)
+        options = ProcessingOption.mergeOverrides(options, overrides)
     }
 
     String getTitleParent() {
@@ -145,7 +146,7 @@ class FairfaxProcessingParameters {
     }
 
     String processingDifferentiator() {
-        String baseDifferentiator = "${titleCode}_${processingDate.format(READABLE_DATE_FORMAT)}_${processingType.fieldValue}"
+        String baseDifferentiator = "${titleCode}_${date.format(READABLE_DATE_FORMAT)}_${type.fieldValue}"
         if (currentEdition == null) {
             return baseDifferentiator
         } else {
@@ -158,13 +159,15 @@ class FairfaxProcessingParameters {
         StringBuilder stringBuilder = new StringBuilder(initialOffset)
         stringBuilder.append("${this.getClass().getName()}:")
         stringBuilder.append(System.lineSeparator())
-        stringBuilder.append("${initialOffset}    processingType=${processingType.fieldValue}")
+        stringBuilder.append("${initialOffset}    type=${type.fieldValue}")
         stringBuilder.append(System.lineSeparator())
-        stringBuilder.append("${initialOffset}    processingDate=${processingDate.format(READABLE_DATE_FORMAT)}")
+        stringBuilder.append("${initialOffset}    sourceFolder=${sourceFolderPath()}")
         stringBuilder.append(System.lineSeparator())
-        stringBuilder.append("${initialOffset}    processingRules=${processingRules}")
+        stringBuilder.append("${initialOffset}    date=${date.format(READABLE_DATE_FORMAT)}")
         stringBuilder.append(System.lineSeparator())
-        stringBuilder.append("${initialOffset}    processingOptions=${processingOptions}")
+        stringBuilder.append("${initialOffset}    rules=${rules}")
+        stringBuilder.append(System.lineSeparator())
+        stringBuilder.append("${initialOffset}    options=${options}")
         stringBuilder.append(System.lineSeparator())
         stringBuilder.append("${initialOffset}    valid=${valid}")
         stringBuilder.append(System.lineSeparator())
@@ -187,4 +190,7 @@ class FairfaxProcessingParameters {
         return stringBuilder.toString()
     }
 
+    String sourceFolderPath() {
+        return sourceFolder == null ? "null" : sourceFolder.getCanonicalPath()
+    }
 }

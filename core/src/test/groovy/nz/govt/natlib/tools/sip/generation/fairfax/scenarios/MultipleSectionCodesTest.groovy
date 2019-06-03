@@ -95,9 +95,10 @@ class MultipleSectionCodesTest {
         String dateString = "20181123"
         LocalDate processingDate = LocalDate.parse(dateString, FairfaxFile.LOCAL_DATE_TIME_FORMATTER)
 
+        File sourceFolder = new File(testMethodState.localPath)
         FairfaxProcessingParameters processingParameters = FairfaxProcessingParameters.build("TST",
-                ProcessingType.ParentGrouping, processingDate, testMethodState.fairfaxSpreadsheet)
-        processingParameters.processingRules = ProcessingRule.mergeOverrides(processingParameters.processingRules,
+                ProcessingType.ParentGrouping, sourceFolder, processingDate, testMethodState.fairfaxSpreadsheet)
+        processingParameters.rules = ProcessingRule.mergeOverrides(processingParameters.rules,
                 [ ProcessingRule.AllSectionsInSipOptional ])
 
         assertThat("Multiple section codes: 'PB1', 'BOO', 'ZOO', 'AAT'", processingParameters.sectionCodes,
