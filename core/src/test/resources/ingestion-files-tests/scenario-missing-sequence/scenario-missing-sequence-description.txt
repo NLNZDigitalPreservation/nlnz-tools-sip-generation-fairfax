@@ -1,0 +1,13 @@
+# Based on https://docs.cucumber.io/
+#
+@tag
+Feature: Nonstandard source file scenarios are handled
+
+   Nonstandard source file scenarios are handled.
+
+   Scenario: The publication issue has one or more pages that are missing sequence numbering
+     Given The publication issue has most of its pages
+     And there are pages that have missing sequence numbering
+     And the processing rule indicates that missing sequences are treated as errors
+     When the publication issue is processed
+     Then an error is generated indicating that there are missing sequences

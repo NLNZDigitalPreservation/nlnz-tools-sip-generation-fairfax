@@ -12,7 +12,9 @@ enum ProcessingRule {
     MultipleEditions("multiple_editions"),
     SingleEdition("single_edition"),
     AllSectionsInSipRequired("required_all_sections_in_sip"),
-    AllSectionsInSipOptional("optional_all_sections_in_sip")
+    AllSectionsInSipOptional("optional_all_sections_in_sip"),
+    MissingSequenceIgnored("missing_sequence_is_ignored"),
+    MissingSequenceError("missing_sequence_is_error")
 
     private static final Map<String, ProcessingRule> LOOKUP_BY_FIELD_VALUE = [ : ]
     private static final Map<ProcessingRule, List<ProcessingRule>> OVERRIDES_MAP = [ : ]
@@ -25,6 +27,8 @@ enum ProcessingRule {
             OVERRIDES_MAP.put(SingleEdition, [ MultipleEditions ])
             OVERRIDES_MAP.put(AllSectionsInSipRequired, [ AllSectionsInSipOptional ])
             OVERRIDES_MAP.put(AllSectionsInSipOptional, [ AllSectionsInSipRequired ])
+            OVERRIDES_MAP.put(MissingSequenceIgnored, [ MissingSequenceError ])
+            OVERRIDES_MAP.put(MissingSequenceError, [ MissingSequenceIgnored ])
         }
     }
 

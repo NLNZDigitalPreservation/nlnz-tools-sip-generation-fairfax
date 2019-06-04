@@ -98,6 +98,27 @@ class FairfaxFile {
         return sorted
     }
 
+    static List<FairfaxFile> postMissingSequenceFiles(List<FairfaxFile> files,
+                                                      FairfaxProcessingParameters processingParameters) {
+        List<FairfaxFile> sorted = sortWithSameTitleCodeAndDate(files, processingParameters)
+        FairfaxFile previousFile = null
+        List<FairfaxFile> postMissingFiles = [ ]
+        sorted.each { FairfaxFile testFile ->
+            if (previousFile != null) {
+                if (!testFile.canComeDirectlyAfter(previousFile, processingParameters.editionDiscriminators)) {
+                    postMissingFiles.add(testFile)
+                }
+                previousFile = testFile
+            } else {
+                previousFile = testFile
+                if (testFile.sequenceNumber != 1) {
+                    postMissingFiles.add(testFile)
+                }
+            }
+        }
+        return postMissingFiles
+    }
+
     static FairfaxFile substituteFor(String sourceSectionCode, String replacementSectionCode, FairfaxFile fairfaxFile,
                                      List<FairfaxFile> possibleFiles) {
         if (fairfaxFile.sectionCode == sourceSectionCode) {
@@ -158,8 +179,8 @@ class FairfaxFile {
         return filtered
     }
 
-    static List<FairfaxFile> filterSubstituteAndSort(FairfaxProcessingParameters processingParameters,
-                                                     List<FairfaxFile> allPossibleFiles) {
+    static List<FairfaxFile> filterSubstituteAndSort(List<FairfaxFile> allPossibleFiles,
+                                                     FairfaxProcessingParameters processingParameters) {
         List<FairfaxFile> filteredSubstitutedAndSorted
         if (processingParameters.currentEdition != null && !processingParameters.editionDiscriminators.isEmpty()) {
             // First we filter so we only have the files we want to process
@@ -228,6 +249,12 @@ class FairfaxFile {
         return sorted
     }
 
+    static List<String> asFilenames(List<FairfaxFile> files) {
+        return files.collect { FairfaxFile fairfaxFile ->
+            fairfaxFile.file.getName()
+        }
+    }
+
     FairfaxFile(File file) {
         this.file = file
         populate()
@@ -294,11 +321,18 @@ class FairfaxFile {
         }
     }
 
-    boolean comesDirectlyAfter(FairfaxFile fairfaxFile) {
+    boolean canComeDirectlyAfter(FairfaxFile fairfaxFile, List<String> editionDiscriminators = [ ]) {
         // this file's sequence number must be greater (or a letter starting at 1)
         int sequenceDifference = this.sequenceNumber - fairfaxFile.sequenceNumber
         if (this.sequenceLetter == fairfaxFile.sequenceLetter) {
-            return sequenceDifference == 1
+            boolean sameSectionCode = this.sectionCode == fairfaxFile.sectionCode ||
+                    (editionDiscriminators.contains(this.sectionCode) &&
+                            editionDiscriminators.contains(fairfaxFile.sectionCode))
+            if (sameSectionCode) {
+                return sequenceDifference == 1
+            } else {
+                return this.sequenceNumber == 1
+            }
         } else {
             return this.sequenceNumber == 1
         }

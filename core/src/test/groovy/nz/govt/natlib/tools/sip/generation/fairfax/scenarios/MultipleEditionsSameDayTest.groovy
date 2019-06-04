@@ -121,7 +121,7 @@ class MultipleEditionsSameDayTest {
             String sipAsXml = FairfaxFilesProcessor.processCollectedFiles(currentProcessingParameters, filesForProcessing)
 
             log.info("${System.lineSeparator()}FairfaxProcessingParameters and SipProcessingState:")
-            log.info(processingParameters.detailedDisplay(0, true))
+            log.info(currentProcessingParameters.detailedDisplay(0, true))
             log.info(System.lineSeparator())
 
             switch (discriminatorCode) {

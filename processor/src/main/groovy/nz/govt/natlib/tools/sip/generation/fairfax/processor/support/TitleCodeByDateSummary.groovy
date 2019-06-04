@@ -36,7 +36,7 @@ class TitleCodeByDateSummary {
                     outOfSequenceFiles.add(fairfaxFile)
                 }
             } else {
-                if (!fairfaxFile.comesDirectlyAfter(lastFairfaxFile)) {
+                if (!fairfaxFile.canComeDirectlyAfter(lastFairfaxFile)) {
                     outOfSequenceFiles.addAll([ lastFairfaxFile, fairfaxFile ])
                 }
             }

@@ -105,6 +105,8 @@ class FairfaxFilesProcessor {
                     successfulFiles.add(fileForProcessing)
                 }
             }
+            checkForMissingSequenceFiles(successfulFiles)
+
             // The valid files should be filtered and sorted already
             sipAsXml = generateSipAsXml(successfulFiles, processingParameters.date)
         }
@@ -230,6 +232,23 @@ class FairfaxFilesProcessor {
             return "_${titleWithUnderscores}"
         } else {
             return "_${processingParameters.currentEdition}_${titleWithUnderscores}"
+        }
+    }
+
+    void checkForMissingSequenceFiles(List<FairfaxFile> checkList) {
+        if (processingParameters.rules.contains(ProcessingRule.MissingSequenceError)) {
+            List<FairfaxFile> postMissingSequenceFiles = FairfaxFile.postMissingSequenceFiles(checkList,
+                    processingParameters)
+            if (postMissingSequenceFiles.size() > 0) {
+                List<String> filenamesOnly = FairfaxFile.asFilenames(postMissingSequenceFiles)
+                String listOfFiles = "${filenamesOnly}".toString()
+                SipProcessingExceptionReason exceptionReason = new SipProcessingExceptionReason(
+                        SipProcessingExceptionReasonType.MISSING_SEQUENCE_FILES, null,
+                        listOfFiles)
+                SipProcessingException sipProcessingException = SipProcessingException.createWithReason(exceptionReason)
+                processingParameters.sipProcessingState.addException(sipProcessingException)
+                log.warn(exceptionReason.toString())
+            }
         }
     }
 }
