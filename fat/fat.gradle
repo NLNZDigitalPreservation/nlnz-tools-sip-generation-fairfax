@@ -29,9 +29,6 @@ setVersion(project.ext.versionNumber)
 dependencies {
     compile project(':sip-generation-fairfax-processor')
 
-    // slf4j for fat jar. Log messages go to console at info level.
-    compile 'org.slf4j:slf4j-simple:1.7.26'
-
     // Required by FilesFinder
     compile 'org.apache.ant:ant:1.10.5'
 }
@@ -52,7 +49,7 @@ shadowJar {
     classifier = null
     version = project.ext.versionNumber
     manifest {
-        attributes 'Main-Class': 'nz.govt.natlib.tools.sip.generation.fairfax.processor.ProcessorRunner'
+        attributes 'Main-Class': 'nz.govt.natlib.tools.sip.generation.fairfax.processor.ProcessorRunnerWrapper'
     }
 }
 

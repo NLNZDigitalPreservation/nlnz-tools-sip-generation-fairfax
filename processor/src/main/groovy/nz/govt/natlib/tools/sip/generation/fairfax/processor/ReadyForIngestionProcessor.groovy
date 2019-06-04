@@ -8,6 +8,7 @@ import nz.govt.natlib.tools.sip.generation.fairfax.FairfaxSpreadsheet
 import nz.govt.natlib.tools.sip.generation.fairfax.parameters.ProcessingOption
 import nz.govt.natlib.tools.sip.generation.fairfax.parameters.ProcessingRule
 import nz.govt.natlib.tools.sip.generation.fairfax.parameters.ProcessingType
+import nz.govt.natlib.tools.sip.processing.PerThreadLogFileAppender
 import nz.govt.natlib.tools.sip.state.SipProcessingException
 import nz.govt.natlib.tools.sip.state.SipProcessingExceptionReason
 import nz.govt.natlib.tools.sip.state.SipProcessingExceptionReasonType
@@ -44,10 +45,9 @@ class ReadyForIngestionProcessor {
     SipProcessingState processTitleCodeFolder(FairfaxProcessingParameters processingParameters, File destinationFolder,
                                               File forReviewFolder, String dateString) {
         // Process the files in the titleCode folder
-        // TODO ProcessLogger won't be able to work in a multithreaded environment! -- if we could split the logging
-        // then we could probably do multithreading.
-        //ProcessLogger processLogger = new ProcessLogger()
-        //processLogger.startSplit()
+
+        File processLoggingFile = PerThreadLogFileAppender.startWithGeneratedFilename(processingParameters.sourceFolder,
+                "${processingParameters.titleCode}_${processingParameters.type.fieldValue}_processing-log")
 
         File sourceFolder = processingParameters.sourceFolder
 
@@ -121,18 +121,20 @@ class ReadyForIngestionProcessor {
                 "${processingParameters.processingDifferentiator()}_parameters-and-state_${ProcessorUtils.FILE_TIMESTAMP_FORMATTER.format(now)}.txt")
         processingStateFile.write(processingParameters.detailedDisplay(0, true))
         if (sipAndFilesFolder.exists()) {
-            ProcessorUtils.copyOrMoveFiles(false, [processingStateFile], sipAndFilesFolder)
+            ProcessorUtils.copyOrMoveFiles(false, [ processingStateFile ], sipAndFilesFolder)
         }
 
-//        if (hasSipAndFilesFolder) {
-//            processLogger.copySplit(sipAndFilesFolder, "Process-Name-Folder", !hasUnrecognizedFilesFolder)
-//        }
-//        if (hasUnrecognizedFilesFolder) {
-//            processLogger.copySplit(unrecognizedFilesFolder, "Process-Name-Folder", true)
-//        }
-
         log.info("END Processing sourceFolder=${processingParameters.sourceFolderPath()}")
+        log.info("${System.lineSeparator()}FairfaxProcessingParameters and SipProcessingState:")
+        log.info(processingParameters.detailedDisplay(0, true))
+        log.info(System.lineSeparator())
+
         processorConfiguration.timekeeper.logElapsed()
+
+        PerThreadLogFileAppender.stopAndRemove()
+        if (processLoggingFile != null && processLoggingFile.exists()) {
+            ProcessorUtils.copyOrMoveFiles(false, [ processLoggingFile ], sipAndFilesFolder)
+        }
 
         return processingParameters.sipProcessingState
     }
@@ -201,13 +203,7 @@ class ReadyForIngestionProcessor {
         log.info("Collected total titleCode directories to " +
                 "process=${ProcessorUtils.TOTAL_FORMAT.format(titleCodeFoldersAndDates.size())}")
         int numberOfThreads = processorConfiguration.parallelizeProcessing ? processorConfiguration.numberOfThreads : 1
-        if (numberOfThreads > 1) {
-            numberOfThreads = 1
-            log.info("Currently multi-threading is not supported for ReadyForIngestionProcessor as ready-for-ingestion")
-            log.info("requires that each directory processed has an individual log of that processing stored with the files")
-            log.info("and there currently doesn't exist a way to differentiate console output by the thread that produced the message.")
-        }
-        // log.info("Processing over numberOfThreads=${numberOfThreads}")
+        log.info("Processing over numberOfThreads=${numberOfThreads}")
 
         List<File> invalidFolders = Collections.synchronizedList([ ])
         // Process the collected directories across multiple threads
