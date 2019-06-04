@@ -54,6 +54,7 @@ class FairfaxFilesProcessor {
         log.info("STARTING process for processingParameters=${processingParameters}")
         processedFairfaxFiles = [ : ]
 
+        String sipAsXml = ""
         if (this.processingParameters.valid) {
             List<FairfaxFile> fairfaxFilesForProcessing = filesForProcessing.collect { File rawFile ->
                 new FairfaxFile(rawFile)
@@ -105,13 +106,12 @@ class FairfaxFilesProcessor {
                 }
             }
             // The valid files should be filtered and sorted already
-            String sipAsXml = generateSipAsXml(successfulFiles, processingParameters.date)
-            log.info("ENDING process for processingParameters=${processingParameters}")
-
-            return sipAsXml
-        } else {
-            return ""
+            sipAsXml = generateSipAsXml(successfulFiles, processingParameters.date)
         }
+
+        log.info("ENDING process for processingParameters=${processingParameters}")
+
+        return sipAsXml
     }
 
     List<FairfaxFile> extractValidNamedFiles(List<FairfaxFile> originalList) {
@@ -198,8 +198,6 @@ class FairfaxFilesProcessor {
             sipAsXml = generateSipAsXml(testSip, filesForSip)
             processingParameters.sipProcessingState.totalFilesProcessed = filesForSip.size()
             processingParameters.sipProcessingState.setComplete(true)
-            log.info("\nFairfaxProcessingParameters and SipProcessingState:")
-            log.info(processingParameters.detailedDisplay(0, true))
             log.debug("\n* * *   S I P   * * *")
             log.debug(sipAsXml)
             log.debug("\n* * *   E N D   O F   S I P   * * *")

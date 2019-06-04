@@ -107,9 +107,9 @@ class MultipleSectionCodesTest {
         processingParameters.sipProcessingState = testMethodState.sipProcessingState
         String sipAsXml = FairfaxFilesProcessor.processCollectedFiles(processingParameters, filesForProcessing)
 
-        log.info("START FairfaxProcessingParameters and SipProcessingState:")
+        log.info("${System.lineSeparator()}FairfaxProcessingParameters and SipProcessingState:")
         log.info(processingParameters.detailedDisplay(0, true))
-        log.info("END FairfaxProcessingParameters and SipProcessingState")
+        log.info(System.lineSeparator())
 
         int expectedNumberOfFilesProcessed = 11
         assertThat("${expectedNumberOfFilesProcessed} files should have been processed",
