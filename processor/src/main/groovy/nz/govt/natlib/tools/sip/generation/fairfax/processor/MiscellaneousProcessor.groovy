@@ -2,6 +2,8 @@ package nz.govt.natlib.tools.sip.generation.fairfax.processor
 
 import groovy.util.logging.Log4j2
 import nz.govt.natlib.tools.sip.files.FilesFinder
+import nz.govt.natlib.tools.sip.pdf.thumbnail.ThumbnailGenerator
+import nz.govt.natlib.tools.sip.pdf.thumbnail.ThumbnailParameters
 
 import java.nio.file.Files
 import java.nio.file.Path
@@ -168,5 +170,27 @@ class MiscellaneousProcessor {
             }
             filteredDirectoriesCount += 1
         }
+    }
+
+    void generateThumbnailPageFromPdfs() {
+        boolean isRegexNotGlob = true
+        boolean matchFilenameOnly = true
+        boolean sortFiles = true
+        // Any pdf will do
+        String pattern = '.*?\\.[pP]{1}[dD]{1}[fF]{1}'
+        List<File> pdfFiles = ProcessorUtils.findFiles(processorConfiguration.sourceFolder.getAbsolutePath(),
+                isRegexNotGlob, matchFilenameOnly, sortFiles, pattern, processorConfiguration.timekeeper)
+
+        String convertedFilepath = ProcessorUtils.fileNameAsSafeString(processorConfiguration.sourceFolder.getCanonicalPath())
+        File thumbnailPageFile = new File(processorConfiguration.targetFolder, "${convertedFilepath}_thumbnail_page.jpeg")
+
+        String thumbnailPageTitle = "PDF files in ${processorConfiguration.sourceFolder.getCanonicalPath()}"
+        ThumbnailParameters thumbnailParameters = new ThumbnailParameters(thumbnailHeight: 180,
+                useAffineTransformation: false, textJustification: ThumbnailParameters.TextJustification.RIGHT,
+                maximumPageWidth: 1200, pageTitleText: thumbnailPageTitle)
+
+        log.info("START Generating thumbnail page from pdfs in sourceFolder=${processorConfiguration.sourceFolder.getCanonicalPath()}, thumbnailPage=${thumbnailPageFile.getCanonicalPath()}")
+        ThumbnailGenerator.writeThumbnailPage(pdfFiles, thumbnailParameters, thumbnailPageFile)
+        log.info("END Generated thumbnail page from pdfs in sourceFolder=${processorConfiguration.sourceFolder.getCanonicalPath()}, thumbnailPage=${thumbnailPageFile.getCanonicalPath()}")
     }
 }

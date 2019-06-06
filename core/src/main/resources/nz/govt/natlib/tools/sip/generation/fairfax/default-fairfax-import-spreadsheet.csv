@@ -19,11 +19,13 @@
 #         required_all_sections_in_sip, optional_all_sections_in_sip,
 #         missing_sequence_is_error, missing_sequence_is_ignored
 # processing_option: There can be multiple processing options for a given row
-#     Current procession options: alpha_before_numeric, numeric_before_alpha, any_first_section_code
+#     Current procession options:
+#         alpha_before_numeric, numeric_before_alpha, any_first_section_code
+#         generate_processed_pdf_thumbnails_page, do_not_generate_processed_pdf_thumbnails_page
 # Certain processing types have default rules and options:
-#     parent_grouping: required_all_sections_in_sip, numeric_before_alpha, missing_sequence_is_error
-#     supplement_grouping: numeric_before_alpha, missing_sequence_is_error
-#     create_sip_for_folder: required_all_sections_in_sip, numeric_before_alpha, missing_sequence_is_error
+#     parent_grouping: required_all_sections_in_sip, numeric_before_alpha, missing_sequence_is_error, generate_processed_pdf_thumbnails_page
+#     supplement_grouping: numeric_before_alpha, missing_sequence_is_error, generate_processed_pdf_thumbnails_page
+#     create_sip_for_folder: required_all_sections_in_sip, numeric_before_alpha, missing_sequence_is_error, generate_processed_pdf_thumbnails_page
 #
 # A single file can be grouped with multiple processing types
 #

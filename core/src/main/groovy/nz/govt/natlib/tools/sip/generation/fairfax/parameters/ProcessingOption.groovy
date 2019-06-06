@@ -7,6 +7,8 @@ import nz.govt.natlib.tools.sip.state.SipProcessingException
 enum ProcessingOption {
     AlphaBeforeNumericSequencing("alpha_before_numeric"),
     NumericBeforeAlphaSequencing("numeric_before_alpha"),
+    GenerateProcessedPdfThumbnailsPage("generate_processed_pdf_thumbnails_page"),
+    DoNotGenerateProcessedPdfThumbnailsPage("do_not_generate_processed_pdf_thumbnails_page"),
     AnyFirstSectionCode("any_first_section_code")
 
     private static final Map<String, ProcessingOption> LOOKUP_BY_FIELD_VALUE = [ : ]
@@ -19,6 +21,8 @@ enum ProcessingOption {
         }
         OVERRIDES_MAP.put(AlphaBeforeNumericSequencing, [ NumericBeforeAlphaSequencing ])
         OVERRIDES_MAP.put(NumericBeforeAlphaSequencing, [ AlphaBeforeNumericSequencing ])
+        OVERRIDES_MAP.put(GenerateProcessedPdfThumbnailsPage, [ DoNotGenerateProcessedPdfThumbnailsPage ])
+        OVERRIDES_MAP.put(DoNotGenerateProcessedPdfThumbnailsPage, [ GenerateProcessedPdfThumbnailsPage ])
     }
 
     static List<ProcessingOption> extract(String list, String separator = ",", List<ProcessingOption> defaults = [ ],

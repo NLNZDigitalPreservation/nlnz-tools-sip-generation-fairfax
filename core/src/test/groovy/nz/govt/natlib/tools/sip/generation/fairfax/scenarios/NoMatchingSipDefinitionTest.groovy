@@ -2,6 +2,7 @@ package nz.govt.natlib.tools.sip.generation.fairfax.scenarios
 
 import groovy.util.logging.Log4j2
 import nz.govt.natlib.tools.sip.generation.fairfax.FairfaxFile
+import nz.govt.natlib.tools.sip.generation.fairfax.parameters.ProcessingOption
 import nz.govt.natlib.tools.sip.generation.fairfax.processor.FairfaxFilesProcessor
 import nz.govt.natlib.tools.sip.generation.fairfax.FairfaxProcessingParameters
 import nz.govt.natlib.tools.sip.generation.fairfax.TestHelper
@@ -17,6 +18,7 @@ import java.nio.file.Path
 import java.time.LocalDate
 
 import static org.hamcrest.core.Is.is
+import static org.junit.Assert.assertNull
 import static org.junit.Assert.assertThat
 import static org.junit.Assert.assertTrue
 
@@ -119,6 +121,14 @@ class NoMatchingSipDefinitionTest {
         int expectedNumberOfUnrecognizedFiles = 0
         assertThat("${expectedNumberOfUnrecognizedFiles} unrecognized files should have been processed",
                 testMethodState.sipProcessingState.unrecognizedFiles.size(), is(expectedNumberOfUnrecognizedFiles))
+
+        if (processingParameters.options.contains(ProcessingOption.GenerateProcessedPdfThumbnailsPage)) {
+            assertNull("Thumbnail page DOES NOT exist, file=${processingParameters.thumbnailPageFile}",
+                    processingParameters.thumbnailPageFile)
+        } else {
+            assertNull("Thumbnail page DOES NOT exist, file=${processingParameters.thumbnailPageFile}",
+                    processingParameters.thumbnailPageFile)
+        }
 
         // There is no SIP created.
         assertTrue("There is no SIP created", sipAsXml.isEmpty())

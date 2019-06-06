@@ -48,6 +48,12 @@ Requires sourceFolder.
 This is a reporting operation and cannot be run with any processing operations.""")
     boolean extractMetadata = false
 
+    @Option(names = ["--generateThumbnailPageFromPdfs" ], description = """Generate a thumbnail page from the PDFs in the given folder.
+Requires sourceFolder, targetFolder.
+Generates a thumbnail page using the PDFs in the source folder. The name of the jpeg is based on the source folder.
+This is a processing operation and must run exclusively of other processing operations.""")
+    boolean generateThumbnailPageFromPdfs = false
+
     @Option(names = ["--copyIngestedLoadsToIngestedFolder" ], description = """Copy the ingested loads to ingested folder.
 Requires sourceFolder, targetPostProcessedFolder, forReviewFolder.
 Uses startingDate, endingDate.
@@ -289,6 +295,22 @@ A comma-separated list of options. These options will override any contradictory
             displayProcessingLegend()
             MiscellaneousProcessor miscellaneousProcessor = new MiscellaneousProcessor(this)
             miscellaneousProcessor.copyProdLoadToTestStructures()
+            commandExecuted = true
+        }
+        if (generateThumbnailPageFromPdfs) {
+            if (sourceFolder == null) {
+                String message = "generateThumbnailPageFromPdfs requires sourceFolder"
+                log.error(message)
+                throw new ProcessorException(message)
+            }
+            if (targetFolder == null) {
+                String message = "generateThumbnailPageFromPdfs requires targetFolder"
+                log.error(message)
+                throw new ProcessorException(message)
+            }
+            displayProcessingLegend()
+            MiscellaneousProcessor miscellaneousProcessor = new MiscellaneousProcessor(this)
+            miscellaneousProcessor.generateThumbnailPageFromPdfs()
             commandExecuted = true
         }
         if (preProcess) {

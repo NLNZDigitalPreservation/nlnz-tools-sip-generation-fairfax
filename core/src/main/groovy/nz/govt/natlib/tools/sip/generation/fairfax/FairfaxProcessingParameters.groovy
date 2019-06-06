@@ -35,6 +35,8 @@ class FairfaxProcessingParameters {
     boolean isMagazine = false
     String currentEdition
     SipProcessingState sipProcessingState = new SipProcessingState()
+    File thumbnailPageFile
+    String thumbnailPageFileFinalName
 
     static FairfaxProcessingParameters build(String titleCode, ProcessingType processingType, File sourceFolder,
                                              LocalDate processingDate, FairfaxSpreadsheet spreadsheet) {

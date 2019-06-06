@@ -124,6 +124,14 @@ class ReadyForIngestionProcessor {
             ProcessorUtils.copyOrMoveFiles(false, [ processingStateFile ], sipAndFilesFolder)
         }
 
+        // Move the thumbnail page file to the sipAndFilesFolder
+        if (processingParameters.thumbnailPageFile != null && processingParameters.thumbnailPageFile.exists()) {
+            File thumbnailPageFileNewFile = new File(processingParameters.thumbnailPageFile.parentFile,
+                    processingParameters.thumbnailPageFileFinalName)
+            processingParameters.thumbnailPageFile.renameTo(thumbnailPageFileNewFile)
+            ProcessorUtils.copyOrMoveFiles(true, [ thumbnailPageFileNewFile ], sipAndFilesFolder)
+        }
+
         log.info("END Processing sourceFolder=${processingParameters.sourceFolderPath()}")
         log.info("${System.lineSeparator()}FairfaxProcessingParameters and SipProcessingState:")
         log.info(processingParameters.detailedDisplay(0, true))

@@ -6,13 +6,13 @@ import groovy.util.logging.Log4j2
 enum ProcessingType {
     ParentGrouping("parent_grouping",
             [ ProcessingRule.AllSectionsInSipRequired, ProcessingRule.MissingSequenceError ],
-            [ ProcessingOption.NumericBeforeAlphaSequencing ]),
+            [ ProcessingOption.NumericBeforeAlphaSequencing, ProcessingOption.GenerateProcessedPdfThumbnailsPage ]),
     SupplementGrouping("supplement_grouping",
             [ ProcessingRule.MissingSequenceError],
-            [ ProcessingOption.NumericBeforeAlphaSequencing ]),
+            [ ProcessingOption.NumericBeforeAlphaSequencing, ProcessingOption.GenerateProcessedPdfThumbnailsPage ]),
     CreateSipForFolder("create_sip_for_folder",
             [ ProcessingRule.AllSectionsInSipRequired, ProcessingRule.MissingSequenceError ],
-            [ ProcessingOption.NumericBeforeAlphaSequencing ])
+            [ ProcessingOption.NumericBeforeAlphaSequencing, ProcessingOption.GenerateProcessedPdfThumbnailsPage ])
 
     private static final Map<String, ProcessingType> LOOKUP_BY_FIELD_VALUE = [ : ]
     private final String fieldValue

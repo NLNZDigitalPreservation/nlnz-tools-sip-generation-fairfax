@@ -8,6 +8,7 @@ import nz.govt.natlib.tools.sip.generation.SipXmlGenerator
 import nz.govt.natlib.tools.sip.generation.fairfax.FairfaxFile
 import nz.govt.natlib.tools.sip.generation.fairfax.FairfaxProcessingParameters
 import nz.govt.natlib.tools.sip.generation.fairfax.SipFactory
+import nz.govt.natlib.tools.sip.generation.fairfax.parameters.ProcessingOption
 import nz.govt.natlib.tools.sip.generation.fairfax.parameters.ProcessingRule
 import nz.govt.natlib.tools.sip.generation.fairfax.parameters.ProcessingType
 import nz.govt.natlib.tools.sip.generation.fairfax.processor.type.ParentGroupingProcessor
@@ -15,6 +16,8 @@ import nz.govt.natlib.tools.sip.generation.fairfax.processor.type.SipForFolderPr
 import nz.govt.natlib.tools.sip.pdf.PdfValidator
 import nz.govt.natlib.tools.sip.pdf.PdfValidatorFactory
 import nz.govt.natlib.tools.sip.pdf.PdfValidatorType
+import nz.govt.natlib.tools.sip.pdf.thumbnail.ThumbnailGenerator
+import nz.govt.natlib.tools.sip.pdf.thumbnail.ThumbnailParameters
 import nz.govt.natlib.tools.sip.state.SipProcessingException
 import nz.govt.natlib.tools.sip.state.SipProcessingExceptionReason
 import nz.govt.natlib.tools.sip.state.SipProcessingExceptionReasonType
@@ -72,6 +75,25 @@ class FairfaxFilesProcessor {
                 default:
                     sortedFilesForProcessing = []
                     break
+            }
+
+            if (processingParameters.options.contains(ProcessingOption.GenerateProcessedPdfThumbnailsPage)) {
+                if (!sortedFilesForProcessing.isEmpty()) {
+                    String readableDate = processingParameters.date.format(FairfaxProcessingParameters.READABLE_DATE_FORMAT)
+                    // TODO When we do more sophisticated processing the date-titleCode-type combination may not be enough to easily differentiate
+                    String thumbnailPagePrefix = "${readableDate}_${processingParameters.titleCode}_${processingParameters.type.fieldValue}_thumbnail_page"
+                    String thumbnailPageTitle = "${readableDate}_${processingParameters.titleCode}_${processingParameters.type.fieldValue}_thumbnail_page.jpeg"
+                    processingParameters.thumbnailPageFileFinalName = thumbnailPageTitle
+                    File thumbnailPageFile = File.createTempFile("${thumbnailPagePrefix}_", ".jpeg")
+                    ThumbnailParameters thumbnailParameters = new ThumbnailParameters(thumbnailHeight: 180,
+                            useAffineTransformation: false, textJustification: ThumbnailParameters.TextJustification.RIGHT,
+                            maximumPageWidth: 1200, pageTitleText: thumbnailPageTitle)
+                    List<File> pdfFiles = sortedFilesForProcessing.collect { FairfaxFile sortedFile ->
+                        sortedFile.file
+                    }
+                    processingParameters.thumbnailPageFile = thumbnailPageFile
+                    ThumbnailGenerator.writeThumbnailPage(pdfFiles, thumbnailParameters, thumbnailPageFile)
+                }
             }
 
             processingParameters.sipProcessingState.ignoredFiles =
