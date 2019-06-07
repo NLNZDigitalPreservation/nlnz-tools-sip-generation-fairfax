@@ -148,7 +148,7 @@ class FairfaxProcessingParameters {
     }
 
     String processingDifferentiator() {
-        String baseDifferentiator = "${titleCode}_${date.format(READABLE_DATE_FORMAT)}_${type.fieldValue}"
+        String baseDifferentiator = "${date.format(READABLE_DATE_FORMAT)}_${titleCode}_${type.fieldValue}"
         if (currentEdition == null) {
             return baseDifferentiator
         } else {

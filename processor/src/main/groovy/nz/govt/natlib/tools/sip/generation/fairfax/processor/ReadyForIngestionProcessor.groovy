@@ -47,7 +47,7 @@ class ReadyForIngestionProcessor {
         // Process the files in the titleCode folder
 
         File processLoggingFile = PerThreadLogFileAppender.startWithGeneratedFilename(processingParameters.sourceFolder,
-                "${processingParameters.titleCode}_${processingParameters.type.fieldValue}_processing-log")
+                "${processingParameters.processingDifferentiator()}_processing-log")
 
         File sourceFolder = processingParameters.sourceFolder
 
