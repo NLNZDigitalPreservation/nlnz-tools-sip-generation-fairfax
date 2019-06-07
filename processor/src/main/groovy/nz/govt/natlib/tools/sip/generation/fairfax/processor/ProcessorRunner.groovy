@@ -146,6 +146,16 @@ A comma-separated list of rules. These rules will override any contradictory rul
 A comma-separated list of options. These options will override any contradictory options.""")
     String forIngestionProcessingOptions
 
+    @Option(names = ["--generalProcessingOptions"], paramLabel = "GENERAL_PROCESSING_OPTIONS",
+            description = """General processing options.
+A comma-separated list of options. These options will override any contradictory options.
+These processing options may or may not be applied depending on the processing that takes place.
+See the class ProcessorOption for a list of what those options are.""")
+    String generalProcessingOptions
+
+    // TODO Some of the existing options could be folded into this option (instead of keeping them separate)
+    List<ProcessorOption> processorOptions
+
     @Option(names = ["-r", "--forReviewFolder"], paramLabel = "FOR_REVIEW_FOLDER", description = 'for-review folder in the format /path/to/folder')
     File forReviewFolder
 
@@ -177,6 +187,7 @@ A comma-separated list of options. These options will override any contradictory
         log.info("        copyIngestedLoadsToIngestedFolder=${copyIngestedLoadsToIngestedFolder}")
         log.info("    Other types of processing:")
         log.info("        copyProdLoadToTestStructures=${copyProdLoadToTestStructures}")
+        log.info("        generateThumbnailPageFromPdfs=${generateThumbnailPageFromPdfs}")
         log.info("    Reporting:")
         log.info("        listFiles=${listFiles}")
         log.info("        statisticalAudit=${statisticalAudit}")
@@ -200,6 +211,7 @@ A comma-separated list of options. These options will override any contradictory
         log.info("        createDestination=${createDestination}")
         log.info("        parallelizeProcessing=${parallelizeProcessing}")
         log.info("        numberOfThreads=${numberOfThreads}")
+        log.info("        generalProcessingOptions=${generalProcessingOptions}")
         log.info("        moveOrCopyEvenIfNoRosettaDoneFile=${moveOrCopyEvenIfNoRosettaDoneFile}")
         log.info("        includeDetailedTimings=${includeDetailedTimings}")
         log.info("        verbose=${verbose}")
@@ -229,6 +241,8 @@ A comma-separated list of options. These options will override any contradictory
     }
 
     void process() {
+        this.processorOptions = ProcessorOption.extract(this.generalProcessingOptions, ",", [ ], true)
+
         int totalProcessingOperations = (copyProdLoadToTestStructures ? 1 : 0) + (preProcess ? 1 : 0) +
                 (readyForIngestion ? 1 : 0) + (copyIngestedLoadsToIngestedFolder ? 1 : 0)
         if (totalProcessingOperations > 1) {

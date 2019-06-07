@@ -172,25 +172,54 @@ class MiscellaneousProcessor {
         }
     }
 
-    void generateThumbnailPageFromPdfs() {
+    List<File> findPdfFiles(File sourceFolder, boolean includeSubdirectories = false) {
         boolean isRegexNotGlob = true
         boolean matchFilenameOnly = true
         boolean sortFiles = true
         // Any pdf will do
         String pattern = '.*?\\.[pP]{1}[dD]{1}[fF]{1}'
-        List<File> pdfFiles = ProcessorUtils.findFiles(processorConfiguration.sourceFolder.getAbsolutePath(),
-                isRegexNotGlob, matchFilenameOnly, sortFiles, pattern, processorConfiguration.timekeeper)
+        List<File> pdfFiles = ProcessorUtils.findFiles(sourceFolder.getAbsolutePath(),
+                isRegexNotGlob, matchFilenameOnly, sortFiles, pattern, processorConfiguration.timekeeper,
+                includeSubdirectories)
 
-        String convertedFilepath = ProcessorUtils.fileNameAsSafeString(processorConfiguration.sourceFolder.getCanonicalPath())
-        File thumbnailPageFile = new File(processorConfiguration.targetFolder, "${convertedFilepath}_thumbnail_page.jpeg")
+        return pdfFiles
+    }
 
-        String thumbnailPageTitle = "PDF files in ${processorConfiguration.sourceFolder.getCanonicalPath()}"
-        ThumbnailParameters thumbnailParameters = new ThumbnailParameters(thumbnailHeight: 180,
-                useAffineTransformation: false, textJustification: ThumbnailParameters.TextJustification.RIGHT,
-                maximumPageWidth: 1200, pageTitleText: thumbnailPageTitle)
+    void generateThumbnailPageFromPdfs(File sourceFolder) {
+        // TODO This could be a processor option (but make it clear it's different from 'SearchSubdirectories')
+        boolean includeSubdirectories = false
+        List<File> pdfFiles = findPdfFiles(sourceFolder, includeSubdirectories)
+        if (pdfFiles.isEmpty()) {
+            log.info("No PDF files found in folder=${sourceFolder.getCanonicalPath()}")
+        } else {
+            String convertedFilepath = ProcessorUtils.fileNameAsSafeString(sourceFolder.getCanonicalPath())
+            File thumbnailPageFile
+            if (processorConfiguration.processorOptions.contains(ProcessorOption.UseSourceSubdirectoryAsTarget)) {
+                thumbnailPageFile = new File(sourceFolder, "${convertedFilepath}_thumbnail_page.jpeg")
+            } else {
+                thumbnailPageFile = new File(processorConfiguration.targetFolder, "${convertedFilepath}_thumbnail_page.jpeg")
+            }
 
-        log.info("START Generating thumbnail page from pdfs in sourceFolder=${processorConfiguration.sourceFolder.getCanonicalPath()}, thumbnailPage=${thumbnailPageFile.getCanonicalPath()}")
-        ThumbnailGenerator.writeThumbnailPage(pdfFiles, thumbnailParameters, thumbnailPageFile)
-        log.info("END Generated thumbnail page from pdfs in sourceFolder=${processorConfiguration.sourceFolder.getCanonicalPath()}, thumbnailPage=${thumbnailPageFile.getCanonicalPath()}")
+            String thumbnailPageTitle = "PDF files in ${sourceFolder.getCanonicalPath()}"
+            ThumbnailParameters thumbnailParameters = new ThumbnailParameters(thumbnailHeight: 180,
+                    useAffineTransformation: false, textJustification: ThumbnailParameters.TextJustification.RIGHT,
+                    maximumPageWidth: 1200, pageTitleText: thumbnailPageTitle)
+
+            log.info("START Generating thumbnail page from pdfs in sourceFolder=${sourceFolder.getCanonicalPath()}, thumbnailPage=${thumbnailPageFile.getCanonicalPath()}")
+            ThumbnailGenerator.writeThumbnailPage(pdfFiles, thumbnailParameters, thumbnailPageFile)
+            log.info("END Generated thumbnail page from pdfs in sourceFolder=${sourceFolder.getCanonicalPath()}, thumbnailPage=${thumbnailPageFile.getCanonicalPath()}")
+        }
+    }
+
+    void generateThumbnailPageFromPdfs() {
+        boolean generateForSubfolders = processorConfiguration.processorOptions.contains(ProcessorOption.SearchSubdirectories)
+        if (generateForSubfolders) {
+            generateThumbnailPageFromPdfs(processorConfiguration.sourceFolder)
+            ProcessorUtils.allSubdirectories(processorConfiguration.sourceFolder).each { File subdirectory ->
+                generateThumbnailPageFromPdfs(subdirectory)
+            }
+        } else {
+            generateThumbnailPageFromPdfs(processorConfiguration.sourceFolder)
+        }
     }
 }

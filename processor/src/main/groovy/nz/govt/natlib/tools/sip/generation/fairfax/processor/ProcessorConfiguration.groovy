@@ -53,4 +53,6 @@ trait ProcessorConfiguration {
     String forIngestionProcessingType
     String forIngestionProcessingRules
     String forIngestionProcessingOptions
+
+    List<ProcessorOption> processorOptions
 }

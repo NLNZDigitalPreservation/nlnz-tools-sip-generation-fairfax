@@ -1,5 +1,6 @@
 package nz.govt.natlib.tools.sip.generation.fairfax.processor
 
+import groovy.io.FileType
 import groovy.util.logging.Log4j2
 import nz.govt.natlib.m11n.tools.automation.logging.Timekeeper
 import nz.govt.natlib.tools.sip.files.FilesFinder
@@ -44,6 +45,14 @@ class ProcessorUtils {
             parsedDate = LocalDate.parse(dateString, FairfaxFile.LOCAL_DATE_TIME_FORMATTER)
         }
         return parsedDate
+    }
+
+    static List<File> allSubdirectories(File rootDirectory) {
+        List<File> allSubdirectories = [ ]
+        rootDirectory.traverse(type: FileType.DIRECTORIES) { File directory ->
+            allSubdirectories.add(directory)
+        }
+        return allSubdirectories
     }
 
     static List<File> findFiles(String localPath, boolean isRegexNotGlob, boolean matchFilenameOnly,
