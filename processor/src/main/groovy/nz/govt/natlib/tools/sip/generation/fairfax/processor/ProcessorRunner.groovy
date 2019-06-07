@@ -77,7 +77,7 @@ Default is no creation (false).""")
 
     @Option(names = ["--parallelizeProcessing" ], description = """Run operations in parallel (if possible).
 Operations that have components that can run in parallel currently are:
-    --preProcess, --readyForIngestion""")
+    --preProcess, --readyForIngestion, --generateThumbnailPageFromPdfs""")
     boolean parallelizeProcessing = false
 
     @Option(names = ["--numberOfThreads"], description = """Number of threads when running operations in parallel.

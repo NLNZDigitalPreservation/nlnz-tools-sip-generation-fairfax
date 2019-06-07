@@ -1,6 +1,7 @@
 package nz.govt.natlib.tools.sip.generation.fairfax.processor
 
 import groovy.util.logging.Log4j2
+import groovyx.gpars.GParsPool
 import nz.govt.natlib.tools.sip.files.FilesFinder
 import nz.govt.natlib.tools.sip.pdf.thumbnail.ThumbnailGenerator
 import nz.govt.natlib.tools.sip.pdf.thumbnail.ThumbnailParameters
@@ -215,9 +216,16 @@ class MiscellaneousProcessor {
         boolean generateForSubfolders = processorConfiguration.processorOptions.contains(ProcessorOption.SearchSubdirectories)
         if (generateForSubfolders) {
             generateThumbnailPageFromPdfs(processorConfiguration.sourceFolder)
-            ProcessorUtils.allSubdirectories(processorConfiguration.sourceFolder).each { File subdirectory ->
-                generateThumbnailPageFromPdfs(subdirectory)
+            List<File> allSubdirectories = ProcessorUtils.allSubdirectories(processorConfiguration.sourceFolder)
+            int numberOfThreads = processorConfiguration.parallelizeProcessing ? processorConfiguration.numberOfThreads : 1
+            log.info("Processing over numberOfThreads=${numberOfThreads}")
+            log.info("Starting processing total subdirectories=${allSubdirectories.size()}")
+            GParsPool.withPool(numberOfThreads) {
+                allSubdirectories.eachParallel { File subdirectory ->
+                    generateThumbnailPageFromPdfs(subdirectory)
+                }
             }
+            log.info("Finished processing total subdirectories=${allSubdirectories.size()}")
         } else {
             generateThumbnailPageFromPdfs(processorConfiguration.sourceFolder)
         }
