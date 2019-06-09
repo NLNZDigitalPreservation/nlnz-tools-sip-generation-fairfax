@@ -188,8 +188,9 @@ class ReadyForIngestionProcessor {
         List<Tuple2<File, String>> titleCodeFoldersAndDates = [ ]
 
         // Loop through the dates in sequence, finding all the folders to process
-        LocalDate currentDate = processorConfiguration.startingDate
-        while (currentDate <= processorConfiguration.endingDate) {
+        List<LocalDate> datesInRange = ProcessorUtils.datesInRange(processorConfiguration.startingDate,
+                processorConfiguration.endingDate)
+        datesInRange.each { LocalDate currentDate ->
             String currentDateString = FairfaxFile.LOCAL_DATE_TIME_FORMATTER.format(currentDate)
             File dateFolder = new File(processorConfiguration.sourceFolder, currentDateString)
             if (dateFolder.exists() && dateFolder.isDirectory()) {
@@ -205,7 +206,6 @@ class ReadyForIngestionProcessor {
             } else {
                 log.info("Skipping ${dateFolder.getCanonicalPath()} as exists=${dateFolder.exists()}, directory=${dateFolder.isDirectory()}")
             }
-            currentDate = currentDate.plusDays(1L)
         }
 
         log.info("Collected total titleCode directories to " +

@@ -17,12 +17,14 @@ import java.security.MessageDigest
 import java.text.DecimalFormat
 import java.text.SimpleDateFormat
 import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import java.util.regex.Pattern
 
 @Log4j2
 class ProcessorUtils {
     static final SimpleDateFormat FILE_TIMESTAMP_FORMATTER = new SimpleDateFormat('yyyy-MM-dd_HH-mm-ss-SSS')
     static final SimpleDateFormat TIMESTAMP_FORMATTER = new SimpleDateFormat('yyyy-MM-dd HH:mm:ss.SSS')
+    static final DateTimeFormatter DATE_YYYYMMDD_FORMATTER = DateTimeFormatter.ofPattern("yyyyMMdd")
     static final DecimalFormat TOTAL_FORMAT = new DecimalFormat("###,###,###,###,###")
     static final String MD5_HASH_ZERO_LENGTH_FILE = "d41d8cd98f00b204e9800998ecf8427e"
     static final String FILENAME_UNSAFE_CHARACTERS = ' *$'
@@ -83,6 +85,54 @@ class ProcessorUtils {
             parsedDate = LocalDate.parse(dateString, FairfaxFile.LOCAL_DATE_TIME_FORMATTER)
         }
         return parsedDate
+    }
+
+    static List<LocalDate> datesInRange(LocalDate startingDate, LocalDate endingDate) {
+        List<LocalDate> dates = [ ]
+        if (startingDate > endingDate) {
+            log.warn("Starting date=${startingDate} comes after=${endingDate}, will return empty collection of dates.")
+            return dates
+        }
+        LocalDate currentDate = startingDate
+        while (currentDate <= endingDate) {
+            dates.add(currentDate)
+            currentDate = currentDate.plusDays(1L)
+        }
+        return dates
+    }
+
+    static List<String> datesAsStringsInRange(LocalDate startingDate, LocalDate endingDate,
+                                              DateTimeFormatter localDateFormatter = DATE_YYYYMMDD_FORMATTER) {
+        return datesInRange(startingDate, endingDate).collect { LocalDate date ->
+            localDateFormatter.format(date)
+        }
+    }
+
+    // Note that this method depends on the format of a given directory matching dates in the given range
+    static List<File> allSubdirectoriesInDateRange(File rootDirectory, LocalDate startingDate, LocalDate endingDate,
+                                                   DateTimeFormatter localDateFormatter = DATE_YYYYMMDD_FORMATTER,
+                                                   boolean sort = true) {
+        List<File> allSubdirectories = [ ]
+        List<String> datesInRange = datesAsStringsInRange(startingDate, endingDate, localDateFormatter)
+        rootDirectory.traverse(type: FileType.DIRECTORIES) { File directory ->
+            String canonicalPath = directory.getCanonicalPath()
+            boolean directoryMatches = datesInRange.any { String date ->
+                canonicalPath.contains(date)
+            }
+            if (directoryMatches) {
+                allSubdirectories.add(directory)
+            }
+        }
+        // We could possibly sort by the date contained in the directory path, but we will assume some kind of ordering
+        // that already exists in the directory structure. Otherwise we would create a map by date with a list of
+        // directories and then go through each date and add the sorted list to the list of allSubdirectories.
+        if (sort) {
+            return allSubdirectories.sort() { File file1, File file2 ->
+                file1.getCanonicalPath() <=> file2.getCanonicalPath()
+            }
+        } else {
+            return allSubdirectories
+        }
     }
 
     static List<File> allSubdirectories(File rootDirectory, boolean sort = true) {

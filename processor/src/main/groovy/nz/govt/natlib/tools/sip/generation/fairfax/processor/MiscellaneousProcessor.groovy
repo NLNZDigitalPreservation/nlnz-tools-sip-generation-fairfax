@@ -225,7 +225,14 @@ class MiscellaneousProcessor {
         boolean generateForSubfolders = processorConfiguration.processorOptions.contains(ProcessorOption.SearchSubdirectories)
         if (generateForSubfolders) {
             generateThumbnailPageFromPdfs(processorConfiguration.sourceFolder)
-            List<File> allSubdirectories = ProcessorUtils.allSubdirectories(processorConfiguration.sourceFolder)
+            List<File> allSubdirectories = [ ]
+            if (processorConfiguration.startingDate != null && processorConfiguration.endingDate != null) {
+                allSubdirectories = ProcessorUtils.allSubdirectoriesInDateRange(processorConfiguration.sourceFolder,
+                        processorConfiguration.startingDate, processorConfiguration.endingDate,
+                        ProcessorUtils.DATE_YYYYMMDD_FORMATTER, true)
+            } else {
+                allSubdirectories = ProcessorUtils.allSubdirectories(processorConfiguration.sourceFolder, true)
+            }
             int numberOfThreads = processorConfiguration.parallelizeProcessing ? processorConfiguration.numberOfThreads : 1
             log.info("Processing over numberOfThreads=${numberOfThreads}")
             log.info("Starting processing total subdirectories=${allSubdirectories.size()}")

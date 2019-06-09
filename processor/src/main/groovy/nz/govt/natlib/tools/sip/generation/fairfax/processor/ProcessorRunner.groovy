@@ -51,6 +51,7 @@ This is a reporting operation and cannot be run with any processing operations."
 
     @Option(names = ["--generateThumbnailPageFromPdfs" ], description = """Generate a thumbnail page from the PDFs in the given folder.
 Requires sourceFolder, targetFolder.
+Optional startingDate and endingDate will select directories that match dates in yyyyMMdd format.
 Generates a thumbnail page using the PDFs in the source folder. The name of the jpeg is based on the source folder.
 This is a processing operation and must run exclusively of other processing operations.""")
     boolean generateThumbnailPageFromPdfs = false
