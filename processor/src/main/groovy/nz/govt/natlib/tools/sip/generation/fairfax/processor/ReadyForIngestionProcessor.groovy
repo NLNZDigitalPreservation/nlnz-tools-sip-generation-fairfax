@@ -1,7 +1,7 @@
 package nz.govt.natlib.tools.sip.generation.fairfax.processor
 
 import groovy.util.logging.Log4j2
-import groovyx.gpars.GParsPool
+import groovyx.gpars.GParsExecutorsPool
 import nz.govt.natlib.tools.sip.generation.fairfax.FairfaxFile
 import nz.govt.natlib.tools.sip.generation.fairfax.FairfaxProcessingParameters
 import nz.govt.natlib.tools.sip.generation.fairfax.FairfaxSpreadsheet
@@ -187,7 +187,7 @@ class ReadyForIngestionProcessor {
         // First, collect all the directories to process
         List<Tuple2<File, String>> titleCodeFoldersAndDates = [ ]
 
-        // Loop through the dates in sequence, finding and processing files
+        // Loop through the dates in sequence, finding all the folders to process
         LocalDate currentDate = processorConfiguration.startingDate
         while (currentDate <= processorConfiguration.endingDate) {
             String currentDateString = FairfaxFile.LOCAL_DATE_TIME_FORMATTER.format(currentDate)
@@ -215,7 +215,7 @@ class ReadyForIngestionProcessor {
 
         List<File> invalidFolders = Collections.synchronizedList([ ])
         // Process the collected directories across multiple threads
-        GParsPool.withPool(numberOfThreads) {
+        GParsExecutorsPool.withPool(numberOfThreads) {
             titleCodeFoldersAndDates.eachParallel { Tuple2<File, String> titleCodeFolderAndDateString ->
                 // we want to process this directory, which should be a <titleCode>
                 File titleCodeFolder = titleCodeFolderAndDateString.first

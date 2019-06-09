@@ -85,12 +85,18 @@ class ProcessorUtils {
         return parsedDate
     }
 
-    static List<File> allSubdirectories(File rootDirectory) {
+    static List<File> allSubdirectories(File rootDirectory, boolean sort = true) {
         List<File> allSubdirectories = [ ]
         rootDirectory.traverse(type: FileType.DIRECTORIES) { File directory ->
             allSubdirectories.add(directory)
         }
-        return allSubdirectories
+        if (sort) {
+            return allSubdirectories.sort() { File file1, File file2 ->
+                file1.getCanonicalPath() <=> file2.getCanonicalPath()
+            }
+        } else {
+            return allSubdirectories
+        }
     }
 
     static List<File> findFiles(String localPath, boolean isRegexNotGlob, boolean matchFilenameOnly,
