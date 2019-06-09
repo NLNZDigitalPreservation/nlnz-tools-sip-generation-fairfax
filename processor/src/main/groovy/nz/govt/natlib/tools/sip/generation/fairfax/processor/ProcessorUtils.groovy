@@ -2,7 +2,8 @@ package nz.govt.natlib.tools.sip.generation.fairfax.processor
 
 import groovy.io.FileType
 import groovy.util.logging.Log4j2
-import nz.govt.natlib.m11n.tools.automation.logging.Timekeeper
+import nz.govt.natlib.tools.sip.logging.DefaultTimekeeper
+import nz.govt.natlib.tools.sip.logging.Timekeeper
 import nz.govt.natlib.tools.sip.files.FilesFinder
 import nz.govt.natlib.tools.sip.generation.fairfax.FairfaxFile
 import org.apache.commons.io.FilenameUtils
@@ -16,6 +17,7 @@ import java.security.MessageDigest
 import java.text.DecimalFormat
 import java.text.SimpleDateFormat
 import java.time.LocalDate
+import java.util.regex.Pattern
 
 @Log4j2
 class ProcessorUtils {
@@ -37,6 +39,42 @@ class ProcessorUtils {
             safeString = safeString.replace(pathCharacter, REPLACEMENT_FILE_PATH_SEPARATOR)
         }
         return safeString
+    }
+
+    static String filePathAsSafeString(File filePath, List<ProcessorOption> options = [ ]) {
+        String fileSeparatorPattern = Pattern.quote(File.separator)
+        String canonicalPath = filePath.getCanonicalPath()
+        List<String> splitCanonicalPath = canonicalPath.split(fileSeparatorPattern)
+        int pathLength = splitCanonicalPath.size()
+        int numberSegments
+        ProcessorOption option = ProcessorOption.showDirectoryOption(options, ProcessorOption.ShowFullPath)
+        switch (option) {
+            case ProcessorOption.ShowDirectoryOnly:
+                numberSegments = 1
+                break
+            case ProcessorOption.ShowDirectoryAndOneParent:
+                numberSegments = 2
+                break
+            case ProcessorOption.ShowDirectoryAndTwoParents:
+                numberSegments = 3
+                break
+            case ProcessorOption.ShowDirectoryAndThreeParents:
+                numberSegments = 4
+                break
+            default:
+                // includes ProcessorOption.ShowFullPath
+                numberSegments = pathLength
+                break
+        }
+        int startingIndex = pathLength - numberSegments > 0 ? pathLength - numberSegments : 0
+        StringBuilder unsafeBuilder = new StringBuilder()
+        for (int pathIndex = startingIndex; pathIndex <=  pathLength - 1; pathIndex++) {
+            unsafeBuilder.append(splitCanonicalPath.get(pathIndex))
+            if (pathIndex < pathLength - 1) {
+                unsafeBuilder.append(File.separator)
+            }
+        }
+        return fileNameAsSafeString(unsafeBuilder.toString())
     }
 
     static LocalDate parseDate(String dateString) {
@@ -139,7 +177,7 @@ class ProcessorUtils {
         }
         Timekeeper theTimekeeper = atomicTimekeeper
         if (includeDetailedTimings && atomicTimekeeper == null) {
-            theTimekeeper = new Timekeeper()
+            theTimekeeper = new DefaultTimekeeper()
             theTimekeeper.start()
         }
         boolean deleteSourceFile = moveFile && !useAtomicOption // because atomic move will automatically delete sourceFile

@@ -6,7 +6,12 @@ import groovy.util.logging.Log4j2
 enum ProcessorOption {
     SearchSubdirectories("search_subdirectories"),
     RootFolderOnly("root_folder_only"),
-    UseSourceSubdirectoryAsTarget("use_source_subdirectory_as_target")
+    UseSourceSubdirectoryAsTarget("use_source_subdirectory_as_target"),
+    ShowDirectoryOnly("show_directory_only"),
+    ShowDirectoryAndOneParent("show_directory_and_one_parent"),
+    ShowDirectoryAndTwoParents("show_directory_and_two_parents"),
+    ShowDirectoryAndThreeParents("show_directory_and_three_parents"),
+    ShowFullPath("show_full_path")
 
     private static final Map<String, ProcessorOption> LOOKUP_BY_FIELD_VALUE = [ : ]
     private static final Map<ProcessorOption, List<ProcessorOption>> OVERRIDES_MAP = [ : ]
@@ -16,8 +21,18 @@ enum ProcessorOption {
         values().each { ProcessorOption processorOption ->
             LOOKUP_BY_FIELD_VALUE.put(processorOption.fieldValue, processorOption)
         }
-        OVERRIDES_MAP.put(SearchSubdirectories, [RootFolderOnly ])
-        OVERRIDES_MAP.put(RootFolderOnly, [SearchSubdirectories ])
+        OVERRIDES_MAP.put(SearchSubdirectories, [ RootFolderOnly ])
+        OVERRIDES_MAP.put(RootFolderOnly, [ SearchSubdirectories ])
+        OVERRIDES_MAP.put(ShowDirectoryOnly, [ ShowDirectoryAndOneParent, ShowDirectoryAndTwoParents,
+                                               ShowDirectoryAndThreeParents, ShowFullPath ])
+        OVERRIDES_MAP.put(ShowDirectoryAndOneParent, [ ShowDirectoryOnly, ShowDirectoryAndTwoParents,
+                                                       ShowDirectoryAndThreeParents, ShowFullPath ])
+        OVERRIDES_MAP.put(ShowDirectoryAndTwoParents, [ ShowDirectoryOnly, ShowDirectoryAndOneParent,
+                                               ShowDirectoryAndThreeParents, ShowFullPath ])
+        OVERRIDES_MAP.put(ShowDirectoryAndThreeParents, [ ShowDirectoryOnly, ShowDirectoryAndOneParent,
+                                                          ShowDirectoryAndTwoParents, ShowFullPath ])
+        OVERRIDES_MAP.put(ShowFullPath, [ ShowDirectoryOnly, ShowDirectoryAndOneParent, ShowDirectoryAndTwoParents,
+                                          ShowDirectoryAndTwoParents ])
     }
 
     static List<ProcessorOption> extract(String list, String separator = ",", List<ProcessorOption> defaults = [ ],
@@ -65,6 +80,15 @@ enum ProcessorOption {
             }
         }
         return merged
+    }
+
+    static ProcessorOption showDirectoryOption(List<ProcessorOption> candidateOptions,
+                                               ProcessorOption defaultOption = ProcessorOption.ShowFullPath) {
+        ProcessorOption option = candidateOptions.find { ProcessorOption anOption->
+            anOption == ProcessorOption.ShowDirectoryOnly ||
+                    ProcessorOption.ShowDirectoryOnly.overrides().contains(anOption)
+        }
+        return option == null ? defaultOption : option
     }
 
     static forFieldValue(String fieldValue) {

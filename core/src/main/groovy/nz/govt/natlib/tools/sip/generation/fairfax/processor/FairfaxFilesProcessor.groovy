@@ -85,9 +85,10 @@ class FairfaxFilesProcessor {
                     String thumbnailPageTitle = "${readableDate}_${processingParameters.titleCode}_${processingParameters.type.fieldValue}_thumbnail_page.jpeg"
                     processingParameters.thumbnailPageFileFinalName = thumbnailPageTitle
                     File thumbnailPageFile = File.createTempFile("${thumbnailPagePrefix}_", ".jpeg")
-                    ThumbnailParameters thumbnailParameters = new ThumbnailParameters(thumbnailHeight: 180,
+                    ThumbnailParameters thumbnailParameters = new ThumbnailParameters(thumbnailHeight: 240,
                             useAffineTransformation: false, textJustification: ThumbnailParameters.TextJustification.RIGHT,
-                            maximumPageWidth: 1200, pageTitleText: thumbnailPageTitle)
+                            maximumPageWidth: 1200, pageTitleText: thumbnailPageTitle,
+                            pageTitleFontJustification: ThumbnailParameters.TextJustification.RIGHT)
                     List<File> pdfFiles = sortedFilesForProcessing.collect { FairfaxFile sortedFile ->
                         sortedFile.file
                     }

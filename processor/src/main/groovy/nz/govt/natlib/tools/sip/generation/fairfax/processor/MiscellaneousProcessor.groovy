@@ -3,6 +3,8 @@ package nz.govt.natlib.tools.sip.generation.fairfax.processor
 import groovy.util.logging.Log4j2
 import groovyx.gpars.GParsPool
 import nz.govt.natlib.tools.sip.files.FilesFinder
+import nz.govt.natlib.tools.sip.logging.ThreadedTimekeeper
+import nz.govt.natlib.tools.sip.logging.Timekeeper
 import nz.govt.natlib.tools.sip.pdf.thumbnail.ThumbnailGenerator
 import nz.govt.natlib.tools.sip.pdf.thumbnail.ThumbnailParameters
 
@@ -186,14 +188,15 @@ class MiscellaneousProcessor {
         return pdfFiles
     }
 
-    void generateThumbnailPageFromPdfs(File sourceFolder) {
+    void generateThumbnailPageFromPdfs(File sourceFolder,
+                                       ProcessorOption showDirectoryOption = ProcessorOption.ShowDirectoryAndTwoParents) {
         // TODO This could be a processor option (but make it clear it's different from 'SearchSubdirectories')
         boolean includeSubdirectories = false
         List<File> pdfFiles = findPdfFiles(sourceFolder, includeSubdirectories)
         if (pdfFiles.isEmpty()) {
             log.info("No PDF files found in folder=${sourceFolder.getCanonicalPath()}")
         } else {
-            String convertedFilepath = ProcessorUtils.fileNameAsSafeString(sourceFolder.getCanonicalPath())
+            String convertedFilepath = ProcessorUtils.filePathAsSafeString(sourceFolder, [ showDirectoryOption ])
             File thumbnailPageFile
             if (processorConfiguration.processorOptions.contains(ProcessorOption.UseSourceSubdirectoryAsTarget)) {
                 thumbnailPageFile = new File(sourceFolder, "${convertedFilepath}_thumbnail_page.jpeg")
@@ -202,18 +205,23 @@ class MiscellaneousProcessor {
             }
 
             String thumbnailPageTitle = "PDF files in ${sourceFolder.getCanonicalPath()}"
-            ThumbnailParameters thumbnailParameters = new ThumbnailParameters(thumbnailHeight: 180,
+            ThumbnailParameters thumbnailParameters = new ThumbnailParameters(thumbnailHeight: 240,
                     useAffineTransformation: false, textJustification: ThumbnailParameters.TextJustification.RIGHT,
-                    maximumPageWidth: 1200, pageTitleText: thumbnailPageTitle)
+                    maximumPageWidth: 1200, pageTitleText: thumbnailPageTitle,
+                    pageTitleFontJustification: ThumbnailParameters.TextJustification.RIGHT)
 
             log.info("START Generating thumbnail page from pdfs in sourceFolder=${sourceFolder.getCanonicalPath()}, thumbnailPage=${thumbnailPageFile.getCanonicalPath()}")
+            Timekeeper singlePageTimekeeper = ThreadedTimekeeper.forCurrentThread()
+            singlePageTimekeeper.start()
             ThumbnailGenerator.writeThumbnailPage(pdfFiles, thumbnailParameters, thumbnailPageFile)
             log.info("END Generated thumbnail page from pdfs in sourceFolder=${sourceFolder.getCanonicalPath()}, thumbnailPage=${thumbnailPageFile.getCanonicalPath()}")
-            processorConfiguration.timekeeper.logElapsed()
+            singlePageTimekeeper.logElapsed()
         }
     }
 
     void generateThumbnailPageFromPdfs() {
+        ProcessorOption showDirectoryOption = ProcessorOption.showDirectoryOption(processorConfiguration.processorOptions,
+                ProcessorOption.ShowDirectoryAndTwoParents)
         boolean generateForSubfolders = processorConfiguration.processorOptions.contains(ProcessorOption.SearchSubdirectories)
         if (generateForSubfolders) {
             generateThumbnailPageFromPdfs(processorConfiguration.sourceFolder)
@@ -223,12 +231,13 @@ class MiscellaneousProcessor {
             log.info("Starting processing total subdirectories=${allSubdirectories.size()}")
             GParsPool.withPool(numberOfThreads) {
                 allSubdirectories.eachParallel { File subdirectory ->
-                    generateThumbnailPageFromPdfs(subdirectory)
+                    generateThumbnailPageFromPdfs(subdirectory, showDirectoryOption)
                 }
             }
             log.info("Finished processing total subdirectories=${allSubdirectories.size()}")
+            processorConfiguration.timekeeper.logElapsed(false, allSubdirectories.size(), true)
         } else {
-            generateThumbnailPageFromPdfs(processorConfiguration.sourceFolder)
+            generateThumbnailPageFromPdfs(processorConfiguration.sourceFolder, showDirectoryOption)
         }
     }
 }
