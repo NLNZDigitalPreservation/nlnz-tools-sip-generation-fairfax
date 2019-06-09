@@ -207,7 +207,7 @@ MMSID|title_parent|processing_type|processing_rule|processing_option|publication
 9915205583502836|The Press|parent_grouping|||title_code|PRS||ED1+TAB+YWE|200|0|STC||PER|Press (Christchurch)|||||The_Press||Fairfax updated title code|||0|0|0|||||||||
 9917913203502836|Marlborough Express|supplement_grouping||||PRM||ED1|200|0|SUP|Thursday|SS|Marlborough property express||1791320|100|31/05/2016|Marlborough_Express|Andrew R|Fairfax updated title code|||0|0|0|||||||||
 9917906003502836|The Press|supplement_grouping||||PRS||YWE|200|0|SUP||SS|Your weekend||1790600|200|27/05/2016|The_Press|Andrew R|Fairfax updated title code|||0|0|0|||||||||
-9918647057402836|The Press|parent_grouping|||title_code|PRS||TAB|200|0|TEC||PER|Homed|||||TBD||New title. Need missing pages. May be a continuation of At home (The Press)|||0|0|0|||||||||
+9918647057402836|The Press|supplement_grouping|||title_code|PRS||TAB|200|0|TEC||PER|Homed|||||TBD||New title. Need missing pages. May be a continuation of At home (The Press)|||0|0|0|||||||||
 9918647057502836|Property weekly|parent_grouping|||title_code|PWM||ED1|200|0|TEC||PER|Property weekly|||||TBD||New title. Need missing pages|||0|0|0|||||||||
 9917975563502836|Mirror|parent_grouping|manual||title_code_section_code|QCM||ED1|200|0|STC||PER|Mirror (Queenstown)||1797556|100-P|24/06/2016|Mirror|Jenny|This edition has largely same content as Queenstown, with a few pages specific to this edition, fairfax files only show specific otago ed pages.|||0|0|0|||||||||
 9917975673502836|Mirror|parent_grouping|manual||title_code_section_code|QCM||ED2|200|0|STC||PER|Mirror (Central Otago)||1797567|100-P|24/06/2016|Mirror|Jenny|This edition has largely same content as Queenstown, with a few pages specific to this edition, fairfax files only show specific Wanaka ed pages.|||0|0|0|||||||||
@@ -266,8 +266,8 @@ MMSID|title_parent|processing_type|processing_rule|processing_option|publication
 9918148155402836|The Timaru Herald|||||TIM||TAB|200|0|TEC||ONE|A perfect day||||31/05/2017|The_Timaru_Herald|Denise|Tab/date conflict named TIMTAB-20170322-01|TIMTAB-20170322-001|TIMTAB-20170322-012|0|0|0|||||||||
 9918148155502836|The Timaru Herald|supplement_grouping||||TIM||TAB|200|0|TEC|Annual|SS|Central South Island holiday guide||||31/05/2017|The_Timaru_Herald|Denise|Can't anticipate next issue|TIMTAB-20151216-001||0|0|0|||||||||
 9918150139902836|Timaru Herald|supplement_grouping||||TIM||TAB|200|0|TEC|Annual|SS|South Canterbury Chamber of Commerce Business Excellence Awards||||9/06/2017|The_Timaru_Herald|Denise|Can't anticipate next issue|TIMTAB-20160824-001||0|0|0|||||||||
-9917962373502836|Taupo Times|parent_grouping|manual|||TPO||ED1|200|0|STA||PER|Taupo Times||1796237|100-P|15/06/2016|Taupo_Times|Denise||||0|0|0|||||||||
-9918647057402836|Taupo Times|parent_grouping|manual|||TPO||TAB|200|0|TEC||PER|Paradise playground : the very best of Tauranga to Taupo|||||TBD||New title|||0|0|0|||||||||
+9917962373502836|Taupo Times|parent_grouping|manual|||TPO||ED1+TAB|200|0|STA||PER|Taupo Times||1796237|100-P|15/06/2016|Taupo_Times|Denise||||0|0|0|||||||||
+9918647057402836|Taupo Times|supplement_grouping|manual|||TPO||TAB|200|0|TEC||PER|Paradise playground : the very best of Tauranga to Taupo|||||TBD||New title|||0|0|0|||||||||
 9917962343502836|The Tribune|parent_grouping|||title_code|TRB||ED1|200|0|STA||PER|Tribune||1796234|100-P|15/06/2016|The_Tribune|Denise||||0|0|0|||||||||
 9918148169602836|The Tribune|supplement_grouping||||TRB||TAB|200|0|TEC|Annual|SS|Christmas guide 2015||||22/05/2017|The_Tribune|Denise|Can't anticipate next issue|TRBTAB-20151209-001||0|0|0|||||||||
 9917981683502836|TV Guide|parent_grouping|||title_code|TVG||ED1|200|1|STA||PER|TV guide||1798168|200|29/06/2016|TV_Guide|Denise||||0|0|0|||||||||

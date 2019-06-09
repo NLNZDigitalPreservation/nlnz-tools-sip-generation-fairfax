@@ -7041,7 +7041,7 @@
         "row-0175": {
             "MMSID": "9918647057402836",
             "title_parent": "The Press",
-            "processing_type": "parent_grouping",
+            "processing_type": "supplement_grouping",
             "processing_rule": "",
             "processing_option": "",
             "publication_key": "title_code",
@@ -9407,7 +9407,7 @@
             "publication_key": "",
             "title_code": "TPO",
             "edition_discriminator": "",
-            "section_code": "ED1",
+            "section_code": "ED1+TAB",
             "Access": "200",
             "Magazine": "0",
             "ingest_status": "STA",
@@ -9441,7 +9441,7 @@
         "row-0235": {
             "MMSID": "9918647057402836",
             "title_parent": "Taupo Times",
-            "processing_type": "parent_grouping",
+            "processing_type": "supplement_grouping",
             "processing_rule": "manual",
             "processing_option": "",
             "publication_key": "",
