@@ -1,0 +1,33 @@
+[
+  {
+    "test-mms-id-one": {
+      "MMSID": "test-mms-id-one",
+      "title_parent": "Test Publication One",
+      "processing_type": "parent_grouping",
+      "processing_rule": "handle_unrecognised",
+      "processing_option": "",
+      "publication_key": "title_code",
+      "title_code": "TST",
+      "edition_discriminator": "",
+      "section_code": "PB1",
+      "Access": "200",
+      "Magazine": "0",
+      "ingest_status": "STA",
+      "Frequency": "",
+      "entity_type": "PER",
+      "Name": "Test Publication One",
+      "ISSN online": "",
+      "Bib ID": "test-pub-one-bib-id",
+      "Access condition": "100-P",
+      "Date catalogued": "09/11/2018",
+      "Collector_folder": "Test_Publication_One",
+      "Cataloguer": "Kurt",
+      "Notes": "",
+      "first_issue_starting_page": "",
+      "last_issue_starting_page": "",
+      "has_volume_md": "0",
+      "has_issue_md": "0",
+      "has_number_md": "0"
+    }
+  }
+]

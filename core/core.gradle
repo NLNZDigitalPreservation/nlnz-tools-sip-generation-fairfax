@@ -44,11 +44,44 @@ project.ext {
             project.fairfaxSpreadsheetImportFilename : null
     fairfaxSpreadsheetExportFilenameValue = project.hasProperty('fairfaxSpreadsheetExportFilename') ?
             project.fairfaxSpreadsheetExportFilename : "core/src/main/resources/nz/govt/natlib/tools/sip/generation/fairfax/default-fairfax-import-parameters.json"
+
+    // Task updateDefaultFairfaxImportParameters
+    doExportDefaultFairfaxImportParameters = ProjectHelper.hasAnyTasks(project, [ "exportDefaultFairfaxImportParameters" ])
+    fairfaxSpreadsheetExportFilenameValue = project.hasProperty('fairfaxSpreadsheetExportFilename') ?
+            project.fairfaxSpreadsheetExportFilename : null
+
+    fairfaxSpreadsheetImportFilenameValue = null
+    defaultExportFilename = ""
+    if (doUpdateDefaultFairfaxImportParameters) {
+        defaultExportFilename = "default-fairfax-import-parameters.json"
+        fairfaxSpreadsheetImportFilenameValue = project.hasProperty('fairfaxSpreadsheetImportFilename') ?
+                project.fairfaxSpreadsheetImportFilename : null
+    } else if (doExportDefaultFairfaxImportParameters) {
+        defaultExportFilename = "fairfax-export-parameters.csv"
+        fairfaxSpreadsheetImportFilenameValue = project.hasProperty('fairfaxSpreadsheetImportFilename') ?
+                project.fairfaxSpreadsheetImportFilename :
+                "core/src/main/resources/nz/govt/natlib/tools/sip/generation/fairfax/default-fairfax-import-parameters.json"
+    }
+    fairfaxSpreadsheetExportFilenameValue = project.hasProperty('fairfaxSpreadsheetExportFilename') ?
+            project.fairfaxSpreadsheetExportFilename :
+            "core/src/main/resources/nz/govt/natlib/tools/sip/generation/" + defaultExportFilename
 }
 
 apply plugin: 'groovy'
+
 apply plugin: 'java'
+
+// this needs to be set after the 'java' plugin has been applied
+java {
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
+}
+
 apply plugin: 'jacoco'
+jacoco {
+    // This version is necessary to run under JDK 1.11
+    toolVersion = "0.8.2"
+}
 
 // run the findBugs checks with 'gradle check' or 'gradle findBugsMain' or 'gradle findBugsTest'
 //apply plugin: 'findbugs'
@@ -69,18 +102,29 @@ dependencies {
     // Use the latest version
     compile "org.apache.commons:commons-lang3:+"
     compile "commons-io:commons-io:2.+"
+    // Latest version
+    compile "org.apache.commons:commons-collections4:4.3"
 
-    compileOnly 'org.slf4j:slf4j-api:1.7.+'
+    // For parallel processing
+    compile "org.codehaus.gpars:gpars:1.2.1"
+
+    // We're using Log4j2
+    compile 'org.apache.logging.log4j:log4j-api:2.11.2'
+    compile 'org.apache.logging.log4j:log4j-core:2.11.2'
+    // Ensure that other logging APIs use log4j2
+    compile 'org.apache.logging.log4j:log4j-slf4j-impl:2.11.2'
+    compile 'org.apache.logging.log4j:log4j-jcl:2.11.2'
 
     compile 'nz.govt.natlib.tools:sip-generation-core:1.0.0-SNAPSHOT'
+
     // latest version
     testCompile 'junit:junit:4.12'
 
     // latest version
-    testCompile 'org.mockito:mockito-all:1.10.19'
+    testCompile 'org.hamcrest:hamcrest-core:2.1'
 
-    // use sl4j logging for tests
-    testCompile 'org.slf4j:slf4j-log4j12:1.7.+'
+    // latest version
+    testCompile 'org.mockito:mockito-core:2.23.4'
 }
 
 jar {
@@ -115,7 +159,8 @@ task updateDefaultFairfaxImportParameters() {
         boolean allowDuplicateIds = true
         boolean allowRowsWithoutIds = true
         // TODO Make the separator configurable
-        Spreadsheet spreadsheet = SpreadsheetImporter.extractSpreadsheet(spreadsheetImportFile, "MMSID", "|", allowDuplicateIds, allowRowsWithoutIds)
+        // Note that the MMSID is not unique for each row, so we generate an id for each row
+        Spreadsheet spreadsheet = SpreadsheetImporter.extractSpreadsheet(spreadsheetImportFile, "GENERATE_ID_VALUE", "|", allowDuplicateIds, allowRowsWithoutIds)
         logger.info("spreadsheet values imported:")
         spreadsheet.rows.each { Map<String, String> spreadsheetLine ->
             StringBuilder line = new StringBuilder()
@@ -128,6 +173,48 @@ task updateDefaultFairfaxImportParameters() {
 
         spreadsheetExportFile.write(JsonOutput.prettyPrint(spreadsheet.asJsonString()))
     }
+}
+
+// Export the fairfax import parameters JSON as a CSV spreadsheet
+task exportDefaultFairfaxImportParameters() {
+    File spreadsheetImportFile
+    if (project.doExportDefaultFairfaxImportParameters) {
+        if (project.fairfaxSpreadsheetImportFilenameValue == null) {
+            throw new BuildException("fairfaxSpreadsheetImportFilename=${project.fairfaxSpreadsheetImportFilenameValue} must be set when calling task 'exportDefaultFairfaxImportParameters'.")
+        } else {
+            spreadsheetImportFile = new File((String) project.fairfaxSpreadsheetImportFilenameValue)
+        }
+        if (!spreadsheetImportFile.exists()) {
+            throw new BuildException("File=${spreadsheetImportFile.getCanonicalPath()} must exist.")
+        }
+        if (!spreadsheetImportFile.isFile()) {
+            throw new BuildException("File=${spreadsheetImportFile.getCanonicalPath()} must be a file.")
+        }
+    }
+    doLast {
+        File spreadsheetExportFile = new File(project.fairfaxSpreadsheetExportFilenameValue)
+        logger.info("Writing spreadsheet-import-file=${spreadsheetImportFile.getCanonicalPath()} to spreadsheet-export-file=${spreadsheetExportFile.getCanonicalPath()}")
+        boolean allowDuplicateIds = true
+        boolean allowRowsWithoutIds = true
+        // TODO Make the separator configurable
+        // Note that the MMSID is not unique for each row, so we generate an id for each row
+        Spreadsheet spreadsheet = Spreadsheet.fromJson("GENERATE_ID_VALUE", spreadsheetImportFile, allowDuplicateIds, allowRowsWithoutIds)
+        logger.info("spreadsheet values imported:")
+        spreadsheet.rows.each { Map<String, String> spreadsheetLine ->
+            StringBuilder line = new StringBuilder()
+            spreadsheetLine.each { String key, String value ->
+                line.append("${key}:${value}|")
+            }
+            logger.info(line.toString())
+        }
+
+        spreadsheetExportFile.write(spreadsheet.asCsvString("|"))
+    }
+}
+
+test {
+    testLogging.showStandardStreams = true
+    testLogging.exceptionFormat = 'full'
 }
 
 //tasks.withType(FindBugs) {

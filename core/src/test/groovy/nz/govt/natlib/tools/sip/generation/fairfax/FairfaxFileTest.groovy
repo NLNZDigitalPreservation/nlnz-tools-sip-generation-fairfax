@@ -1,10 +1,13 @@
 package nz.govt.natlib.tools.sip.generation.fairfax
 
+import nz.govt.natlib.tools.sip.generation.fairfax.parameters.ProcessingOption
+
+import java.time.LocalDate
+
 import static org.hamcrest.core.Is.is
 import static org.junit.Assert.assertEquals
 import static org.junit.Assert.assertFalse
 import static org.junit.Assert.assertNotNull
-import static org.junit.Assert.assertNull
 import static org.junit.Assert.assertThat
 import static org.junit.Assert.assertTrue
 import static org.mockito.Mockito.when
@@ -12,7 +15,7 @@ import static org.mockito.Mockito.when
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Mock
-import org.mockito.runners.MockitoJUnitRunner
+import org.mockito.junit.MockitoJUnitRunner
 
 /**
  * Tests {@link FairfaxFile}.
@@ -31,8 +34,8 @@ class FairfaxFileTest {
         FairfaxFile testFairfaxFile = new FairfaxFile(mockFile)
 
         assertThat("Filename extracted correctly", testFairfaxFile.filename, is(originalFilename))
-        assertThat("Name parsed correctly", testFairfaxFile.name, is("TST"))
-        assertThat("Edition parsed correctly", testFairfaxFile.edition, is("ED1"))
+        assertThat("TitleCode parsed correctly", testFairfaxFile.titleCode, is("TST"))
+        assertThat("SectionCode parsed correctly", testFairfaxFile.sectionCode, is("ED1"))
         assertNotNull("Year extracted", testFairfaxFile.dateYear)
         assertThat("dateYear parsed correctly", testFairfaxFile.dateYear, is(new Integer(2018)))
         assertThat("dateMonthOfYear parsed correctly", testFairfaxFile.dateMonthOfYear, is(new Integer(10)))
@@ -40,7 +43,8 @@ class FairfaxFileTest {
         assertThat("Prefix parsed correctly", testFairfaxFile.sequenceLetter, is("B"))
         assertThat("Prefix parsed correctly", testFairfaxFile.sequenceNumberString, is("024"))
         assertThat("Prefix parsed correctly", testFairfaxFile.sequenceNumber, is(24))
-        assertTrue("FairfaxFile is valid", testFairfaxFile.isValid())
+        assertThat("Qualifier parsed correctly", testFairfaxFile.qualifier, is(""))
+        assertTrue("FairfaxFile is valid", testFairfaxFile.isValidName())
     }
 
     @Test
@@ -51,14 +55,139 @@ class FairfaxFileTest {
         FairfaxFile testFairfaxFile = new FairfaxFile(mockFile)
 
         assertThat("filename extracted correctly", testFairfaxFile.filename, is(originalFilename))
-        assertThat("Name parsed correctly", testFairfaxFile.name, is("t20"))
-        assertThat("Edition parsed correctly", testFairfaxFile.edition, is("ABC"))
+        assertThat("TitleCode parsed correctly", testFairfaxFile.titleCode, is("t20"))
+        assertThat("SectionCode parsed correctly", testFairfaxFile.sectionCode, is("ABC"))
         assertThat("dateYear parsed correctly", testFairfaxFile.dateYear, is(new Integer(2018)))
         assertThat("dateMonthOfYear parsed correctly", testFairfaxFile.dateMonthOfYear, is(new Integer(10)))
         assertThat("dateDayOfMonth parsed correctly", testFairfaxFile.dateDayOfMonth, is(new Integer(22)))
         assertThat("sequenceLetter parsed correctly", testFairfaxFile.sequenceLetter, is(""))
         assertThat("sequenceNumber parsed correctly", testFairfaxFile.sequenceNumber, is(24))
-        assertTrue("FairfaxFile is valid", testFairfaxFile.isValid())
+        assertThat("Qualifier parsed correctly", testFairfaxFile.qualifier, is(""))
+        assertTrue("FairfaxFile is valid", testFairfaxFile.isValidName())
+    }
+
+    @Test
+    void createsCorrectlyWithLetterSequenceQualifier() {
+        String originalFilename = "TSTED1-20181022-B024a qualifier.pdf"
+        when(mockFile.getName()).thenReturn(originalFilename)
+
+        FairfaxFile testFairfaxFile = new FairfaxFile(mockFile)
+
+        assertThat("Filename extracted correctly", testFairfaxFile.filename, is(originalFilename))
+        assertThat("TitleCode parsed correctly", testFairfaxFile.titleCode, is("TST"))
+        assertThat("SectionCode parsed correctly", testFairfaxFile.sectionCode, is("ED1"))
+        assertNotNull("Year extracted", testFairfaxFile.dateYear)
+        assertThat("dateYear parsed correctly", testFairfaxFile.dateYear, is(new Integer(2018)))
+        assertThat("dateMonthOfYear parsed correctly", testFairfaxFile.dateMonthOfYear, is(new Integer(10)))
+        assertThat("dateDayOfMonth parsed correctly", testFairfaxFile.dateDayOfMonth, is(new Integer(22)))
+        assertThat("Prefix parsed correctly", testFairfaxFile.sequenceLetter, is("B"))
+        assertThat("Prefix parsed correctly", testFairfaxFile.sequenceNumberString, is("024"))
+        assertThat("Prefix parsed correctly", testFairfaxFile.sequenceNumber, is(24))
+        assertThat("Qualifier parsed correctly", testFairfaxFile.qualifier, is("a qualifier"))
+        assertTrue("FairfaxFile is valid", testFairfaxFile.isValidName())
+    }
+
+    @Test
+    void createsCorrectlyWithMixedCaseExtension() {
+        String originalFilename = "TSTED1-20181022-B024a qualifier.pDf"
+        when(mockFile.getName()).thenReturn(originalFilename)
+
+        FairfaxFile testFairfaxFile = new FairfaxFile(mockFile)
+
+        assertThat("Filename extracted correctly", testFairfaxFile.filename, is(originalFilename))
+        assertThat("TitleCode parsed correctly", testFairfaxFile.titleCode, is("TST"))
+        assertThat("SectionCode parsed correctly", testFairfaxFile.sectionCode, is("ED1"))
+        assertNotNull("Year extracted", testFairfaxFile.dateYear)
+        assertThat("dateYear parsed correctly", testFairfaxFile.dateYear, is(new Integer(2018)))
+        assertThat("dateMonthOfYear parsed correctly", testFairfaxFile.dateMonthOfYear, is(new Integer(10)))
+        assertThat("dateDayOfMonth parsed correctly", testFairfaxFile.dateDayOfMonth, is(new Integer(22)))
+        assertThat("Prefix parsed correctly", testFairfaxFile.sequenceLetter, is("B"))
+        assertThat("Prefix parsed correctly", testFairfaxFile.sequenceNumberString, is("024"))
+        assertThat("Prefix parsed correctly", testFairfaxFile.sequenceNumber, is(24))
+        assertThat("Qualifier parsed correctly", testFairfaxFile.qualifier, is("a qualifier"))
+        assertTrue("FairfaxFile is valid", testFairfaxFile.isValidName())
+    }
+
+    @Test
+    void createsCorrectlyWithUpperCaseExtension() {
+        String originalFilename = "TSTED1-20181022-B024a qualifier.PDF"
+        when(mockFile.getName()).thenReturn(originalFilename)
+
+        FairfaxFile testFairfaxFile = new FairfaxFile(mockFile)
+
+        assertThat("Filename extracted correctly", testFairfaxFile.filename, is(originalFilename))
+        assertThat("TitleCode parsed correctly", testFairfaxFile.titleCode, is("TST"))
+        assertThat("SectionCode parsed correctly", testFairfaxFile.sectionCode, is("ED1"))
+        assertNotNull("Year extracted", testFairfaxFile.dateYear)
+        assertThat("dateYear parsed correctly", testFairfaxFile.dateYear, is(new Integer(2018)))
+        assertThat("dateMonthOfYear parsed correctly", testFairfaxFile.dateMonthOfYear, is(new Integer(10)))
+        assertThat("dateDayOfMonth parsed correctly", testFairfaxFile.dateDayOfMonth, is(new Integer(22)))
+        assertThat("Prefix parsed correctly", testFairfaxFile.sequenceLetter, is("B"))
+        assertThat("Prefix parsed correctly", testFairfaxFile.sequenceNumberString, is("024"))
+        assertThat("Prefix parsed correctly", testFairfaxFile.sequenceNumber, is(24))
+        assertThat("Qualifier parsed correctly", testFairfaxFile.qualifier, is("a qualifier"))
+        assertTrue("FairfaxFile is valid", testFairfaxFile.isValidName())
+    }
+
+    @Test
+    void createsCorrectlyWithFourCharacterTitleCode() {
+        String originalFilename = "JAZZED1-20181022-B024a qualifier.pDf"
+        when(mockFile.getName()).thenReturn(originalFilename)
+
+        FairfaxFile testFairfaxFile = new FairfaxFile(mockFile)
+
+        assertThat("Filename extracted correctly", testFairfaxFile.filename, is(originalFilename))
+        assertThat("TitleCode parsed correctly", testFairfaxFile.titleCode, is("JAZZ"))
+        assertThat("SectionCode parsed correctly", testFairfaxFile.sectionCode, is("ED1"))
+        assertNotNull("Year extracted", testFairfaxFile.dateYear)
+        assertThat("dateYear parsed correctly", testFairfaxFile.dateYear, is(new Integer(2018)))
+        assertThat("dateMonthOfYear parsed correctly", testFairfaxFile.dateMonthOfYear, is(new Integer(10)))
+        assertThat("dateDayOfMonth parsed correctly", testFairfaxFile.dateDayOfMonth, is(new Integer(22)))
+        assertThat("Prefix parsed correctly", testFairfaxFile.sequenceLetter, is("B"))
+        assertThat("Prefix parsed correctly", testFairfaxFile.sequenceNumberString, is("024"))
+        assertThat("Prefix parsed correctly", testFairfaxFile.sequenceNumber, is(24))
+        assertThat("Qualifier parsed correctly", testFairfaxFile.qualifier, is("a qualifier"))
+        assertTrue("FairfaxFile is valid", testFairfaxFile.isValidName())
+    }
+
+    @Test
+    void createsCorrectlyWithTwoCharacterSectionCode() {
+        String originalFilename = "TSTAB-20181022-B024a qualifier.pDf"
+        when(mockFile.getName()).thenReturn(originalFilename)
+
+        FairfaxFile testFairfaxFile = new FairfaxFile(mockFile)
+
+        assertThat("Filename extracted correctly", testFairfaxFile.filename, is(originalFilename))
+        assertThat("TitleCode parsed correctly", testFairfaxFile.titleCode, is("TST"))
+        assertThat("SectionCode parsed correctly", testFairfaxFile.sectionCode, is("AB"))
+        assertNotNull("Year extracted", testFairfaxFile.dateYear)
+        assertThat("dateYear parsed correctly", testFairfaxFile.dateYear, is(new Integer(2018)))
+        assertThat("dateMonthOfYear parsed correctly", testFairfaxFile.dateMonthOfYear, is(new Integer(10)))
+        assertThat("dateDayOfMonth parsed correctly", testFairfaxFile.dateDayOfMonth, is(new Integer(22)))
+        assertThat("Prefix parsed correctly", testFairfaxFile.sequenceLetter, is("B"))
+        assertThat("Prefix parsed correctly", testFairfaxFile.sequenceNumberString, is("024"))
+        assertThat("Prefix parsed correctly", testFairfaxFile.sequenceNumber, is(24))
+        assertThat("Qualifier parsed correctly", testFairfaxFile.qualifier, is("a qualifier"))
+        assertTrue("FairfaxFile is valid", testFairfaxFile.isValidName())
+    }
+
+    @Test
+    void createsCorrectlyWithNumberOnlySequenceQualifier() {
+        String originalFilename = "t20ABC-20181022-024crop.pdf"
+        when(mockFile.getName()).thenReturn(originalFilename)
+
+        FairfaxFile testFairfaxFile = new FairfaxFile(mockFile)
+
+        assertThat("filename extracted correctly", testFairfaxFile.filename, is(originalFilename))
+        assertThat("TitleCode parsed correctly", testFairfaxFile.titleCode, is("t20"))
+        assertThat("SectionCode parsed correctly", testFairfaxFile.sectionCode, is("ABC"))
+        assertThat("dateYear parsed correctly", testFairfaxFile.dateYear, is(new Integer(2018)))
+        assertThat("dateMonthOfYear parsed correctly", testFairfaxFile.dateMonthOfYear, is(new Integer(10)))
+        assertThat("dateDayOfMonth parsed correctly", testFairfaxFile.dateDayOfMonth, is(new Integer(22)))
+        assertThat("sequenceLetter parsed correctly", testFairfaxFile.sequenceLetter, is(""))
+        assertThat("sequenceNumber parsed correctly", testFairfaxFile.sequenceNumber, is(24))
+        assertThat("Qualifier parsed correctly", testFairfaxFile.qualifier, is("crop"))
+        assertTrue("FairfaxFile is valid", testFairfaxFile.isValidName())
     }
 
     @Test
@@ -69,7 +198,7 @@ class FairfaxFileTest {
         FairfaxFile testFairfaxFile = new FairfaxFile(mockFile)
 
         assertThat("filename extracted correctly", testFairfaxFile.filename, is(originalFilename))
-        assertFalse("FairfaxFile is invalid", testFairfaxFile.isValid())
+        assertFalse("FairfaxFile is invalid", testFairfaxFile.isValidName())
     }
 
     @Test
@@ -83,6 +212,22 @@ class FairfaxFileTest {
         FairfaxFile fairfaxFile2 = new FairfaxFile(mockFile2)
 
         assertTrue("Same prefix and date in filename matches", fairfaxFile1.matches(fairfaxFile2))
+        assertFalse("Same prefix and date but different sequence does not sequence match",
+                fairfaxFile1.matchesWithSequence(fairfaxFile2))
+    }
+
+    @Test
+    void matchesWhenSamePrefixDateAndSequence() {
+        String filename1 = "Mixy2k-20181022-023.pdf"
+        String filename2 = "Mixy2k-20181022-023withQualifier.pdf"
+        when(mockFile1.getName()).thenReturn(filename1)
+        when(mockFile2.getName()).thenReturn(filename2)
+
+        FairfaxFile fairfaxFile1 = new FairfaxFile(mockFile1)
+        FairfaxFile fairfaxFile2 = new FairfaxFile(mockFile2)
+
+        assertTrue("Same prefix and date in filename matches", fairfaxFile1.matches(fairfaxFile2))
+        assertTrue("Matches with sequence", fairfaxFile1.matchesWithSequence(fairfaxFile2))
     }
 
     @Test
@@ -178,4 +323,580 @@ class FairfaxFileTest {
         assertEquals("Sorts correctly with same date but different sequence numbers",
                 [fairfaxFile1, fairfaxFile2, fairfaxFile3].sort(), [fairfaxFile3, fairfaxFile2, fairfaxFile1])
     }
+
+    @Test
+    void correctlyCreatesLocalDateFromFilename() {
+        String filename1 = "NAMed1-20180101-M023.pdf"
+        String filename2 = "NAMed1-20180630-A021.pdf"
+        String filename3 = "NAMed1-20181231-C022.pdf"
+        when(mockFile1.getName()).thenReturn(filename1)
+        when(mockFile2.getName()).thenReturn(filename2)
+        when(mockFile3.getName()).thenReturn(filename3)
+
+        FairfaxFile fairfaxFile1 = new FairfaxFile(mockFile1)
+        FairfaxFile fairfaxFile2 = new FairfaxFile(mockFile2)
+        FairfaxFile fairfaxFile3 = new FairfaxFile(mockFile3)
+
+        LocalDate january12018 = new LocalDate(2018, 1, 1)
+        LocalDate june302018 = new LocalDate(2018, 6, 30)
+        LocalDate december312018 = new LocalDate(2018, 12, 31)
+        assertThat("Creates date correctly for ${january12018}", fairfaxFile1.date, is(january12018))
+        assertThat("Creates date correctly for ${june302018}", fairfaxFile2.date, is(june302018))
+        assertThat("Creates date correctly for ${december312018}", fairfaxFile3.date, is(december312018))
+    }
+
+    @Test
+    void sortsCorrectlyUsingNumericBeforeAlpha() {
+        File file1 = new File("NAMed1-20180131-M023.pdf")
+        File file2 = new File("NAMed1-20180131-A01.pdf")
+        File file3 = new File("NAMed1-20180131-A02.pdf")
+        File file4 = new File("NAMed1-20180131-02.pdf")
+        File file5 = new File("NAMed1-20180131-01.pdf")
+        File file6 = new File("NAMed1-20180131-C1.pdf")
+        File file7 = new File("NAMed1-20180131-C2.pdf")
+
+        FairfaxFile fairfaxFile1 = new FairfaxFile(file1)
+        FairfaxFile fairfaxFile2 = new FairfaxFile(file2)
+        FairfaxFile fairfaxFile3 = new FairfaxFile(file3)
+        FairfaxFile fairfaxFile4 = new FairfaxFile(file4)
+        FairfaxFile fairfaxFile5 = new FairfaxFile(file5)
+        FairfaxFile fairfaxFile6 = new FairfaxFile(file6)
+        FairfaxFile fairfaxFile7 = new FairfaxFile(file7)
+
+        List<FairfaxFile> unsorted = [ fairfaxFile1, fairfaxFile2, fairfaxFile3, fairfaxFile4, fairfaxFile5,
+                                       fairfaxFile6, fairfaxFile7 ]
+        List<FairfaxFile> expected = [ fairfaxFile5, fairfaxFile4, fairfaxFile2, fairfaxFile3, fairfaxFile6,
+                                       fairfaxFile7, fairfaxFile1 ]
+        List<FairfaxFile> sorted = FairfaxFile.sortNumericAndAlpha(unsorted, false)
+        assertThat("Numeric comes before alpha for sorted=${sorted}", sorted, is(expected))
+    }
+
+    @Test
+    void sortsCorrectlyUsingAlphaBeforeNumeric() {
+        File file1 = new File("NAMed1-20180131-M023.pdf")
+        File file2 = new File("NAMed1-20180131-A01.pdf")
+        File file3 = new File("NAMed1-20180131-A02.pdf")
+        File file4 = new File("NAMed1-20180131-02.pdf")
+        File file5 = new File("NAMed1-20180131-01.pdf")
+        File file6 = new File("NAMed1-20180131-C1.pdf")
+        File file7 = new File("NAMed1-20180131-C2.pdf")
+
+        FairfaxFile fairfaxFile1 = new FairfaxFile(file1)
+        FairfaxFile fairfaxFile2 = new FairfaxFile(file2)
+        FairfaxFile fairfaxFile3 = new FairfaxFile(file3)
+        FairfaxFile fairfaxFile4 = new FairfaxFile(file4)
+        FairfaxFile fairfaxFile5 = new FairfaxFile(file5)
+        FairfaxFile fairfaxFile6 = new FairfaxFile(file6)
+        FairfaxFile fairfaxFile7 = new FairfaxFile(file7)
+
+        List<FairfaxFile> unsorted = [ fairfaxFile1, fairfaxFile2, fairfaxFile3, fairfaxFile4, fairfaxFile5,
+                                       fairfaxFile6, fairfaxFile7 ]
+        List<FairfaxFile> expected = [ fairfaxFile2, fairfaxFile3, fairfaxFile6, fairfaxFile7, fairfaxFile1,
+                                       fairfaxFile5, fairfaxFile4 ]
+        List<FairfaxFile> sorted = FairfaxFile.sortNumericAndAlpha(unsorted, true)
+        assertThat("Alpha comes before numeric for sorted=${sorted}", sorted, is(expected))
+    }
+
+    @Test
+    void correctlyFiltersSubstitutesAndSortsOnFirstSectionCode() {
+        File file1 = new File("NAMed1-20180131-A01.pdf")
+        File file2 = new File("NAMed1-20180131-A02.pdf")
+        File file3 = new File("NAMed1-20180131-A03.pdf")
+        File file4 = new File("NAMed2-20180131-A02.pdf")
+        File file5 = new File("NAMed1-20180131-A04.pdf")
+        File file6 = new File("NAMed1-20180131-01.pdf")
+        File file7 = new File("NAMed2-20180131-01.pdf")
+        File file8 = new File("NAMed2-20180131-02.pdf")
+        File file9 = new File("NAMed2-20180131-03.pdf")
+        File file10 = new File("NAMed3-20180131-A01.pdf")
+        File file11 = new File("NAMFEE-20180131-A01.pdf")
+        File file12 = new File("NAMFEE-20180131-A02.pdf")
+        File file13 = new File("NAMNOT-20180131-A01.pdf")
+        File file14 = new File("NAMNOT-20180131-A02.pdf")
+
+        FairfaxFile fairfaxFile1 = new FairfaxFile(file1)
+        FairfaxFile fairfaxFile2 = new FairfaxFile(file2)
+        FairfaxFile fairfaxFile3 = new FairfaxFile(file3)
+        FairfaxFile fairfaxFile4 = new FairfaxFile(file4)
+        FairfaxFile fairfaxFile5 = new FairfaxFile(file5)
+        FairfaxFile fairfaxFile6 = new FairfaxFile(file6)
+        FairfaxFile fairfaxFile7 = new FairfaxFile(file7)
+        FairfaxFile fairfaxFile8 = new FairfaxFile(file8)
+        FairfaxFile fairfaxFile9 = new FairfaxFile(file9)
+        FairfaxFile fairfaxFile10 = new FairfaxFile(file10)
+        FairfaxFile fairfaxFile11 = new FairfaxFile(file11)
+        FairfaxFile fairfaxFile12 = new FairfaxFile(file12)
+        FairfaxFile fairfaxFile13 = new FairfaxFile(file13)
+        FairfaxFile fairfaxFile14 = new FairfaxFile(file14)
+
+        FairfaxProcessingParameters processingParameters = new FairfaxProcessingParameters(currentEdition: "ed1",
+                editionDiscriminators: [ "ed1", "ed2", "ed3" ], sectionCodes: [ "ed1", "TWO", "FEE" ])
+
+        List<FairfaxFile> original = [ fairfaxFile14, fairfaxFile13, fairfaxFile12, fairfaxFile11, fairfaxFile10,
+                                       fairfaxFile9, fairfaxFile8, fairfaxFile7, fairfaxFile6, fairfaxFile5,
+                                       fairfaxFile4, fairfaxFile3, fairfaxFile2, fairfaxFile1 ]
+        List<FairfaxFile> expected = [ fairfaxFile6, fairfaxFile1, fairfaxFile2, fairfaxFile3, fairfaxFile5,
+                                       fairfaxFile11, fairfaxFile12 ]
+        List<FairfaxFile> substituted = FairfaxFile.filterSubstituteAndSort(original, processingParameters)
+        assertTrue("There are substitutions possible", FairfaxFile.hasSubstitutions("ed1", original))
+        assertThat("Filter substitute and sort done correctly from=${original} to=${substituted}", substituted,
+                is(expected))
+    }
+
+    @Test
+    void correctlyFiltersSubstitutesAndSortsWithSecondSectionCode() {
+        File file1 = new File("NAMed1-20180131-A01.pdf")
+        File file2 = new File("NAMed1-20180131-A02.pdf")
+        File file3 = new File("NAMed1-20180131-A03.pdf")
+        File file4 = new File("NAMed2-20180131-A02.pdf")
+        File file5 = new File("NAMed1-20180131-A04.pdf")
+        File file6 = new File("NAMed1-20180131-01.pdf")
+        File file7 = new File("NAMed2-20180131-01.pdf")
+        File file8 = new File("NAMed2-20180131-02.pdf")
+        File file9 = new File("NAMed2-20180131-03.pdf")
+        File file10 = new File("NAMed3-20180131-A01.pdf")
+        File file11 = new File("NAMFEE-20180131-A01.pdf")
+        File file12 = new File("NAMFEE-20180131-A02.pdf")
+        File file13 = new File("NAMNOT-20180131-A01.pdf")
+        File file14 = new File("NAMNOT-20180131-A02.pdf")
+
+        FairfaxFile fairfaxFile1 = new FairfaxFile(file1)
+        FairfaxFile fairfaxFile2 = new FairfaxFile(file2)
+        FairfaxFile fairfaxFile3 = new FairfaxFile(file3)
+        FairfaxFile fairfaxFile4 = new FairfaxFile(file4)
+        FairfaxFile fairfaxFile5 = new FairfaxFile(file5)
+        FairfaxFile fairfaxFile6 = new FairfaxFile(file6)
+        FairfaxFile fairfaxFile7 = new FairfaxFile(file7)
+        FairfaxFile fairfaxFile8 = new FairfaxFile(file8)
+        FairfaxFile fairfaxFile9 = new FairfaxFile(file9)
+        FairfaxFile fairfaxFile10 = new FairfaxFile(file10)
+        FairfaxFile fairfaxFile11 = new FairfaxFile(file11)
+        FairfaxFile fairfaxFile12 = new FairfaxFile(file12)
+        FairfaxFile fairfaxFile13 = new FairfaxFile(file13)
+        FairfaxFile fairfaxFile14 = new FairfaxFile(file14)
+
+        FairfaxProcessingParameters processingParameters = new FairfaxProcessingParameters(currentEdition: "ed2",
+                editionDiscriminators: [ "ed1", "ed2", "ed3" ], sectionCodes: [ "ed1", "TWO", "FEE" ])
+
+        List<FairfaxFile> original = [ fairfaxFile14, fairfaxFile13, fairfaxFile12, fairfaxFile11, fairfaxFile10,
+                                       fairfaxFile9, fairfaxFile8, fairfaxFile7, fairfaxFile6, fairfaxFile5,
+                                       fairfaxFile4, fairfaxFile3, fairfaxFile2, fairfaxFile1 ]
+        List<FairfaxFile> expected = [ fairfaxFile7, fairfaxFile8, fairfaxFile9, fairfaxFile1, fairfaxFile4,
+                                       fairfaxFile3, fairfaxFile5, fairfaxFile11, fairfaxFile12 ]
+        List<FairfaxFile> substituted = FairfaxFile.filterSubstituteAndSort(original, processingParameters)
+        assertTrue("There are substitutions possible", FairfaxFile.hasSubstitutions("ed1", original))
+        assertThat("Filter substitute and sort done correctly from=${original} to=${substituted}", substituted,
+                is(expected))
+    }
+
+    @Test
+    void correctlyFiltersSubstitutesAndSortsWithSecondSectionCodeAndAlphaBeforeNumeric() {
+        File file1 = new File("NAMed1-20180131-A01.pdf")
+        File file2 = new File("NAMed1-20180131-A02.pdf")
+        File file3 = new File("NAMed1-20180131-A03.pdf")
+        File file4 = new File("NAMed2-20180131-A02.pdf")
+        File file5 = new File("NAMed1-20180131-A04.pdf")
+        File file6 = new File("NAMed1-20180131-01.pdf")
+        File file7 = new File("NAMed2-20180131-01.pdf")
+        File file8 = new File("NAMed2-20180131-02.pdf")
+        File file9 = new File("NAMed2-20180131-03.pdf")
+        File file10 = new File("NAMed3-20180131-A01.pdf")
+        File file11 = new File("NAMFEE-20180131-A01.pdf")
+        File file12 = new File("NAMFEE-20180131-A02.pdf")
+        File file13 = new File("NAMNOT-20180131-A01.pdf")
+        File file14 = new File("NAMNOT-20180131-A02.pdf")
+
+        FairfaxFile fairfaxFile1 = new FairfaxFile(file1)
+        FairfaxFile fairfaxFile2 = new FairfaxFile(file2)
+        FairfaxFile fairfaxFile3 = new FairfaxFile(file3)
+        FairfaxFile fairfaxFile4 = new FairfaxFile(file4)
+        FairfaxFile fairfaxFile5 = new FairfaxFile(file5)
+        FairfaxFile fairfaxFile6 = new FairfaxFile(file6)
+        FairfaxFile fairfaxFile7 = new FairfaxFile(file7)
+        FairfaxFile fairfaxFile8 = new FairfaxFile(file8)
+        FairfaxFile fairfaxFile9 = new FairfaxFile(file9)
+        FairfaxFile fairfaxFile10 = new FairfaxFile(file10)
+        FairfaxFile fairfaxFile11 = new FairfaxFile(file11)
+        FairfaxFile fairfaxFile12 = new FairfaxFile(file12)
+        FairfaxFile fairfaxFile13 = new FairfaxFile(file13)
+        FairfaxFile fairfaxFile14 = new FairfaxFile(file14)
+
+        FairfaxProcessingParameters processingParameters = new FairfaxProcessingParameters(currentEdition: "ed2",
+                editionDiscriminators: [ "ed1", "ed2", "ed3" ], sectionCodes: [ "ed1", "TWO", "FEE" ],
+                options: [ ProcessingOption.AlphaBeforeNumericSequencing ] )
+
+        List<FairfaxFile> original = [ fairfaxFile14, fairfaxFile13, fairfaxFile12, fairfaxFile11, fairfaxFile10,
+                                       fairfaxFile9, fairfaxFile8, fairfaxFile7, fairfaxFile6, fairfaxFile5,
+                                       fairfaxFile4, fairfaxFile3, fairfaxFile2, fairfaxFile1 ]
+        List<FairfaxFile> expected = [ fairfaxFile1, fairfaxFile4, fairfaxFile3, fairfaxFile5, fairfaxFile7,
+                                       fairfaxFile8, fairfaxFile9, fairfaxFile11, fairfaxFile12 ]
+        List<FairfaxFile> substituted = FairfaxFile.filterSubstituteAndSort(original, processingParameters)
+        assertTrue("There are substitutions possible", FairfaxFile.hasSubstitutions("ed1", original))
+        assertThat("Filter substitute and sort done correctly from=${original} to=${substituted}", substituted,
+                is(expected))
+    }
+
+    @Test
+    void correctlyFiltersSubstitutesAndSortsWhenThereAreNoSubstitutes() {
+        File file1 = new File("NAMed1-20180131-A01.pdf")
+        File file2 = new File("NAMed1-20180131-A02.pdf")
+        File file3 = new File("NAMed1-20180131-A03.pdf")
+        File file4 = new File("NAMed2-20180131-A02.pdf")
+        File file5 = new File("NAMed1-20180131-A04.pdf")
+        File file6 = new File("NAMed1-20180131-01.pdf")
+        File file7 = new File("NAMed2-20180131-01.pdf")
+        File file8 = new File("NAMed2-20180131-02.pdf")
+        File file9 = new File("NAMed2-20180131-03.pdf")
+        File file11 = new File("NAMFEE-20180131-A01.pdf")
+        File file12 = new File("NAMFEE-20180131-A02.pdf")
+        File file13 = new File("NAMNOT-20180131-A01.pdf")
+        File file14 = new File("NAMNOT-20180131-A02.pdf")
+
+        FairfaxFile fairfaxFile1 = new FairfaxFile(file1)
+        FairfaxFile fairfaxFile2 = new FairfaxFile(file2)
+        FairfaxFile fairfaxFile3 = new FairfaxFile(file3)
+        FairfaxFile fairfaxFile4 = new FairfaxFile(file4)
+        FairfaxFile fairfaxFile5 = new FairfaxFile(file5)
+        FairfaxFile fairfaxFile6 = new FairfaxFile(file6)
+        FairfaxFile fairfaxFile7 = new FairfaxFile(file7)
+        FairfaxFile fairfaxFile8 = new FairfaxFile(file8)
+        FairfaxFile fairfaxFile9 = new FairfaxFile(file9)
+        FairfaxFile fairfaxFile11 = new FairfaxFile(file11)
+        FairfaxFile fairfaxFile12 = new FairfaxFile(file12)
+        FairfaxFile fairfaxFile13 = new FairfaxFile(file13)
+        FairfaxFile fairfaxFile14 = new FairfaxFile(file14)
+
+        FairfaxProcessingParameters processingParameters = new FairfaxProcessingParameters(currentEdition: "ed3",
+                editionDiscriminators: [ "ed1", "ed2", "ed3" ], sectionCodes: [ "ed1", "TWO", "FEE" ])
+
+        List<FairfaxFile> original = [ fairfaxFile14, fairfaxFile13, fairfaxFile12, fairfaxFile11,
+                                       fairfaxFile9, fairfaxFile8, fairfaxFile7, fairfaxFile6, fairfaxFile5,
+                                       fairfaxFile4, fairfaxFile3, fairfaxFile2, fairfaxFile1 ]
+        List<FairfaxFile> expected = [ ]
+        List<FairfaxFile> substituted = FairfaxFile.filterSubstituteAndSort(original, processingParameters)
+        assertFalse("There are substitutions possible", FairfaxFile.hasSubstitutions("ed3", original))
+        assertThat("Filter substitute and sort done correctly from=${original} to=${substituted}", substituted,
+                is(expected))
+    }
+
+    @Test
+    void correctlySortsWithSameTitleCodeAndDate() {
+        File file1 = new File("NAMed1-20180131-A01.pdf")
+        File file2 = new File("NAMed1-20180131-A02.pdf")
+        File file3 = new File("NAMed1-20180131-A03.pdf")
+        File file4 = new File("NAMed1-20180131-A04.pdf")
+        File file5 = new File("NAMed1-20180131-A06.pdf")
+        File file6 = new File("NAMed1-20180131-01.pdf")
+        File file7 = new File("NAMed1-20180131-02.pdf")
+        File file8 = new File("NAMed1-20180131-03.pdf")
+        File file9 = new File("NAMed1-20180131-05.pdf")
+        File file10 = new File("NAMed1-20180131-09.pdf")
+        File file11 = new File("NAMFEE-20180131-B02.pdf")
+        File file12 = new File("NAMFEE-20180131-B04.pdf")
+        File file13 = new File("NAMFEE-20180131-C06.pdf")
+        File file14 = new File("NAMFEE-20180131-C08.pdf")
+
+        FairfaxFile fairfaxFile1 = new FairfaxFile(file1)
+        FairfaxFile fairfaxFile2 = new FairfaxFile(file2)
+        FairfaxFile fairfaxFile3 = new FairfaxFile(file3)
+        FairfaxFile fairfaxFile4 = new FairfaxFile(file4)
+        FairfaxFile fairfaxFile5 = new FairfaxFile(file5)
+        FairfaxFile fairfaxFile6 = new FairfaxFile(file6)
+        FairfaxFile fairfaxFile7 = new FairfaxFile(file7)
+        FairfaxFile fairfaxFile8 = new FairfaxFile(file8)
+        FairfaxFile fairfaxFile9 = new FairfaxFile(file9)
+        FairfaxFile fairfaxFile10 = new FairfaxFile(file10)
+        FairfaxFile fairfaxFile11 = new FairfaxFile(file11)
+        FairfaxFile fairfaxFile12 = new FairfaxFile(file12)
+        FairfaxFile fairfaxFile13 = new FairfaxFile(file13)
+        FairfaxFile fairfaxFile14 = new FairfaxFile(file14)
+
+        FairfaxProcessingParameters processingParameters = new FairfaxProcessingParameters(
+                sectionCodes: [ "ed1", "TWO", "FEE" ])
+
+        List<FairfaxFile> original = [ fairfaxFile14, fairfaxFile13, fairfaxFile12, fairfaxFile11,
+                                       fairfaxFile9, fairfaxFile8, fairfaxFile7, fairfaxFile6, fairfaxFile5,
+                                       fairfaxFile10, fairfaxFile4, fairfaxFile3, fairfaxFile2, fairfaxFile1 ]
+        List<FairfaxFile> expected = [ fairfaxFile6, fairfaxFile7, fairfaxFile8, fairfaxFile9, fairfaxFile10,
+                                       fairfaxFile1, fairfaxFile2, fairfaxFile3, fairfaxFile4, fairfaxFile5,
+                                       fairfaxFile11, fairfaxFile12, fairfaxFile13, fairfaxFile14 ]
+        List<FairfaxFile> sorted = FairfaxFile.sortWithSameTitleCodeAndDate(original, processingParameters)
+        assertThat("Sort done correctly from=${original} to=${sorted}", sorted, is(expected))
+    }
+
+    @Test
+    void correctDeterminesIfOneFileComesAfterAnother() {
+        File file1 = new File("NAMed1-20180131-A01.pdf")
+        File file2 = new File("NAMed1-20180131-A02.pdf")
+        File file3 = new File("NAMed1-20180131-A03.pdf")
+        File file4 = new File("NAMed1-20180131-A02.pdf")
+        File file5 = new File("NAMed1-20180131-A04.pdf")
+        File file6 = new File("NAMed1-20180131-01.pdf")
+        File file7 = new File("NAMed1-20180131-02.pdf")
+        File file8 = new File("NAMed2-20180131-03.pdf")
+        File file9 = new File("NAMed2-20180131-04.pdf")
+        File file11 = new File("NAMFEE-20180131-B01.pdf")
+        File file12 = new File("NAMFEE-20180131-B02.pdf")
+        File file13 = new File("NAMNOT-20180131-C01.pdf")
+        File file14 = new File("NAMNOT-20180131-C02.pdf")
+
+        FairfaxFile fairfaxFile1 = new FairfaxFile(file1)
+        FairfaxFile fairfaxFile2 = new FairfaxFile(file2)
+        FairfaxFile fairfaxFile3 = new FairfaxFile(file3)
+        FairfaxFile fairfaxFile4 = new FairfaxFile(file4)
+        FairfaxFile fairfaxFile5 = new FairfaxFile(file5)
+        FairfaxFile fairfaxFile6 = new FairfaxFile(file6)
+        FairfaxFile fairfaxFile7 = new FairfaxFile(file7)
+        FairfaxFile fairfaxFile8 = new FairfaxFile(file8)
+        FairfaxFile fairfaxFile9 = new FairfaxFile(file9)
+        FairfaxFile fairfaxFile11 = new FairfaxFile(file11)
+        FairfaxFile fairfaxFile12 = new FairfaxFile(file12)
+        FairfaxFile fairfaxFile13 = new FairfaxFile(file13)
+        FairfaxFile fairfaxFile14 = new FairfaxFile(file14)
+
+        assertTrue("FairfaxFile=${fairfaxFile2.file.getName()} comes directly after FairfaxFile=${fairfaxFile1.file.getName()}",
+                fairfaxFile2.canComeDirectlyAfter(fairfaxFile1))
+        assertTrue("FairfaxFile=${fairfaxFile3.file.getName()} comes directly after FairfaxFile=${fairfaxFile2.file.getName()}",
+                fairfaxFile3.canComeDirectlyAfter(fairfaxFile2))
+        assertTrue("FairfaxFile=${fairfaxFile4.file.getName()} comes directly after FairfaxFile=${fairfaxFile1.file.getName()}",
+                fairfaxFile4.canComeDirectlyAfter(fairfaxFile1))
+        assertTrue("FairfaxFile=${fairfaxFile6.file.getName()} comes directly after FairfaxFile=${fairfaxFile5.file.getName()}",
+                fairfaxFile6.canComeDirectlyAfter(fairfaxFile5))
+        assertTrue("FairfaxFile=${fairfaxFile7.file.getName()} comes directly after FairfaxFile=${fairfaxFile6.file.getName()}",
+                fairfaxFile7.canComeDirectlyAfter(fairfaxFile6))
+        assertTrue("FairfaxFile=${fairfaxFile9.file.getName()} comes directly after FairfaxFile=${fairfaxFile8.file.getName()}",
+                fairfaxFile9.canComeDirectlyAfter(fairfaxFile8))
+        assertTrue("FairfaxFile=${fairfaxFile11.file.getName()} comes directly after FairfaxFile=${fairfaxFile9.file.getName()}",
+                fairfaxFile11.canComeDirectlyAfter(fairfaxFile9))
+        assertTrue("FairfaxFile=${fairfaxFile12.file.getName()} comes directly after FairfaxFile=${fairfaxFile11.file.getName()}",
+                fairfaxFile12.canComeDirectlyAfter(fairfaxFile11))
+        assertTrue("FairfaxFile=${fairfaxFile13.file.getName()} comes directly after FairfaxFile=${fairfaxFile12.file.getName()}",
+                fairfaxFile13.canComeDirectlyAfter(fairfaxFile12))
+        assertTrue("FairfaxFile=${fairfaxFile13.file.getName()} comes directly after FairfaxFile=${fairfaxFile9.file.getName()}",
+                fairfaxFile13.canComeDirectlyAfter(fairfaxFile9))
+        assertTrue("FairfaxFile=${fairfaxFile11.file.getName()} comes directly after FairfaxFile=${fairfaxFile6.file.getName()}",
+                fairfaxFile11.canComeDirectlyAfter(fairfaxFile6))
+
+        assertFalse("FairfaxFile=${fairfaxFile1.file.getName()} DOES NOT come directly after FairfaxFile=${fairfaxFile2.file.getName()}",
+                fairfaxFile1.canComeDirectlyAfter(fairfaxFile2))
+        assertFalse("FairfaxFile=${fairfaxFile4.file.getName()} DOES NOT come directly after FairfaxFile=${fairfaxFile5.file.getName()}",
+                fairfaxFile4.canComeDirectlyAfter(fairfaxFile5))
+        assertFalse("FairfaxFile=${fairfaxFile7.file.getName()} DOES NOT come directly after FairfaxFile=${fairfaxFile5.file.getName()}",
+                fairfaxFile7.canComeDirectlyAfter(fairfaxFile5))
+        assertFalse("FairfaxFile=${fairfaxFile8.file.getName()} DOES NOT come directly after FairfaxFile=${fairfaxFile7.file.getName()}",
+                fairfaxFile8.canComeDirectlyAfter(fairfaxFile7))
+        assertFalse("FairfaxFile=${fairfaxFile2.file.getName()} DOES NOT come directly after FairfaxFile=${fairfaxFile3.file.getName()}",
+                fairfaxFile2.canComeDirectlyAfter(fairfaxFile3))
+        assertFalse("FairfaxFile=${fairfaxFile3.file.getName()} DOES NOT come directly after FairfaxFile=${fairfaxFile1.file.getName()}",
+                fairfaxFile3.canComeDirectlyAfter(fairfaxFile1))
+        assertFalse("FairfaxFile=${fairfaxFile14.file.getName()} DOES NOT come directly after FairfaxFile=${fairfaxFile11.file.getName()}",
+                fairfaxFile14.canComeDirectlyAfter(fairfaxFile11))
+        assertFalse("FairfaxFile=${fairfaxFile9.file.getName()} DOES NOT come directly after FairfaxFile=${fairfaxFile6.file.getName()}",
+                fairfaxFile9.canComeDirectlyAfter(fairfaxFile6))
+        assertFalse("FairfaxFile=${fairfaxFile9.file.getName()} DOES NOT come directly after FairfaxFile=${fairfaxFile7.file.getName()}",
+                fairfaxFile9.canComeDirectlyAfter(fairfaxFile7))
+        assertFalse("FairfaxFile=${fairfaxFile7.file.getName()} DOES NOT come directly after FairfaxFile=${fairfaxFile9.file.getName()}",
+                fairfaxFile7.canComeDirectlyAfter(fairfaxFile9))
+        assertFalse("FairfaxFile=${fairfaxFile14.file.getName()} DOES NOT come directly after FairfaxFile=${fairfaxFile12.file.getName()}",
+                fairfaxFile14.canComeDirectlyAfter(fairfaxFile12))
+    }
+
+    @Test
+    void correctDeterminesIfOneFileComesAfterAnotherWithMultipleNumericSequences() {
+        File file1 = new File("NAMed1-20180131-A01.pdf")
+        File file2 = new File("NAMed1-20180131-A02.pdf")
+        File file3 = new File("NAMed1-20180131-A03.pdf")
+        File file4 = new File("NAMed1-20180131-A04.pdf")
+        File file5 = new File("NAMed1-20180131-A05.pdf")
+        File file6 = new File("NAMed2-20180131-01.pdf")
+        File file7 = new File("NAMed2-20180131-02.pdf")
+        File file8 = new File("NAMed2-20180131-03.pdf")
+        File file9 = new File("NAMed2-20180131-04.pdf")
+        File file11 = new File("NAMFEE-20180131-01.pdf")
+        File file12 = new File("NAMFEE-20180131-02.pdf")
+        File file13 = new File("NAMNOT-20180131-C01.pdf")
+        File file14 = new File("NAMNOT-20180131-C02.pdf")
+
+        FairfaxFile fairfaxFile1 = new FairfaxFile(file1)
+        FairfaxFile fairfaxFile2 = new FairfaxFile(file2)
+        FairfaxFile fairfaxFile3 = new FairfaxFile(file3)
+        FairfaxFile fairfaxFile4 = new FairfaxFile(file4)
+        FairfaxFile fairfaxFile5 = new FairfaxFile(file5)
+        FairfaxFile fairfaxFile6 = new FairfaxFile(file6)
+        FairfaxFile fairfaxFile7 = new FairfaxFile(file7)
+        FairfaxFile fairfaxFile8 = new FairfaxFile(file8)
+        FairfaxFile fairfaxFile9 = new FairfaxFile(file9)
+        FairfaxFile fairfaxFile11 = new FairfaxFile(file11)
+        FairfaxFile fairfaxFile12 = new FairfaxFile(file12)
+        FairfaxFile fairfaxFile13 = new FairfaxFile(file13)
+        FairfaxFile fairfaxFile14 = new FairfaxFile(file14)
+
+        assertTrue("FairfaxFile=${fairfaxFile2.file.getName()} comes directly after FairfaxFile=${fairfaxFile1.file.getName()}",
+                fairfaxFile2.canComeDirectlyAfter(fairfaxFile1))
+        assertTrue("FairfaxFile=${fairfaxFile3.file.getName()} comes directly after FairfaxFile=${fairfaxFile2.file.getName()}",
+                fairfaxFile3.canComeDirectlyAfter(fairfaxFile2))
+        assertTrue("FairfaxFile=${fairfaxFile4.file.getName()} comes directly after FairfaxFile=${fairfaxFile3.file.getName()}",
+                fairfaxFile4.canComeDirectlyAfter(fairfaxFile3))
+        assertTrue("FairfaxFile=${fairfaxFile6.file.getName()} comes directly after FairfaxFile=${fairfaxFile5.file.getName()}",
+                fairfaxFile6.canComeDirectlyAfter(fairfaxFile5))
+        assertTrue("FairfaxFile=${fairfaxFile7.file.getName()} comes directly after FairfaxFile=${fairfaxFile6.file.getName()}",
+                fairfaxFile7.canComeDirectlyAfter(fairfaxFile6))
+        assertTrue("FairfaxFile=${fairfaxFile9.file.getName()} comes directly after FairfaxFile=${fairfaxFile8.file.getName()}",
+                fairfaxFile9.canComeDirectlyAfter(fairfaxFile8))
+        assertTrue("FairfaxFile=${fairfaxFile11.file.getName()} comes directly after FairfaxFile=${fairfaxFile9.file.getName()}",
+                fairfaxFile11.canComeDirectlyAfter(fairfaxFile9))
+        assertTrue("FairfaxFile=${fairfaxFile12.file.getName()} comes directly after FairfaxFile=${fairfaxFile11.file.getName()}",
+                fairfaxFile12.canComeDirectlyAfter(fairfaxFile11))
+        assertTrue("FairfaxFile=${fairfaxFile13.file.getName()} comes directly after FairfaxFile=${fairfaxFile12.file.getName()}",
+                fairfaxFile13.canComeDirectlyAfter(fairfaxFile12))
+        assertTrue("FairfaxFile=${fairfaxFile13.file.getName()} comes directly after FairfaxFile=${fairfaxFile9.file.getName()}",
+                fairfaxFile13.canComeDirectlyAfter(fairfaxFile9))
+        assertTrue("FairfaxFile=${fairfaxFile11.file.getName()} comes directly after FairfaxFile=${fairfaxFile6.file.getName()}",
+                fairfaxFile11.canComeDirectlyAfter(fairfaxFile6))
+
+        assertFalse("FairfaxFile=${fairfaxFile1.file.getName()} DOES NOT come directly after FairfaxFile=${fairfaxFile2.file.getName()}",
+                fairfaxFile1.canComeDirectlyAfter(fairfaxFile2))
+        assertFalse("FairfaxFile=${fairfaxFile4.file.getName()} DOES NOT come directly after FairfaxFile=${fairfaxFile5.file.getName()}",
+                fairfaxFile4.canComeDirectlyAfter(fairfaxFile5))
+        assertFalse("FairfaxFile=${fairfaxFile8.file.getName()} DOES NOT come directly after FairfaxFile=${fairfaxFile6.file.getName()}",
+                fairfaxFile8.canComeDirectlyAfter(fairfaxFile6))
+        assertFalse("FairfaxFile=${fairfaxFile2.file.getName()} DOES NOT come directly after FairfaxFile=${fairfaxFile3.file.getName()}",
+                fairfaxFile2.canComeDirectlyAfter(fairfaxFile3))
+        assertFalse("FairfaxFile=${fairfaxFile3.file.getName()} DOES NOT come directly after FairfaxFile=${fairfaxFile1.file.getName()}",
+                fairfaxFile3.canComeDirectlyAfter(fairfaxFile1))
+        assertFalse("FairfaxFile=${fairfaxFile14.file.getName()} DOES NOT come directly after FairfaxFile=${fairfaxFile11.file.getName()}",
+                fairfaxFile14.canComeDirectlyAfter(fairfaxFile11))
+        assertFalse("FairfaxFile=${fairfaxFile9.file.getName()} DOES NOT come directly after FairfaxFile=${fairfaxFile6.file.getName()}",
+                fairfaxFile9.canComeDirectlyAfter(fairfaxFile6))
+        assertFalse("FairfaxFile=${fairfaxFile9.file.getName()} DOES NOT come directly after FairfaxFile=${fairfaxFile7.file.getName()}",
+                fairfaxFile9.canComeDirectlyAfter(fairfaxFile7))
+        assertFalse("FairfaxFile=${fairfaxFile7.file.getName()} DOES NOT come directly after FairfaxFile=${fairfaxFile9.file.getName()}",
+                fairfaxFile7.canComeDirectlyAfter(fairfaxFile9))
+        assertFalse("FairfaxFile=${fairfaxFile12.file.getName()} DOES NOT come directly after FairfaxFile=${fairfaxFile6.file.getName()}",
+                fairfaxFile12.canComeDirectlyAfter(fairfaxFile6))
+        assertFalse("FairfaxFile=${fairfaxFile14.file.getName()} DOES NOT come directly after FairfaxFile=${fairfaxFile12.file.getName()}",
+                fairfaxFile14.canComeDirectlyAfter(fairfaxFile12))
+    }
+
+    @Test
+    void correctDeterminesIfOneFileComesAfterAnotherWithMultipleEditions() {
+        File file1 = new File("NAMed1-20180131-A01.pdf")
+        File file2 = new File("NAMed1-20180131-A02.pdf")
+        File file3 = new File("NAMed1-20180131-A03.pdf")
+        File file4 = new File("NAMed2-20180131-A02.pdf")
+        File file5 = new File("NAMed1-20180131-A04.pdf")
+        File file6 = new File("NAMed1-20180131-01.pdf")
+        File file7 = new File("NAMed2-20180131-01.pdf")
+        File file8 = new File("NAMed2-20180131-02.pdf")
+        File file9 = new File("NAMed2-20180131-03.pdf")
+        File file11 = new File("NAMFEE-20180131-001.pdf")
+        File file12 = new File("NAMFEE-20180131-002.pdf")
+        File file13 = new File("NAMNOT-20180131-C01.pdf")
+        File file14 = new File("NAMNOT-20180131-C02.pdf")
+
+        FairfaxFile fairfaxFile1 = new FairfaxFile(file1)
+        FairfaxFile fairfaxFile2 = new FairfaxFile(file2)
+        FairfaxFile fairfaxFile3 = new FairfaxFile(file3)
+        FairfaxFile fairfaxFile4 = new FairfaxFile(file4)
+        FairfaxFile fairfaxFile5 = new FairfaxFile(file5)
+        FairfaxFile fairfaxFile6 = new FairfaxFile(file6)
+        FairfaxFile fairfaxFile7 = new FairfaxFile(file7)
+        FairfaxFile fairfaxFile8 = new FairfaxFile(file8)
+        FairfaxFile fairfaxFile9 = new FairfaxFile(file9)
+        FairfaxFile fairfaxFile11 = new FairfaxFile(file11)
+        FairfaxFile fairfaxFile12 = new FairfaxFile(file12)
+        FairfaxFile fairfaxFile13 = new FairfaxFile(file13)
+        FairfaxFile fairfaxFile14 = new FairfaxFile(file14)
+
+        List<String> editionDiscriminators = [ 'ed1', 'ed2' ]
+        assertTrue("FairfaxFile=${fairfaxFile2.file.getName()} comes directly after FairfaxFile=${fairfaxFile1.file.getName()}",
+                fairfaxFile2.canComeDirectlyAfter(fairfaxFile1, editionDiscriminators))
+        assertTrue("FairfaxFile=${fairfaxFile3.file.getName()} comes directly after FairfaxFile=${fairfaxFile2.file.getName()}",
+                fairfaxFile3.canComeDirectlyAfter(fairfaxFile2, editionDiscriminators))
+        assertTrue("FairfaxFile=${fairfaxFile4.file.getName()} comes directly after FairfaxFile=${fairfaxFile1.file.getName()}",
+                fairfaxFile4.canComeDirectlyAfter(fairfaxFile1, editionDiscriminators))
+        assertTrue("FairfaxFile=${fairfaxFile6.file.getName()} comes directly after FairfaxFile=${fairfaxFile5.file.getName()}",
+                fairfaxFile6.canComeDirectlyAfter(fairfaxFile5, editionDiscriminators))
+        assertTrue("FairfaxFile=${fairfaxFile7.file.getName()} comes directly after FairfaxFile=${fairfaxFile5.file.getName()}",
+                fairfaxFile7.canComeDirectlyAfter(fairfaxFile5, editionDiscriminators))
+        assertTrue("FairfaxFile=${fairfaxFile9.file.getName()} comes directly after FairfaxFile=${fairfaxFile8.file.getName()}",
+                fairfaxFile9.canComeDirectlyAfter(fairfaxFile8, editionDiscriminators))
+        assertTrue("FairfaxFile=${fairfaxFile11.file.getName()} comes directly after FairfaxFile=${fairfaxFile9.file.getName()}",
+                fairfaxFile11.canComeDirectlyAfter(fairfaxFile9, editionDiscriminators))
+        assertTrue("FairfaxFile=${fairfaxFile12.file.getName()} comes directly after FairfaxFile=${fairfaxFile11.file.getName()}",
+                fairfaxFile12.canComeDirectlyAfter(fairfaxFile11, editionDiscriminators))
+        assertTrue("FairfaxFile=${fairfaxFile13.file.getName()} comes directly after FairfaxFile=${fairfaxFile12.file.getName()}",
+                fairfaxFile13.canComeDirectlyAfter(fairfaxFile12, editionDiscriminators))
+        assertTrue("FairfaxFile=${fairfaxFile13.file.getName()} comes directly after FairfaxFile=${fairfaxFile9.file.getName()}",
+                fairfaxFile13.canComeDirectlyAfter(fairfaxFile9, editionDiscriminators))
+        assertTrue("FairfaxFile=${fairfaxFile11.file.getName()} comes directly after FairfaxFile=${fairfaxFile6.file.getName()}",
+                fairfaxFile11.canComeDirectlyAfter(fairfaxFile6, editionDiscriminators))
+
+        assertFalse("FairfaxFile=${fairfaxFile1.file.getName()} DOES NOT come directly after FairfaxFile=${fairfaxFile2.file.getName()}",
+                fairfaxFile1.canComeDirectlyAfter(fairfaxFile2, editionDiscriminators))
+        assertFalse("FairfaxFile=${fairfaxFile4.file.getName()} DOES NOT come directly after FairfaxFile=${fairfaxFile5.file.getName()}",
+                fairfaxFile4.canComeDirectlyAfter(fairfaxFile5, editionDiscriminators))
+        assertFalse("FairfaxFile=${fairfaxFile7.file.getName()} DOES NOT come directly after FairfaxFile=${fairfaxFile6.file.getName()}",
+                fairfaxFile7.canComeDirectlyAfter(fairfaxFile6, editionDiscriminators))
+        assertFalse("FairfaxFile=${fairfaxFile2.file.getName()} DOES NOT come directly after FairfaxFile=${fairfaxFile3.file.getName()}",
+                fairfaxFile2.canComeDirectlyAfter(fairfaxFile3, editionDiscriminators))
+        assertFalse("FairfaxFile=${fairfaxFile3.file.getName()} DOES NOT come directly after FairfaxFile=${fairfaxFile1.file.getName()}",
+                fairfaxFile3.canComeDirectlyAfter(fairfaxFile1, editionDiscriminators))
+        assertFalse("FairfaxFile=${fairfaxFile14.file.getName()} DOES NOT come directly after FairfaxFile=${fairfaxFile11.file.getName()}",
+                fairfaxFile14.canComeDirectlyAfter(fairfaxFile11, editionDiscriminators))
+        assertFalse("FairfaxFile=${fairfaxFile9.file.getName()} DOES NOT come directly after FairfaxFile=${fairfaxFile6.file.getName()}",
+                fairfaxFile9.canComeDirectlyAfter(fairfaxFile6, editionDiscriminators))
+        assertFalse("FairfaxFile=${fairfaxFile9.file.getName()} DOES NOT come directly after FairfaxFile=${fairfaxFile7.file.getName()}",
+                fairfaxFile9.canComeDirectlyAfter(fairfaxFile7, editionDiscriminators))
+        assertFalse("FairfaxFile=${fairfaxFile7.file.getName()} DOES NOT come directly after FairfaxFile=${fairfaxFile9.file.getName()}",
+                fairfaxFile7.canComeDirectlyAfter(fairfaxFile9, editionDiscriminators))
+        assertFalse("FairfaxFile=${fairfaxFile14.file.getName()} DOES NOT come directly after FairfaxFile=${fairfaxFile12.file.getName()}",
+                fairfaxFile14.canComeDirectlyAfter(fairfaxFile12, editionDiscriminators))
+    }
+
+    @Test
+    void correctFindsPostMissingSequenceFiles() {
+        File file1 = new File("NAMed1-20180131-A01.pdf")
+        File file2 = new File("NAMed1-20180131-A02.pdf")
+        File file3 = new File("NAMed1-20180131-A03.pdf")
+        File file4 = new File("NAMed1-20180131-A04.pdf")
+        File file5 = new File("NAMed1-20180131-A06.pdf")
+        File file6 = new File("NAMed1-20180131-01.pdf")
+        File file7 = new File("NAMed1-20180131-02.pdf")
+        File file8 = new File("NAMed1-20180131-03.pdf")
+        File file9 = new File("NAMed1-20180131-05.pdf")
+        File file10 = new File("NAMed1-20180131-09.pdf")
+        File file11 = new File("NAMFEE-20180131-B02.pdf")
+        File file12 = new File("NAMFEE-20180131-B04.pdf")
+        File file13 = new File("NAMFEE-20180131-C06.pdf")
+        File file14 = new File("NAMFEE-20180131-C08.pdf")
+
+        FairfaxFile fairfaxFile1 = new FairfaxFile(file1)
+        FairfaxFile fairfaxFile2 = new FairfaxFile(file2)
+        FairfaxFile fairfaxFile3 = new FairfaxFile(file3)
+        FairfaxFile fairfaxFile4 = new FairfaxFile(file4)
+        FairfaxFile fairfaxFile5 = new FairfaxFile(file5)
+        FairfaxFile fairfaxFile6 = new FairfaxFile(file6)
+        FairfaxFile fairfaxFile7 = new FairfaxFile(file7)
+        FairfaxFile fairfaxFile8 = new FairfaxFile(file8)
+        FairfaxFile fairfaxFile9 = new FairfaxFile(file9)
+        FairfaxFile fairfaxFile10 = new FairfaxFile(file10)
+        FairfaxFile fairfaxFile11 = new FairfaxFile(file11)
+        FairfaxFile fairfaxFile12 = new FairfaxFile(file12)
+        FairfaxFile fairfaxFile13 = new FairfaxFile(file13)
+        FairfaxFile fairfaxFile14 = new FairfaxFile(file14)
+
+        FairfaxProcessingParameters processingParameters = new FairfaxProcessingParameters(
+                sectionCodes: [ "ed1", "TWO", "FEE" ])
+
+        List<FairfaxFile> original = [ fairfaxFile14, fairfaxFile13, fairfaxFile12, fairfaxFile11,
+                                       fairfaxFile9, fairfaxFile8, fairfaxFile7, fairfaxFile6, fairfaxFile5,
+                                       fairfaxFile10, fairfaxFile4, fairfaxFile3, fairfaxFile2, fairfaxFile1 ]
+        List<FairfaxFile> expected = [ fairfaxFile9, fairfaxFile10, fairfaxFile5, fairfaxFile11, fairfaxFile12,
+                                       fairfaxFile13, fairfaxFile14 ]
+        List<FairfaxFile> postMissing = FairfaxFile.postMissingSequenceFiles(original, processingParameters)
+        assertThat("Post missing correctly found from=${FairfaxFile.asFilenames(original)} postMissing=${FairfaxFile.asFilenames(postMissing)}",
+                postMissing, is(expected))
+    }
+
 }

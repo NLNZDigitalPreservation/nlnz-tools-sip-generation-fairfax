@@ -1,0 +1,12 @@
+# Based on https://docs.cucumber.io/
+#
+@tag
+Feature: Same filenames with different qualifiers are handled
+
+   Same filenames with different qualifiers are handled.
+
+   Scenario: More than one file has the same filename
+     Given More than one file has the same filename (titleCode, sectionCode, date, sequenceLetter, sequenceNumber)
+     And the qualifiers are different
+     When the publication issue is verified
+     Then a notification email indicating a duplicate file is sent to a designated contact

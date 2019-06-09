@@ -1,5 +1,5 @@
 rootProject.name = 'sip-generation-fairfax'
-include ":core", ":gradle-plugin"
+include ":core", ":fat", ":gradle-plugin", ":processor"
 
 // Correctly refer to the children build files
 rootProject.children.each { child ->
