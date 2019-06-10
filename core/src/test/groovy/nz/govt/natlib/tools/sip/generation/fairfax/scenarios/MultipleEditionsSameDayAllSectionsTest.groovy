@@ -123,11 +123,14 @@ class MultipleEditionsSameDayAllSectionsTest {
             log.info(processingParameters.detailedDisplay(0, true))
             log.info(System.lineSeparator())
 
+            boolean expectedThumbnailFile = false
             switch (discriminatorCode) {
                 case "PB1" :
+                    expectedThumbnailFile = currentProcessingParameters.options.contains(ProcessingOption.AlwaysGenerateThumbnailPage)
                     expectedSizingPB1()
                     break
                 case "PB2" :
+                    expectedThumbnailFile = currentProcessingParameters.options.contains(ProcessingOption.AlwaysGenerateThumbnailPage)
                     expectedSizingPB2()
                     break
                 case "PB3" :
@@ -152,6 +155,22 @@ class MultipleEditionsSameDayAllSectionsTest {
                     break
             }
 
+            if (currentProcessingParameters.options.contains(ProcessingOption.GenerateProcessedPdfThumbnailsPage)) {
+                if (expectedThumbnailFile) {
+                    assertTrue("Thumbnail page exists, file=${currentProcessingParameters.thumbnailPageFile.getCanonicalPath()}",
+                            currentProcessingParameters.thumbnailPageFile.exists())
+                    // We delete the file because we don't want it sticking around after the test
+                    // Comment out the following line if you want to view the file
+                    currentProcessingParameters.thumbnailPageFile.delete()
+                } else {
+                    assertNull("Thumbnail page DOES NOT exist, file=${processingParameters.thumbnailPageFile}",
+                            processingParameters.thumbnailPageFile)
+                }
+            } else {
+                assertNull("Thumbnail page DOES NOT exist, file=${processingParameters.thumbnailPageFile}",
+                        processingParameters.thumbnailPageFile)
+            }
+
             log.info("STARTING SIP validation")
             switch (discriminatorCode) {
                 case "PB1" :
@@ -167,6 +186,7 @@ class MultipleEditionsSameDayAllSectionsTest {
                     assertFalse("Unrecognized discriminatorCode=${discriminatorCode}", true)
                     break
             }
+
             log.info("ENDING SIP validation")
             log.info("Process output path=${testMethodState.processOutputInterceptor.path}")
             Path processingStateFilePath = testMethodState.sipProcessingState.toTempFile()

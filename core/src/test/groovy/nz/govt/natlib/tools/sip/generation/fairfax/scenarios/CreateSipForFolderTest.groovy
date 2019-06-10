@@ -4,6 +4,7 @@ import groovy.util.logging.Log4j2
 import nz.govt.natlib.tools.sip.IEEntityType
 import nz.govt.natlib.tools.sip.extraction.SipXmlExtractor
 import nz.govt.natlib.tools.sip.generation.fairfax.FairfaxFile
+import nz.govt.natlib.tools.sip.generation.fairfax.parameters.ProcessingOption
 import nz.govt.natlib.tools.sip.generation.fairfax.processor.FairfaxFilesProcessor
 import nz.govt.natlib.tools.sip.generation.fairfax.FairfaxProcessingParameters
 import nz.govt.natlib.tools.sip.generation.fairfax.TestHelper
@@ -118,6 +119,17 @@ class CreateSipForFolderTest {
         int expectedNumberOfUnrecognizedFiles = 0
         assertThat("${expectedNumberOfUnrecognizedFiles} unrecognized files should have been processed",
                 testMethodState.sipProcessingState.unrecognizedFiles.size(), is(expectedNumberOfUnrecognizedFiles))
+
+        if (processingParameters.options.contains(ProcessingOption.GenerateProcessedPdfThumbnailsPage)) {
+            assertTrue("Thumbnail page exists, file=${processingParameters.thumbnailPageFile.getCanonicalPath()}",
+                    processingParameters.thumbnailPageFile.exists())
+            // We delete the file because we don't want it sticking around after the test
+            // Comment out the following line if you want to view the file
+            processingParameters.thumbnailPageFile.delete()
+        } else {
+            assertNull("Thumbnail page DOES NOT exist, file=${processingParameters.thumbnailPageFile}",
+                    processingParameters.thumbnailPageFile)
+        }
 
         log.info("SIP validation")
         sipConstructedCorrectly(sipAsXml)

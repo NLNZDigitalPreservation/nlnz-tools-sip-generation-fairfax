@@ -46,8 +46,6 @@ setVersion(project.ext.versionNumber)
 dependencies {
     compile project(':sip-generation-fairfax-core')
 
-    compile  'nz.govt.natlib.m11n.tools:automation-core:1.0.0-SNAPSHOT'
-
     compile 'info.picocli:picocli:3.9.5'
 
     // latest version

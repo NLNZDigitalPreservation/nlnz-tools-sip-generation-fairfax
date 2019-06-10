@@ -1,7 +1,7 @@
 package nz.govt.natlib.tools.sip.generation.fairfax.processor
 
 import groovy.util.logging.Log4j2
-import groovyx.gpars.GParsPool
+import groovyx.gpars.GParsExecutorsPool
 import nz.govt.natlib.tools.sip.generation.fairfax.FairfaxFile
 import nz.govt.natlib.tools.sip.generation.fairfax.FairfaxProcessingParameters
 import nz.govt.natlib.tools.sip.generation.fairfax.FairfaxSpreadsheet
@@ -47,7 +47,7 @@ class ReadyForIngestionProcessor {
         // Process the files in the titleCode folder
 
         File processLoggingFile = PerThreadLogFileAppender.startWithGeneratedFilename(processingParameters.sourceFolder,
-                "${processingParameters.titleCode}_${processingParameters.type.fieldValue}_processing-log")
+                "${processingParameters.processingDifferentiator()}_processing-log")
 
         File sourceFolder = processingParameters.sourceFolder
 
@@ -124,6 +124,14 @@ class ReadyForIngestionProcessor {
             ProcessorUtils.copyOrMoveFiles(false, [ processingStateFile ], sipAndFilesFolder)
         }
 
+        // Move the thumbnail page file to the sipAndFilesFolder
+        if (processingParameters.thumbnailPageFile != null && processingParameters.thumbnailPageFile.exists()) {
+            File thumbnailPageFileNewFile = new File(processingParameters.thumbnailPageFile.parentFile,
+                    processingParameters.thumbnailPageFileFinalName)
+            processingParameters.thumbnailPageFile.renameTo(thumbnailPageFileNewFile)
+            ProcessorUtils.copyOrMoveFiles(true, [ thumbnailPageFileNewFile ], sipAndFilesFolder)
+        }
+
         log.info("END Processing sourceFolder=${processingParameters.sourceFolderPath()}")
         log.info("${System.lineSeparator()}FairfaxProcessingParameters and SipProcessingState:")
         log.info(processingParameters.detailedDisplay(0, true))
@@ -179,9 +187,10 @@ class ReadyForIngestionProcessor {
         // First, collect all the directories to process
         List<Tuple2<File, String>> titleCodeFoldersAndDates = [ ]
 
-        // Loop through the dates in sequence, finding and processing files
-        LocalDate currentDate = processorConfiguration.startingDate
-        while (currentDate <= processorConfiguration.endingDate) {
+        // Loop through the dates in sequence, finding all the folders to process
+        List<LocalDate> datesInRange = ProcessorUtils.datesInRange(processorConfiguration.startingDate,
+                processorConfiguration.endingDate)
+        datesInRange.each { LocalDate currentDate ->
             String currentDateString = FairfaxFile.LOCAL_DATE_TIME_FORMATTER.format(currentDate)
             File dateFolder = new File(processorConfiguration.sourceFolder, currentDateString)
             if (dateFolder.exists() && dateFolder.isDirectory()) {
@@ -197,7 +206,6 @@ class ReadyForIngestionProcessor {
             } else {
                 log.info("Skipping ${dateFolder.getCanonicalPath()} as exists=${dateFolder.exists()}, directory=${dateFolder.isDirectory()}")
             }
-            currentDate = currentDate.plusDays(1L)
         }
 
         log.info("Collected total titleCode directories to " +
@@ -207,7 +215,7 @@ class ReadyForIngestionProcessor {
 
         List<File> invalidFolders = Collections.synchronizedList([ ])
         // Process the collected directories across multiple threads
-        GParsPool.withPool(numberOfThreads) {
+        GParsExecutorsPool.withPool(numberOfThreads) {
             titleCodeFoldersAndDates.eachParallel { Tuple2<File, String> titleCodeFolderAndDateString ->
                 // we want to process this directory, which should be a <titleCode>
                 File titleCodeFolder = titleCodeFolderAndDateString.first

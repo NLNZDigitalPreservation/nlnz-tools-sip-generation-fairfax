@@ -1,10 +1,11 @@
 package nz.govt.natlib.tools.sip.generation.fairfax.processor
 
+import nz.govt.natlib.tools.sip.logging.DefaultTimekeeper
 import picocli.CommandLine
 import picocli.CommandLine.Command
 import picocli.CommandLine.Option
 import groovy.util.logging.Log4j2
-import nz.govt.natlib.m11n.tools.automation.logging.Timekeeper
+import nz.govt.natlib.tools.sip.logging.Timekeeper
 
 import java.time.LocalDate
 import java.util.concurrent.Callable
@@ -48,6 +49,13 @@ Requires sourceFolder.
 This is a reporting operation and cannot be run with any processing operations.""")
     boolean extractMetadata = false
 
+    @Option(names = ["--generateThumbnailPageFromPdfs" ], description = """Generate a thumbnail page from the PDFs in the given folder.
+Requires sourceFolder, targetFolder.
+Optional startingDate and endingDate will select directories that match dates in yyyyMMdd format.
+Generates a thumbnail page using the PDFs in the source folder. The name of the jpeg is based on the source folder.
+This is a processing operation and must run exclusively of other processing operations.""")
+    boolean generateThumbnailPageFromPdfs = false
+
     @Option(names = ["--copyIngestedLoadsToIngestedFolder" ], description = """Copy the ingested loads to ingested folder.
 Requires sourceFolder, targetPostProcessedFolder, forReviewFolder.
 Uses startingDate, endingDate.
@@ -71,7 +79,7 @@ Default is no creation (false).""")
 
     @Option(names = ["--parallelizeProcessing" ], description = """Run operations in parallel (if possible).
 Operations that have components that can run in parallel currently are:
-    --preProcess, --readyForIngestion""")
+    --preProcess, --readyForIngestion, --generateThumbnailPageFromPdfs""")
     boolean parallelizeProcessing = false
 
     @Option(names = ["--numberOfThreads"], description = """Number of threads when running operations in parallel.
@@ -140,6 +148,16 @@ A comma-separated list of rules. These rules will override any contradictory rul
 A comma-separated list of options. These options will override any contradictory options.""")
     String forIngestionProcessingOptions
 
+    @Option(names = ["--generalProcessingOptions"], paramLabel = "GENERAL_PROCESSING_OPTIONS",
+            description = """General processing options.
+A comma-separated list of options. These options will override any contradictory options.
+These processing options may or may not be applied depending on the processing that takes place.
+See the class ProcessorOption for a list of what those options are.""")
+    String generalProcessingOptions
+
+    // TODO Some of the existing options could be folded into this option (instead of keeping them separate)
+    List<ProcessorOption> processorOptions
+
     @Option(names = ["-r", "--forReviewFolder"], paramLabel = "FOR_REVIEW_FOLDER", description = 'for-review folder in the format /path/to/folder')
     File forReviewFolder
 
@@ -154,7 +172,7 @@ A comma-separated list of options. These options will override any contradictory
 
     @Override
     Void call() throws Exception {
-        timekeeper = new Timekeeper()
+        timekeeper = new DefaultTimekeeper()
 
         showParameters()
 
@@ -171,6 +189,7 @@ A comma-separated list of options. These options will override any contradictory
         log.info("        copyIngestedLoadsToIngestedFolder=${copyIngestedLoadsToIngestedFolder}")
         log.info("    Other types of processing:")
         log.info("        copyProdLoadToTestStructures=${copyProdLoadToTestStructures}")
+        log.info("        generateThumbnailPageFromPdfs=${generateThumbnailPageFromPdfs}")
         log.info("    Reporting:")
         log.info("        listFiles=${listFiles}")
         log.info("        statisticalAudit=${statisticalAudit}")
@@ -194,6 +213,7 @@ A comma-separated list of options. These options will override any contradictory
         log.info("        createDestination=${createDestination}")
         log.info("        parallelizeProcessing=${parallelizeProcessing}")
         log.info("        numberOfThreads=${numberOfThreads}")
+        log.info("        generalProcessingOptions=${generalProcessingOptions}")
         log.info("        moveOrCopyEvenIfNoRosettaDoneFile=${moveOrCopyEvenIfNoRosettaDoneFile}")
         log.info("        includeDetailedTimings=${includeDetailedTimings}")
         log.info("        verbose=${verbose}")
@@ -223,6 +243,8 @@ A comma-separated list of options. These options will override any contradictory
     }
 
     void process() {
+        this.processorOptions = ProcessorOption.extract(this.generalProcessingOptions, ",", [ ], true)
+
         int totalProcessingOperations = (copyProdLoadToTestStructures ? 1 : 0) + (preProcess ? 1 : 0) +
                 (readyForIngestion ? 1 : 0) + (copyIngestedLoadsToIngestedFolder ? 1 : 0)
         if (totalProcessingOperations > 1) {
@@ -289,6 +311,22 @@ A comma-separated list of options. These options will override any contradictory
             displayProcessingLegend()
             MiscellaneousProcessor miscellaneousProcessor = new MiscellaneousProcessor(this)
             miscellaneousProcessor.copyProdLoadToTestStructures()
+            commandExecuted = true
+        }
+        if (generateThumbnailPageFromPdfs) {
+            if (sourceFolder == null) {
+                String message = "generateThumbnailPageFromPdfs requires sourceFolder"
+                log.error(message)
+                throw new ProcessorException(message)
+            }
+            if (targetFolder == null) {
+                String message = "generateThumbnailPageFromPdfs requires targetFolder"
+                log.error(message)
+                throw new ProcessorException(message)
+            }
+            displayProcessingLegend()
+            MiscellaneousProcessor miscellaneousProcessor = new MiscellaneousProcessor(this)
+            miscellaneousProcessor.generateThumbnailPageFromPdfs()
             commandExecuted = true
         }
         if (preProcess) {

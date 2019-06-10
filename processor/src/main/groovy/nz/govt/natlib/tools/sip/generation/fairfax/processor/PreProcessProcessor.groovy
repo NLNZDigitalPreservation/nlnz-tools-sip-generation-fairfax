@@ -1,7 +1,7 @@
 package nz.govt.natlib.tools.sip.generation.fairfax.processor
 
 import groovy.util.logging.Log4j2
-import groovyx.gpars.GParsPool
+import groovyx.gpars.GParsExecutorsPool
 import nz.govt.natlib.tools.sip.generation.fairfax.FairfaxFile
 import nz.govt.natlib.tools.sip.generation.fairfax.FairfaxSpreadsheet
 import nz.govt.natlib.tools.sip.processing.ProcessLogger
@@ -236,7 +236,7 @@ class PreProcessProcessor {
             log.info("Moving=${processorConfiguration.moveFiles} " +
                     "total files=${ProcessorUtils.TOTAL_FORMAT.format(filteredFiles.size())} " +
                     "to destination=${processorConfiguration.targetPreProcessingFolder.getCanonicalPath()}")
-            GParsPool.withPool(numberOfThreads) {
+            GParsExecutorsPool.withPool(numberOfThreads) {
                 filteredFiles.eachParallel { FairfaxFile fairfaxFile ->
                     String dateString = LOCAL_DATE_FOLDER_FORMATTER.format(fairfaxFile.date)
                     boolean moved = copyOrMoveFileToPreProcessingDestination(

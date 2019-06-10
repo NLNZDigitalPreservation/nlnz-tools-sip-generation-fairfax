@@ -7,7 +7,11 @@ import nz.govt.natlib.tools.sip.state.SipProcessingException
 enum ProcessingOption {
     AlphaBeforeNumericSequencing("alpha_before_numeric"),
     NumericBeforeAlphaSequencing("numeric_before_alpha"),
-    AnyFirstSectionCode("any_first_section_code")
+    GenerateProcessedPdfThumbnailsPage("generate_processed_pdf_thumbnails_page"),
+    DoNotGenerateProcessedPdfThumbnailsPage("do_not_generate_processed_pdf_thumbnails_page"),
+    AnyFirstSectionCode("any_first_section_code"),
+    SkipThumbnailPageGenerationWhenNoErrors("skip_generation_thumbnail_page_when_error_free"),
+    AlwaysGenerateThumbnailPage("always_generate_thumbnail_page")
 
     private static final Map<String, ProcessingOption> LOOKUP_BY_FIELD_VALUE = [ : ]
     private static final Map<ProcessingOption, List<ProcessingOption>> OVERRIDES_MAP = [ : ]
@@ -19,6 +23,10 @@ enum ProcessingOption {
         }
         OVERRIDES_MAP.put(AlphaBeforeNumericSequencing, [ NumericBeforeAlphaSequencing ])
         OVERRIDES_MAP.put(NumericBeforeAlphaSequencing, [ AlphaBeforeNumericSequencing ])
+        OVERRIDES_MAP.put(GenerateProcessedPdfThumbnailsPage, [ DoNotGenerateProcessedPdfThumbnailsPage ])
+        OVERRIDES_MAP.put(DoNotGenerateProcessedPdfThumbnailsPage, [ GenerateProcessedPdfThumbnailsPage ])
+        OVERRIDES_MAP.put(SkipThumbnailPageGenerationWhenNoErrors, [ AlwaysGenerateThumbnailPage ])
+        OVERRIDES_MAP.put(AlwaysGenerateThumbnailPage, [ SkipThumbnailPageGenerationWhenNoErrors ])
     }
 
     static List<ProcessingOption> extract(String list, String separator = ",", List<ProcessingOption> defaults = [ ],

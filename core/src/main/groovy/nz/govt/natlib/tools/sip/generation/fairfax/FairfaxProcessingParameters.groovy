@@ -35,6 +35,8 @@ class FairfaxProcessingParameters {
     boolean isMagazine = false
     String currentEdition
     SipProcessingState sipProcessingState = new SipProcessingState()
+    File thumbnailPageFile
+    String thumbnailPageFileFinalName
 
     static FairfaxProcessingParameters build(String titleCode, ProcessingType processingType, File sourceFolder,
                                              LocalDate processingDate, FairfaxSpreadsheet spreadsheet) {
@@ -146,7 +148,7 @@ class FairfaxProcessingParameters {
     }
 
     String processingDifferentiator() {
-        String baseDifferentiator = "${titleCode}_${date.format(READABLE_DATE_FORMAT)}_${type.fieldValue}"
+        String baseDifferentiator = "${date.format(READABLE_DATE_FORMAT)}_${titleCode}_${type.fieldValue}"
         if (currentEdition == null) {
             return baseDifferentiator
         } else {
