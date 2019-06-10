@@ -12,6 +12,7 @@ import nz.govt.natlib.tools.sip.generation.fairfax.parameters.ProcessingOption
 import nz.govt.natlib.tools.sip.generation.fairfax.parameters.ProcessingRule
 import nz.govt.natlib.tools.sip.generation.fairfax.parameters.ProcessingType
 import nz.govt.natlib.tools.sip.generation.fairfax.processor.type.ParentGroupingProcessor
+import nz.govt.natlib.tools.sip.generation.fairfax.processor.type.ParentGroupingWithEditionProcessor
 import nz.govt.natlib.tools.sip.generation.fairfax.processor.type.SipForFolderProcessor
 import nz.govt.natlib.tools.sip.pdf.PdfValidator
 import nz.govt.natlib.tools.sip.pdf.PdfValidatorFactory
@@ -69,6 +70,9 @@ class FairfaxFilesProcessor {
                 case ProcessingType.ParentGrouping:
                     sortedFilesForProcessing = ParentGroupingProcessor.selectAndSort(processingParameters, validNamedFiles)
                     break
+                case ProcessingType.ParentGroupingWithEdition:
+                    sortedFilesForProcessing = ParentGroupingWithEditionProcessor.selectAndSort(processingParameters, validNamedFiles)
+                    break
                 case ProcessingType.CreateSipForFolder:
                     sortedFilesForProcessing = SipForFolderProcessor.selectAndSort(processingParameters, validNamedFiles)
                     break
@@ -78,22 +82,27 @@ class FairfaxFilesProcessor {
             }
 
             if (processingParameters.options.contains(ProcessingOption.GenerateProcessedPdfThumbnailsPage)) {
-                if (!sortedFilesForProcessing.isEmpty()) {
-                    String readableDate = processingParameters.date.format(FairfaxProcessingParameters.READABLE_DATE_FORMAT)
-                    // TODO When we do more sophisticated processing the date-titleCode-type combination may not be enough to easily differentiate
-                    String thumbnailPagePrefix = "${readableDate}_${processingParameters.titleCode}_${processingParameters.type.fieldValue}_thumbnail_page"
-                    String thumbnailPageTitle = "${readableDate}_${processingParameters.titleCode}_${processingParameters.type.fieldValue}_thumbnail_page.jpeg"
-                    processingParameters.thumbnailPageFileFinalName = thumbnailPageTitle
-                    File thumbnailPageFile = File.createTempFile("${thumbnailPagePrefix}_", ".jpeg")
-                    ThumbnailParameters thumbnailParameters = new ThumbnailParameters(thumbnailHeight: 240,
-                            useAffineTransformation: false, textJustification: ThumbnailParameters.TextJustification.RIGHT,
-                            maximumPageWidth: 1200, pageTitleText: thumbnailPageTitle,
-                            pageTitleFontJustification: ThumbnailParameters.TextJustification.RIGHT)
-                    List<File> pdfFiles = sortedFilesForProcessing.collect { FairfaxFile sortedFile ->
-                        sortedFile.file
+                boolean doGenerate = processingParameters.options.contains(ProcessingOption.AlwaysGenerateThumbnailPage) ||
+                        (processingParameters.options.contains(ProcessingOption.SkipThumbnailPageGenerationWhenNoErrors) &&
+                                processingParameters.sipProcessingState.hasExceptions())
+                if (doGenerate) {
+                    if (!sortedFilesForProcessing.isEmpty()) {
+                        String readableDate = processingParameters.date.format(FairfaxProcessingParameters.READABLE_DATE_FORMAT)
+                        // TODO When we do more sophisticated processing the date-titleCode-type combination may not be enough to easily differentiate
+                        String thumbnailPagePrefix = "${readableDate}_${processingParameters.titleCode}_${processingParameters.type.fieldValue}_thumbnail_page"
+                        String thumbnailPageTitle = "${readableDate}_${processingParameters.titleCode}_${processingParameters.type.fieldValue}_thumbnail_page.jpeg"
+                        processingParameters.thumbnailPageFileFinalName = thumbnailPageTitle
+                        File thumbnailPageFile = File.createTempFile("${thumbnailPagePrefix}_", ".jpeg")
+                        ThumbnailParameters thumbnailParameters = new ThumbnailParameters(thumbnailHeight: 240,
+                                useAffineTransformation: false, textJustification: ThumbnailParameters.TextJustification.RIGHT,
+                                maximumPageWidth: 1200, pageTitleText: thumbnailPageTitle,
+                                pageTitleFontJustification: ThumbnailParameters.TextJustification.RIGHT)
+                        List<File> pdfFiles = sortedFilesForProcessing.collect { FairfaxFile sortedFile ->
+                            sortedFile.file
+                        }
+                        processingParameters.thumbnailPageFile = thumbnailPageFile
+                        ThumbnailGenerator.writeThumbnailPage(pdfFiles, thumbnailParameters, thumbnailPageFile)
                     }
-                    processingParameters.thumbnailPageFile = thumbnailPageFile
-                    ThumbnailGenerator.writeThumbnailPage(pdfFiles, thumbnailParameters, thumbnailPageFile)
                 }
             }
 
@@ -113,12 +122,16 @@ class FairfaxFilesProcessor {
                 }
                 if (!withoutEditionFiles.isEmpty()) {
                     String detailedReason = "${ProcessingRule.AllSectionsInSipRequired.fieldValue} but these files are not processed=${withoutEditionFiles}".toString()
-                    SipProcessingExceptionReason exceptionReason = new SipProcessingExceptionReason(
-                            SipProcessingExceptionReasonType.ALL_FILES_CANNOT_BE_PROCESSED, null,
-                            detailedReason)
-                    SipProcessingException sipProcessingException = SipProcessingException.createWithReason(exceptionReason)
-                    processingParameters.sipProcessingState.addException(sipProcessingException)
-                    log.warn(detailedReason)
+                    if (processingParameters.rules.contains(ProcessingRule.AllSectionsInSipRequired)) {
+                        SipProcessingExceptionReason exceptionReason = new SipProcessingExceptionReason(
+                                SipProcessingExceptionReasonType.ALL_FILES_CANNOT_BE_PROCESSED, null,
+                                detailedReason)
+                        SipProcessingException sipProcessingException = SipProcessingException.createWithReason(exceptionReason)
+                        processingParameters.sipProcessingState.addException(sipProcessingException)
+                        log.warn(detailedReason)
+                    } else {
+                        log.info(detailedReason)
+                    }
                 }
             }
 

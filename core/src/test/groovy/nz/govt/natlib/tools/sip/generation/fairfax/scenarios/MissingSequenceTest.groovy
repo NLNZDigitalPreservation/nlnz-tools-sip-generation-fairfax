@@ -125,7 +125,8 @@ class MissingSequenceTest {
         assertThat("${expectedNumberOfUnrecognizedFiles} unrecognized files should have been processed",
                 testMethodState.sipProcessingState.unrecognizedFiles.size(), is(expectedNumberOfUnrecognizedFiles))
 
-        if (processingParameters.options.contains(ProcessingOption.GenerateProcessedPdfThumbnailsPage)) {
+        if (processingParameters.options.contains(ProcessingOption.GenerateProcessedPdfThumbnailsPage) &&
+                processingParameters.options.contains(ProcessingOption.AlwaysGenerateThumbnailPage)) {
             assertTrue("Thumbnail page exists, file=${processingParameters.thumbnailPageFile.getCanonicalPath()}",
                     processingParameters.thumbnailPageFile.exists())
             // We delete the file because we don't want it sticking around after the test

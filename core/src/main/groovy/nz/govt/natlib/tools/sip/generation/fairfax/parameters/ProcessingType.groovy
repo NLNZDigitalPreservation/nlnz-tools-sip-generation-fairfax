@@ -6,13 +6,20 @@ import groovy.util.logging.Log4j2
 enum ProcessingType {
     ParentGrouping("parent_grouping",
             [ ProcessingRule.AllSectionsInSipRequired, ProcessingRule.MissingSequenceError ],
-            [ ProcessingOption.NumericBeforeAlphaSequencing, ProcessingOption.GenerateProcessedPdfThumbnailsPage ]),
+            [ ProcessingOption.NumericBeforeAlphaSequencing, ProcessingOption.GenerateProcessedPdfThumbnailsPage,
+              ProcessingOption.SkipThumbnailPageGenerationWhenNoErrors ]),
+    ParentGroupingWithEdition("parent_grouping_with_edition",
+            [ ProcessingRule.AllSectionsInSipRequired, ProcessingRule.MissingSequenceError ],
+            [ ProcessingOption.NumericBeforeAlphaSequencing, ProcessingOption.GenerateProcessedPdfThumbnailsPage,
+              ProcessingOption.SkipThumbnailPageGenerationWhenNoErrors ]),
     SupplementGrouping("supplement_grouping",
-            [ ProcessingRule.MissingSequenceError],
-            [ ProcessingOption.NumericBeforeAlphaSequencing, ProcessingOption.GenerateProcessedPdfThumbnailsPage ]),
+            [ ProcessingRule.AllSectionsInSipOptional, ProcessingRule.MissingSequenceError ],
+            [ ProcessingOption.NumericBeforeAlphaSequencing, ProcessingOption.GenerateProcessedPdfThumbnailsPage,
+              ProcessingOption.SkipThumbnailPageGenerationWhenNoErrors ]),
     CreateSipForFolder("create_sip_for_folder",
             [ ProcessingRule.AllSectionsInSipRequired, ProcessingRule.MissingSequenceError ],
-            [ ProcessingOption.NumericBeforeAlphaSequencing, ProcessingOption.GenerateProcessedPdfThumbnailsPage ])
+            [ ProcessingOption.NumericBeforeAlphaSequencing, ProcessingOption.GenerateProcessedPdfThumbnailsPage,
+              ProcessingOption.SkipThumbnailPageGenerationWhenNoErrors ])
 
     private static final Map<String, ProcessingType> LOOKUP_BY_FIELD_VALUE = [ : ]
     private final String fieldValue

@@ -126,11 +126,11 @@ class MultipleEditionsSameDayAllSectionsTest {
             boolean expectedThumbnailFile = false
             switch (discriminatorCode) {
                 case "PB1" :
-                    expectedThumbnailFile = true
+                    expectedThumbnailFile = currentProcessingParameters.options.contains(ProcessingOption.AlwaysGenerateThumbnailPage)
                     expectedSizingPB1()
                     break
                 case "PB2" :
-                    expectedThumbnailFile = true
+                    expectedThumbnailFile = currentProcessingParameters.options.contains(ProcessingOption.AlwaysGenerateThumbnailPage)
                     expectedSizingPB2()
                     break
                 case "PB3" :
