@@ -6,6 +6,7 @@ import nz.govt.natlib.tools.sip.generation.fairfax.FairfaxFileTitleEditionKey
 import nz.govt.natlib.tools.sip.generation.fairfax.FairfaxSpreadsheet
 import nz.govt.natlib.tools.sip.generation.fairfax.processor.support.TitleCodeByDateSummary
 import nz.govt.natlib.tools.sip.pdf.PdfInformationExtractor
+import nz.govt.natlib.tools.sip.utils.FileUtils
 
 import java.time.LocalDate
 import java.time.Period
@@ -40,7 +41,7 @@ class ReportsProcessor {
         boolean matchFilenameOnly = true
         boolean sortFiles = true
         String pattern = ".*?\\.[pP]{1}[dD]{1}[fF]{1}"
-        List<File> foundFiles = ProcessorUtils.findFiles(processorConfiguration.sourceFolder.getAbsolutePath(),
+        List<File> foundFiles = FileUtils.findFiles(processorConfiguration.sourceFolder.getAbsolutePath(),
                 isRegexNotGlob, matchFilenameOnly, sortFiles, pattern, processorConfiguration.timekeeper)
         List<FairfaxFile> fairfaxFiles = foundFiles.collect { File file ->
             new FairfaxFile(file)
@@ -146,7 +147,7 @@ class ReportsProcessor {
         boolean matchFilenameOnly = true
         boolean sortFiles = true
         String pattern = ".*?\\.[pP]{1}[dD]{1}[fF]{1}"
-        List<File> foundFiles = ProcessorUtils.findFiles(processorConfiguration.sourceFolder.getAbsolutePath(),
+        List<File> foundFiles = FileUtils.findFiles(processorConfiguration.sourceFolder.getAbsolutePath(),
                 isRegexNotGlob, matchFilenameOnly, sortFiles, pattern, processorConfiguration.timekeeper)
         Map<LocalDate, Map<String, TitleCodeByDateSummary>> dateToTitleCodeMap = [ : ]
         foundFiles.each { File file ->
@@ -305,7 +306,7 @@ class ReportsProcessor {
         boolean sortFiles = true
         boolean includeSubdirectories = true
         String pattern = ".*?\\.[pP]{1}[dD]{1}[fF]{1}"
-        List<File> pdfFiles = ProcessorUtils.findFiles(processorConfiguration.sourceFolder.getAbsolutePath(),
+        List<File> pdfFiles = FileUtils.findFiles(processorConfiguration.sourceFolder.getAbsolutePath(),
                 isRegexNotGlob, matchFilenameOnly, sortFiles, pattern, processorConfiguration.timekeeper,
                 includeSubdirectories)
 

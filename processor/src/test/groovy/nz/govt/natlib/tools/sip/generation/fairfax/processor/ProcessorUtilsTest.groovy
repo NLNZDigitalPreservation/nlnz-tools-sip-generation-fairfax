@@ -21,20 +21,6 @@ class ProcessorUtilsTest {
     static final File FIVE_SEGMENT_FILE_SLASH = new File("/parent4/parent3/parent2/parent1/filename.txt")
 
     @Test
-    void convertsFilenamesProperly() {
-        checkAndConvertFilename("/this/is/a/path", "_this_is_a_path")
-        checkAndConvertFilename("\\this\\is\\a\\path", "_this_is_a_path")
-        checkAndConvertFilename("dollars/\$are\$/removed", "dollars_-are-_removed")
-        checkAndConvertFilename("/asterisks*have-/dashes*instead", "_asterisks-have-_dashes-instead")
-        checkAndConvertFilename("no more spaces either ", "no-more-spaces-either-")
-    }
-
-    static void checkAndConvertFilename(String filePath, String expectedConversion) {
-        assertThat("Correctly coverts=${filePath} to ${expectedConversion}",
-                ProcessorUtils.fileNameAsSafeString(filePath), is(expectedConversion))
-    }
-
-    @Test
     void verifyThatFilePathAsSafeStringWorksForDirectoryOnly() {
         List<ProcessorOption> testOptions = [ ProcessorOption.ShowDirectoryOnly ]
 

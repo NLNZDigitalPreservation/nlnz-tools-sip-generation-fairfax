@@ -4,13 +4,14 @@ import groovy.util.logging.Log4j2
 import nz.govt.natlib.tools.sip.IEEntityType
 import nz.govt.natlib.tools.sip.extraction.SipXmlExtractor
 import nz.govt.natlib.tools.sip.generation.fairfax.FairfaxFile
-import nz.govt.natlib.tools.sip.generation.fairfax.parameters.ProcessingOption
-import nz.govt.natlib.tools.sip.generation.fairfax.processor.FairfaxFilesProcessor
 import nz.govt.natlib.tools.sip.generation.fairfax.FairfaxProcessingParameters
 import nz.govt.natlib.tools.sip.generation.fairfax.TestHelper
 import nz.govt.natlib.tools.sip.generation.fairfax.TestHelper.TestMethodState
+import nz.govt.natlib.tools.sip.generation.fairfax.parameters.ProcessingOption
 import nz.govt.natlib.tools.sip.generation.fairfax.parameters.ProcessingRule
 import nz.govt.natlib.tools.sip.generation.fairfax.parameters.ProcessingType
+import nz.govt.natlib.tools.sip.generation.fairfax.processor.FairfaxFilesProcessor
+import nz.govt.natlib.tools.sip.state.SipProcessingState
 import org.junit.Before
 import org.junit.Ignore
 import org.junit.Test
@@ -21,12 +22,10 @@ import java.nio.file.Path
 import java.time.LocalDate
 
 import static org.hamcrest.core.Is.is
-import static org.junit.Assert.assertNull
-import static org.junit.Assert.assertThat
-import static org.junit.Assert.assertTrue
+import static org.junit.Assert.*
 
 /**
- * Tests the {@code multiple-section-codes} scenario.
+ * Tests the {@code parent-grouping-with-edition-single-same-day} scenario.
  *
  * Note that this test is complicated by the files either being part of a directory structure or in a resource file (jar),
  * so the {@link TestHelper} class is used to handle both scenarios. In real-life processing the files would be on the
@@ -36,14 +35,14 @@ import static org.junit.Assert.assertTrue
  */
 @RunWith(MockitoJUnitRunner.class)
 @Log4j2
-class MultipleSectionCodesTest {
+class ParentGroupingWithEditionSingleSameDayTest {
     // TODO Make this processing simpler
     // - given a starting folder
     // - and a set of selection criteria
     // - create SIPs for the given files
     static String ID_COLUMN_NAME = "MMSID"
 
-    static final String RESOURCES_FOLDER = "ingestion-files-tests/scenario-multiple-section-codes"
+    static final String RESOURCES_FOLDER = "ingestion-files-tests/scenario-parent-grouping-with-edition-single-same-day"
     static final String IMPORT_PARAMETERS_FILENAME = "test-fairfax-import-parameters.json"
 
     TestMethodState testMethodState
@@ -66,7 +65,7 @@ class MultipleSectionCodesTest {
     @Ignore
     void correctlyAssembleSipFromFilesOnFilesystem() {
         boolean forLocalFilesystem = true
-        TestHelper.initializeTestMethod(testMethodState, "MultipleSectionCodesTest-", forLocalFilesystem)
+        TestHelper.initializeTestMethod(testMethodState, "ParentGroupingWithEditionSingleSameDayTest-", forLocalFilesystem)
 
         // TODO A more complicated pattern -- date and other masks?
         boolean isRegexNotGlob = true
@@ -81,7 +80,7 @@ class MultipleSectionCodesTest {
     @Test
     void correctlyAssembleSipFromFiles() {
         boolean forLocalFilesystem = false
-        TestHelper.initializeTestMethod(testMethodState, "MultipleSectionCodesTest-", forLocalFilesystem)
+        TestHelper.initializeTestMethod(testMethodState, "ParentGroupingWithEditionSingleSameDayTest-", forLocalFilesystem)
 
         // TODO A more complicated pattern -- date and other masks?
         boolean isRegexNotGlob = true
@@ -99,7 +98,8 @@ class MultipleSectionCodesTest {
 
         File sourceFolder = new File(testMethodState.localPath)
         List<FairfaxProcessingParameters> parametersList = FairfaxProcessingParameters.build("TST",
-                [ ProcessingType.ParentGrouping ], sourceFolder, processingDate, testMethodState.fairfaxSpreadsheet,
+                [ ProcessingType.ParentGroupingWithEdition, ProcessingType.ParentGrouping, ProcessingType.CreateSipForFolder ],
+                sourceFolder, processingDate, testMethodState.fairfaxSpreadsheet,
                 [ ProcessingRule.AllSectionsInSipOptional ])
 
         assertThat("Only a single FairfaxProcessingParameters is returned, size=${parametersList.size()}",
@@ -107,8 +107,12 @@ class MultipleSectionCodesTest {
 
         FairfaxProcessingParameters processingParameters = parametersList.first()
 
-        assertThat("Multiple section codes: 'PB1', 'BOO', 'ZOO', 'AAT'", processingParameters.sectionCodes,
-                is([ 'PB1', 'BOO', 'ZOO', 'AAT' ]))
+        String discriminatorCode = processingParameters.editionDiscriminators.first()
+        assertThat("editionDiscriminator matches=PB1", discriminatorCode, is("PB1"))
+        assertThat ( "Multiple section codes: 'PB1', 'BOO', 'ZOO', 'AAT'", processingParameters.sectionCodes,
+                is ( [ 'PB1', 'BOO', 'ZOO', 'AAT' ] ) )
+        assertTrue ( "Numeric before alpha sequencing",
+                processingParameters.options.contains (ProcessingOption.NumericBeforeAlphaSequencing))
 
         processingParameters.sipProcessingState = testMethodState.sipProcessingState
         String sipAsXml = FairfaxFilesProcessor.processCollectedFiles(processingParameters, filesForProcessing)
@@ -126,11 +130,9 @@ class MultipleSectionCodesTest {
         int expectedNumberOfInvalidFiles = 0
         assertThat("${expectedNumberOfInvalidFiles} invalid files should have been processed",
                 testMethodState.sipProcessingState.invalidFiles.size(), is(expectedNumberOfInvalidFiles))
-        int expectedNumberOfIgnoredFiles = 2
+        int expectedNumberOfIgnoredFiles = 0
         assertThat("${expectedNumberOfIgnoredFiles} ignored files should have been processed",
                 testMethodState.sipProcessingState.ignoredFiles.size(), is(expectedNumberOfIgnoredFiles))
-        assertThat("First ignored file is 'TSTQEE-20181123-001.pdf'",
-                testMethodState.sipProcessingState.ignoredFiles.first().getName(), is("TSTQEE-20181123-001.pdf"))
         int expectedNumberOfUnrecognizedFiles = 0
         assertThat("${expectedNumberOfUnrecognizedFiles} unrecognized files should have been processed",
                 testMethodState.sipProcessingState.unrecognizedFiles.size(), is(expectedNumberOfUnrecognizedFiles))
@@ -188,7 +190,7 @@ class MultipleSectionCodesTest {
         TestHelper.assertExpectedSipFileValues(sipForValidation, 6, "TSTPB1-20181123-B02.pdf", "TSTPB1-20181123-B02.pdf",
                 739L, "MD5", "b5808604069f9f61d94e0660409616ba", "0006", "application/pdf")
 
-        TestHelper.assertExpectedSipFileValues(sipForValidation, 7, "TSTPB1-20181123-C01.pdf", "TSTPB1-20181123-C01.pdf",
+        TestHelper.assertExpectedSipFileValues(sipForValidation, 7, "TSTPB1-20181123-B03.pdf", "TSTPB1-20181123-B03.pdf",
                 739L, "MD5", "b5808604069f9f61d94e0660409616ba", "0007", "application/pdf")
 
         TestHelper.assertExpectedSipFileValues(sipForValidation, 8, "TSTBOO-20181123-001.pdf", "TSTBOO-20181123-001.pdf",
@@ -203,5 +205,4 @@ class MultipleSectionCodesTest {
         TestHelper.assertExpectedSipFileValues(sipForValidation, 11, "TSTAAT-20181123-P02.pdf", "TSTAAT-20181123-P02.pdf",
                 739L, "MD5", "b5808604069f9f61d94e0660409616ba", "0011", "application/pdf")
     }
-
 }

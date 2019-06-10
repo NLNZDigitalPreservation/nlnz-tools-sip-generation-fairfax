@@ -5,6 +5,8 @@ import groovyx.gpars.GParsExecutorsPool
 import nz.govt.natlib.tools.sip.generation.fairfax.FairfaxFile
 import nz.govt.natlib.tools.sip.generation.fairfax.FairfaxSpreadsheet
 import nz.govt.natlib.tools.sip.processing.ProcessLogger
+import nz.govt.natlib.tools.sip.utils.FileUtils
+import nz.govt.natlib.tools.sip.utils.GeneralUtils
 
 import java.nio.file.Files
 import java.time.LocalDate
@@ -42,7 +44,7 @@ class PreProcessProcessor {
     void waitForNoInProcessDestinationFile(File file) {
         int waitCount = 0
         while (inProcessDestinationFiles.contains(file)) {
-            ProcessorUtils.printAndFlush("\n")
+            GeneralUtils.printAndFlush("\n")
             log.warn("inProcessDestinationFiles (size=${inProcessDestinationFiles.size()}) (waitCount=${waitCount}) " +
                     "already contains file=${file.getCanonicalPath()}, waiting for it to clear.")
             sleep(2000)
@@ -55,7 +57,7 @@ class PreProcessProcessor {
         inProcessDestinationFilesLock.lock()
         try {
             if (inProcessDestinationFiles.contains(file)) {
-                ProcessorUtils.printAndFlush("\n")
+                GeneralUtils.printAndFlush("\n")
                 log.warn("inProcessDestinationFiles already contains file=${file.getCanonicalPath()} (multiple threads checking the same file)")
             } else {
                 inProcessDestinationFiles.add(file)
@@ -71,7 +73,7 @@ class PreProcessProcessor {
             if (inProcessDestinationFiles.contains(file)) {
                 inProcessDestinationFiles.remove(file)
             } else {
-                ProcessorUtils.printAndFlush("\n")
+                GeneralUtils.printAndFlush("\n")
                 log.warn("inProcessDestinationFiles DOES NOT contain file=${file.getCanonicalPath()} (multiple threads removing the same file)")
             }
         } finally {
@@ -90,7 +92,7 @@ class PreProcessProcessor {
             // Goes to '<date>/<titleCode>/<file>'
             if (!recognizedTitleCodes.contains(targetFile.titleCode)) {
                 recognizedTitleCodes.add(targetFile.titleCode)
-                ProcessorUtils.printAndFlush("\n")
+                GeneralUtils.printAndFlush("\n")
                 log.info("copyOrMoveFileToPreProcessingDestination adding titleCode=${targetFile.titleCode}")
             }
             folderPath = "${destinationFolder.getCanonicalPath()}${File.separator}${dateFolderName}${File.separator}${titleCodeFolderName}"
@@ -99,7 +101,7 @@ class PreProcessProcessor {
             // Goes to 'UNKNOWN-TITLE-CODE/<date>/<file>'
             if (!unrecognizedTitleCodes.contains(targetFile.titleCode)) {
                 unrecognizedTitleCodes.add(targetFile.titleCode)
-                ProcessorUtils.printAndFlush("\n")
+                GeneralUtils.printAndFlush("\n")
                 log.info("copyOrMoveFileToPreProcessingDestination adding unrecognizedName=${targetFile.titleCode}")
             }
             folderPath = "${forReviewFolder.getCanonicalPath()}${File.separator}UNKNOWN-TITLE-CODE${File.separator}${dateFolderName}"
@@ -118,26 +120,26 @@ class PreProcessProcessor {
                         "PHYSICAL file!")
                 log.warn("    sourceFile=${targetFile.file.getCanonicalPath()}")
                 log.warn("    targetFile=${destinationFile.getCanonicalPath()}")
-            } else if (ProcessorUtils.isSameFile(targetFile.file, destinationFile)) {
+            } else if (FileUtils.isSameFile(targetFile.file, destinationFile)) {
                 moveToDestination = false
                 if (processorConfiguration.verbose) {
                     log.info("Skipping moveFile=${moveFile} destinationFile=${destinationFile.getCanonicalPath()} -- it already exists and is same file")
                 } else {
-                    ProcessorUtils.printAndFlush("+")
+                    GeneralUtils.printAndFlush("+")
                 }
                 if (moveFile) {
                     Files.delete(targetFile.file.toPath())
                     if (processorConfiguration.verbose) {
                         log.info("Deleting moveFile=${moveFile} destinationFile=${destinationFile.getCanonicalPath()}")
                     } else {
-                        ProcessorUtils.printAndFlush("-")
+                        GeneralUtils.printAndFlush("-")
                     }
                 }
             } else {
                 boolean couldAlreadyExist = true
                 while (couldAlreadyExist) {
-                    File nonDuplicateFile = ProcessorUtils.nonDuplicateFile(destinationFile)
-                    ProcessorUtils.printAndFlush("\n")
+                    File nonDuplicateFile = FileUtils.nonDuplicateFile(destinationFile)
+                    GeneralUtils.printAndFlush("\n")
                     log.info("moveFile=${moveFile} destinationFile=${destinationFile.getCanonicalPath()} -- same name but different file")
                     log.info("             moving to destinationFile=${nonDuplicateFile.getCanonicalPath()}")
                     File oldDestinationFile = destinationFile
@@ -155,9 +157,9 @@ class PreProcessProcessor {
         }
         if (moveToDestination) {
             boolean useAtomicOption = true
-            boolean moveOrCopyResult = ProcessorUtils.atomicMoveOrCopy(moveFile, targetFile.file, destinationFile,
+            boolean moveOrCopyResult = FileUtils.atomicMoveOrCopy(moveFile, targetFile.file, destinationFile,
                     useAtomicOption, processorConfiguration.includeDetailedTimings)
-            ProcessorUtils.printAndFlush(moveOrCopyResult ? "." : "!")
+            GeneralUtils.printAndFlush(moveOrCopyResult ? "." : "!")
         }
         removeInProcessDestinationFile(destinationFile)
 
@@ -215,10 +217,10 @@ class PreProcessProcessor {
         boolean matchFilenameOnly = true
         boolean sortFiles = true
 
-        String pattern = '\\w{5,7}-\\d{8}-\\w{3,4}.*?\\.[pP]{1}[dD]{1}[fF]{1}'
+        String pattern = FairfaxFile.PDF_FILE_WITH_TITLE_SECTION_DATE_SEQUENCE_PATTERN
         // Given that we could be dealing with 60,000+ files in the source directory, it's probably more efficient to
         // get them all at once
-        List<File> allFiles = ProcessorUtils.findFiles(processorConfiguration.sourceFolder.getAbsolutePath(),
+        List<File> allFiles = FileUtils.findFiles(processorConfiguration.sourceFolder.getAbsolutePath(),
                 isRegexNotGlob, matchFilenameOnly, sortFiles, pattern, processorConfiguration.timekeeper)
         int allFilesFoundSize = allFiles.size()
 
@@ -234,7 +236,7 @@ class PreProcessProcessor {
             // Clear allFiles (especially if large) -- we want this collection garbage collected out
             allFiles = null
             log.info("Moving=${processorConfiguration.moveFiles} " +
-                    "total files=${ProcessorUtils.TOTAL_FORMAT.format(filteredFiles.size())} " +
+                    "total files=${GeneralUtils.TOTAL_FORMAT.format(filteredFiles.size())} " +
                     "to destination=${processorConfiguration.targetPreProcessingFolder.getCanonicalPath()}")
             GParsExecutorsPool.withPool(numberOfThreads) {
                 filteredFiles.eachParallel { FairfaxFile fairfaxFile ->
@@ -248,7 +250,7 @@ class PreProcessProcessor {
                     }
                     filesProcessedCounter.incrementCounter()
                     if (filesProcessedCounter.currentCount % 5000 == 0) {
-                        ProcessorUtils.printAndFlush("\n")
+                        GeneralUtils.printAndFlush("\n")
                         processorConfiguration.timekeeper.logElapsed(false, filesProcessedCounter.currentCount,
                                 true)
                     }
@@ -258,7 +260,7 @@ class PreProcessProcessor {
             log.info("startingDate=${processorConfiguration.startingDate} and " +
                     "endingDate=${processorConfiguration.endingDate} have not been both specified")
 
-            List<File> foundFiles = ProcessorUtils.findNonMatchingFiles(
+            List<File> foundFiles = FileUtils.findNonMatchingFiles(
                     processorConfiguration.sourceFolder.getAbsolutePath(), isRegexNotGlob, matchFilenameOnly,
                     sortFiles, pattern, processorConfiguration.timekeeper)
             foundFiles.each { File foundFile ->
@@ -278,11 +280,11 @@ class PreProcessProcessor {
         log.info("    forReviewFolder=${processorConfiguration.forReviewFolder.getCanonicalPath()}")
         processorConfiguration.timekeeper.logElapsed()
         log.info("Files totals:")
-        log.info("    found=${ProcessorUtils.TOTAL_FORMAT.format(allFilesFoundSize)}")
-        log.info("    reviewed=${ProcessorUtils.TOTAL_FORMAT.format(filesProcessedCounter.total)}")
-        log.info("    files moved or copied=${ProcessorUtils.TOTAL_FORMAT.format(filesMovedOrCopiedCounter.total)}")
+        log.info("    found=${GeneralUtils.TOTAL_FORMAT.format(allFilesFoundSize)}")
+        log.info("    reviewed=${GeneralUtils.TOTAL_FORMAT.format(filesProcessedCounter.total)}")
+        log.info("    files moved or copied=${GeneralUtils.TOTAL_FORMAT.format(filesMovedOrCopiedCounter.total)}")
         int notMovedOrCopied = filesProcessedCounter.total - filesMovedOrCopiedCounter.total
-        log.info("    NOT moved or copied=${ProcessorUtils.TOTAL_FORMAT.format(notMovedOrCopied)} (probably duplicates)")
+        log.info("    NOT moved or copied=${GeneralUtils.TOTAL_FORMAT.format(notMovedOrCopied)} (probably duplicates)")
 
         processLogger.copySplit(processorConfiguration.targetPreProcessingFolder, "Pre-Process-Processor", true)
     }
