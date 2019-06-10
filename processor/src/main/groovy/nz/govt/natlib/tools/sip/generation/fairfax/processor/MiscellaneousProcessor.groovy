@@ -3,10 +3,13 @@ package nz.govt.natlib.tools.sip.generation.fairfax.processor
 import groovy.util.logging.Log4j2
 import groovyx.gpars.GParsExecutorsPool
 import nz.govt.natlib.tools.sip.files.FilesFinder
+import nz.govt.natlib.tools.sip.generation.fairfax.FairfaxFile
 import nz.govt.natlib.tools.sip.logging.ThreadedTimekeeper
 import nz.govt.natlib.tools.sip.logging.Timekeeper
 import nz.govt.natlib.tools.sip.pdf.thumbnail.ThumbnailGenerator
 import nz.govt.natlib.tools.sip.pdf.thumbnail.ThumbnailParameters
+import nz.govt.natlib.tools.sip.utils.FileUtils
+import nz.govt.natlib.tools.sip.utils.GeneralUtils
 
 import java.nio.file.Files
 import java.nio.file.Path
@@ -54,7 +57,7 @@ class MiscellaneousProcessor {
             Matcher matcher = directory.getName() =~ /${regexPattern}/
             if (matcher.matches()) {
                 String dateString = matcher.group('date')
-                LocalDate directoryDate = ProcessorUtils.parseDate(dateString)
+                LocalDate directoryDate = GeneralUtils.parseDate(dateString)
                 if ((directoryDate.isEqual(startingDate) || directoryDate.isAfter(startingDate)) &&
                         (directoryDate.isBefore(endingDate) || directoryDate.isEqual(endingDate))) {
                     filteredDirectoriesList.add(directory)
@@ -108,7 +111,7 @@ class MiscellaneousProcessor {
         boolean isRegexNotGlob = true
         boolean matchFilenameOnly = true
         boolean sortFiles = true
-        String pattern = '\\w{5,7}-\\d{8}-.*?\\.[pP]{1}[dD]{1}[fF]{1}'
+        String pattern = FairfaxFile.PDF_FILE_WITH_TITLE_SECTION_DATE_PATTERN
         String directoryPattern = '(?<titleCode>\\w{3,7})_(?<date>\\d{8})'
 
         log.info("Processing filteredDirectories total=${filteredDirectoriesList.size()}")
@@ -137,7 +140,7 @@ class MiscellaneousProcessor {
                 }
                 File streamsFolder = new File(contentFolder, "streams")
                 if (streamsFolder.exists()) {
-                    List<File> pdfFiles = ProcessorUtils.findFiles(streamsFolder.getAbsolutePath(), isRegexNotGlob,
+                    List<File> pdfFiles = FileUtils.findFiles(streamsFolder.getAbsolutePath(), isRegexNotGlob,
                             matchFilenameOnly, sortFiles, pattern, processorConfiguration.timekeeper)
                     sourceFiles.addAll(pdfFiles)
                 } else {
@@ -181,7 +184,7 @@ class MiscellaneousProcessor {
         boolean sortFiles = true
         // Any pdf will do
         String pattern = '.*?\\.[pP]{1}[dD]{1}[fF]{1}'
-        List<File> pdfFiles = ProcessorUtils.findFiles(sourceFolder.getAbsolutePath(),
+        List<File> pdfFiles = FileUtils.findFiles(sourceFolder.getAbsolutePath(),
                 isRegexNotGlob, matchFilenameOnly, sortFiles, pattern, processorConfiguration.timekeeper,
                 includeSubdirectories)
 
@@ -227,11 +230,11 @@ class MiscellaneousProcessor {
             generateThumbnailPageFromPdfs(processorConfiguration.sourceFolder)
             List<File> allSubdirectories = [ ]
             if (processorConfiguration.startingDate != null && processorConfiguration.endingDate != null) {
-                allSubdirectories = ProcessorUtils.allSubdirectoriesInDateRange(processorConfiguration.sourceFolder,
+                allSubdirectories = FileUtils.allSubdirectoriesInDateRange(processorConfiguration.sourceFolder,
                         processorConfiguration.startingDate, processorConfiguration.endingDate,
-                        ProcessorUtils.DATE_YYYYMMDD_FORMATTER, true)
+                        GeneralUtils.DATE_YYYYMMDD_FORMATTER, true)
             } else {
-                allSubdirectories = ProcessorUtils.allSubdirectories(processorConfiguration.sourceFolder, true)
+                allSubdirectories = FileUtils.allSubdirectories(processorConfiguration.sourceFolder, true)
             }
             int numberOfThreads = processorConfiguration.parallelizeProcessing ? processorConfiguration.numberOfThreads : 1
             log.info("Processing over numberOfThreads=${numberOfThreads}")

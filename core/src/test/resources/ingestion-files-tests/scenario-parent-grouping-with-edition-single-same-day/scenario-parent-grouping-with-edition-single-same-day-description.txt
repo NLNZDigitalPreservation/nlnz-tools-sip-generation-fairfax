@@ -1,0 +1,12 @@
+# Based on https://docs.cucumber.io/
+#
+@tag
+Feature: Parent group with edition is handled when files match the spreadsheet rows
+
+   All files are created with the appropriate SIP.
+
+   Scenario: The publication issue has multiple PDF pages that match a title code and edition code combination
+     Given The publication has PDF pages that match a spreadsheet title code and edition code combination
+     And the processing type is parent_grouping_with_edition
+     When the publication issue is processed
+     Then the SIP metadata has the correct PDF files for the given title code and edition code combination

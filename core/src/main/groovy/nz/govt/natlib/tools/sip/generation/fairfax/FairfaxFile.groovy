@@ -8,6 +8,8 @@ import groovy.util.logging.Log4j2
 import nz.govt.natlib.tools.sip.Sip
 import nz.govt.natlib.tools.sip.SipFileWrapperFactory
 import nz.govt.natlib.tools.sip.generation.fairfax.parameters.ProcessingOption
+import nz.govt.natlib.tools.sip.logging.DefaultTimekeeper
+import nz.govt.natlib.tools.sip.utils.FileUtils
 import org.apache.commons.collections4.CollectionUtils
 
 import java.time.LocalDate
@@ -24,8 +26,11 @@ class FairfaxFile {
     // Note that the titleCode appears to be, in some cases 4 characters long (eg. JAZZTAB), but for most cases it is 3.
     // The populate() method attempts to correct any issues with the titleCode/sectionCode grouping.
     // Note that the pdf extension can be upper or lower case (and we handle the mixed case as well
-    static String REGEX_PATTERN = "(?<titleCode>[a-zA-Z0-9]{3,4})(?<sectionCode>[a-zA-Z0-9]{2,3})-(?<date>\\d{8})-" +
-            "(?<sequenceLetter>[A-Za-z]{0,2})(?<sequenceNumber>\\d{1,4})(?<qualifier>.*?)\\.[pP]{1}[dD]{1}[fF]{1}"
+    static final String PDF_FILE_WITH_TITLE_SECTION_DATE_SEQUENCE_GROUPING_PATTERN = "(?<titleCode>[a-zA-Z0-9]{3,4})" +
+            "(?<sectionCode>[a-zA-Z0-9]{2,3})-(?<date>\\d{8})-(?<sequenceLetter>[A-Za-z]{0,2})" +
+            "(?<sequenceNumber>\\d{1,4})(?<qualifier>.*?)\\.[pP]{1}[dD]{1}[fF]{1}"
+    static final String PDF_FILE_WITH_TITLE_SECTION_DATE_SEQUENCE_PATTERN = '\\w{5,7}-\\d{8}-\\w{3,4}.*?\\.[pP]{1}[dD]{1}[fF]{1}'
+    static final String PDF_FILE_WITH_TITLE_SECTION_DATE_PATTERN = '\\w{5,7}-\\d{8}-.*?\\.[pP]{1}[dD]{1}[fF]{1}'
     static final DateTimeFormatter LOCAL_DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyyMMdd")
 
     File file
@@ -249,6 +254,33 @@ class FairfaxFile {
         return sorted
     }
 
+    static List<FairfaxFile> fromSourceFolder(File sourceFolder,
+                                              String pattern = PDF_FILE_WITH_TITLE_SECTION_DATE_SEQUENCE_PATTERN) {
+        boolean isRegexNotGlob = true
+        boolean matchFilenameOnly = true
+        boolean sortFiles = true
+
+        log.info("Processing for pattern=${pattern}, sourceFolder=${sourceFolder.getCanonicalPath()}")
+
+        List<File> allFiles = FileUtils.findFiles(sourceFolder.getCanonicalPath(),
+                isRegexNotGlob, matchFilenameOnly, sortFiles, pattern, new DefaultTimekeeper())
+        List<FairfaxFile> onlyFairfaxFiles = [ ]
+        allFiles.each { File file ->
+            FairfaxFile fairfaxFile = new FairfaxFile(file)
+            // TODO We have no checks here for FairfaxFile validity -- the pattern supposedly selects only validly named ones.
+            onlyFairfaxFiles.add(fairfaxFile)
+        }
+        return onlyFairfaxFiles
+    }
+
+    static List<String> uniqueSectionCodes(List<FairfaxFile> fairfaxFiles) {
+        Set<String> uniqueCodes = [ ]
+        fairfaxFiles.each { FairfaxFile file ->
+            uniqueCodes.add(file.sectionCode)
+        }
+        return uniqueCodes.toList()
+    }
+
     static List<String> asFilenames(List<FairfaxFile> files) {
         return files.collect { FairfaxFile fairfaxFile ->
             fairfaxFile.file.getName()
@@ -267,7 +299,7 @@ class FairfaxFile {
     private populate() {
         this.filename = file.getName()
         // TODO Maybe the pattern comes from a resource or properties file?
-        Matcher matcher = filename =~ /${REGEX_PATTERN}/
+        Matcher matcher = filename =~ /${PDF_FILE_WITH_TITLE_SECTION_DATE_SEQUENCE_GROUPING_PATTERN}/
         if (matcher.matches()) {
             this.titleCode = matcher.group('titleCode')
             this.sectionCode = matcher.group('sectionCode')

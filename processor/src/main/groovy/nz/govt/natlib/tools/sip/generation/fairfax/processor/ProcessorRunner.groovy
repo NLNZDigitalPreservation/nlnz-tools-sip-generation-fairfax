@@ -133,10 +133,11 @@ This is the destination folder used when no other destination folders are specif
             description = """target post-processed folder in the format /path/to/folder""")
     File targetPostProcessedFolder
 
-    @Option(names = ["--forIngestionProcessingType"], paramLabel = "PROCESSING_TYPE",
-            description = """For-ingestion processing type.
-A pre-processing titleCode folder can only be processed once for a single processing type.""")
-    String forIngestionProcessingType
+    @Option(names = ["--forIngestionProcessingTypes"], paramLabel = "PROCESSING_TYPE",
+            description = """Comma-separated list of for-ingestion processing types.
+A pre-processing titleCode folder should only be processed once for a single processing type.
+It may be possible for multiple processing types to apply to the same folder, producing different SIPs.""")
+    String forIngestionProcessingTypes
 
     @Option(names = ["--forIngestionProcessingRules"], paramLabel = "PROCESSING_RULES",
             description = """For-ingestion processing rules.
@@ -202,7 +203,7 @@ See the class ProcessorOption for a list of what those options are.""")
         log.info("        targetPostProcessedFolder=${targetPostProcessedFolder}")
         log.info("        forReviewFolder=${forReviewFolder}")
         log.info("    Processing parameters:")
-        log.info("        forIngestionProcessingType=${forIngestionProcessingType}")
+        log.info("        forIngestionProcessingTypes=${forIngestionProcessingTypes}")
         log.info("        forIngestionProcessingRules=${forIngestionProcessingRules}")
         log.info("        forIngestionProcessingOptions=${forIngestionProcessingOptions}")
         log.info("    Date scoping:")
@@ -371,8 +372,8 @@ See the class ProcessorOption for a list of what those options are.""")
                 log.error(message)
                 throw new ProcessorException(message)
             }
-            if (forIngestionProcessingType == null || forIngestionProcessingType.strip().isEmpty()) {
-                String message = "readyForIngestion requires forIngestionProcessingType"
+            if (forIngestionProcessingTypes == null || forIngestionProcessingTypes.strip().isEmpty()) {
+                String message = "readyForIngestion requires forIngestionProcessingTypes"
                 log.error(message)
                 throw new ProcessorException(message)
             }

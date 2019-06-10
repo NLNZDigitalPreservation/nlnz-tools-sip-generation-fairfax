@@ -98,8 +98,14 @@ class MultipleEditionsSameDayAllSectionsTest {
         LocalDate processingDate = LocalDate.parse(dateString, FairfaxFile.LOCAL_DATE_TIME_FORMATTER)
 
         File sourceFolder = new File(testMethodState.localPath)
-        FairfaxProcessingParameters processingParameters = FairfaxProcessingParameters.build("TST",
-                ProcessingType.ParentGrouping, sourceFolder, processingDate, testMethodState.fairfaxSpreadsheet)
+        List<FairfaxProcessingParameters> parametersList = FairfaxProcessingParameters.build("TST",
+                [ ProcessingType.ParentGrouping ], sourceFolder, processingDate, testMethodState.fairfaxSpreadsheet)
+
+        assertThat("Only a single FairfaxProcessingParameters is returned, size=${parametersList.size()}",
+                parametersList.size(), is(1))
+
+        FairfaxProcessingParameters processingParameters = parametersList.first()
+
         processingParameters.rules = ProcessingRule.mergeOverrides(processingParameters.rules,
                 [ ProcessingRule.AllSectionsInSipRequired ])
 

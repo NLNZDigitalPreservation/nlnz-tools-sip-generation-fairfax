@@ -31,27 +31,27 @@ class ProcessingRuleTest {
 
     @Test
     void extractsCorrectlyWithoutDefaults() {
-        List<ProcessingRule> options = ProcessingRule.extract("handle_unprocessed,multiple_editions",
+        List<ProcessingRule> rules = ProcessingRule.extract("handle_unprocessed,multiple_editions",
                 ",", [ ], true)
         List<ProcessingRule> expected = [ ProcessingRule.HandleUnprocessed, ProcessingRule.MultipleEditions ]
-        assertThat("ProcessingRule extracted without defaults correctly", options, is(expected))
+        assertThat("ProcessingRule extracted without defaults correctly", rules, is(expected))
     }
 
     @Test
     void extractsCorrectlyWithDefaults() {
-        List<ProcessingRule> options = ProcessingRule.extract("handle_unprocessed,optional_all_sections_in_sip",
+        List<ProcessingRule> rules = ProcessingRule.extract("handle_unprocessed,optional_all_sections_in_sip",
                 ",", [ ProcessingRule.AllSectionsInSipRequired, ProcessingRule.HandleInvalid ], true)
         List<ProcessingRule> expected = [ ProcessingRule.AllSectionsInSipOptional, ProcessingRule.HandleInvalid,
                                           ProcessingRule.HandleUnprocessed ]
-        assertThat("ProcessingRule extracted with defaults correctly", options, is(expected))
+        assertThat("ProcessingRule extracted with defaults correctly", rules, is(expected))
     }
 
     @Test
     void extractsCorrectlyWithEmptyListAndDefaults() {
-        List<ProcessingRule> options = ProcessingRule.extract("",
+        List<ProcessingRule> rules = ProcessingRule.extract("",
                 ",", [ ProcessingRule.AllSectionsInSipRequired, ProcessingRule.HandleInvalid ], true)
         List<ProcessingRule> expected = [ ProcessingRule.AllSectionsInSipRequired, ProcessingRule.HandleInvalid ]
-        assertThat("ProcessingRule extracted with defaults correctly", options, is(expected))
+        assertThat("ProcessingRule extracted with defaults correctly", rules, is(expected))
     }
 
     @Test(expected = SipProcessingException.class)

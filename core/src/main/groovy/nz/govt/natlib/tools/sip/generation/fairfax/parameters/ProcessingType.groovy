@@ -1,14 +1,16 @@
 package nz.govt.natlib.tools.sip.generation.fairfax.parameters
 
 import groovy.util.logging.Log4j2
+import nz.govt.natlib.tools.sip.state.SipProcessingException
 
 @Log4j2
 enum ProcessingType {
-    ParentGrouping("parent_grouping",
+    // Note that declaration order is the sorting order
+    ParentGroupingWithEdition("parent_grouping_with_edition",
             [ ProcessingRule.AllSectionsInSipRequired, ProcessingRule.MissingSequenceError ],
             [ ProcessingOption.NumericBeforeAlphaSequencing, ProcessingOption.GenerateProcessedPdfThumbnailsPage,
               ProcessingOption.SkipThumbnailPageGenerationWhenNoErrors ]),
-    ParentGroupingWithEdition("parent_grouping_with_edition",
+    ParentGrouping("parent_grouping",
             [ ProcessingRule.AllSectionsInSipRequired, ProcessingRule.MissingSequenceError ],
             [ ProcessingOption.NumericBeforeAlphaSequencing, ProcessingOption.GenerateProcessedPdfThumbnailsPage,
               ProcessingOption.SkipThumbnailPageGenerationWhenNoErrors ]),
@@ -32,7 +34,8 @@ enum ProcessingType {
         }
     }
 
-    static List<ProcessingType> extract(String list, String separator = ",") {
+    static List<ProcessingType> extract(String list, String separator = ",",
+                                        boolean exceptionIfUnrecognized = false) {
         List<ProcessingType> processingTypes = [ ]
         if (list == null || list.strip().isEmpty()) {
             return processingTypes
@@ -43,7 +46,11 @@ enum ProcessingType {
             ProcessingType processingType = forFieldValue(strippedValue)
             if (processingType == null) {
                 if (!strippedValue.isEmpty()) {
-                    log.warn("Unable to match processing type=${strippedValue} to a ProcessingType enum value.")
+                    String message = "Unable to match processing type=${strippedValue} to a ProcessingType enum value."
+                    log.warn(message)
+                    if (exceptionIfUnrecognized) {
+                        throw new SipProcessingException(message)
+                    }
                 }
             } else {
                 processingTypes.add(processingType)

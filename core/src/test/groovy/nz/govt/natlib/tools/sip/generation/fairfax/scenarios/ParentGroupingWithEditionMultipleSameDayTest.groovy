@@ -4,13 +4,13 @@ import groovy.util.logging.Log4j2
 import nz.govt.natlib.tools.sip.IEEntityType
 import nz.govt.natlib.tools.sip.extraction.SipXmlExtractor
 import nz.govt.natlib.tools.sip.generation.fairfax.FairfaxFile
-import nz.govt.natlib.tools.sip.generation.fairfax.processor.FairfaxFilesProcessor
 import nz.govt.natlib.tools.sip.generation.fairfax.FairfaxProcessingParameters
 import nz.govt.natlib.tools.sip.generation.fairfax.TestHelper
 import nz.govt.natlib.tools.sip.generation.fairfax.TestHelper.TestMethodState
 import nz.govt.natlib.tools.sip.generation.fairfax.parameters.ProcessingOption
 import nz.govt.natlib.tools.sip.generation.fairfax.parameters.ProcessingRule
 import nz.govt.natlib.tools.sip.generation.fairfax.parameters.ProcessingType
+import nz.govt.natlib.tools.sip.generation.fairfax.processor.FairfaxFilesProcessor
 import nz.govt.natlib.tools.sip.state.SipProcessingState
 import org.junit.Before
 import org.junit.Ignore
@@ -22,13 +22,10 @@ import java.nio.file.Path
 import java.time.LocalDate
 
 import static org.hamcrest.core.Is.is
-import static org.junit.Assert.assertFalse
-import static org.junit.Assert.assertNull
-import static org.junit.Assert.assertThat
-import static org.junit.Assert.assertTrue
+import static org.junit.Assert.*
 
 /**
- * Tests the {@code multiple-editions-same-day} scenario.
+ * Tests the {@code parent-grouping-with-edition-multiple-same-day} scenario.
  *
  * Note that this test is complicated by the files either being part of a directory structure or in a resource file (jar),
  * so the {@link TestHelper} class is used to handle both scenarios. In real-life processing the files would be on the
@@ -38,14 +35,14 @@ import static org.junit.Assert.assertTrue
  */
 @RunWith(MockitoJUnitRunner.class)
 @Log4j2
-class MultipleEditionsSameDayTest {
+class ParentGroupingWithEditionMultipleSameDayTest {
     // TODO Make this processing simpler
     // - given a starting folder
     // - and a set of selection criteria
     // - create SIPs for the given files
     static String ID_COLUMN_NAME = "MMSID"
 
-    static final String RESOURCES_FOLDER = "ingestion-files-tests/scenario-multiple-edition-same-day"
+    static final String RESOURCES_FOLDER = "ingestion-files-tests/scenario-parent-grouping-with-edition-multiple-same-day"
     static final String IMPORT_PARAMETERS_FILENAME = "test-fairfax-import-parameters.json"
 
     TestMethodState testMethodState
@@ -68,7 +65,7 @@ class MultipleEditionsSameDayTest {
     @Ignore
     void correctlyAssembleSipFromFilesOnFilesystem() {
         boolean forLocalFilesystem = true
-        TestHelper.initializeTestMethod(testMethodState, "MultipleEditionSameDayTest-", forLocalFilesystem)
+        TestHelper.initializeTestMethod(testMethodState, "ParentGroupingWithEditionMultipleSameDayTest-", forLocalFilesystem)
 
         // TODO A more complicated pattern -- date and other masks?
         boolean isRegexNotGlob = true
@@ -83,7 +80,7 @@ class MultipleEditionsSameDayTest {
     @Test
     void correctlyAssembleSipFromFiles() {
         boolean forLocalFilesystem = false
-        TestHelper.initializeTestMethod(testMethodState, "MultipleEditionSameDayTest-", forLocalFilesystem)
+        TestHelper.initializeTestMethod(testMethodState, "ParentGroupingWithEditionMultipleSameDayTest-", forLocalFilesystem)
 
         // TODO A more complicated pattern -- date and other masks?
         boolean isRegexNotGlob = true
@@ -101,27 +98,37 @@ class MultipleEditionsSameDayTest {
 
         File sourceFolder = new File(testMethodState.localPath)
         List<FairfaxProcessingParameters> parametersList = FairfaxProcessingParameters.build("TST",
-                [ ProcessingType.ParentGrouping ], sourceFolder, processingDate, testMethodState.fairfaxSpreadsheet,
+                [ ProcessingType.ParentGroupingWithEdition, ProcessingType.ParentGrouping, ProcessingType.CreateSipForFolder ],
+                sourceFolder, processingDate, testMethodState.fairfaxSpreadsheet,
                 [ ProcessingRule.AllSectionsInSipOptional ])
 
-        assertThat("Only a single FairfaxProcessingParameters is returned, size=${parametersList.size()}",
-                parametersList.size(), is(1))
-
-        FairfaxProcessingParameters processingParameters = parametersList.first()
-
-        assertThat("Multiple section codes: 'PB1', 'BOO', 'ZOO', 'AAT'", processingParameters.sectionCodes,
-                is([ 'PB1', 'BOO', 'ZOO', 'AAT' ]))
-        assertThat("Multiple discriminator codes: 'PB1', 'PB2', 'PB3'", processingParameters.editionDiscriminators,
-                is([ 'PB1', 'PB2', 'PB3' ]))
-        assertTrue("Alpha before numeric sorting",
-                processingParameters.options.contains(ProcessingOption.AlphaBeforeNumericSequencing))
+        assertThat("2 FairfaxProcessingParameters are returned, size=${parametersList.size()}, list=${parametersList}",
+                parametersList.size(), is(2))
 
         SipProcessingState originalSipProcessingState = testMethodState.sipProcessingState
 
-        processingParameters.editionDiscriminators.each { String discriminatorCode ->
+        parametersList.each { FairfaxProcessingParameters currentProcessingParameters ->
+
+            String discriminatorCode = currentProcessingParameters.editionDiscriminators.first()
+            switch (discriminatorCode) {
+                case "PB1":
+                    assertThat("editionDiscriminator matches=PB1", discriminatorCode, is("PB1"))
+                    assertThat ( "Multiple section codes: 'PB1', 'BOO', 'ZOO', 'AAT'", currentProcessingParameters.sectionCodes,
+                            is ( [ 'PB1', 'BOO', 'ZOO', 'AAT' ] ) )
+                    break
+                case "PB2":
+                    assertThat("editionDiscriminator matches=PB2", discriminatorCode, is("PB2"))
+                    assertThat ( "Multiple section codes: 'PB2', 'BOO', 'ZOO'", currentProcessingParameters.sectionCodes,
+                            is ( [ 'PB2', 'BOO', 'ZOO' ] ) )
+                    break
+                default:
+                    assertFalse("Unrecognized discriminatorCode=${discriminatorCode}", true)
+                    break
+            }
+            assertTrue ( "Numeric before alpha sequencing",
+                    currentProcessingParameters.options.contains (ProcessingOption.NumericBeforeAlphaSequencing))
+
             testMethodState.sipProcessingState = originalSipProcessingState.clone()
-            FairfaxProcessingParameters currentProcessingParameters = processingParameters.clone()
-            currentProcessingParameters.currentEdition = discriminatorCode
             currentProcessingParameters.sipProcessingState = testMethodState.sipProcessingState
             String sipAsXml = FairfaxFilesProcessor.processCollectedFiles(currentProcessingParameters, filesForProcessing)
 
@@ -139,23 +146,6 @@ class MultipleEditionsSameDayTest {
                     expectedThumbnailFile = currentProcessingParameters.options.contains(ProcessingOption.AlwaysGenerateThumbnailPage)
                     expectedSizingPB2()
                     break
-                case "PB3" :
-                    int expectedNumberOfFilesProcessed = 0
-                    assertThat("${expectedNumberOfFilesProcessed} files should have been processed",
-                            testMethodState.sipProcessingState.totalFilesProcessed, is(expectedNumberOfFilesProcessed))
-                    int expectedNumberOfValidFiles = 0
-                    assertThat("${expectedNumberOfValidFiles} valid files should have been processed",
-                            testMethodState.sipProcessingState.validFiles.size(), is(expectedNumberOfValidFiles))
-                    int expectedNumberOfInvalidFiles = 0
-                    assertThat("${expectedNumberOfInvalidFiles} invalid files should have been processed",
-                            testMethodState.sipProcessingState.invalidFiles.size(), is(expectedNumberOfInvalidFiles))
-                    int expectedNumberOfIgnoredFiles = 16
-                    assertThat("${expectedNumberOfIgnoredFiles} ignored files should have been processed",
-                            testMethodState.sipProcessingState.ignoredFiles.size(), is(expectedNumberOfIgnoredFiles))
-                    int expectedNumberOfUnrecognizedFiles = 0
-                    assertThat("${expectedNumberOfUnrecognizedFiles} unrecognized files should have been processed",
-                            testMethodState.sipProcessingState.unrecognizedFiles.size(), is(expectedNumberOfUnrecognizedFiles))
-                    break
                 default:
                     assertFalse("Unrecognized discriminatorCode=${discriminatorCode}", true)
                     break
@@ -169,12 +159,12 @@ class MultipleEditionsSameDayTest {
                     // Comment out the following line if you want to view the file
                     currentProcessingParameters.thumbnailPageFile.delete()
                 } else {
-                    assertNull("Thumbnail page DOES NOT exist, file=${processingParameters.thumbnailPageFile}",
-                            processingParameters.thumbnailPageFile)
+                    assertNull("Thumbnail page DOES NOT exist, file=${currentProcessingParameters.thumbnailPageFile}",
+                            currentProcessingParameters.thumbnailPageFile)
                 }
             } else {
-                assertNull("Thumbnail page DOES NOT exist, file=${processingParameters.thumbnailPageFile}",
-                        processingParameters.thumbnailPageFile)
+                assertNull("Thumbnail page DOES NOT exist, file=${currentProcessingParameters.thumbnailPageFile}",
+                        currentProcessingParameters.thumbnailPageFile)
             }
 
             log.info("STARTING SIP validation")
@@ -213,7 +203,7 @@ class MultipleEditionsSameDayTest {
         int expectedNumberOfInvalidFiles = 0
         assertThat("${expectedNumberOfInvalidFiles} invalid files should have been processed",
                 testMethodState.sipProcessingState.invalidFiles.size(), is(expectedNumberOfInvalidFiles))
-        int expectedNumberOfIgnoredFiles = 5
+        int expectedNumberOfIgnoredFiles = 6
         assertThat("${expectedNumberOfIgnoredFiles} ignored files should have been processed",
                 testMethodState.sipProcessingState.ignoredFiles.size(), is(expectedNumberOfIgnoredFiles))
         int expectedNumberOfUnrecognizedFiles = 0
@@ -222,16 +212,16 @@ class MultipleEditionsSameDayTest {
     }
 
     void expectedSizingPB2() {
-        int expectedNumberOfFilesProcessed = 12
+        int expectedNumberOfFilesProcessed = 8
         assertThat("${expectedNumberOfFilesProcessed} files should have been processed",
                 testMethodState.sipProcessingState.totalFilesProcessed, is(expectedNumberOfFilesProcessed))
-        int expectedNumberOfValidFiles = 12
+        int expectedNumberOfValidFiles = 8
         assertThat("${expectedNumberOfValidFiles} valid files should have been processed",
                 testMethodState.sipProcessingState.validFiles.size(), is(expectedNumberOfValidFiles))
         int expectedNumberOfInvalidFiles = 0
         assertThat("${expectedNumberOfInvalidFiles} invalid files should have been processed",
                 testMethodState.sipProcessingState.invalidFiles.size(), is(expectedNumberOfInvalidFiles))
-        int expectedNumberOfIgnoredFiles = 4
+        int expectedNumberOfIgnoredFiles = 9
         assertThat("${expectedNumberOfIgnoredFiles} ignored files should have been processed",
                 testMethodState.sipProcessingState.ignoredFiles.size(), is(expectedNumberOfIgnoredFiles))
         int expectedNumberOfUnrecognizedFiles = 0
@@ -251,25 +241,25 @@ class MultipleEditionsSameDayTest {
                 IEEntityType.NewspaperIE, "ALMAMMS", "test-mms-id-one", "200",
                 "PRESERVATION_MASTER", "VIEW", true, 1)
 
-        TestHelper.assertExpectedSipFileValues(sipForValidation, 1, "TSTPB1-20181123-A01with-a-qualifier.pdf", "TSTPB1-20181123-A01with-a-qualifier.pdf",
+        TestHelper.assertExpectedSipFileValues(sipForValidation, 1, "TSTPB1-20181123-001.pdf", "TSTPB1-20181123-001.pdf",
                 739L, "MD5", "b5808604069f9f61d94e0660409616ba", "0001", "application/pdf")
 
-        TestHelper.assertExpectedSipFileValues(sipForValidation, 2, "TSTPB1-20181123-A02.pdf", "TSTPB1-20181123-A02.pdf",
+        TestHelper.assertExpectedSipFileValues(sipForValidation, 2, "TSTPB1-20181123-002.pdf", "TSTPB1-20181123-002.pdf",
                 739L, "MD5", "b5808604069f9f61d94e0660409616ba", "0002", "application/pdf")
 
-        TestHelper.assertExpectedSipFileValues(sipForValidation, 3, "TSTPB1-20181123-B01.pdf", "TSTPB1-20181123-B01.pdf",
+        TestHelper.assertExpectedSipFileValues(sipForValidation, 3, "TSTPB1-20181123-A01with-a-qualifier.pdf", "TSTPB1-20181123-A01with-a-qualifier.pdf",
                 739L, "MD5", "b5808604069f9f61d94e0660409616ba", "0003", "application/pdf")
 
-        TestHelper.assertExpectedSipFileValues(sipForValidation, 4, "TSTPB1-20181123-B02.pdf", "TSTPB1-20181123-B02.pdf",
+        TestHelper.assertExpectedSipFileValues(sipForValidation, 4, "TSTPB1-20181123-A02.pdf", "TSTPB1-20181123-A02.pdf",
                 739L, "MD5", "b5808604069f9f61d94e0660409616ba", "0004", "application/pdf")
 
-        TestHelper.assertExpectedSipFileValues(sipForValidation, 5, "TSTPB1-20181123-C01.pdf", "TSTPB1-20181123-C01.pdf",
+        TestHelper.assertExpectedSipFileValues(sipForValidation, 5, "TSTPB1-20181123-B01.pdf", "TSTPB1-20181123-B01.pdf",
                 739L, "MD5", "b5808604069f9f61d94e0660409616ba", "0005", "application/pdf")
 
-        TestHelper.assertExpectedSipFileValues(sipForValidation, 6, "TSTPB1-20181123-001.pdf", "TSTPB1-20181123-001.pdf",
+        TestHelper.assertExpectedSipFileValues(sipForValidation, 6, "TSTPB1-20181123-B02.pdf", "TSTPB1-20181123-B02.pdf",
                 739L, "MD5", "b5808604069f9f61d94e0660409616ba", "0006", "application/pdf")
 
-        TestHelper.assertExpectedSipFileValues(sipForValidation, 7, "TSTPB1-20181123-002.pdf", "TSTPB1-20181123-002.pdf",
+        TestHelper.assertExpectedSipFileValues(sipForValidation, 7, "TSTPB1-20181123-B03.pdf", "TSTPB1-20181123-B03.pdf",
                 739L, "MD5", "b5808604069f9f61d94e0660409616ba", "0007", "application/pdf")
 
         TestHelper.assertExpectedSipFileValues(sipForValidation, 8, "TSTBOO-20181123-001.pdf", "TSTBOO-20181123-001.pdf",
@@ -293,45 +283,33 @@ class MultipleEditionsSameDayTest {
         assertTrue("SipProcessingState is complete", testMethodState.sipProcessingState.isComplete())
         assertTrue("SipProcessingState is successful", testMethodState.sipProcessingState.isSuccessful())
 
-        TestHelper.assertExpectedSipMetadataValues(sipForValidation, "Test Publication One", 2018, 11, 23,
-                IEEntityType.NewspaperIE, "ALMAMMS", "test-mms-id-one", "200",
+        TestHelper.assertExpectedSipMetadataValues(sipForValidation, "Test Publication Two", 2018, 11, 23,
+                IEEntityType.NewspaperIE, "ALMAMMS", "test-mms-id-two", "200",
                 "PRESERVATION_MASTER", "VIEW", true, 1)
 
-        TestHelper.assertExpectedSipFileValues(sipForValidation, 1, "TSTPB1-20181123-A01with-a-qualifier.pdf", "TSTPB1-20181123-A01with-a-qualifier.pdf",
+        TestHelper.assertExpectedSipFileValues(sipForValidation, 1, "TSTPB2-20181123-001.pdf", "TSTPB2-20181123-001.pdf",
                 739L, "MD5", "b5808604069f9f61d94e0660409616ba", "0001", "application/pdf")
 
-        TestHelper.assertExpectedSipFileValues(sipForValidation, 2, "TSTPB1-20181123-A02.pdf", "TSTPB1-20181123-A02.pdf",
+        TestHelper.assertExpectedSipFileValues(sipForValidation, 2, "TSTPB2-20181123-002.pdf", "TSTPB2-20181123-002.pdf",
                 739L, "MD5", "b5808604069f9f61d94e0660409616ba", "0002", "application/pdf")
 
-        TestHelper.assertExpectedSipFileValues(sipForValidation, 3, "TSTPB1-20181123-B01.pdf", "TSTPB1-20181123-B01.pdf",
+        TestHelper.assertExpectedSipFileValues(sipForValidation, 3, "TSTPB2-20181123-003.pdf", "TSTPB2-20181123-003.pdf",
                 739L, "MD5", "b5808604069f9f61d94e0660409616ba", "0003", "application/pdf")
 
-        TestHelper.assertExpectedSipFileValues(sipForValidation, 4, "TSTPB2-20181123-B02.pdf", "TSTPB2-20181123-B02.pdf",
+        TestHelper.assertExpectedSipFileValues(sipForValidation, 4, "TSTPB2-20181123-004.pdf", "TSTPB2-20181123-004.pdf",
                 739L, "MD5", "b5808604069f9f61d94e0660409616ba", "0004", "application/pdf")
 
-        TestHelper.assertExpectedSipFileValues(sipForValidation, 5, "TSTPB2-20181123-B03.pdf", "TSTPB2-20181123-B03.pdf",
+        TestHelper.assertExpectedSipFileValues(sipForValidation, 5, "TSTPB2-20181123-005.pdf", "TSTPB2-20181123-005.pdf",
                 739L, "MD5", "b5808604069f9f61d94e0660409616ba", "0005", "application/pdf")
 
-        TestHelper.assertExpectedSipFileValues(sipForValidation, 6, "TSTPB1-20181123-C01.pdf", "TSTPB1-20181123-C01.pdf",
+        TestHelper.assertExpectedSipFileValues(sipForValidation, 6, "TSTPB2-20181123-006.pdf", "TSTPB2-20181123-006.pdf",
                 739L, "MD5", "b5808604069f9f61d94e0660409616ba", "0006", "application/pdf")
 
-        TestHelper.assertExpectedSipFileValues(sipForValidation, 7, "TSTPB2-20181123-001.pdf", "TSTPB2-20181123-001.pdf",
+        TestHelper.assertExpectedSipFileValues(sipForValidation, 7, "TSTBOO-20181123-001.pdf", "TSTBOO-20181123-001.pdf",
                 739L, "MD5", "b5808604069f9f61d94e0660409616ba", "0007", "application/pdf")
 
-        TestHelper.assertExpectedSipFileValues(sipForValidation, 8, "TSTPB1-20181123-002.pdf", "TSTPB1-20181123-002.pdf",
+        TestHelper.assertExpectedSipFileValues(sipForValidation, 8, "TSTBOO-20181123-002.pdf", "TSTBOO-20181123-002.pdf",
                 739L, "MD5", "b5808604069f9f61d94e0660409616ba", "0008", "application/pdf")
-
-        TestHelper.assertExpectedSipFileValues(sipForValidation, 9, "TSTBOO-20181123-001.pdf", "TSTBOO-20181123-001.pdf",
-                739L, "MD5", "b5808604069f9f61d94e0660409616ba", "0009", "application/pdf")
-
-        TestHelper.assertExpectedSipFileValues(sipForValidation, 10, "TSTBOO-20181123-002.pdf", "TSTBOO-20181123-002.pdf",
-                739L, "MD5", "b5808604069f9f61d94e0660409616ba", "0010", "application/pdf")
-
-        TestHelper.assertExpectedSipFileValues(sipForValidation, 11, "TSTAAT-20181123-P01.pdf", "TSTAAT-20181123-P01.pdf",
-                739L, "MD5", "b5808604069f9f61d94e0660409616ba", "0011", "application/pdf")
-
-        TestHelper.assertExpectedSipFileValues(sipForValidation, 12, "TSTAAT-20181123-P02.pdf", "TSTAAT-20181123-P02.pdf",
-                739L, "MD5", "b5808604069f9f61d94e0660409616ba", "0012", "application/pdf")
     }
 
 }

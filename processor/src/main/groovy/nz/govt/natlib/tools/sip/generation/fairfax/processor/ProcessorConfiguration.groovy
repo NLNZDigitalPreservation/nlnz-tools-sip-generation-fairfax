@@ -46,7 +46,7 @@ trait ProcessorConfiguration {
     File targetPostProcessedFolder
     File forReviewFolder
 
-    String forIngestionProcessingType
+    String forIngestionProcessingTypes
     String forIngestionProcessingRules
     String forIngestionProcessingOptions
 
