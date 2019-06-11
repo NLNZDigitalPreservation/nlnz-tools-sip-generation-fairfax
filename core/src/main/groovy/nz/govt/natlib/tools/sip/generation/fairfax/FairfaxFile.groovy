@@ -262,8 +262,9 @@ class FairfaxFile {
 
         log.info("Processing for pattern=${pattern}, sourceFolder=${sourceFolder.getCanonicalPath()}")
 
+        // Note that we only want the current directory and we don't want info messages
         List<File> allFiles = FileUtils.findFiles(sourceFolder.getCanonicalPath(),
-                isRegexNotGlob, matchFilenameOnly, sortFiles, pattern, new DefaultTimekeeper())
+                isRegexNotGlob, matchFilenameOnly, sortFiles, pattern, null, false, true)
         List<FairfaxFile> onlyFairfaxFiles = [ ]
         allFiles.each { File file ->
             FairfaxFile fairfaxFile = new FairfaxFile(file)

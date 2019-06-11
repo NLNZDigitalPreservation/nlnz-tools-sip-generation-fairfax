@@ -25,6 +25,7 @@ trait ProcessorConfiguration {
 
     boolean parallelizeProcessing
     int numberOfThreads
+    int maximumThumbnailPageThreads
 
     boolean moveOrCopyEvenIfNoRosettaDoneFile
 

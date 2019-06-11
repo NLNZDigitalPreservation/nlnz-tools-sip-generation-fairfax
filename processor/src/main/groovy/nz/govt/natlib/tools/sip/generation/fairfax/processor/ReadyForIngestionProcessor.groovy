@@ -8,6 +8,9 @@ import nz.govt.natlib.tools.sip.generation.fairfax.FairfaxSpreadsheet
 import nz.govt.natlib.tools.sip.generation.fairfax.parameters.ProcessingOption
 import nz.govt.natlib.tools.sip.generation.fairfax.parameters.ProcessingRule
 import nz.govt.natlib.tools.sip.generation.fairfax.parameters.ProcessingType
+import nz.govt.natlib.tools.sip.logging.DefaultTimekeeper
+import nz.govt.natlib.tools.sip.logging.Timekeeper
+import nz.govt.natlib.tools.sip.pdf.thumbnail.ThreadedThumbnailGenerator
 import nz.govt.natlib.tools.sip.processing.PerThreadLogFileAppender
 import nz.govt.natlib.tools.sip.state.SipProcessingException
 import nz.govt.natlib.tools.sip.state.SipProcessingExceptionReason
@@ -48,102 +51,109 @@ class ReadyForIngestionProcessor {
                                               File forReviewFolder, String dateString) {
         // Process the files in the titleCode folder
 
+        UUID appenderId = UUID.randomUUID()
         File processLoggingFile = PerThreadLogFileAppender.startWithGeneratedFilename(processingParameters.sourceFolder,
-                "${processingParameters.processingDifferentiator()}_processing-log")
-
-        File sourceFolder = processingParameters.sourceFolder
-
-        log.info("START Processing sourceFolder=${processingParameters.sourceFolderPath()}")
-        processorConfiguration.timekeeper.logElapsed()
-
-        String sipAsXml = ""
-        if (processingParameters.valid) {
-            sipAsXml = processValidTitleCodeFolder(processingParameters)
-        }
-
-        SipProcessingState sipProcessingState = processingParameters.sipProcessingState
+                "${processingParameters.processingDifferentiator()}_processing-log", appenderId)
 
         File sipAndFilesFolder
-        String folderName = "${dateString}_${processingParameters.titleCode}_${processingParameters.type.getFieldValue()}"
-        if (sipProcessingState.identifier != null) {
-            folderName = "${folderName}_${sipProcessingState.identifier}"
-        }
-        if (sipProcessingState.complete && sipProcessingState.successful) {
-            sipAndFilesFolder = new File(destinationFolder,
-                    "${sipProcessingState.ieEntityType.getDisplayName()}/${folderName}")
-        } else {
-            sipAndFilesFolder = new File(forReviewFolder,
-                    "${sipProcessingState.ieEntityType.getDisplayName()}/${folderName}")
-        }
-        File contentStreamsFolder = new File(sipAndFilesFolder, "content/streams")
-        // Note that unrecognized only gets moved/copied if ProcessingRule.HandleUnrecognised
-        File unrecognizedFilesFolder = new File(forReviewFolder, "UNRECOGNIZED/${dateString}/${processingParameters.titleCode}")
 
-        boolean hasSipAndFilesFolder
-        boolean hasUnrecognizedFilesFolder
-        // Move or copy the processed files to the destination folder
-        if ((sipProcessingState.validFiles.size() > 0 || sipProcessingState.invalidFiles.size() > 0)) {
-            hasSipAndFilesFolder = true
-            if (!sipAndFilesFolder.exists() && processorConfiguration.createDestination) {
-                sipAndFilesFolder.mkdirs()
-                contentStreamsFolder.mkdirs()
-            }
-        } else {
-            hasSipAndFilesFolder = true
-            if (!sipAndFilesFolder.exists() && processorConfiguration.createDestination) {
-                sipAndFilesFolder.mkdirs()
-            }
-        }
-        FileUtils.copyOrMoveFiles(processorConfiguration.moveFiles, sipProcessingState.validFiles, contentStreamsFolder)
-        if (processingParameters.rules.contains(ProcessingRule.HandleInvalid)) {
-            FileUtils.copyOrMoveFiles(processorConfiguration.moveFiles, sipProcessingState.invalidFiles, contentStreamsFolder)
-        }
+        try {
+            File sourceFolder = processingParameters.sourceFolder
 
-        if (processingParameters.rules.contains(ProcessingRule.HandleUnrecognised)) {
-            // If the files aren't recognized, then dump the files in an exception folder
-            if (sipProcessingState.unrecognizedFiles.size() > 0) {
-                hasUnrecognizedFilesFolder = true
-                if (!unrecognizedFilesFolder.exists() && processorConfiguration.createDestination) {
-                    unrecognizedFilesFolder.mkdirs()
+            log.info("START Processing sourceFolder=${processingParameters.sourceFolderPath()}")
+            processorConfiguration.timekeeper.logElapsed()
+
+            String sipAsXml = ""
+            if (processingParameters.valid) {
+                sipAsXml = processValidTitleCodeFolder(processingParameters)
+            }
+
+            SipProcessingState sipProcessingState = processingParameters.sipProcessingState
+
+            String folderName = "${dateString}_${processingParameters.titleCode}_${processingParameters.type.getFieldValue()}"
+            if (sipProcessingState.identifier != null) {
+                folderName = "${folderName}_${sipProcessingState.identifier}"
+            }
+            if (sipProcessingState.complete && sipProcessingState.successful) {
+                sipAndFilesFolder = new File(destinationFolder,
+                        "${sipProcessingState.ieEntityType.getDisplayName()}/${folderName}")
+            } else {
+                sipAndFilesFolder = new File(forReviewFolder,
+                        "${sipProcessingState.ieEntityType.getDisplayName()}/${folderName}")
+            }
+            File contentStreamsFolder = new File(sipAndFilesFolder, "content/streams")
+            // Note that unrecognized only gets moved/copied if ProcessingRule.HandleUnrecognised
+            File unrecognizedFilesFolder = new File(forReviewFolder, "UNRECOGNIZED/${dateString}/${processingParameters.titleCode}")
+
+            boolean hasSipAndFilesFolder
+            boolean hasUnrecognizedFilesFolder
+            // Move or copy the processed files to the destination folder
+            if ((sipProcessingState.validFiles.size() > 0 || sipProcessingState.invalidFiles.size() > 0)) {
+                hasSipAndFilesFolder = true
+                if (!sipAndFilesFolder.exists() && processorConfiguration.createDestination) {
+                    sipAndFilesFolder.mkdirs()
+                    contentStreamsFolder.mkdirs()
+                }
+            } else {
+                hasSipAndFilesFolder = true
+                if (!sipAndFilesFolder.exists() && processorConfiguration.createDestination) {
+                    sipAndFilesFolder.mkdirs()
                 }
             }
-            FileUtils.copyOrMoveFiles(processorConfiguration.moveFiles, sipProcessingState.unrecognizedFiles, unrecognizedFilesFolder)
-        }
+            FileUtils.copyOrMoveFiles(processorConfiguration.moveFiles, sipProcessingState.validFiles, contentStreamsFolder)
+            if (processingParameters.rules.contains(ProcessingRule.HandleInvalid)) {
+                FileUtils.copyOrMoveFiles(processorConfiguration.moveFiles, sipProcessingState.invalidFiles, contentStreamsFolder)
+            }
 
-        // Write out the SIP file
-        if (processingParameters.valid && !sipAsXml.isEmpty()) {
-            File sipFile = new File(sipAndFilesFolder, "content/mets.xml")
-            sipFile.write(sipAsXml)
-        }
+            if (processingParameters.rules.contains(ProcessingRule.HandleUnrecognised)) {
+                // If the files aren't recognized, then dump the files in an exception folder
+                if (sipProcessingState.unrecognizedFiles.size() > 0) {
+                    hasUnrecognizedFilesFolder = true
+                    if (!unrecognizedFilesFolder.exists() && processorConfiguration.createDestination) {
+                        unrecognizedFilesFolder.mkdirs()
+                    }
+                }
+                FileUtils.copyOrMoveFiles(processorConfiguration.moveFiles, sipProcessingState.unrecognizedFiles, unrecognizedFilesFolder)
+            }
 
-        // Write out the FairfaxProcessingParameters and SipProcessingState
-        Date now = new Date()
-        // We will assume that millisecond timestamps ensures that the filename will be unique
-        File processingStateFile = new File(sourceFolder,
-                "${processingParameters.processingDifferentiator()}_parameters-and-state_${FileUtils.FILE_TIMESTAMP_FORMATTER.format(now)}.txt")
-        processingStateFile.write(processingParameters.detailedDisplay(0, true))
-        if (sipAndFilesFolder.exists()) {
-            FileUtils.copyOrMoveFiles(false, [ processingStateFile ], sipAndFilesFolder)
-        }
+            // Write out the SIP file
+            if (processingParameters.valid && !sipAsXml.isEmpty()) {
+                File sipFile = new File(sipAndFilesFolder, "content/mets.xml")
+                sipFile.write(sipAsXml)
+            }
 
-        // Move the thumbnail page file to the sipAndFilesFolder
-        if (processingParameters.thumbnailPageFile != null && processingParameters.thumbnailPageFile.exists()) {
-            File thumbnailPageFileNewFile = new File(processingParameters.thumbnailPageFile.parentFile,
-                    processingParameters.thumbnailPageFileFinalName)
-            processingParameters.thumbnailPageFile.renameTo(thumbnailPageFileNewFile)
-            FileUtils.copyOrMoveFiles(true, [ thumbnailPageFileNewFile ], sipAndFilesFolder)
-        }
+            // Write out the FairfaxProcessingParameters and SipProcessingState
+            Date now = new Date()
+            // We will assume that millisecond timestamps ensures that the filename will be unique
+            File processingStateFile = new File(sourceFolder,
+                    "${processingParameters.processingDifferentiator()}_parameters-and-state_${FileUtils.FILE_TIMESTAMP_FORMATTER.format(now)}.txt")
+            processingStateFile.write(processingParameters.detailedDisplay(0, true))
+            if (sipAndFilesFolder.exists()) {
+                FileUtils.copyOrMoveFiles(false, [processingStateFile], sipAndFilesFolder)
+            }
 
-        log.info("END Processing sourceFolder=${processingParameters.sourceFolderPath()}")
-        log.info("${System.lineSeparator()}FairfaxProcessingParameters and SipProcessingState:")
-        log.info(processingParameters.detailedDisplay(0, true))
-        log.info(System.lineSeparator())
+            // Move the thumbnail page file to the sipAndFilesFolder
+            if (processingParameters.thumbnailPageFile != null && processingParameters.thumbnailPageFile.exists()) {
+                File thumbnailPageFileNewFile = new File(processingParameters.thumbnailPageFile.parentFile,
+                        processingParameters.thumbnailPageFileFinalName)
+                processingParameters.thumbnailPageFile.renameTo(thumbnailPageFileNewFile)
+                FileUtils.copyOrMoveFiles(true, [thumbnailPageFileNewFile], sipAndFilesFolder)
+            }
 
-        processorConfiguration.timekeeper.logElapsed()
+            log.info("END Processing sourceFolder=${processingParameters.sourceFolderPath()}")
+            log.info("${System.lineSeparator()}FairfaxProcessingParameters and SipProcessingState:")
+            log.info(processingParameters.detailedDisplay(0, true))
+            log.info(System.lineSeparator())
 
-        PerThreadLogFileAppender.stopAndRemove()
-        if (processLoggingFile != null && processLoggingFile.exists()) {
-            FileUtils.copyOrMoveFiles(false, [ processLoggingFile ], sipAndFilesFolder)
+            processorConfiguration.timekeeper.logElapsed()
+
+        } finally {
+            PerThreadLogFileAppender.stopAndRemove(appenderId)
+            if (sipAndFilesFolder != null) {
+                if (processLoggingFile != null && processLoggingFile.exists()) {
+                    FileUtils.copyOrMoveFiles(false, [processLoggingFile], sipAndFilesFolder)
+                }
+            }
         }
 
         return processingParameters.sipProcessingState
@@ -178,6 +188,7 @@ class ReadyForIngestionProcessor {
         log.info("    targetForIngestionFolder=${processorConfiguration.targetForIngestionFolder.getCanonicalPath()}")
         log.info("    forReviewFolder=${processorConfiguration.forReviewFolder.getCanonicalPath()}")
         processorConfiguration.timekeeper.logElapsed()
+        Timekeeper processingTimekeeper = new DefaultTimekeeper()
 
         if (processorConfiguration.createDestination) {
             processorConfiguration.targetForIngestionFolder.mkdirs()
@@ -214,9 +225,14 @@ class ReadyForIngestionProcessor {
                 "process=${GeneralUtils.TOTAL_FORMAT.format(titleCodeFoldersAndDates.size())}")
         int numberOfThreads = processorConfiguration.parallelizeProcessing ? processorConfiguration.numberOfThreads : 1
         log.info("Processing over numberOfThreads=${numberOfThreads}")
+        ThreadedThumbnailGenerator.changeMaximumConcurrentThreads(processorConfiguration.maximumThumbnailPageThreads)
+        log.info("Maximum number of threads processing thumbnails=${processorConfiguration.maximumThumbnailPageThreads}")
 
         List<File> invalidFolders = Collections.synchronizedList([ ])
         // Process the collected directories across multiple threads
+        // Note for debugging: GParsExecutorPool and GParsPool will collect any exceptions thrown in the block and then
+        // list them after all the threads have finished processing everything in the block. This can make it difficult
+        // to debug.
         GParsExecutorsPool.withPool(numberOfThreads) {
             titleCodeFoldersAndDates.eachParallel { Tuple2<File, String> titleCodeFolderAndDateString ->
                 // we want to process this directory, which should be a <titleCode>
@@ -225,9 +241,14 @@ class ReadyForIngestionProcessor {
                 String dateString = titleCodeFolderAndDateString.second
                 LocalDate processingDate = LocalDate.parse(dateString, FairfaxFile.LOCAL_DATE_TIME_FORMATTER)
 
+                // Avoid issue when multiple threads iterating through this list.
+                List<ProcessingType> perThreadProcessingTypes = (List<ProcessingType>) this.processingTypes.clone()
+                List<ProcessingRule> perThreadOverrideRules = (List<ProcessingRule>) this.overrideProcessingRules.clone()
+                List<ProcessingOption> perThreadOverrideOptions = (List<ProcessingOption>) this.overrideProcessingOptions.clone()
+
                 List<FairfaxProcessingParameters> parametersList = FairfaxProcessingParameters.build(titleCode,
-                        this.processingTypes, titleCodeFolder, processingDate, fairfaxSpreadsheet,
-                        this.overrideProcessingRules, this.overrideProcessingOptions)
+                        perThreadProcessingTypes, titleCodeFolder, processingDate, fairfaxSpreadsheet,
+                        perThreadOverrideRules, perThreadOverrideOptions)
 
                 parametersList.each { FairfaxProcessingParameters processingParameters ->
                     if (!processingParameters.valid) {
@@ -254,6 +275,19 @@ class ReadyForIngestionProcessor {
                 log.warn("    titleCode=${titleCode}, invalid folder=${folder.getCanonicalPath()}")
             }
         }
+        log.info("END ready-for-ingestion with parameters:")
+        log.info("    startindDate=${processorConfiguration.startingDate}")
+        log.info("    endingDate=${processorConfiguration.endingDate}")
+        log.info("    sourceFolder=${processorConfiguration.sourceFolder.getCanonicalPath()}")
+        log.info("    targetForIngestionFolder=${processorConfiguration.targetForIngestionFolder.getCanonicalPath()}")
+        log.info("    forReviewFolder=${processorConfiguration.forReviewFolder.getCanonicalPath()}")
+        log.info("${System.lineSeparator()}${System.lineSeparator()}Summary:")
+        log.info("    Total folders processed=${GeneralUtils.TOTAL_FORMAT.format(titleCodeFoldersAndDates.size())}")
+        log.info("    Processed with over numberOfThreads=${GeneralUtils.TOTAL_FORMAT.format(numberOfThreads)}")
+        log.info("    Maximum number of threads processing thumbnails=${GeneralUtils.TOTAL_FORMAT.format(processorConfiguration.maximumThumbnailPageThreads)}")
+        processingTimekeeper.stop()
+        processingTimekeeper.logElapsed(false, titleCodeFoldersAndDates.size(), true)
+        log.info("${System.lineSeparator()}Total elapsed:")
+        processorConfiguration.timekeeper.logElapsed()
     }
-
 }
