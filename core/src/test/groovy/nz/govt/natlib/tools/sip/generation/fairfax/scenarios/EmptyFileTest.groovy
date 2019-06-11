@@ -131,8 +131,8 @@ class EmptyFileTest {
         assertThat("${expectedNumberOfUnrecognizedFiles} unrecognized files should have been processed",
                 testMethodState.sipProcessingState.unrecognizedFiles.size(), is(expectedNumberOfUnrecognizedFiles))
 
-        if (processingParameters.options.contains(ProcessingOption.GenerateProcessedPdfThumbnailsPage) &&
-                processingParameters.options.contains(ProcessingOption.AlwaysGenerateThumbnailPage)) {
+        // If a thumbnail page will be generated, then it will always generate because empty file is a processing exception.
+        if (processingParameters.options.contains(ProcessingOption.GenerateProcessedPdfThumbnailsPage)) {
             assertTrue("Thumbnail page exists, file=${processingParameters.thumbnailPageFile.getCanonicalPath()}",
                     processingParameters.thumbnailPageFile.exists())
             // We delete the file because we don't want it sticking around after the test
