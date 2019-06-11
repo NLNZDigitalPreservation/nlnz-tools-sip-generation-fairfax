@@ -98,12 +98,16 @@ class SeriesSequentialTest {
 
         File sourceFolder = new File(testMethodState.localPath)
         List<FairfaxProcessingParameters> parametersList = FairfaxProcessingParameters.build("TST",
-                [ ProcessingType.ParentGrouping ], sourceFolder, processingDate, testMethodState.fairfaxSpreadsheet)
+                [ ProcessingType.ParentGrouping ], sourceFolder, processingDate, testMethodState.fairfaxSpreadsheet,
+                [ ], [ ProcessingOption.AlwaysGenerateThumbnailPage ])
 
         assertThat("Only a single FairfaxProcessingParameters is returned, size=${parametersList.size()}",
                 parametersList.size(), is(1))
 
         FairfaxProcessingParameters processingParameters = parametersList.first()
+
+        assertTrue("Processing parameters always generates thumbnail page setting=${processingParameters.options}",
+                processingParameters.options.contains(ProcessingOption.GenerateProcessedPdfThumbnailsPage))
 
         processingParameters.sipProcessingState = testMethodState.sipProcessingState
         String sipAsXml = FairfaxFilesProcessor.processCollectedFiles(processingParameters, filesForProcessing)

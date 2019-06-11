@@ -17,7 +17,7 @@ import nz.govt.natlib.tools.sip.generation.fairfax.processor.type.SipForFolderPr
 import nz.govt.natlib.tools.sip.pdf.PdfValidator
 import nz.govt.natlib.tools.sip.pdf.PdfValidatorFactory
 import nz.govt.natlib.tools.sip.pdf.PdfValidatorType
-import nz.govt.natlib.tools.sip.pdf.thumbnail.ThumbnailGenerator
+import nz.govt.natlib.tools.sip.pdf.thumbnail.ThreadedThumbnailGenerator
 import nz.govt.natlib.tools.sip.pdf.thumbnail.ThumbnailParameters
 import nz.govt.natlib.tools.sip.state.SipProcessingException
 import nz.govt.natlib.tools.sip.state.SipProcessingExceptionReason
@@ -81,31 +81,6 @@ class FairfaxFilesProcessor {
                     break
             }
 
-            if (processingParameters.options.contains(ProcessingOption.GenerateProcessedPdfThumbnailsPage)) {
-                boolean doGenerate = processingParameters.options.contains(ProcessingOption.AlwaysGenerateThumbnailPage) ||
-                        (processingParameters.options.contains(ProcessingOption.SkipThumbnailPageGenerationWhenNoErrors) &&
-                                processingParameters.sipProcessingState.hasExceptions())
-                if (doGenerate) {
-                    if (!sortedFilesForProcessing.isEmpty()) {
-                        String readableDate = processingParameters.date.format(FairfaxProcessingParameters.READABLE_DATE_FORMAT)
-                        // TODO When we do more sophisticated processing the date-titleCode-type combination may not be enough to easily differentiate
-                        String thumbnailPagePrefix = "${readableDate}_${processingParameters.titleCode}_${processingParameters.type.fieldValue}_thumbnail_page"
-                        String thumbnailPageTitle = "${readableDate}_${processingParameters.titleCode}_${processingParameters.type.fieldValue}_thumbnail_page.jpeg"
-                        processingParameters.thumbnailPageFileFinalName = thumbnailPageTitle
-                        File thumbnailPageFile = File.createTempFile("${thumbnailPagePrefix}_", ".jpeg")
-                        ThumbnailParameters thumbnailParameters = new ThumbnailParameters(thumbnailHeight: 240,
-                                useAffineTransformation: false, textJustification: ThumbnailParameters.TextJustification.RIGHT,
-                                maximumPageWidth: 1200, pageTitleText: thumbnailPageTitle,
-                                pageTitleFontJustification: ThumbnailParameters.TextJustification.RIGHT)
-                        List<File> pdfFiles = sortedFilesForProcessing.collect { FairfaxFile sortedFile ->
-                            sortedFile.file
-                        }
-                        processingParameters.thumbnailPageFile = thumbnailPageFile
-                        ThumbnailGenerator.writeThumbnailPage(pdfFiles, thumbnailParameters, thumbnailPageFile)
-                    }
-                }
-            }
-
             processingParameters.sipProcessingState.ignoredFiles =
                     FairfaxFile.differences(validNamedFiles, sortedFilesForProcessing).
                             collect { FairfaxFile fairfaxFile ->
@@ -142,6 +117,10 @@ class FairfaxFilesProcessor {
                 }
             }
             checkForMissingSequenceFiles(successfulFiles)
+
+            generateThumbnailPage(successfulFiles)
+            // TODO If we are generating a thumbnail page when there are errors we may want to consider generating a
+            // TODO thumbnail page for ALL the files (this could help in understanding the problem).
 
             // The valid files should be filtered and sorted already
             sipAsXml = generateSipAsXml(successfulFiles, processingParameters.date)
@@ -284,6 +263,40 @@ class FairfaxFilesProcessor {
                 SipProcessingException sipProcessingException = SipProcessingException.createWithReason(exceptionReason)
                 processingParameters.sipProcessingState.addException(sipProcessingException)
                 log.warn(exceptionReason.toString())
+            }
+        }
+    }
+
+    boolean doGenerateThumbnailPage() {
+        boolean doGenerate = false
+        if (processingParameters.options.contains(ProcessingOption.GenerateProcessedPdfThumbnailsPage)) {
+            boolean alwaysGenerate = processingParameters.options.contains(ProcessingOption.AlwaysGenerateThumbnailPage)
+            boolean skipWhenErrorFree = processingParameters.options.contains(ProcessingOption.SkipThumbnailPageGenerationWhenNoErrors)
+            doGenerate = alwaysGenerate ||
+                    (skipWhenErrorFree && processingParameters.sipProcessingState.hasExceptions())
+        }
+        return doGenerate
+    }
+
+    void generateThumbnailPage(List<FairfaxFile> fairfaxPdfFiles) {
+        if (doGenerateThumbnailPage()) {
+            if (!fairfaxPdfFiles.isEmpty()) {
+                String readableDate = processingParameters.date.format(FairfaxProcessingParameters.READABLE_DATE_FORMAT)
+                // TODO When we do more sophisticated processing the date-titleCode-type combination may not be enough to easily differentiate
+                String thumbnailPagePrefix = "${readableDate}_${processingParameters.titleCode}_${processingParameters.type.fieldValue}_thumbnail_page"
+                String thumbnailPageTitle = "${readableDate}_${processingParameters.titleCode}_${processingParameters.type.fieldValue}_thumbnail_page.jpeg"
+                processingParameters.thumbnailPageFileFinalName = thumbnailPageTitle
+                File thumbnailPageFile = File.createTempFile("${thumbnailPagePrefix}_", ".jpeg")
+                ThumbnailParameters thumbnailParameters = new ThumbnailParameters(thumbnailHeight: 240,
+                        useAffineTransformation: false, textJustification: ThumbnailParameters.TextJustification.RIGHT,
+                        maximumPageWidth: 1200, pageTitleText: thumbnailPageTitle,
+                        pageTitleFontJustification: ThumbnailParameters.TextJustification.RIGHT)
+                List<File> pdfFiles = fairfaxPdfFiles.collect { FairfaxFile sortedFile ->
+                    sortedFile.file
+                }
+                processingParameters.thumbnailPageFile = thumbnailPageFile
+                log.info("Generating thumbnail page file=${thumbnailPageTitle} (created as temp file=${thumbnailPageFile.getCanonicalPath()})   ")
+                ThreadedThumbnailGenerator.writeThumbnailPage(pdfFiles, thumbnailParameters, thumbnailPageFile)
             }
         }
     }
