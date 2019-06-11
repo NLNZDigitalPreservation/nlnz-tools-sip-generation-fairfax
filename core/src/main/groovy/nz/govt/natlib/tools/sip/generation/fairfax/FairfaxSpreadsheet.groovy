@@ -29,7 +29,7 @@ class FairfaxSpreadsheet {
     Set<FairfaxFileTitleEditionKey> allTitleCodeSectionCodeKeys = [ ]
     Set<String> allTitleCodeKeys = [ ]
 
-    static Map<String, String> BLANK_ROW = [
+    static final Map<String, String> BLANK_ROW = [
         "MMSID": "UNKNOWN_MMSID",
         "title_parent": "UNKNOWN_TITLE",
         "processing_type": "NO_PROCESSING_TYPE_GIVEN",
@@ -41,7 +41,7 @@ class FairfaxSpreadsheet {
         "section_code": "",
         "Access": "200",
         "Magazine": "1"
-    ]
+    ].asImmutable()
 
     static Sip getBlankSip() {
         Sip sip = new Sip(title: 'UNKNOWN_TITLE', ieEntityType: IEEntityType.UNKNOWN,

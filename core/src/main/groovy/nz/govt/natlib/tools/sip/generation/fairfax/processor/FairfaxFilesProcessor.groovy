@@ -7,6 +7,7 @@ import nz.govt.natlib.tools.sip.SipFileWrapperFactory
 import nz.govt.natlib.tools.sip.generation.SipXmlGenerator
 import nz.govt.natlib.tools.sip.generation.fairfax.FairfaxFile
 import nz.govt.natlib.tools.sip.generation.fairfax.FairfaxProcessingParameters
+import nz.govt.natlib.tools.sip.generation.fairfax.FairfaxSpreadsheet
 import nz.govt.natlib.tools.sip.generation.fairfax.SipFactory
 import nz.govt.natlib.tools.sip.generation.fairfax.parameters.ProcessingOption
 import nz.govt.natlib.tools.sip.generation.fairfax.parameters.ProcessingRule
@@ -75,6 +76,19 @@ class FairfaxFilesProcessor {
                     break
                 case ProcessingType.CreateSipForFolder:
                     sortedFilesForProcessing = SipForFolderProcessor.selectAndSort(processingParameters, validNamedFiles)
+                    if (processingParameters.spreadsheetRow == FairfaxSpreadsheet.BLANK_ROW) {
+                        String detailedReason = "No matching spreadsheet row for titleCode=${processingParameters.titleCode}, " +
+                                "date=${processingParameters.date}, folder=${processingParameters.sourceFolder.canonicalPath}."
+                        SipProcessingExceptionReason exceptionReason = new SipProcessingExceptionReason(
+                                SipProcessingExceptionReasonType.NO_MATCHING_SIP_DEFINITION, null,
+                                detailedReason)
+                        SipProcessingException sipProcessingException = SipProcessingException.createWithReason(exceptionReason)
+                        processingParameters.sipProcessingState.addException(sipProcessingException)
+                        log.warn(detailedReason)
+                    } else {
+                        // TODO Should this be an error
+                        log.warn("ProcessingType.CreateSipForFolder should have SipProcessingException reason.")
+                    }
                     break
                 default:
                     sortedFilesForProcessing = []
