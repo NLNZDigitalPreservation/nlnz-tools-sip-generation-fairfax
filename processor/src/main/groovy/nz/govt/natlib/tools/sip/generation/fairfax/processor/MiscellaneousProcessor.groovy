@@ -6,7 +6,7 @@ import nz.govt.natlib.tools.sip.files.FilesFinder
 import nz.govt.natlib.tools.sip.generation.fairfax.FairfaxFile
 import nz.govt.natlib.tools.sip.logging.ThreadedTimekeeper
 import nz.govt.natlib.tools.sip.logging.Timekeeper
-import nz.govt.natlib.tools.sip.pdf.thumbnail.ThumbnailGenerator
+import nz.govt.natlib.tools.sip.pdf.thumbnail.ThreadedThumbnailGenerator
 import nz.govt.natlib.tools.sip.pdf.thumbnail.ThumbnailParameters
 import nz.govt.natlib.tools.sip.utils.FileUtils
 import nz.govt.natlib.tools.sip.utils.GeneralUtils
@@ -216,7 +216,7 @@ class MiscellaneousProcessor {
             log.info("START Generating thumbnail page from pdfs in sourceFolder=${sourceFolder.getCanonicalPath()}, thumbnailPage=${thumbnailPageFile.getCanonicalPath()}")
             Timekeeper singlePageTimekeeper = ThreadedTimekeeper.forCurrentThread()
             singlePageTimekeeper.start()
-            ThumbnailGenerator.writeThumbnailPage(pdfFiles, thumbnailParameters, thumbnailPageFile)
+            ThreadedThumbnailGenerator.writeThumbnailPage(pdfFiles, thumbnailParameters, thumbnailPageFile)
             log.info("END Generated thumbnail page from pdfs in sourceFolder=${sourceFolder.getCanonicalPath()}, thumbnailPage=${thumbnailPageFile.getCanonicalPath()}")
             singlePageTimekeeper.logElapsed()
         }
@@ -238,6 +238,10 @@ class MiscellaneousProcessor {
             }
             int numberOfThreads = processorConfiguration.parallelizeProcessing ? processorConfiguration.numberOfThreads : 1
             log.info("Processing over numberOfThreads=${numberOfThreads}")
+
+            ThreadedThumbnailGenerator.changeMaximumConcurrentThreads(processorConfiguration.maximumThumbnailPageThreads)
+            log.info("Maximum number of threads processing thumbnails=${processorConfiguration.maximumThumbnailPageThreads}")
+
             log.info("Starting processing total subdirectories=${allSubdirectories.size()}")
             GParsExecutorsPool.withPool(numberOfThreads) {
                 allSubdirectories.eachParallel { File subdirectory ->

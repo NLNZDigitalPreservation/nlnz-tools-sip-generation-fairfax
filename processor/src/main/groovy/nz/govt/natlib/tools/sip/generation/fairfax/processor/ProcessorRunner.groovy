@@ -31,6 +31,7 @@ Output is ready for ingestion by Rosetta.
 Requires sourceFolder, targetForIngestionFolder, forReviewFolder, processingType.
 Uses startingDate, endingDate.
 Optional createDestination. Note that moveFiles is not supported at this time.
+Optional maximumThumbnailPageThreads.
 This is a processing operation and must run exclusively of other processing operations.""")
     boolean readyForIngestion = false
 
@@ -82,9 +83,16 @@ Operations that have components that can run in parallel currently are:
     --preProcess, --readyForIngestion, --generateThumbnailPageFromPdfs""")
     boolean parallelizeProcessing = false
 
-    @Option(names = ["--numberOfThreads"], description = """Number of threads when running operations in parallel.
+    @Option(names = ["--numberOfThreads"], paramLabel = "NUMBER_OF_THREADS",
+            description = """Number of threads when running operations in parallel.
 The default is 1.""")
     int numberOfThreads = 1
+
+    @Option(names = ["--maximumThumbnailPageThreads"], paramLabel = "MAXIMUM_THUMBNAIL_PAGE_THREADS",
+            description = """Maximum of threads that can be used to generate thumbnail pages when running operations in parallel.
+The default is 1.
+This limit is in place because thumbnail page generation can be quite resource intensive and can overload the JVM.""")
+    int maximumThumbnailPageThreads = 1
 
     @Option(names = ["--moveOrCopyEvenIfNoRosettaDoneFile" ],
             description = """Whether the move or copy takes place even if there is no Rosetta done file.
@@ -133,7 +141,7 @@ This is the destination folder used when no other destination folders are specif
             description = """target post-processed folder in the format /path/to/folder""")
     File targetPostProcessedFolder
 
-    @Option(names = ["--forIngestionProcessingTypes"], paramLabel = "PROCESSING_TYPE",
+    @Option(names = ["--forIngestionProcessingTypes"], paramLabel = "PROCESSING_TYPES",
             description = """Comma-separated list of for-ingestion processing types.
 A pre-processing titleCode folder should only be processed once for a single processing type.
 It may be possible for multiple processing types to apply to the same folder, producing different SIPs.""")
@@ -214,6 +222,7 @@ See the class ProcessorOption for a list of what those options are.""")
         log.info("        createDestination=${createDestination}")
         log.info("        parallelizeProcessing=${parallelizeProcessing}")
         log.info("        numberOfThreads=${numberOfThreads}")
+        log.info("        maximumThumbnailPageThreads=${maximumThumbnailPageThreads}")
         log.info("        generalProcessingOptions=${generalProcessingOptions}")
         log.info("        moveOrCopyEvenIfNoRosettaDoneFile=${moveOrCopyEvenIfNoRosettaDoneFile}")
         log.info("        includeDetailedTimings=${includeDetailedTimings}")
