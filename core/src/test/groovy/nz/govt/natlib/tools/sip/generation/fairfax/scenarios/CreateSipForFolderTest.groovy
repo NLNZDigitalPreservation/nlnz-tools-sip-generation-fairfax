@@ -10,6 +10,7 @@ import nz.govt.natlib.tools.sip.generation.fairfax.FairfaxProcessingParameters
 import nz.govt.natlib.tools.sip.generation.fairfax.TestHelper
 import nz.govt.natlib.tools.sip.generation.fairfax.TestHelper.TestMethodState
 import nz.govt.natlib.tools.sip.generation.fairfax.parameters.ProcessingType
+import nz.govt.natlib.tools.sip.state.SipProcessingExceptionReasonType
 import org.junit.Before
 import org.junit.Ignore
 import org.junit.Test
@@ -154,7 +155,7 @@ class CreateSipForFolderTest {
         assertTrue("SipXmlExtractor has content", sipForValidation.xml.length() > 0)
 
         assertTrue("SipProcessingState is complete", testMethodState.sipProcessingState.isComplete())
-        assertTrue("SipProcessingState is successful", testMethodState.sipProcessingState.isSuccessful())
+        TestHelper.assertExpectedExceptionReason(testMethodState.sipProcessingState, SipProcessingExceptionReasonType.NO_MATCHING_SIP_DEFINITION)
 
         TestHelper.assertExpectedSipMetadataValues(sipForValidation, "UNKNOWN_TITLE", 2018, 11, 23,
                 IEEntityType.MagazineIE, "ALMAMMS", "UNKNOWN_MMSID",
