@@ -89,11 +89,33 @@ class FairfaxProcessingParameters {
                     }
                 }
             }
-            parametersList.each { FairfaxProcessingParameters parameters ->
-                parameters.applyOverrides(overrideRules, overrideOptions)
+        }
+        parametersList.each { FairfaxProcessingParameters parameters ->
+            parameters.applyOverrides(overrideRules, overrideOptions)
+        }
+        List<FairfaxProcessingParameters> editionExpandedList = [ ]
+        parametersList.each { FairfaxProcessingParameters processingParameters ->
+            boolean hasMultipleEditions = processingParameters.editionDiscriminators.size() > 0
+            if (hasMultipleEditions) {
+                processingParameters.editionDiscriminators.each { String editionDiscriminator ->
+                    boolean hasMatchingEdition = true
+                    if (processingParameters.rules.contains(ProcessingRule.IgnoreEditionsWithoutMatchingFiles)) {
+                        List<FairfaxFile> allFairfaxFiles = FairfaxFile.fromSourceFolder(sourceFolder, fileFindPattern)
+                        hasMatchingEdition = allFairfaxFiles.any { FairfaxFile fairfaxFile ->
+                            editionDiscriminator == fairfaxFile.sectionCode
+                        }
+                    }
+                    if (hasMatchingEdition) {
+                        FairfaxProcessingParameters clonedParameters = (FairfaxProcessingParameters) processingParameters.clone()
+                        clonedParameters.currentEdition = editionDiscriminator
+                        editionExpandedList.add(clonedParameters)
+                    }
+                }
+            } else {
+                editionExpandedList.add(processingParameters)
             }
         }
-        return parametersList
+        return editionExpandedList
     }
 
     static FairfaxProcessingParameters buildForRows(String titleCode, ProcessingType processingType,
@@ -172,11 +194,19 @@ class FairfaxProcessingParameters {
 
     static List<String> extractSeparatedValues(Map<String, String> spreadsheetRow, String columnKey,
                                                String regex = "\\+|,|-") {
-        List<String> extractedValues = spreadsheetRow.get(columnKey).split(regex).collect { String value ->
-                    value.strip()
-                }
+        List<String> extractedValues = splitColumnValue(spreadsheetRow.get(columnKey), regex)
 
         return extractedValues
+    }
+
+    static List<String> splitColumnValue(String columnValue, String regex = "\\+|,|-") {
+        List<String> extractedValues = columnValue.split(regex).collect { String value ->
+            value.strip()
+        }
+
+        return extractedValues.findAll { String value ->
+            !value.isBlank()
+        }
     }
 
     void applyOverrides(List<ProcessingRule> overrideRules, List<ProcessingOption> overrideOptions) {
@@ -216,7 +246,7 @@ class FairfaxProcessingParameters {
 
     List<String> validSectionCodes() {
         if (!hasCurrentEdition()) {
-            return this.sectionCodes.clone()
+            return (List<String>) this.sectionCodes.clone()
         }
         List<String> validSectionCodes = [ ]
         if (this.currentEdition != this.editionDiscriminators.first()) {
