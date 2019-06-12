@@ -295,10 +295,9 @@ class FairfaxFilesProcessor {
     void generateThumbnailPage(List<FairfaxFile> fairfaxPdfFiles) {
         if (doGenerateThumbnailPage()) {
             if (!fairfaxPdfFiles.isEmpty()) {
-                String readableDate = processingParameters.date.format(FairfaxProcessingParameters.READABLE_DATE_FORMAT)
-                // TODO When we do more sophisticated processing the date-titleCode-type combination may not be enough to easily differentiate
-                String thumbnailPagePrefix = "${readableDate}_${processingParameters.titleCode}_${processingParameters.type.fieldValue}_thumbnail_page"
-                String thumbnailPageTitle = "${readableDate}_${processingParameters.titleCode}_${processingParameters.type.fieldValue}_thumbnail_page.jpeg"
+                String processingDifferentiator = processingParameters.processingDifferentiator()
+                String thumbnailPagePrefix = "${processingDifferentiator}_thumbnail_page"
+                String thumbnailPageTitle = "${processingDifferentiator}_thumbnail_page.jpeg"
                 processingParameters.thumbnailPageFileFinalName = thumbnailPageTitle
                 File thumbnailPageFile = File.createTempFile("${thumbnailPagePrefix}_", ".jpeg")
                 ThumbnailParameters thumbnailParameters = new ThumbnailParameters(thumbnailHeight: 240,

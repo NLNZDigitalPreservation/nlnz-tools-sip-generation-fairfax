@@ -254,17 +254,8 @@ class ReadyForIngestionProcessor {
                     if (!processingParameters.valid) {
                         invalidFolders.add(titleCodeFolder)
                     }
-                    if (processingParameters.rules.contains(ProcessingRule.MultipleEditions)) {
-                        processingParameters.editionDiscriminators.each { String editionDiscriminator ->
-                            FairfaxProcessingParameters editionParameters = processingParameters.clone()
-                            editionParameters.currentEdition = editionDiscriminator
-                            processTitleCodeFolder(editionParameters, processorConfiguration.targetForIngestionFolder,
-                                    processorConfiguration.forReviewFolder, dateString)
-                        }
-                    } else {
-                        processTitleCodeFolder(processingParameters, processorConfiguration.targetForIngestionFolder,
-                                processorConfiguration.forReviewFolder, dateString)
-                    }
+                    processTitleCodeFolder(processingParameters, processorConfiguration.targetForIngestionFolder,
+                            processorConfiguration.forReviewFolder, dateString)
                 }
             }
         }
