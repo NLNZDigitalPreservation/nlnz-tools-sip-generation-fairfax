@@ -15,12 +15,12 @@ class FairfaxSpreadsheet {
     static String DEFAULT_FIELD_SEPARATOR = "|"
     static String MMSID_COLUMN_NAME = "MMSID"
     static String PROCESSING_TYPE_KEY = "processing_type"
-    static String PROCESSING_RULES_KEY = "processing_rule"
-    static String PROCESSING_OPTIONS_KEY = "processing_option"
+    static String PROCESSING_RULES_KEY = "processing_rules"
+    static String PROCESSING_OPTIONS_KEY = "processing_options"
     static String TITLE_CODE_KEY = "title_code"
-    static String SECTION_CODE_KEY = "section_code"
+    static String SECTION_CODE_KEY = "section_codes"
     static String TITLE_PARENT_KEY = "title_parent"
-    static String EDITION_DISCRIMINATOR_KEY = "edition_discriminator"
+    static String EDITION_DISCRIMINATOR_KEY = "edition_discriminators"
     static String IS_MAGAZINE_KEY = "Magazine"
 
     Spreadsheet spreadsheet
@@ -33,12 +33,12 @@ class FairfaxSpreadsheet {
         "MMSID": "UNKNOWN_MMSID",
         "title_parent": "UNKNOWN_TITLE",
         "processing_type": "NO_PROCESSING_TYPE_GIVEN",
-        "processing_rule": "",
-        "processing_option": "",
+        "processing_rules": "",
+        "processing_options": "",
         "publication_key": "",
         "title_code": "NO_TITLE_CODE_GIVEN",
-        "edition_discriminator": "",
-        "section_code": "",
+        "edition_discriminators": "",
+        "section_codes": "",
         "Access": "200",
         "Magazine": "1"
     ].asImmutable()

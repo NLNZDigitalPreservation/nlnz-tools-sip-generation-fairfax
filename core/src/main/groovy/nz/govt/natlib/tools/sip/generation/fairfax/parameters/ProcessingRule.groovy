@@ -9,8 +9,10 @@ enum ProcessingRule {
     HandleUnrecognised("handle_unrecognised"),
     HandleInvalid("handle_invalid"),
     Manual("manual"),
-    MultipleEditions("multiple_editions"),
-    SingleEdition("single_edition"),
+    ProcessAllEditions("process_all_editions"),
+    IgnoreEditionsWithoutMatchingFiles("ignore_editions_without_files"),
+    EditionDiscriminatorsUsingSmartSubstitute("edition_discriminators_using_smart_substitute"),
+    EditionDiscriminatorsNotUsingSmartSubstitute("edition_discriminators_not_using_smart_substitute"),
     AllSectionsInSipRequired("required_all_sections_in_sip"),
     AllSectionsInSipOptional("optional_all_sections_in_sip"),
     MissingSequenceIgnored("missing_sequence_is_ignored"),
@@ -23,12 +25,14 @@ enum ProcessingRule {
     static {
         values().each { ProcessingRule processingRule ->
             LOOKUP_BY_FIELD_VALUE.put(processingRule.fieldValue, processingRule)
-            OVERRIDES_MAP.put(MultipleEditions, [ SingleEdition ])
-            OVERRIDES_MAP.put(SingleEdition, [ MultipleEditions ])
+            OVERRIDES_MAP.put(ProcessAllEditions, [ IgnoreEditionsWithoutMatchingFiles ])
+            OVERRIDES_MAP.put(IgnoreEditionsWithoutMatchingFiles, [ ProcessAllEditions ])
             OVERRIDES_MAP.put(AllSectionsInSipRequired, [ AllSectionsInSipOptional ])
             OVERRIDES_MAP.put(AllSectionsInSipOptional, [ AllSectionsInSipRequired ])
             OVERRIDES_MAP.put(MissingSequenceIgnored, [ MissingSequenceError ])
             OVERRIDES_MAP.put(MissingSequenceError, [ MissingSequenceIgnored ])
+            OVERRIDES_MAP.put(EditionDiscriminatorsUsingSmartSubstitute, [EditionDiscriminatorsNotUsingSmartSubstitute ])
+            OVERRIDES_MAP.put(EditionDiscriminatorsNotUsingSmartSubstitute, [EditionDiscriminatorsUsingSmartSubstitute ])
         }
     }
 

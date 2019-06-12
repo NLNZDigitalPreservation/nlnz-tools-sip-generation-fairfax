@@ -1,4 +1,4 @@
-MMSID|title_parent|processing_type|processing_rule|processing_option|publication_key|title_code|edition_discriminator|section_code|Access|Magazine|ingest_status|Frequency|entity_type|title_mets|ISSN online|Bib ID|Access condition|Date catalogued|Collector_folder|Cataloguer|Notes|first_issue_starting_page|last_issue_starting_page|has_volume_md|has_issue_md|has_number_md|previous_volume|previous_volume_date|previous_volume_frequency|previous_issue|previous_issue_date|previous_issue_frequency|previous_number|previous_number_date|previous_number_frequency
+MMSID|title_parent|processing_type|processing_rules|processing_options|publication_key|title_code|edition_discriminators|section_codes|Access|Magazine|ingest_status|Frequency|entity_type|title_mets|ISSN online|Bib ID|Access condition|Date catalogued|Collector_folder|Cataloguer|Notes|first_issue_starting_page|last_issue_starting_page|has_volume_md|has_issue_md|has_number_md|previous_volume|previous_volume_date|previous_volume_frequency|previous_issue|previous_issue_date|previous_issue_frequency|previous_number|previous_number_date|previous_number_frequency
 #
 # File for working with Fairfax ingestion
 # All lines starting with '#' are considered comments and ignored.
@@ -17,13 +17,14 @@ MMSID|title_parent|processing_type|processing_rule|processing_option|publication
 # processing_rule: There can be multiple processing rules for a given row
 #     Current processing rules:
 #         handle_unprocessed, handle_unrecognised, handle_invalid,
-#         single_edition, multiple_edition, manual,
+#         process_all_editions, ignore_editions_without_files, manual,
 #         required_all_sections_in_sip, optional_all_sections_in_sip,
 #         missing_sequence_is_error, missing_sequence_is_ignored,
+#         edition_discriminators_using_smart_substitute, edition_discriminators_not_using_smart_substitute
 # processing_option: There can be multiple processing options for a given row
 #     Current procession options:
-#         alpha_before_numeric, numeric_before_alpha, any_first_section_code
-#         generate_processed_pdf_thumbnails_page, do_not_generate_processed_pdf_thumbnails_page
+#         alpha_before_numeric, numeric_before_alpha, any_first_section_code,
+#         generate_processed_pdf_thumbnails_page, do_not_generate_processed_pdf_thumbnails_page,
 #         skip_generation_thumbnail_page_when_error_free, always_generate_thumbnail_page
 # Certain processing types have default rules and options:
 #     parent_grouping: required_all_sections_in_sip, numeric_before_alpha, missing_sequence_is_error,
@@ -216,9 +217,9 @@ MMSID|title_parent|processing_type|processing_rule|processing_option|publication
 9917906003502836|The Press|supplement_grouping||||PRS||YWE|200|0|SUP||SS|Your weekend||1790600|200|27/05/2016|The_Press|Andrew R|Fairfax updated title code|||0|0|0|||||||||
 9918647057402836|The Press|supplement_grouping|||title_code|PRS||TAB|200|0|TEC||PER|Homed|||||TBD||New title. Need missing pages. May be a continuation of At home (The Press)|||0|0|0|||||||||
 9918647057502836|Property weekly|parent_grouping|||title_code|PWM||ED1|200|0|TEC||PER|Property weekly|||||TBD||New title. Need missing pages|||0|0|0|||||||||
-9917975563502836|Mirror|parent_grouping_with_edition|||title_code_section_code|QCM|ED1|ED1|200|0|STC||PER|Mirror (Queenstown)||1797556|100-P|24/06/2016|Mirror|Jenny|This edition has largely same content as Queenstown, with a few pages specific to this edition, fairfax files only show specific otago ed pages.|||0|0|0|||||||||
-9917975673502836|Mirror|parent_grouping_with_edition|||title_code_section_code|QCM|ED2|ED2|200|0|STC||PER|Mirror (Central Otago)||1797567|100-P|24/06/2016|Mirror|Jenny|This edition has largely same content as Queenstown, with a few pages specific to this edition, fairfax files only show specific Wanaka ed pages.|||0|0|0|||||||||
-9917975753502836|Mirror|parent_grouping_with_edition|||title_code_section_code|QCM|ED3|ED3|200|0|STC||PER|Mirror (Wanaka)||1797575|100-P|24/06/2016|Mirror|Jenny|Advised JG - Too hard for this iteration because of the versioning/editions stuff 22/9/17|||0|0|0|||||||||
+9917975563502836|Mirror|parent_grouping_with_edition|edition_discriminators_using_smart_substitute||title_code_section_code|QCM|ED1|ED1|200|0|STC||PER|Mirror (Queenstown)||1797556|100-P|24/06/2016|Mirror|Jenny|This edition has largely same content as Queenstown, with a few pages specific to this edition, fairfax files only show specific otago ed pages.|||0|0|0|||||||||
+9917975673502836|Mirror|parent_grouping_with_edition|edition_discriminators_using_smart_substitute||title_code_section_code|QCM|ED2|ED1|200|0|STC||PER|Mirror (Central Otago)||1797567|100-P|24/06/2016|Mirror|Jenny|This edition has largely same content as Queenstown, with a few pages specific to this edition, fairfax files only show specific Wanaka ed pages.|||0|0|0|||||||||
+9917975753502836|Mirror|parent_grouping_with_edition|edition_discriminators_using_smart_substitute||title_code_section_code|QCM|ED3|ED1|200|0|STC||PER|Mirror (Wanaka)||1797575|100-P|24/06/2016|Mirror|Jenny|Advised JG - Too hard for this iteration because of the versioning/editions stuff 22/9/17|||0|0|0|||||||||
 9917975563502836|Mirror|parent_grouping|manual||title_code_section_code|QUM||ED1|200|0|STC||PER|Mirror (Queenstown)||1797556|100-P|24/06/2016|Mirror|Jenny|This edition has largely same content as Queenstown, with a few pages specific to this edition, fairfax files only show specific otago ed pages.|||0|0|0|||||||||
 9917975673502836|Mirror|parent_grouping|manual||title_code_section_code|QUM||ED2|200|0|STC||PER|Mirror (Central Otago)||1797567|100-P|24/06/2016|Mirror|Jenny|This edition has largely same content as Queenstown, with a few pages specific to this edition, fairfax files only show specific Wanaka ed pages.|||0|0|0|||||||||
 9917975753502836|Mirror|parent_grouping|manual||title_code_section_code|QUM||ED3|200|0|STC||PER|Mirror (Wanaka)||1797575|100-P|24/06/2016|Mirror|Jenny|Advised JG - Too hard for this iteration because of the versioning/editions stuff 22/9/17|||0|0|0|||||||||

@@ -8,7 +8,6 @@ import groovy.util.logging.Log4j2
 import nz.govt.natlib.tools.sip.Sip
 import nz.govt.natlib.tools.sip.SipFileWrapperFactory
 import nz.govt.natlib.tools.sip.generation.fairfax.parameters.ProcessingOption
-import nz.govt.natlib.tools.sip.logging.DefaultTimekeeper
 import nz.govt.natlib.tools.sip.utils.FileUtils
 import org.apache.commons.collections4.CollectionUtils
 
@@ -193,6 +192,7 @@ class FairfaxFile {
             // Then we do the substitutions
             // Substitutions happen if the FIRST editionDiscriminator has a substitution with the same date/sequenceLetter/sequenceNumber
             String firstDiscriminatorCode = processingParameters.editionDiscriminators.first()
+
             boolean hasSubstitutions = hasSubstitutions(processingParameters.currentEdition, filtered)
             if (hasSubstitutions) {
                 List<FairfaxFile> substituted = substituteAllFor(firstDiscriminatorCode,
