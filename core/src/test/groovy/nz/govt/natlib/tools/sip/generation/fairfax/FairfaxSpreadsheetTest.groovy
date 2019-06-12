@@ -28,7 +28,7 @@ class FairfaxSpreadsheetTest {
         assertThat("'title_parent' is 'Country Living'", mapsForCountryLiving.get("title_parent"), is("Country Living"))
         assertThat("'MMSID' is 9918150268002836", mapsForCountryLiving.get("MMSID"), is("9918150268002836"))
         assertThat("'title_code' is 'CL4'", mapsForCountryLiving.get("title_code"), is("CL4"))
-        assertThat("'section_code' is 'ED1'", mapsForCountryLiving.get("section_code"), is("ED1"))
+        assertThat("'section_codes' is 'ED1'", mapsForCountryLiving.get("section_codes"), is("ED1"))
 
         assertThat("titleParent for titleCode: CL4 sectionCode: ED1 is 'Country Living'", fairfaxSpreadsheet.getTitleParentForTitleCodeSectionCode('CL4', 'ED1'),
                 is('Country Living'))

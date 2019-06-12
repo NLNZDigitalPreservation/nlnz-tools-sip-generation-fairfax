@@ -10,30 +10,30 @@ class ProcessingRuleTest {
 
     @Test
     void correctlyMergesOverridesWhenOverrideExists() {
-        List<ProcessingRule> current = [ ProcessingRule.MultipleEditions, ProcessingRule.HandleUnrecognised ]
-        List<ProcessingRule> overrides = [ ProcessingRule.SingleEdition ]
+        List<ProcessingRule> current = [ ProcessingRule.AllSectionsInSipRequired, ProcessingRule.HandleUnrecognised ]
+        List<ProcessingRule> overrides = [ ProcessingRule.AllSectionsInSipOptional ]
         List<ProcessingRule> merged = ProcessingRule.mergeOverrides(current, overrides)
 
-        List<ProcessingRule> expected = [ ProcessingRule.SingleEdition, ProcessingRule.HandleUnrecognised ]
+        List<ProcessingRule> expected = [ ProcessingRule.AllSectionsInSipOptional, ProcessingRule.HandleUnrecognised ]
         assertThat("ProcessingRule merges correctly", merged, is(expected))
     }
 
     @Test
     void correctlyMergesOverridesWhenOverrideDoesNotExist() {
         List<ProcessingRule> current = [ ProcessingRule.HandleUnprocessed, ProcessingRule.HandleUnrecognised ]
-        List<ProcessingRule> overrides = [ ProcessingRule.SingleEdition ]
+        List<ProcessingRule> overrides = [ ProcessingRule.AllSectionsInSipOptional ]
         List<ProcessingRule> merged = ProcessingRule.mergeOverrides(current, overrides)
 
         List<ProcessingRule> expected = [ ProcessingRule.HandleUnprocessed, ProcessingRule.HandleUnrecognised,
-                                          ProcessingRule.SingleEdition ]
+                                          ProcessingRule.AllSectionsInSipOptional ]
         assertThat("ProcessingRule merges correctly", merged, is(expected))
     }
 
     @Test
     void extractsCorrectlyWithoutDefaults() {
-        List<ProcessingRule> rules = ProcessingRule.extract("handle_unprocessed,multiple_editions",
+        List<ProcessingRule> rules = ProcessingRule.extract("handle_unprocessed,required_all_sections_in_sip",
                 ",", [ ], true)
-        List<ProcessingRule> expected = [ ProcessingRule.HandleUnprocessed, ProcessingRule.MultipleEditions ]
+        List<ProcessingRule> expected = [ ProcessingRule.HandleUnprocessed, ProcessingRule.AllSectionsInSipRequired ]
         assertThat("ProcessingRule extracted without defaults correctly", rules, is(expected))
     }
 
@@ -56,7 +56,7 @@ class ProcessingRuleTest {
 
     @Test(expected = SipProcessingException.class)
     void throwsExceptionWithUnrecognizedRule() {
-        List<ProcessingRule> rules = ProcessingRule.extract("multiple_editions,unrecognized_rule", ",", [ ],true)
-        assertThat("This point should not be reached", rules, is([ ProcessingRule.MultipleEditions]))
+        List<ProcessingRule> rules = ProcessingRule.extract("required_all_sections_in_sip,unrecognized_rule", ",", [ ],true)
+        assertThat("This point should not be reached", rules, is([ ProcessingRule.AllSectionsInSipRequired]))
     }
 }

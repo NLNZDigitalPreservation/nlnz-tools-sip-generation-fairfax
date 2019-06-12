@@ -7,19 +7,23 @@ import nz.govt.natlib.tools.sip.state.SipProcessingException
 enum ProcessingType {
     // Note that declaration order is the sorting order
     ParentGroupingWithEdition("parent_grouping_with_edition",
-            [ ProcessingRule.AllSectionsInSipRequired, ProcessingRule.MissingSequenceError ],
+            [ ProcessingRule.AllSectionsInSipRequired, ProcessingRule.MissingSequenceError,
+              ProcessingRule.IgnoreEditionsWithoutMatchingFiles ],
             [ ProcessingOption.NumericBeforeAlphaSequencing, ProcessingOption.GenerateProcessedPdfThumbnailsPage,
               ProcessingOption.SkipThumbnailPageGenerationWhenNoErrors ]),
     ParentGrouping("parent_grouping",
-            [ ProcessingRule.AllSectionsInSipRequired, ProcessingRule.MissingSequenceError ],
+            [ ProcessingRule.AllSectionsInSipRequired, ProcessingRule.MissingSequenceError,
+              ProcessingRule.IgnoreEditionsWithoutMatchingFiles ],
             [ ProcessingOption.NumericBeforeAlphaSequencing, ProcessingOption.GenerateProcessedPdfThumbnailsPage,
               ProcessingOption.SkipThumbnailPageGenerationWhenNoErrors ]),
     SupplementGrouping("supplement_grouping",
-            [ ProcessingRule.AllSectionsInSipOptional, ProcessingRule.MissingSequenceError ],
+            [ ProcessingRule.AllSectionsInSipOptional, ProcessingRule.MissingSequenceError,
+              ProcessingRule.IgnoreEditionsWithoutMatchingFiles ],
             [ ProcessingOption.NumericBeforeAlphaSequencing, ProcessingOption.GenerateProcessedPdfThumbnailsPage,
               ProcessingOption.SkipThumbnailPageGenerationWhenNoErrors ]),
     CreateSipForFolder("create_sip_for_folder",
-            [ ProcessingRule.AllSectionsInSipRequired, ProcessingRule.MissingSequenceError ],
+            [ ProcessingRule.AllSectionsInSipRequired, ProcessingRule.MissingSequenceError,
+              ProcessingRule.IgnoreEditionsWithoutMatchingFiles ],
             [ ProcessingOption.NumericBeforeAlphaSequencing, ProcessingOption.GenerateProcessedPdfThumbnailsPage,
               ProcessingOption.SkipThumbnailPageGenerationWhenNoErrors ])
 
