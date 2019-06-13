@@ -20,13 +20,24 @@ class SipFactory {
     static Sip fromMap(Map<String, String> parameterMap, List<File> files = [ ], boolean useFilenameOnly = false,
                        boolean generateMD5Hash = false) {
         String title = parameterMap.get(TITLE_PARENT_KEY)
-        boolean isMagazine = "1" == parameterMap.get(IS_MAGAZINE_KEY)
         String almaMmsId = parameterMap.get(ALMA_MMS_ID_KEY)
         String policyId = parameterMap.get(POLICY_ID_KEY)
 
         Sip sip = new Sip()
         sip.title = title
-        sip.ieEntityType = isMagazine ? IEEntityType.MagazineIE : IEEntityType.NewspaperIE
+
+        String magazineValue = parameterMap.get(IS_MAGAZINE_KEY)
+        switch (magazineValue) {
+            case ("1"):
+                sip.ieEntityType = IEEntityType.MagazineIE
+                break
+            case ("0"):
+                sip.ieEntityType = IEEntityType.NewspaperIE
+                break
+            default:
+                sip.ieEntityType = IEEntityType.UNKNOWN
+                break
+        }
         sip.objectIdentifierType = Sip.OBJECT_IDENTIFIER_TYPE_ALMA_MMS
         sip.objectIdentifierValue = almaMmsId
         sip.policyId = policyId

@@ -74,12 +74,12 @@ class ReadyForIngestionProcessor {
             if (sipProcessingState.identifier != null) {
                 folderName = "${folderName}_${sipProcessingState.identifier}"
             }
+            String typeFolderNamePath = "${sipProcessingState.ieEntityType.getDisplayName()}${File.separator}${folderName}"
             if (sipProcessingState.complete && sipProcessingState.successful) {
-                sipAndFilesFolder = new File(destinationFolder,
-                        "${sipProcessingState.ieEntityType.getDisplayName()}/${folderName}")
+                sipAndFilesFolder = new File(destinationFolder, typeFolderNamePath)
             } else {
                 sipAndFilesFolder = new File(forReviewFolder,
-                        "${sipProcessingState.ieEntityType.getDisplayName()}/${folderName}")
+                        "${sipProcessingState.failureReasonSummary}${File.separator}${typeFolderNamePath}")
             }
             File contentStreamsFolder = new File(sipAndFilesFolder, "content/streams")
             // Note that unrecognized only gets moved/copied if ProcessingRule.HandleUnrecognised
