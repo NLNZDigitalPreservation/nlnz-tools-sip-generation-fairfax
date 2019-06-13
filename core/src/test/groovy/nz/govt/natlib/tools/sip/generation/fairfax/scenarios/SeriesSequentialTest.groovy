@@ -5,11 +5,13 @@ import nz.govt.natlib.tools.sip.IEEntityType
 import nz.govt.natlib.tools.sip.extraction.SipXmlExtractor
 import nz.govt.natlib.tools.sip.generation.fairfax.FairfaxFile
 import nz.govt.natlib.tools.sip.generation.fairfax.parameters.ProcessingOption
+import nz.govt.natlib.tools.sip.generation.fairfax.parameters.ProcessingRule
 import nz.govt.natlib.tools.sip.generation.fairfax.processor.FairfaxFilesProcessor
 import nz.govt.natlib.tools.sip.generation.fairfax.FairfaxProcessingParameters
 import nz.govt.natlib.tools.sip.generation.fairfax.TestHelper
 import nz.govt.natlib.tools.sip.generation.fairfax.TestHelper.TestMethodState
 import nz.govt.natlib.tools.sip.generation.fairfax.parameters.ProcessingType
+import nz.govt.natlib.tools.sip.state.SipProcessingExceptionReasonType
 import org.junit.Before
 import org.junit.Ignore
 import org.junit.Test
@@ -53,7 +55,7 @@ class SeriesSequentialTest {
     }
 
     /**
-     * Note to developers: Ensure that this is exactly the same test as {@link #correctlyAssembleSipFromFiles()}, except
+     * Note to developers: Ensure that this is exactly the same test as {@link #correctlyAssembleSipFromFilesNoRuleOverrides()}, except
      * that this test only reads from the file system, not a resource file.
      *
      * This test should use the local filesystem when running from within an IDE.
@@ -63,7 +65,26 @@ class SeriesSequentialTest {
     @Test
     // TODO Ignore this test before making a code commit
     @Ignore
-    void correctlyAssembleSipFromFilesOnFilesystem() {
+    void correctlyAssembleSipFromFilesOnFilesystemNoRuleOverrides() {
+        correctlyAssembleSipFromFilesOnFilesystem([ ])
+    }
+
+    /**
+     * Note to developers: Ensure that this is exactly the same test as {@link #correctlyAssembleSipFromFilesOnFilesystemManualProcessing()}, except
+     * that this test only reads from the file system, not a resource file.
+     *
+     * This test should use the local filesystem when running from within an IDE.
+     *
+     * This test then becomes a starting point for scripts that create and process SIPs.
+     */
+    @Test
+    // TODO Ignore this test before making a code commit
+    @Ignore
+    void correctlyAssembleSipFromFilesOnFilesystemManualProcessing() {
+        correctlyAssembleSipFromFilesOnFilesystem([ ProcessingRule.Manual ])
+    }
+
+    void correctlyAssembleSipFromFilesOnFilesystem(List<ProcessingRule> overrideRules) {
         boolean forLocalFilesystem = true
         TestHelper.initializeTestMethod(testMethodState, "SeriesSequentialTest-", forLocalFilesystem)
 
@@ -74,11 +95,20 @@ class SeriesSequentialTest {
         List<File> filesForProcessing = TestHelper.getFilesForProcessingFromFileSystem(isRegexNotGlob, matchFilenameOnly,
                 sortFiles, testMethodState.localPath, ".*?\\.[pP]{1}[dD]{1}[fF]{1}")
 
-        processFiles(filesForProcessing)
+        processFiles(filesForProcessing, overrideRules)
     }
 
     @Test
-    void correctlyAssembleSipFromFiles() {
+    void correctlyAssembleSipFromFilesNoRuleOverrides() {
+        correctlyAssembleSipFromFiles([ ])
+    }
+
+    @Test
+    void correctlyAssembleSipFromFilesManualProcessing() {
+        correctlyAssembleSipFromFiles([ ProcessingRule.Manual ])
+    }
+
+    void correctlyAssembleSipFromFiles(List<ProcessingRule> overrideRules) {
         boolean forLocalFilesystem = false
         TestHelper.initializeTestMethod(testMethodState, "SeriesSequentialTest-", forLocalFilesystem)
 
@@ -89,10 +119,10 @@ class SeriesSequentialTest {
         List<File> filesForProcessing = TestHelper.getFilesForProcessingFromResource(isRegexNotGlob, matchFilenameOnly,
                 sortFiles, testMethodState.resourcePath, testMethodState.localPath, ".*?\\.[pP]{1}[dD]{1}[fF]{1}")
 
-        processFiles(filesForProcessing)
+        processFiles(filesForProcessing, overrideRules)
     }
 
-    void processFiles(List<File> filesForProcessing) {
+    void processFiles(List<File> filesForProcessing, List<ProcessingRule> overrideRules) {
         String dateString = "20181123"
         LocalDate processingDate = LocalDate.parse(dateString, FairfaxFile.LOCAL_DATE_TIME_FORMATTER)
 
@@ -145,7 +175,7 @@ class SeriesSequentialTest {
         }
 
         log.info("STARTING SIP validation")
-        sipConstructedCorrectly(sipAsXml)
+        sipConstructedCorrectly(sipAsXml, processingParameters.rules.contains(ProcessingRule.Manual))
         log.info("ENDING SIP validation")
         log.info("Process output path=${testMethodState.processOutputInterceptor.path}")
         Path processingStateFilePath = testMethodState.sipProcessingState.toTempFile()
@@ -155,13 +185,19 @@ class SeriesSequentialTest {
         // would be moved/copied to a processing completed directory based on the processing state.
     }
 
-    void sipConstructedCorrectly(String sipXml) {
+    void sipConstructedCorrectly(String sipXml, boolean expectManualError) {
         SipXmlExtractor sipForValidation = new SipXmlExtractor(sipXml)
 
         assertTrue("SipXmlExtractor has content", sipForValidation.xml.length() > 0)
 
         assertTrue("SipProcessingState is complete", testMethodState.sipProcessingState.isComplete())
-        assertTrue("SipProcessingState is successful", testMethodState.sipProcessingState.isSuccessful())
+
+        if (expectManualError) {
+            TestHelper.assertExpectedExceptionReason(testMethodState.sipProcessingState, SipProcessingExceptionReasonType.GENERIC_ONE_PLACE)
+            testMethodState.sipProcessingState.exceptions.first().reasons.first().toString().startsWith("Manual processing specified:")
+        } else {
+            assertTrue("SipProcessingState is successful", testMethodState.sipProcessingState.isSuccessful())
+        }
 
         TestHelper.assertExpectedSipMetadataValues(sipForValidation, "Test Publication One", 2018, 11, 23,
                 IEEntityType.NewspaperIE, "ALMAMMS", "test-mms-id-one", "200",

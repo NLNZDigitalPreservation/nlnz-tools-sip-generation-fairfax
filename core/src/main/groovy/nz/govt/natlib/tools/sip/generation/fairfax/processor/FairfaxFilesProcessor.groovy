@@ -132,6 +132,8 @@ class FairfaxFilesProcessor {
             }
             checkForMissingSequenceFiles(successfulFiles)
 
+            checkForManualProcessing()
+
             generateThumbnailPage(successfulFiles)
             // TODO If we are generating a thumbnail page when there are errors we may want to consider generating a
             // TODO thumbnail page for ALL the files (this could help in understanding the problem).
@@ -278,6 +280,18 @@ class FairfaxFilesProcessor {
                 processingParameters.sipProcessingState.addException(sipProcessingException)
                 log.warn(exceptionReason.toString())
             }
+        }
+    }
+
+    void checkForManualProcessing() {
+        if (processingParameters.rules.contains(ProcessingRule.Manual)) {
+            String reason = "Manual processing specified: Processing will be redirected to for-review."
+            SipProcessingExceptionReason exceptionReason = new SipProcessingExceptionReason(
+                    SipProcessingExceptionReasonType.GENERIC_ONE_PLACE, null,
+                    reason)
+            SipProcessingException sipProcessingException = SipProcessingException.createWithReason(exceptionReason)
+            processingParameters.sipProcessingState.addException(sipProcessingException)
+            log.warn(exceptionReason.toString())
         }
     }
 
