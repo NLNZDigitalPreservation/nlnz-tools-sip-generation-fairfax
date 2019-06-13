@@ -70,14 +70,22 @@ class FairfaxProcessingParameters {
                         parametersList.add(candidate)
                     }
                 } else {
+                    // TODO This seems like a filter chain
                     if (parametersList.isEmpty()) {
                         if (processingType == ProcessingType.ParentGroupingWithEdition && processingTypes.size() > 1) {
                             // ParentGroupingWithEdition is always first in the list, so if there are others, they may match
                             log.debug("Ignoring processingType=${processingType}, invalid candidate=${candidate}, as other processing types may match.")
-                        } else if (processingType == ProcessingType.ParentGrouping &&
-                                (processingTypes.contains(ProcessingType.SupplementGrouping) ||
-                                processingTypes.contains(ProcessingType.CreateSipForFolder))) {
-                            log.debug("Ignoring processingType=${processingType}, invalid candidate=${candidate}, as other processing types may match.")
+                        } else if (processingType == ProcessingType.ParentGrouping) {
+                            if (candidate.sipProcessingState.exceptions.first().reasons.first().reasonType ==
+                                    SipProcessingExceptionReasonType.MULTIPLE_DEFINITIONS) {
+                                // If there are too many definitions then show that as an exception -- our definitions need fixing.
+                                parametersList.add(candidate)
+                            } else if (processingTypes.contains(ProcessingType.SupplementGrouping) ||
+                                    processingTypes.contains(ProcessingType.CreateSipForFolder)) {
+                                log.debug("Ignoring processingType=${processingType}, invalid candidate=${candidate}, as other processing types may match.")
+                            } else {
+                                parametersList.add(candidate)
+                            }
                         } else if (processingType == ProcessingType.SupplementGrouping &&
                                 processingTypes.contains(ProcessingType.CreateSipForFolder)) {
                             log.debug("Ignoring processingType=${processingType}, invalid candidate=${candidate}, as other processing types may match.")
@@ -124,7 +132,7 @@ class FairfaxProcessingParameters {
         if (matchingRows.size() > 1) {
             String message = "Multiple spreadsheet rows for processingType=${processingType.fieldValue} and titleCode=${titleCode}. Unable to generate parameters".toString()
             SipProcessingExceptionReason exceptionReason = new SipProcessingExceptionReason(
-                    SipProcessingExceptionReasonType.INVALID_PARAMETERS, null, message)
+                    SipProcessingExceptionReasonType.MULTIPLE_DEFINITIONS, null, message)
             SipProcessingState replacementSipProcessingState = new SipProcessingState()
             replacementSipProcessingState.exceptions = [SipProcessingException.createWithReason(exceptionReason)]
             log.warn(message)
@@ -175,7 +183,7 @@ class FairfaxProcessingParameters {
                                                      String fileFindPattern = FairfaxFile.PDF_FILE_WITH_TITLE_SECTION_DATE_SEQUENCE_PATTERN) {
         List<Map<String, String>> matchingRows = spreadsheet.matchingProcessingTypeParameterMaps(
                 processingType.fieldValue, titleCode)
-        if (processingType == ProcessingType.ParentGroupingWithEdition) {
+        if (!matchingRows.isEmpty() && processingType == ProcessingType.ParentGroupingWithEdition) {
             // Step 1: Find all the files, get the different section_codes
             List<FairfaxFile> allFairfaxFiles = FairfaxFile.fromSourceFolder(sourceFolder, fileFindPattern)
             List<String> uniqueSectionCodes = FairfaxFile.uniqueSectionCodes(allFairfaxFiles)

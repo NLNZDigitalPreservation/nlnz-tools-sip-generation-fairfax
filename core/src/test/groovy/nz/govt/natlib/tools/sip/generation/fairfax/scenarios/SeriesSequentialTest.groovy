@@ -193,8 +193,7 @@ class SeriesSequentialTest {
         assertTrue("SipProcessingState is complete", testMethodState.sipProcessingState.isComplete())
 
         if (expectManualError) {
-            TestHelper.assertExpectedExceptionReason(testMethodState.sipProcessingState, SipProcessingExceptionReasonType.GENERIC_ONE_PLACE)
-            testMethodState.sipProcessingState.exceptions.first().reasons.first().toString().startsWith("Manual processing specified:")
+            TestHelper.assertExpectedExceptionReason(testMethodState.sipProcessingState, SipProcessingExceptionReasonType.MANUAL_PROCESSING_REQUIRED)
         } else {
             assertTrue("SipProcessingState is successful", testMethodState.sipProcessingState.isSuccessful())
         }

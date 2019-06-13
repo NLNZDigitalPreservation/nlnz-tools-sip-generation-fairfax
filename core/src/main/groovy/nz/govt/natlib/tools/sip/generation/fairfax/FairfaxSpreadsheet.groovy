@@ -40,7 +40,7 @@ class FairfaxSpreadsheet {
         "edition_discriminators": "",
         "section_codes": "",
         "Access": "200",
-        "Magazine": "1"
+        "Magazine": "-1"
     ].asImmutable()
 
     static Sip getBlankSip() {

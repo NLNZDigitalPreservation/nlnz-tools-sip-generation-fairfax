@@ -158,7 +158,7 @@ class CreateSipForFolderTest {
         TestHelper.assertExpectedExceptionReason(testMethodState.sipProcessingState, SipProcessingExceptionReasonType.NO_MATCHING_SIP_DEFINITION)
 
         TestHelper.assertExpectedSipMetadataValues(sipForValidation, "UNKNOWN_TITLE", 2018, 11, 23,
-                IEEntityType.MagazineIE, "ALMAMMS", "UNKNOWN_MMSID",
+                IEEntityType.UNKNOWN, "ALMAMMS", "UNKNOWN_MMSID",
                 "200", "PRESERVATION_MASTER", "VIEW", true, 1)
 
         TestHelper.assertExpectedSipFileValues(sipForValidation, 1, "TSTPBX-20181123-001.pdf", "TSTPBX-20181123-001.pdf",

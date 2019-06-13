@@ -99,8 +99,7 @@ class ParentGroupingWithEditionMultipleSameDayTest {
         File sourceFolder = new File(testMethodState.localPath)
         List<FairfaxProcessingParameters> parametersList = FairfaxProcessingParameters.build("TST",
                 [ ProcessingType.ParentGroupingWithEdition, ProcessingType.ParentGrouping, ProcessingType.CreateSipForFolder ],
-                sourceFolder, processingDate, testMethodState.fairfaxSpreadsheet,
-                [ ProcessingRule.AllSectionsInSipOptional ])
+                sourceFolder, processingDate, testMethodState.fairfaxSpreadsheet)
 
         assertThat("2 FairfaxProcessingParameters are returned, size=${parametersList.size()}, list=${parametersList}",
                 parametersList.size(), is(2))

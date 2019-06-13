@@ -262,7 +262,7 @@ class FairfaxFilesProcessor {
         if (processingParameters.currentEdition == null) {
             return "_${titleWithUnderscores}"
         } else {
-            return "_${processingParameters.currentEdition}_${titleWithUnderscores}"
+            return "${processingParameters.currentEdition}__${titleWithUnderscores}"
         }
     }
 
@@ -285,9 +285,9 @@ class FairfaxFilesProcessor {
 
     void checkForManualProcessing() {
         if (processingParameters.rules.contains(ProcessingRule.Manual)) {
-            String reason = "Manual processing specified: Processing will be redirected to for-review."
+            String reason = "Processing will be redirected to for-review."
             SipProcessingExceptionReason exceptionReason = new SipProcessingExceptionReason(
-                    SipProcessingExceptionReasonType.GENERIC_ONE_PLACE, null,
+                    SipProcessingExceptionReasonType.MANUAL_PROCESSING_REQUIRED, null,
                     reason)
             SipProcessingException sipProcessingException = SipProcessingException.createWithReason(exceptionReason)
             processingParameters.sipProcessingState.addException(sipProcessingException)
