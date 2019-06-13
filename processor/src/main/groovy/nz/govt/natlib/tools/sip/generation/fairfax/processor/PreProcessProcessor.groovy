@@ -240,19 +240,23 @@ class PreProcessProcessor {
                     "to destination=${processorConfiguration.targetPreProcessingFolder.getCanonicalPath()}")
             GParsExecutorsPool.withPool(numberOfThreads) {
                 filteredFiles.eachParallel { FairfaxFile fairfaxFile ->
-                    String dateString = LOCAL_DATE_FOLDER_FORMATTER.format(fairfaxFile.date)
-                    boolean moved = copyOrMoveFileToPreProcessingDestination(
-                            processorConfiguration.targetPreProcessingFolder,
-                            processorConfiguration.forReviewFolder, fairfaxFile, dateString,
-                            processorConfiguration.moveFiles)
-                    if (moved) {
-                        filesMovedOrCopiedCounter.incrementCounter()
-                    }
-                    filesProcessedCounter.incrementCounter()
-                    if (filesProcessedCounter.currentCount % 5000 == 0) {
-                        GeneralUtils.printAndFlush("\n")
-                        processorConfiguration.timekeeper.logElapsed(false, filesProcessedCounter.currentCount,
-                                true)
+                    try {
+                        String dateString = LOCAL_DATE_FOLDER_FORMATTER.format(fairfaxFile.date)
+                        boolean moved = copyOrMoveFileToPreProcessingDestination(
+                                processorConfiguration.targetPreProcessingFolder,
+                                processorConfiguration.forReviewFolder, fairfaxFile, dateString,
+                                processorConfiguration.moveFiles)
+                        if (moved) {
+                            filesMovedOrCopiedCounter.incrementCounter()
+                        }
+                        filesProcessedCounter.incrementCounter()
+                        if (filesProcessedCounter.currentCount % 5000 == 0) {
+                            GeneralUtils.printAndFlush("\n")
+                            processorConfiguration.timekeeper.logElapsed(false, filesProcessedCounter.currentCount,
+                                    true)
+                        }
+                    } catch (Exception e) {
+                        log.error("Exception processing fairfaxFile=${fairfaxFile}", e)
                     }
                 }
             }

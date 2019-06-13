@@ -245,7 +245,11 @@ class MiscellaneousProcessor {
             log.info("Starting processing total subdirectories=${allSubdirectories.size()}")
             GParsExecutorsPool.withPool(numberOfThreads) {
                 allSubdirectories.eachParallel { File subdirectory ->
-                    generateThumbnailPageFromPdfs(subdirectory, showDirectoryOption)
+                    try {
+                        generateThumbnailPageFromPdfs(subdirectory, showDirectoryOption)
+                    } catch (Exception e) {
+                        log.error("Exception processing subdirectory=${subdirectory.canonicalPath}", e)
+                    }
                 }
             }
             log.info("Finished processing total subdirectories=${allSubdirectories.size()}")
