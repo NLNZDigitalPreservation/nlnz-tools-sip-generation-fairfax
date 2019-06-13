@@ -235,27 +235,31 @@ class ReadyForIngestionProcessor {
         // to debug.
         GParsExecutorsPool.withPool(numberOfThreads) {
             titleCodeFoldersAndDates.eachParallel { Tuple2<File, String> titleCodeFolderAndDateString ->
-                // we want to process this directory, which should be a <titleCode>
                 File titleCodeFolder = titleCodeFolderAndDateString.first
                 String titleCode = titleCodeFolder.getName()
                 String dateString = titleCodeFolderAndDateString.second
-                LocalDate processingDate = LocalDate.parse(dateString, FairfaxFile.LOCAL_DATE_TIME_FORMATTER)
+                try {
+                    // we want to process this directory, which should be a <titleCode>
+                    LocalDate processingDate = LocalDate.parse(dateString, FairfaxFile.LOCAL_DATE_TIME_FORMATTER)
 
-                // Avoid issue when multiple threads iterating through this list.
-                List<ProcessingType> perThreadProcessingTypes = (List<ProcessingType>) this.processingTypes.clone()
-                List<ProcessingRule> perThreadOverrideRules = (List<ProcessingRule>) this.overrideProcessingRules.clone()
-                List<ProcessingOption> perThreadOverrideOptions = (List<ProcessingOption>) this.overrideProcessingOptions.clone()
+                    // Avoid issue when multiple threads iterating through this list.
+                    List<ProcessingType> perThreadProcessingTypes = (List<ProcessingType>) this.processingTypes.clone()
+                    List<ProcessingRule> perThreadOverrideRules = (List<ProcessingRule>) this.overrideProcessingRules.clone()
+                    List<ProcessingOption> perThreadOverrideOptions = (List<ProcessingOption>) this.overrideProcessingOptions.clone()
 
-                List<FairfaxProcessingParameters> parametersList = FairfaxProcessingParameters.build(titleCode,
-                        perThreadProcessingTypes, titleCodeFolder, processingDate, fairfaxSpreadsheet,
-                        perThreadOverrideRules, perThreadOverrideOptions)
+                    List<FairfaxProcessingParameters> parametersList = FairfaxProcessingParameters.build(titleCode,
+                            perThreadProcessingTypes, titleCodeFolder, processingDate, fairfaxSpreadsheet,
+                            perThreadOverrideRules, perThreadOverrideOptions)
 
-                parametersList.each { FairfaxProcessingParameters processingParameters ->
-                    if (!processingParameters.valid) {
-                        invalidFolders.add(titleCodeFolder)
+                    parametersList.each { FairfaxProcessingParameters processingParameters ->
+                        if (!processingParameters.valid) {
+                            invalidFolders.add(titleCodeFolder)
+                        }
+                        processTitleCodeFolder(processingParameters, processorConfiguration.targetForIngestionFolder,
+                                processorConfiguration.forReviewFolder, dateString)
                     }
-                    processTitleCodeFolder(processingParameters, processorConfiguration.targetForIngestionFolder,
-                            processorConfiguration.forReviewFolder, dateString)
+                } catch (Exception e) {
+                    log.error("Exception processing titleCode=${titleCode}, date=${dateString}, folder=${titleCodeFolder.canonicalPath}", e)
                 }
             }
         }
