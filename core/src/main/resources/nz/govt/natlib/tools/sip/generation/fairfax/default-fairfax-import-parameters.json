@@ -1,6 +1,7 @@
 [
     {
         "COMMENTS": [
+            "#",
             "# File for working with Fairfax ingestion",
             "# All lines starting with '#' are considered comments and ignored.",
             "# The first non-comment line is used to extract column headers.",
@@ -10,7 +11,7 @@
             "# entity_type: periodic=PER, serial_supplement=SS, oneoff=ONE",
             "# magazine (1 for magazine, 0 for newspaper)",
             "# edition_discriminator: section_code used to discriminate between different editions",
-            "# section_code: An ordered list of sections, separated by \u2018,\u2019 or \u2018-\u2019 or \u2018+\u2019, that couples all the sections in a publication",
+            "# section_codes: An ordered list of sections, separated by \u2018,\u2019 or \u2018-\u2019 or \u2018+\u2019, that couples all the sections in a publication",
             "# (or will that be section_codes??)",
             "#",
             "# processing_type: There can be only 1 processing type for a given row",
@@ -24,7 +25,7 @@
             "#         edition_discriminators_using_smart_substitute, edition_discriminators_not_using_smart_substitute",
             "# processing_option: There can be multiple processing options for a given row",
             "#     Current procession options:",
-            "#          alpha_before_numeric, numeric_before_alpha, any_first_section_code,",
+            "#         alpha_before_numeric, numeric_before_alpha, any_first_section_code,",
             "#         generate_processed_pdf_thumbnails_page, do_not_generate_processed_pdf_thumbnails_page,",
             "#         skip_generation_thumbnail_page_when_error_free, always_generate_thumbnail_page",
             "# Certain processing types have default rules and options:",
