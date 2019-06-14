@@ -114,22 +114,15 @@ class EmptyFileTest {
         log.info(System.lineSeparator())
 
         int expectedNumberOfFilesProcessed = 10
-        assertThat("${expectedNumberOfFilesProcessed} files should have been processed",
-                testMethodState.sipProcessingState.totalFilesProcessed, is(expectedNumberOfFilesProcessed))
+        int expectedNumberOfSipFiles = 10
+        int expectedNumberOfThumbnailPageFiles = 10
         int expectedNumberOfValidFiles = 9
-        assertThat("${expectedNumberOfValidFiles} valid files should have been processed",
-                testMethodState.sipProcessingState.validFiles.size(), is(expectedNumberOfValidFiles))
         int expectedNumberOfInvalidFiles = 1
-        assertThat("${expectedNumberOfInvalidFiles} invalid files should have been processed",
-                testMethodState.sipProcessingState.invalidFiles.size(), is(expectedNumberOfInvalidFiles))
-        assertThat("Invalid file is 'TSTPB1-20181123-003.pdf'",
-                testMethodState.sipProcessingState.invalidFiles.first().getName(), is("TSTPB1-20181123-003.pdf"))
         int expectedNumberOfIgnoredFiles = 0
-        assertThat("${expectedNumberOfIgnoredFiles} ignored files should have been processed",
-                testMethodState.sipProcessingState.ignoredFiles.size(), is(expectedNumberOfIgnoredFiles))
         int expectedNumberOfUnrecognizedFiles = 0
-        assertThat("${expectedNumberOfUnrecognizedFiles} unrecognized files should have been processed",
-                testMethodState.sipProcessingState.unrecognizedFiles.size(), is(expectedNumberOfUnrecognizedFiles))
+        TestHelper.assertSipProcessingStateFileNumbers(expectedNumberOfFilesProcessed, expectedNumberOfSipFiles,
+                expectedNumberOfThumbnailPageFiles, expectedNumberOfValidFiles, expectedNumberOfInvalidFiles,
+                expectedNumberOfIgnoredFiles, expectedNumberOfUnrecognizedFiles, testMethodState.sipProcessingState)
 
         // If a thumbnail page will be generated, then it will always generate because empty file is a processing exception.
         if (processingParameters.options.contains(ProcessingOption.GenerateProcessedPdfThumbnailsPage)) {

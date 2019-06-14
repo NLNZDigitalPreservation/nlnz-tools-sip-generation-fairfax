@@ -113,20 +113,15 @@ class SeriesSectionsTest {
         log.info(System.lineSeparator())
 
         int expectedNumberOfFilesProcessed = 10
-        assertThat("${expectedNumberOfFilesProcessed} files should have been processed",
-                testMethodState.sipProcessingState.totalFilesProcessed, is(expectedNumberOfFilesProcessed))
+        int expectedNumberOfSipFiles = 10
+        int expectedNumberOfThumbnailPageFiles = 10
         int expectedNumberOfValidFiles = 10
-        assertThat("${expectedNumberOfValidFiles} valid files should have been processed",
-                testMethodState.sipProcessingState.validFiles.size(), is(expectedNumberOfValidFiles))
         int expectedNumberOfInvalidFiles = 0
-        assertThat("${expectedNumberOfInvalidFiles} invalid files should have been processed",
-                testMethodState.sipProcessingState.invalidFiles.size(), is(expectedNumberOfInvalidFiles))
         int expectedNumberOfIgnoredFiles = 0
-        assertThat("${expectedNumberOfIgnoredFiles} ignored files should have been processed",
-                testMethodState.sipProcessingState.ignoredFiles.size(), is(expectedNumberOfIgnoredFiles))
         int expectedNumberOfUnrecognizedFiles = 0
-        assertThat("${expectedNumberOfUnrecognizedFiles} unrecognized files should have been processed",
-                testMethodState.sipProcessingState.unrecognizedFiles.size(), is(expectedNumberOfUnrecognizedFiles))
+        TestHelper.assertSipProcessingStateFileNumbers(expectedNumberOfFilesProcessed, expectedNumberOfSipFiles,
+                expectedNumberOfThumbnailPageFiles, expectedNumberOfValidFiles, expectedNumberOfInvalidFiles,
+                expectedNumberOfIgnoredFiles, expectedNumberOfUnrecognizedFiles, testMethodState.sipProcessingState)
 
         if (processingParameters.options.contains(ProcessingOption.GenerateProcessedPdfThumbnailsPage) &&
                 processingParameters.options.contains(ProcessingOption.AlwaysGenerateThumbnailPage)) {

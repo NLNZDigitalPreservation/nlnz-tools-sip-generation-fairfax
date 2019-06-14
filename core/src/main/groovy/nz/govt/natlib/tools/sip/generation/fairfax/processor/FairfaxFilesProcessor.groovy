@@ -23,6 +23,7 @@ import nz.govt.natlib.tools.sip.pdf.thumbnail.ThumbnailParameters
 import nz.govt.natlib.tools.sip.state.SipProcessingException
 import nz.govt.natlib.tools.sip.state.SipProcessingExceptionReason
 import nz.govt.natlib.tools.sip.state.SipProcessingExceptionReasonType
+import nz.govt.natlib.tools.sip.state.SipProcessingState
 
 import java.time.LocalDate
 
@@ -124,22 +125,31 @@ class FairfaxFilesProcessor {
                 }
             }
 
-            List<FairfaxFile> successfulFiles = [ ]
             sortedFilesForProcessing.each { FairfaxFile fileForProcessing ->
-                if (processFile(fileForProcessing)) {
-                    successfulFiles.add(fileForProcessing)
-                }
+                processFile(fileForProcessing)
             }
-            checkForMissingSequenceFiles(successfulFiles)
+            // TODO We are converting back and forth between FarifaxFile and File for different processing stages to
+            // ensure that the sip-generation-core classes don't get polluted with Fairfax-specific functionality.
+            // At some point we need to look at finding a better way. Perhaps there's an interface that might expose
+            // a wrapper so that it can be processed through implementation-specific processing.
+            // For the moment we do the conversion. This is something to consider when refactoring/redesigning this
+            // application.
+            List<FairfaxFile> sipFiles = processingParameters.sipProcessingState.sipFiles.collect { File file ->
+                new FairfaxFile(file)
+            }
+            checkForMissingSequenceFiles(sipFiles)
 
             checkForManualProcessing()
 
-            generateThumbnailPage(successfulFiles)
+            // See the note above about converting back and forth.
+            List<FairfaxFile> thumbnailPageFiles = processingParameters.sipProcessingState.sipFiles.collect { File file ->
+                new FairfaxFile(file)
+            }
+            generateThumbnailPage(thumbnailPageFiles)
             // TODO If we are generating a thumbnail page when there are errors we may want to consider generating a
             // TODO thumbnail page for ALL the files (this could help in understanding the problem).
 
-            // The valid files should be filtered and sorted already
-            sipAsXml = generateSipAsXml(successfulFiles, processingParameters.date)
+            sipAsXml = generateSipAsXml(sipFiles, processingParameters.date)
         }
 
         log.info("ENDING process for processingParameters=${processingParameters}")
@@ -165,10 +175,13 @@ class FairfaxFilesProcessor {
         return cleanedList
     }
 
-    boolean processFile(FairfaxFile fairfaxFile) {
+    void processFile(FairfaxFile fairfaxFile) {
         log.info("Processing fairfaxFile=${fairfaxFile}")
         // We generally include all files whether they are valid or invalid. We don't include duplicate files.
+        SipProcessingState sipProcessingState = processingParameters.sipProcessingState
+
         boolean includeFileInSip = true
+        boolean includeInThumbnailPage = true
         if (processedFairfaxFiles.containsKey(fairfaxFile)) {
             // We have a duplicate file -- possibly a different qualifier
             // We use the fairfax file as a key, but we'll get the duplicate back
@@ -176,7 +189,7 @@ class FairfaxFilesProcessor {
             SipProcessingExceptionReason exceptionReason = new SipProcessingExceptionReason(
                     SipProcessingExceptionReasonType.DUPLICATE_FILE, null,
                     firstVersion.file.getCanonicalPath(), fairfaxFile.file.getCanonicalPath())
-            processingParameters.sipProcessingState.addException(SipProcessingException.createWithReason(exceptionReason))
+            sipProcessingState.addException(SipProcessingException.createWithReason(exceptionReason))
             includeFileInSip = false
         } else {
             processedFairfaxFiles.put(fairfaxFile, fairfaxFile)
@@ -203,7 +216,12 @@ class FairfaxFilesProcessor {
         } else {
             processingParameters.sipProcessingState.invalidFiles.add(fairfaxFile.file)
         }
-        return includeFileInSip
+        if (includeFileInSip) {
+            sipProcessingState.sipFiles.add(fairfaxFile.file)
+        }
+        if (includeInThumbnailPage) {
+            sipProcessingState.thumbnailPageFiles.add(fairfaxFile.file)
+        }
     }
 
     String generateSipAsXml(List<FairfaxFile> sortedFairfaxFiles, LocalDate sipDate) {

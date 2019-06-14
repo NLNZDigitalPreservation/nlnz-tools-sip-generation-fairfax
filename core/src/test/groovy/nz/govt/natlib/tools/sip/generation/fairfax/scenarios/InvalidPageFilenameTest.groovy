@@ -114,22 +114,15 @@ class InvalidPageFilenameTest {
         log.info(System.lineSeparator())
 
         int expectedNumberOfFilesProcessed = 9
-        assertThat("${expectedNumberOfFilesProcessed} files should have been processed",
-                testMethodState.sipProcessingState.totalFilesProcessed, is(expectedNumberOfFilesProcessed))
+        int expectedNumberOfSipFiles = 9
+        int expectedNumberOfThumbnailPageFiles = 9
         int expectedNumberOfValidFiles = 9
-        assertThat("${expectedNumberOfValidFiles} valid files should have been processed",
-                testMethodState.sipProcessingState.validFiles.size(), is(expectedNumberOfValidFiles))
         int expectedNumberOfInvalidFiles = 0
-        assertThat("${expectedNumberOfInvalidFiles} invalid files should have been processed",
-                testMethodState.sipProcessingState.invalidFiles.size(), is(expectedNumberOfInvalidFiles))
         int expectedNumberOfIgnoredFiles = 0
-        assertThat("${expectedNumberOfIgnoredFiles} ignored files should have been processed",
-                testMethodState.sipProcessingState.ignoredFiles.size(), is(expectedNumberOfIgnoredFiles))
         int expectedNumberOfUnrecognizedFiles = 1
-        assertThat("${expectedNumberOfUnrecognizedFiles} unrecognized files should have been processed",
-                testMethodState.sipProcessingState.unrecognizedFiles.size(), is(expectedNumberOfUnrecognizedFiles))
-        assertThat("Unrecognized file is 'TSTPB1-20181123-XYZ010.pdf'",
-                testMethodState.sipProcessingState.unrecognizedFiles.first().getName(), is("TSTPB1-20181123-XYZ010.pdf"))
+        TestHelper.assertSipProcessingStateFileNumbers(expectedNumberOfFilesProcessed, expectedNumberOfSipFiles,
+                expectedNumberOfThumbnailPageFiles, expectedNumberOfValidFiles, expectedNumberOfInvalidFiles,
+                expectedNumberOfIgnoredFiles, expectedNumberOfUnrecognizedFiles, testMethodState.sipProcessingState)
 
         if (processingParameters.options.contains(ProcessingOption.GenerateProcessedPdfThumbnailsPage)) {
             assertTrue("Thumbnail page exists, file=${processingParameters.thumbnailPageFile.getCanonicalPath()}",

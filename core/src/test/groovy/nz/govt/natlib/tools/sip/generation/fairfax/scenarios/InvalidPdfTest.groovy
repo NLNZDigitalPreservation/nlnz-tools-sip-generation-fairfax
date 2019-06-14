@@ -114,26 +114,22 @@ class InvalidPdfTest {
         log.info(System.lineSeparator())
 
         int expectedNumberOfFilesProcessed = 10
-        assertThat("${expectedNumberOfFilesProcessed} files should have been processed",
-                testMethodState.sipProcessingState.totalFilesProcessed, is(expectedNumberOfFilesProcessed))
+        int expectedNumberOfSipFiles = 10
+        int expectedNumberOfThumbnailPageFiles = 10
         int expectedNumberOfValidFiles = 7
-        assertThat("${expectedNumberOfValidFiles} valid files should have been processed",
-                testMethodState.sipProcessingState.validFiles.size(), is(expectedNumberOfValidFiles))
         int expectedNumberOfInvalidFiles = 3
-        assertThat("${expectedNumberOfInvalidFiles} invalid files should have been processed",
-                testMethodState.sipProcessingState.invalidFiles.size(), is(expectedNumberOfInvalidFiles))
+        int expectedNumberOfIgnoredFiles = 0
+        int expectedNumberOfUnrecognizedFiles = 0
+        TestHelper.assertSipProcessingStateFileNumbers(expectedNumberOfFilesProcessed, expectedNumberOfSipFiles,
+                expectedNumberOfThumbnailPageFiles, expectedNumberOfValidFiles, expectedNumberOfInvalidFiles,
+                expectedNumberOfIgnoredFiles, expectedNumberOfUnrecognizedFiles, testMethodState.sipProcessingState)
+
         assertThat("First invalid file is 'TSTPB1-20181123-003.pdf'",
                 testMethodState.sipProcessingState.invalidFiles.get(0).getName(), is("TSTPB1-20181123-003.pdf"))
         assertThat("Second invalid file is 'TSTPB1-20181123-006.pdf'",
                 testMethodState.sipProcessingState.invalidFiles.get(1).getName(), is("TSTPB1-20181123-006.pdf"))
         assertThat("Third invalid file is 'TSTPB1-20181123-009.pdf'",
                 testMethodState.sipProcessingState.invalidFiles.get(2).getName(), is("TSTPB1-20181123-009.pdf"))
-        int expectedNumberOfIgnoredFiles = 0
-        assertThat("${expectedNumberOfIgnoredFiles} ignored files should have been processed",
-                testMethodState.sipProcessingState.ignoredFiles.size(), is(expectedNumberOfIgnoredFiles))
-        int expectedNumberOfUnrecognizedFiles = 0
-        assertThat("${expectedNumberOfUnrecognizedFiles} unrecognized files should have been processed",
-                testMethodState.sipProcessingState.unrecognizedFiles.size(), is(expectedNumberOfUnrecognizedFiles))
 
         // If a thumbnail page will be generated, then it will always generate because invalid pdf is a processing exception.
         if (processingParameters.options.contains(ProcessingOption.GenerateProcessedPdfThumbnailsPage)) {
