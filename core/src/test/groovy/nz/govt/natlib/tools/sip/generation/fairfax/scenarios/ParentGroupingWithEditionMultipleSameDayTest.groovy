@@ -223,38 +223,28 @@ class ParentGroupingWithEditionMultipleSameDayTest {
 
     void expectedSizingPB1() {
         int expectedNumberOfFilesProcessed = 13
-        assertThat("${expectedNumberOfFilesProcessed} files should have been processed",
-                testMethodState.sipProcessingState.totalFilesProcessed, is(expectedNumberOfFilesProcessed))
+        int expectedNumberOfSipFiles = 13
+        int expectedNumberOfThumbnailPageFiles = 13
         int expectedNumberOfValidFiles = 13
-        assertThat("${expectedNumberOfValidFiles} valid files should have been processed",
-                testMethodState.sipProcessingState.validFiles.size(), is(expectedNumberOfValidFiles))
         int expectedNumberOfInvalidFiles = 0
-        assertThat("${expectedNumberOfInvalidFiles} invalid files should have been processed",
-                testMethodState.sipProcessingState.invalidFiles.size(), is(expectedNumberOfInvalidFiles))
         int expectedNumberOfIgnoredFiles = 6
-        assertThat("${expectedNumberOfIgnoredFiles} ignored files should have been processed",
-                testMethodState.sipProcessingState.ignoredFiles.size(), is(expectedNumberOfIgnoredFiles))
         int expectedNumberOfUnrecognizedFiles = 0
-        assertThat("${expectedNumberOfUnrecognizedFiles} unrecognized files should have been processed",
-                testMethodState.sipProcessingState.unrecognizedFiles.size(), is(expectedNumberOfUnrecognizedFiles))
+        TestHelper.assertSipProcessingStateFileNumbers(expectedNumberOfFilesProcessed, expectedNumberOfSipFiles,
+                expectedNumberOfThumbnailPageFiles, expectedNumberOfValidFiles, expectedNumberOfInvalidFiles,
+                expectedNumberOfIgnoredFiles, expectedNumberOfUnrecognizedFiles, testMethodState.sipProcessingState)
     }
 
     void expectedSizingPB2() {
         int expectedNumberOfFilesProcessed = 12
-        assertThat("${expectedNumberOfFilesProcessed} files should have been processed",
-                testMethodState.sipProcessingState.totalFilesProcessed, is(expectedNumberOfFilesProcessed))
+        int expectedNumberOfSipFiles = 12
+        int expectedNumberOfThumbnailPageFiles = 12
         int expectedNumberOfValidFiles = 12
-        assertThat("${expectedNumberOfValidFiles} valid files should have been processed",
-                testMethodState.sipProcessingState.validFiles.size(), is(expectedNumberOfValidFiles))
         int expectedNumberOfInvalidFiles = 0
-        assertThat("${expectedNumberOfInvalidFiles} invalid files should have been processed",
-                testMethodState.sipProcessingState.invalidFiles.size(), is(expectedNumberOfInvalidFiles))
         int expectedNumberOfIgnoredFiles = 7
-        assertThat("${expectedNumberOfIgnoredFiles} ignored files should have been processed",
-                testMethodState.sipProcessingState.ignoredFiles.size(), is(expectedNumberOfIgnoredFiles))
         int expectedNumberOfUnrecognizedFiles = 0
-        assertThat("${expectedNumberOfUnrecognizedFiles} unrecognized files should have been processed",
-                testMethodState.sipProcessingState.unrecognizedFiles.size(), is(expectedNumberOfUnrecognizedFiles))
+        TestHelper.assertSipProcessingStateFileNumbers(expectedNumberOfFilesProcessed, expectedNumberOfSipFiles,
+                expectedNumberOfThumbnailPageFiles, expectedNumberOfValidFiles, expectedNumberOfInvalidFiles,
+                expectedNumberOfIgnoredFiles, expectedNumberOfUnrecognizedFiles, testMethodState.sipProcessingState)
     }
 
     void sipConstructedCorrectlyPB1Edition(String sipXml) {

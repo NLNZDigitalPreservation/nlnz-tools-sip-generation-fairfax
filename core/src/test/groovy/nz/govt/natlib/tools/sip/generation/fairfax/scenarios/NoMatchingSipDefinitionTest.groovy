@@ -111,22 +111,20 @@ class NoMatchingSipDefinitionTest {
         log.info(System.lineSeparator())
 
         int expectedNumberOfFilesProcessed = 0
-        assertThat("${expectedNumberOfFilesProcessed} files should have been processed",
-                testMethodState.sipProcessingState.totalFilesProcessed, is(expectedNumberOfFilesProcessed))
+        int expectedNumberOfSipFiles = 0
+        int expectedNumberOfThumbnailPageFiles = 0
         int expectedNumberOfValidFiles = 0
-        assertThat("${expectedNumberOfValidFiles} valid files should have been processed",
-                testMethodState.sipProcessingState.validFiles.size(), is(expectedNumberOfValidFiles))
         int expectedNumberOfInvalidFiles = 0
-        assertThat("${expectedNumberOfInvalidFiles} invalid files should have been processed",
-                testMethodState.sipProcessingState.invalidFiles.size(), is(expectedNumberOfInvalidFiles))
         int expectedNumberOfIgnoredFiles = 10
+        int expectedNumberOfUnrecognizedFiles = 0
+        TestHelper.assertSipProcessingStateFileNumbers(expectedNumberOfFilesProcessed, expectedNumberOfSipFiles,
+                expectedNumberOfThumbnailPageFiles, expectedNumberOfValidFiles, expectedNumberOfInvalidFiles,
+                expectedNumberOfIgnoredFiles, expectedNumberOfUnrecognizedFiles, testMethodState.sipProcessingState)
+
         assertThat("${expectedNumberOfIgnoredFiles} ignored files should have been processed",
                 testMethodState.sipProcessingState.ignoredFiles.size(), is(expectedNumberOfIgnoredFiles))
         assertThat("Ignored file is 'TSTPBX-20181123-001.pdf'",
                 testMethodState.sipProcessingState.ignoredFiles.first().getName(), is("TSTPBX-20181123-001.pdf"))
-        int expectedNumberOfUnrecognizedFiles = 0
-        assertThat("${expectedNumberOfUnrecognizedFiles} unrecognized files should have been processed",
-                testMethodState.sipProcessingState.unrecognizedFiles.size(), is(expectedNumberOfUnrecognizedFiles))
 
         if (processingParameters.options.contains(ProcessingOption.GenerateProcessedPdfThumbnailsPage)) {
             assertNull("Thumbnail page DOES NOT exist, file=${processingParameters.thumbnailPageFile}",
