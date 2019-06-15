@@ -15,6 +15,7 @@ import nz.govt.natlib.tools.sip.generation.fairfax.parameters.ProcessingType
 import nz.govt.natlib.tools.sip.generation.fairfax.processor.type.ParentGroupingProcessor
 import nz.govt.natlib.tools.sip.generation.fairfax.processor.type.ParentGroupingWithEditionProcessor
 import nz.govt.natlib.tools.sip.generation.fairfax.processor.type.SipForFolderProcessor
+import nz.govt.natlib.tools.sip.logging.JvmPerformanceLogger
 import nz.govt.natlib.tools.sip.pdf.PdfValidator
 import nz.govt.natlib.tools.sip.pdf.PdfValidatorFactory
 import nz.govt.natlib.tools.sip.pdf.PdfValidatorType
@@ -58,6 +59,8 @@ class FairfaxFilesProcessor {
 
     String process() {
         log.info("STARTING process for processingParameters=${processingParameters}")
+        JvmPerformanceLogger.logState("FairfaxFilesProcessor Current thread state at start",
+                false, true, true, false, true, false, true)
         processedFairfaxFiles = [ : ]
 
         String sipAsXml = ""
@@ -152,6 +155,8 @@ class FairfaxFilesProcessor {
             sipAsXml = generateSipAsXml(sipFiles, processingParameters.date)
         }
 
+        JvmPerformanceLogger.logState("FairfaxFilesProcessor Current thread state at end",
+                false, true, true, false, true, false, true)
         log.info("ENDING process for processingParameters=${processingParameters}")
 
         return sipAsXml

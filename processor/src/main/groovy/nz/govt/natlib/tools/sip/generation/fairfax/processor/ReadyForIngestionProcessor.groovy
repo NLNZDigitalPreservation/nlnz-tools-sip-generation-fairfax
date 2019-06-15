@@ -9,6 +9,7 @@ import nz.govt.natlib.tools.sip.generation.fairfax.parameters.ProcessingOption
 import nz.govt.natlib.tools.sip.generation.fairfax.parameters.ProcessingRule
 import nz.govt.natlib.tools.sip.generation.fairfax.parameters.ProcessingType
 import nz.govt.natlib.tools.sip.logging.DefaultTimekeeper
+import nz.govt.natlib.tools.sip.logging.JvmPerformanceLogger
 import nz.govt.natlib.tools.sip.logging.Timekeeper
 import nz.govt.natlib.tools.sip.pdf.thumbnail.ThreadedThumbnailGenerator
 import nz.govt.natlib.tools.sip.processing.PerThreadLogFileAppender
@@ -228,6 +229,9 @@ class ReadyForIngestionProcessor {
         ThreadedThumbnailGenerator.changeMaximumConcurrentThreads(processorConfiguration.maximumThumbnailPageThreads)
         log.info("Maximum number of threads processing thumbnails=${processorConfiguration.maximumThumbnailPageThreads}")
 
+        JvmPerformanceLogger.logState("ReadyForIngestionProcessor Current thread state at start of ALL processing",
+                true, true, true, false, true, true, true)
+
         List<File> invalidFolders = Collections.synchronizedList([ ])
         // Process the collected directories across multiple threads
         // Note for debugging: GParsExecutorPool and GParsPool will collect any exceptions thrown in the block and then
@@ -238,7 +242,10 @@ class ReadyForIngestionProcessor {
                 File titleCodeFolder = titleCodeFolderAndDateString.first
                 String titleCode = titleCodeFolder.getName()
                 String dateString = titleCodeFolderAndDateString.second
+                String titleCodeFolderMessage = "titleCode=${titleCode}, date=${dateString}, folder=${titleCodeFolder.canonicalPath}"
                 try {
+                    JvmPerformanceLogger.logState("ReadyForIngestionProcessor Current thread state at start of ${titleCodeFolderMessage}",
+                            false, true, true, false, true, false, true)
                     // we want to process this directory, which should be a <titleCode>
                     LocalDate processingDate = LocalDate.parse(dateString, FairfaxFile.LOCAL_DATE_TIME_FORMATTER)
 
@@ -258,8 +265,10 @@ class ReadyForIngestionProcessor {
                         processTitleCodeFolder(processingParameters, processorConfiguration.targetForIngestionFolder,
                                 processorConfiguration.forReviewFolder, dateString)
                     }
+                    JvmPerformanceLogger.logState("ReadyForIngestionProcessor Current thread state at end of ${titleCodeFolderMessage}",
+                            false, true, true, false, true, false, true)
                 } catch (Exception e) {
-                    log.error("Exception processing titleCode=${titleCode}, date=${dateString}, folder=${titleCodeFolder.canonicalPath}", e)
+                    log.error("Exception processing ${titleCodeFolderMessage}", e)
                 }
             }
         }
@@ -284,5 +293,7 @@ class ReadyForIngestionProcessor {
         processingTimekeeper.logElapsed(false, titleCodeFoldersAndDates.size(), true)
         log.info("${System.lineSeparator()}Total elapsed:")
         processorConfiguration.timekeeper.logElapsed()
+        JvmPerformanceLogger.logState("ReadyForIngestionProcessor Current thread state at end of ALL processing",
+                true, true, true, false, true, true, true)
     }
 }
