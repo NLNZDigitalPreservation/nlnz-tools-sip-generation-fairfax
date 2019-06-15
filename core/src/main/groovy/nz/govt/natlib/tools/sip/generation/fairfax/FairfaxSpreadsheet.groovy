@@ -43,16 +43,6 @@ class FairfaxSpreadsheet {
         "Magazine": "-1"
     ].asImmutable()
 
-    static Sip getBlankSip() {
-        Sip sip = new Sip(title: 'UNKNOWN_TITLE', ieEntityType: IEEntityType.UNKNOWN,
-                objectIdentifierType: 'UNKNOWN_OBJECT_IDENTIFIER_TYPE',
-                objectIdentifierValue: 'UNKNOWN_OBJECT_IDENTIFIER_VALUE', policyId: 'UNKNOWN_POLICY_ID',
-                preservationType: 'UNKNOWN_PRESERVATION_TYPE', usageType: 'UNKNOWN_USAGE_TYPE',
-                digitalOriginal: true, revisionNumber: 1,
-                year: 2038, month: 12, dayOfMonth: 31)
-
-    }
-
     /**
      * Load and return the FairfaxSpreadsheet from default resources.
      */
