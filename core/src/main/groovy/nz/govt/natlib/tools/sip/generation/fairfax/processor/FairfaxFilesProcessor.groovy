@@ -131,7 +131,7 @@ class FairfaxFilesProcessor {
             sortedFilesForProcessing.each { FairfaxFile fileForProcessing ->
                 processFile(fileForProcessing)
             }
-            // TODO We are converting back and forth between FarifaxFile and File for different processing stages to
+            // TODO We are converting back and forth between FairfaxFile and File for different processing stages to
             // ensure that the sip-generation-core classes don't get polluted with Fairfax-specific functionality.
             // At some point we need to look at finding a better way. Perhaps there's an interface that might expose
             // a wrapper so that it can be processed through implementation-specific processing.

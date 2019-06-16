@@ -25,7 +25,7 @@ enum ProcessingType {
             [ ProcessingRule.AllSectionsInSipRequired, ProcessingRule.MissingSequenceError,
               ProcessingRule.IgnoreEditionsWithoutMatchingFiles ],
             [ ProcessingOption.NumericBeforeAlphaSequencing, ProcessingOption.GenerateProcessedPdfThumbnailsPage,
-              ProcessingOption.SkipThumbnailPageGenerationWhenNoErrors ])
+              ProcessingOption.AlwaysGenerateThumbnailPage ])
 
     private static final Map<String, ProcessingType> LOOKUP_BY_FIELD_VALUE = [ : ]
     private final String fieldValue
