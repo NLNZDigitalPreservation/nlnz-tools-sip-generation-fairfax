@@ -33,7 +33,7 @@
 #     supplement_grouping: optional_all_sections_in_sip, numeric_before_alpha, missing_sequence_is_error,
 #                          generate_processed_pdf_thumbnails_page, skip_generation_thumbnail_page_when_error_free
 #     create_sip_for_folder: required_all_sections_in_sip, numeric_before_alpha, missing_sequence_is_error,
-#                            generate_processed_pdf_thumbnails_page, skip_generation_thumbnail_page_when_error_free
+#                            generate_processed_pdf_thumbnails_page, always_generate_thumbnail_page
 #
 # A single file can be grouped with multiple processing types
 #
