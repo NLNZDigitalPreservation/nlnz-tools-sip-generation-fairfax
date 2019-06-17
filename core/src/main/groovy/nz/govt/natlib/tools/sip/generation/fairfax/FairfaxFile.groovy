@@ -397,7 +397,11 @@ class FairfaxFile {
         otherFile.updateDimensions(true)
 
         Point2D.Double ratio = PdfDimensionFinder.getDimensionalRatio(this.dimensionsInPoints, otherFile.dimensionsInPoints)
-        return PdfDimensionFinder.isSameHeightDoubleWidth(ratio, 0.05)
+        boolean isSameHeightDoubleWidth = PdfDimensionFinder.isSameHeightDoubleWidth(ratio, 0.05)
+        if (!isSameHeightDoubleWidth) {
+            log.info("Not same height/double width dimensions1=${this.dimensionsInPoints}, dimensions2=${otherFile.dimensionsInPoints} file1=${this.file.canonicalPath}, file2=${otherFile.file.canonicalPath}")
+        }
+        return isSameHeightDoubleWidth
     }
 
     boolean isSameHeightHalfWidth(FairfaxFile otherFile) {
@@ -405,8 +409,10 @@ class FairfaxFile {
         otherFile.updateDimensions(true)
 
         Point2D.Double ratio = PdfDimensionFinder.getDimensionalRatio(this.dimensionsInPoints, otherFile.dimensionsInPoints)
-        return PdfDimensionFinder.isSameHeightHalfWidth(ratio, 0.05)
+        boolean isSameHeightHalfWidth = PdfDimensionFinder.isSameHeightHalfWidth(ratio, 0.05)
+        if (!isSameHeightHalfWidth) {
+            log.info("Not same height/half width dimensions1=${this.dimensionsInPoints}, dimensions2=${otherFile.dimensionsInPoints} file1=${this.file.canonicalPath}, file2=${otherFile.file.canonicalPath}")
+        }
+        return isSameHeightHalfWidth
     }
-
-
 }
