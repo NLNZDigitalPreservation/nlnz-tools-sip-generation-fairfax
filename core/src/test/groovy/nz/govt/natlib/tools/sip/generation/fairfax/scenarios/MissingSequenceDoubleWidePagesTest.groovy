@@ -124,10 +124,10 @@ class MissingSequenceDoubleWidePagesTest {
         log.info(processingParameters.detailedDisplay(0, true))
         log.info(System.lineSeparator())
 
-        int expectedNumberOfFilesProcessed = 8
-        int expectedNumberOfSipFiles = 8
-        int expectedNumberOfThumbnailPageFiles = 8
-        int expectedNumberOfValidFiles = 8
+        int expectedNumberOfFilesProcessed = 10
+        int expectedNumberOfSipFiles = 10
+        int expectedNumberOfThumbnailPageFiles = 10
+        int expectedNumberOfValidFiles = 10
         int expectedNumberOfInvalidFiles = 0
         int expectedNumberOfIgnoredFiles = 0
         int expectedNumberOfUnrecognizedFiles = 0
@@ -198,5 +198,11 @@ class MissingSequenceDoubleWidePagesTest {
 
         TestHelper.assertExpectedSipFileValues(sipForValidation, 8, "TSTPB1-20181123-010.pdf", "TSTPB1-20181123-010.pdf",
                 12539L, "MD5", "6803efd241fed95f0614ad1e70380148", "0008", "application/pdf")
+
+        TestHelper.assertExpectedSipFileValues(sipForValidation, 9, "TSTPB1-20181123-012.pdf", "TSTPB1-20181123-012.pdf",
+                12923L, "MD5", "d58fb5c894632654d9bcb638485bac91", "0009", "application/pdf")
+
+        TestHelper.assertExpectedSipFileValues(sipForValidation, 10, "TSTPB1-20181123-013.pdf", "TSTPB1-20181123-013.pdf",
+                12539L, "MD5", "6803efd241fed95f0614ad1e70380148", "0010", "application/pdf")
     }
 }
