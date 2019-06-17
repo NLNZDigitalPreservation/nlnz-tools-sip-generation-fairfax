@@ -8,9 +8,12 @@ import groovy.util.logging.Log4j2
 import nz.govt.natlib.tools.sip.Sip
 import nz.govt.natlib.tools.sip.SipFileWrapperFactory
 import nz.govt.natlib.tools.sip.generation.fairfax.parameters.ProcessingOption
+import nz.govt.natlib.tools.sip.pdf.PdfDimensionFinder
 import nz.govt.natlib.tools.sip.utils.FileUtils
 import org.apache.commons.collections4.CollectionUtils
 
+import java.awt.Point
+import java.awt.geom.Point2D
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.regex.Matcher
@@ -31,6 +34,7 @@ class FairfaxFile {
     static final String PDF_FILE_WITH_TITLE_SECTION_DATE_SEQUENCE_PATTERN = '\\w{5,7}-\\d{8}-\\w{3,4}.*?\\.[pP]{1}[dD]{1}[fF]{1}'
     static final String PDF_FILE_WITH_TITLE_SECTION_DATE_PATTERN = '\\w{5,7}-\\d{8}-.*?\\.[pP]{1}[dD]{1}[fF]{1}'
     static final DateTimeFormatter LOCAL_DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyyMMdd")
+    static final Point UNDIMENSIONED = new Point(-1, -1)
 
     File file
     String filename
@@ -46,6 +50,7 @@ class FairfaxFile {
     String qualifier
     boolean validForProcessing
     boolean validPdf
+    Point dimensionsInPoints = UNDIMENSIONED
 
     static List<FairfaxFile> differences(List<FairfaxFile> list1, List<FairfaxFile> list2) {
         List<FairfaxFile> list1MinusList2 = CollectionUtils.subtract(list1, list2)
@@ -376,4 +381,32 @@ class FairfaxFile {
         return this.date == fairfaxFile.date && this.sequenceLetter == fairfaxFile.sequenceLetter &&
                 this.sequenceNumber == fairfaxFile.sequenceNumber
     }
+
+    boolean hasDimensions() {
+        return dimensionsInPoints.x > 0 && dimensionsInPoints.y > 0
+    }
+
+    void updateDimensions(boolean whenNotDimensioned = true) {
+        if ((whenNotDimensioned && !hasDimensions()) || !whenNotDimensioned) {
+            this.dimensionsInPoints = PdfDimensionFinder.getDimensions(this.file, 0)
+        }
+    }
+
+    boolean isSameHeightDoubleWidth(FairfaxFile otherFile) {
+        updateDimensions(true)
+        otherFile.updateDimensions(true)
+
+        Point2D.Double ratio = PdfDimensionFinder.getDimensionalRatio(this.dimensionsInPoints, otherFile.dimensionsInPoints)
+        return PdfDimensionFinder.isSameHeightDoubleWidth(ratio, 0.05)
+    }
+
+    boolean isSameHeightHalfWidth(FairfaxFile otherFile) {
+        updateDimensions(true)
+        otherFile.updateDimensions(true)
+
+        Point2D.Double ratio = PdfDimensionFinder.getDimensionalRatio(this.dimensionsInPoints, otherFile.dimensionsInPoints)
+        return PdfDimensionFinder.isSameHeightHalfWidth(ratio, 0.05)
+    }
+
+
 }

@@ -294,16 +294,43 @@ class FairfaxFilesProcessor {
             List<FairfaxFile> postMissingSequenceFiles = FairfaxFile.postMissingSequenceFiles(checkList,
                     processingParameters)
             if (postMissingSequenceFiles.size() > 0) {
-                List<String> filenamesOnly = FairfaxFile.asFilenames(postMissingSequenceFiles)
-                String listOfFiles = "${filenamesOnly}".toString()
-                SipProcessingExceptionReason exceptionReason = new SipProcessingExceptionReason(
-                        SipProcessingExceptionReasonType.MISSING_SEQUENCE_FILES, null,
-                        listOfFiles)
-                SipProcessingException sipProcessingException = SipProcessingException.createWithReason(exceptionReason)
-                processingParameters.sipProcessingState.addException(sipProcessingException)
-                log.warn(exceptionReason.toString())
+                boolean hasMissingFiles = true
+                if (processingParameters.rules.contains(ProcessingRule.MissingSequenceDoubleWideIgnored)) {
+                    hasMissingFiles = notAllMissingFilesAreDoubleWides(checkList, postMissingSequenceFiles)
+                }
+                if (hasMissingFiles) {
+                    List<String> filenamesOnly = FairfaxFile.asFilenames(postMissingSequenceFiles)
+                    String listOfFiles = "${filenamesOnly}".toString()
+                    SipProcessingExceptionReason exceptionReason = new SipProcessingExceptionReason(
+                            SipProcessingExceptionReasonType.MISSING_SEQUENCE_FILES, null,
+                            listOfFiles)
+                    SipProcessingException sipProcessingException = SipProcessingException.createWithReason(exceptionReason)
+                    processingParameters.sipProcessingState.addException(sipProcessingException)
+                    log.warn(exceptionReason.toString())
+                }
             }
         }
+    }
+
+    boolean notAllMissingFilesAreDoubleWides(List<FairfaxFile> checkList, List<FairfaxFile> postMissingSequenceFiles) {
+        FairfaxFile genuineMissingFile = postMissingSequenceFiles.find { FairfaxFile missingFile ->
+            !isDoubleWideInSequence(checkList, missingFile)
+        }
+        return genuineMissingFile != null
+    }
+
+    boolean isDoubleWideInSequence(List<FairfaxFile> checkList, FairfaxFile postMissingFile) {
+        int postMissingFileIndex = checkList.indexOf(postMissingFile)
+        int previousIndex = postMissingFileIndex - 1
+        if (previousIndex < 0) {
+            // There is no previous file
+            return false
+        }
+        FairfaxFile previousFile = checkList.get(previousIndex)
+
+        // Either the previous file was a double wide or this file is a double wide.
+        return previousFile.isSameHeightDoubleWidth(postMissingFile) ||
+                previousFile.isSameHeightHalfWidth(postMissingFile)
     }
 
     void checkForManualProcessing() {

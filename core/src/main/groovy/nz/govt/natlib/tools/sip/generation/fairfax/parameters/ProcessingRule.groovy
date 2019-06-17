@@ -16,7 +16,9 @@ enum ProcessingRule {
     AllSectionsInSipRequired("required_all_sections_in_sip"),
     AllSectionsInSipOptional("optional_all_sections_in_sip"),
     MissingSequenceIgnored("missing_sequence_is_ignored"),
-    MissingSequenceError("missing_sequence_is_error")
+    MissingSequenceError("missing_sequence_is_error"),
+    MissingSequenceDoubleWideIgnored("missing_sequence_double_wide_is_ignored"),
+    MissingSequenceDoubleWideError("missing_sequence_double_wide_is_error"),
 
     private static final Map<String, ProcessingRule> LOOKUP_BY_FIELD_VALUE = [ : ]
     private static final Map<ProcessingRule, List<ProcessingRule>> OVERRIDES_MAP = [ : ]
@@ -31,8 +33,10 @@ enum ProcessingRule {
             OVERRIDES_MAP.put(AllSectionsInSipOptional, [ AllSectionsInSipRequired ])
             OVERRIDES_MAP.put(MissingSequenceIgnored, [ MissingSequenceError ])
             OVERRIDES_MAP.put(MissingSequenceError, [ MissingSequenceIgnored ])
-            OVERRIDES_MAP.put(EditionDiscriminatorsUsingSmartSubstitute, [EditionDiscriminatorsNotUsingSmartSubstitute ])
-            OVERRIDES_MAP.put(EditionDiscriminatorsNotUsingSmartSubstitute, [EditionDiscriminatorsUsingSmartSubstitute ])
+            OVERRIDES_MAP.put(MissingSequenceDoubleWideIgnored, [ MissingSequenceDoubleWideError ])
+            OVERRIDES_MAP.put(MissingSequenceDoubleWideError, [ MissingSequenceDoubleWideIgnored ])
+            OVERRIDES_MAP.put(EditionDiscriminatorsUsingSmartSubstitute, [ EditionDiscriminatorsNotUsingSmartSubstitute ])
+            OVERRIDES_MAP.put(EditionDiscriminatorsNotUsingSmartSubstitute, [ EditionDiscriminatorsUsingSmartSubstitute ])
         }
     }
 
