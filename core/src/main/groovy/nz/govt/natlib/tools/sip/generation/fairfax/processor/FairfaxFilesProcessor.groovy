@@ -15,6 +15,7 @@ import nz.govt.natlib.tools.sip.generation.fairfax.parameters.ProcessingType
 import nz.govt.natlib.tools.sip.generation.fairfax.processor.type.ParentGroupingProcessor
 import nz.govt.natlib.tools.sip.generation.fairfax.processor.type.ParentGroupingWithEditionProcessor
 import nz.govt.natlib.tools.sip.generation.fairfax.processor.type.SipForFolderProcessor
+import nz.govt.natlib.tools.sip.generation.fairfax.special.PageUnavailableWriter
 import nz.govt.natlib.tools.sip.logging.JvmPerformanceLogger
 import nz.govt.natlib.tools.sip.pdf.PdfValidator
 import nz.govt.natlib.tools.sip.pdf.PdfValidatorFactory
@@ -202,6 +203,12 @@ class FairfaxFilesProcessor {
                 SipProcessingExceptionReason exceptionReason = new SipProcessingExceptionReason(
                         SipProcessingExceptionReasonType.FILE_OF_LENGTH_ZERO, null,
                         fairfaxFile.file.getCanonicalPath())
+                fairfaxFile.zeroLengthFile = true
+                if (processingParameters.rules.contains(ProcessingRule.ZeroLengthPdfReplacedWithPageUnavailablePdf)) {
+                    includeFileInSip = true
+                    File replacementFile = PageUnavailableWriter.writeToToTemporaryDirectory(fairfaxFile.file.name)
+                    fairfaxFile.file = replacementFile
+                }
                 processingParameters.sipProcessingState.addException(SipProcessingException.createWithReason(exceptionReason))
             } else {
                 // We use the Jhove validator as it is the same type used by Rosetta.
