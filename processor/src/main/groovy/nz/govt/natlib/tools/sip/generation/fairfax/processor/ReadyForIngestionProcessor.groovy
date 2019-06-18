@@ -84,6 +84,7 @@ class ReadyForIngestionProcessor {
             }
             File contentStreamsFolder = new File(sipAndFilesFolder, "content/streams")
             // Note that unrecognized only gets moved/copied if ProcessingRule.HandleUnrecognised
+            File invalidFilesFolder = new File(forReviewFolder, "INVALID/${dateString}/${processingParameters.titleCode}")
             File unrecognizedFilesFolder = new File(forReviewFolder, "UNRECOGNIZED/${dateString}/${processingParameters.titleCode}")
 
             boolean hasSipAndFilesFolder
@@ -101,9 +102,9 @@ class ReadyForIngestionProcessor {
                     sipAndFilesFolder.mkdirs()
                 }
             }
-            FileUtils.copyOrMoveFiles(processorConfiguration.moveFiles, sipProcessingState.validFiles, contentStreamsFolder)
+            FileUtils.copyOrMoveFiles(processorConfiguration.moveFiles, sipProcessingState.sipFiles, contentStreamsFolder)
             if (processingParameters.rules.contains(ProcessingRule.HandleInvalid)) {
-                FileUtils.copyOrMoveFiles(processorConfiguration.moveFiles, sipProcessingState.invalidFiles, contentStreamsFolder)
+                FileUtils.copyOrMoveFiles(processorConfiguration.moveFiles, sipProcessingState.invalidFiles, invalidFilesFolder)
             }
 
             if (processingParameters.rules.contains(ProcessingRule.HandleUnrecognised)) {

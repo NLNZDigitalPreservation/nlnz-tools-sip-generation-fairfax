@@ -205,8 +205,8 @@ class FairfaxFilesProcessor {
                         fairfaxFile.file.getCanonicalPath())
                 fairfaxFile.zeroLengthFile = true
                 if (processingParameters.rules.contains(ProcessingRule.ZeroLengthPdfReplacedWithPageUnavailablePdf)) {
-                    includeFileInSip = true
                     File replacementFile = PageUnavailableWriter.writeToToTemporaryDirectory(fairfaxFile.file.name)
+                    fairfaxFile.originalFile = fairfaxFile.file
                     fairfaxFile.file = replacementFile
                 }
                 processingParameters.sipProcessingState.addException(SipProcessingException.createWithReason(exceptionReason))
@@ -226,7 +226,7 @@ class FairfaxFilesProcessor {
         if (fairfaxFile.validPdf && fairfaxFile.validForProcessing) {
             processingParameters.sipProcessingState.validFiles.add(fairfaxFile.file)
         } else {
-            processingParameters.sipProcessingState.invalidFiles.add(fairfaxFile.file)
+            processingParameters.sipProcessingState.invalidFiles.add(fairfaxFile.originalFileOrFile)
         }
         if (includeFileInSip) {
             sipProcessingState.sipFiles.add(fairfaxFile.file)
