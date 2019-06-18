@@ -37,6 +37,8 @@ class FairfaxFile {
     static final Point UNDIMENSIONED = new Point(-1, -1)
 
     File file
+    // This is for when the file gets replaced, such as when a zero-length pdf is replaced by another file.
+    File originalFile
     String filename
     String titleCode
     String sectionCode
@@ -415,5 +417,9 @@ class FairfaxFile {
             log.info("Not same height/half width dimensions1=${this.dimensionsInPoints}, dimensions2=${otherFile.dimensionsInPoints} file1=${this.file.canonicalPath}, file2=${otherFile.file.canonicalPath}")
         }
         return isSameHeightHalfWidth
+    }
+
+    File getOriginalFileOrFile() {
+        return originalFile == null ? file : originalFile
     }
 }
