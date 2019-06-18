@@ -1,6 +1,7 @@
 package nz.govt.natlib.tools.sip.generation.fairfax
 
 import nz.govt.natlib.tools.sip.generation.fairfax.parameters.ProcessingOption
+import nz.govt.natlib.tools.sip.generation.fairfax.parameters.ProcessingRule
 
 import java.time.LocalDate
 
@@ -894,6 +895,132 @@ class FairfaxFileTest {
                                        fairfaxFile10, fairfaxFile4, fairfaxFile3, fairfaxFile2, fairfaxFile1 ]
         List<FairfaxFile> expected = [ fairfaxFile9, fairfaxFile10, fairfaxFile5, fairfaxFile11, fairfaxFile12,
                                        fairfaxFile13, fairfaxFile14 ]
+        List<FairfaxFile> postMissing = FairfaxFile.postMissingSequenceFiles(original, processingParameters)
+        assertThat("Post missing correctly found from=${FairfaxFile.asFilenames(original)} postMissing=${FairfaxFile.asFilenames(postMissing)}",
+                postMissing, is(expected))
+    }
+
+    @Test
+    void correctlyDeterminesAHundredsSequenceStart() {
+        File file1 = new File("NAMed1-20180131-100.pdf")
+        File file2 = new File("NAMed1-20180131-101.pdf")
+        File file3 = new File("NAMed1-20180131-300.pdf")
+        File file4 = new File("NAMed1-20180131-399.pdf")
+        File file5 = new File("NAMed1-20180131-400.pdf")
+        File file6 = new File("NAMed1-20180131-401.pdf")
+        File file7 = new File("NAMed1-20180131-402.pdf")
+        File file8 = new File("NAMed1-20180131-501.pdf")
+        File file9 = new File("NAMed1-20180131-502.pdf")
+
+        FairfaxFile fairfaxFile1 = new FairfaxFile(file1)
+        FairfaxFile fairfaxFile2 = new FairfaxFile(file2)
+        FairfaxFile fairfaxFile3 = new FairfaxFile(file3)
+        FairfaxFile fairfaxFile4 = new FairfaxFile(file4)
+        FairfaxFile fairfaxFile5 = new FairfaxFile(file5)
+        FairfaxFile fairfaxFile6 = new FairfaxFile(file6)
+        FairfaxFile fairfaxFile7 = new FairfaxFile(file7)
+        FairfaxFile fairfaxFile8 = new FairfaxFile(file8)
+        FairfaxFile fairfaxFile9 = new FairfaxFile(file9)
+
+        assertTrue("file=${fairfaxFile5.file} is isAHundredsSequenceStart", fairfaxFile5.isAHundredsSequenceStart())
+        assertTrue("file=${fairfaxFile6.file} is isAHundredsSequenceStart", fairfaxFile6.isAHundredsSequenceStart())
+        assertTrue("file=${fairfaxFile8.file} is isAHundredsSequenceStart", fairfaxFile8.isAHundredsSequenceStart())
+
+        assertFalse("file=${fairfaxFile1.file} is NOT isAHundredsSequenceStart", fairfaxFile1.isAHundredsSequenceStart())
+        assertFalse("file=${fairfaxFile2.file} is NOT isAHundredsSequenceStart", fairfaxFile2.isAHundredsSequenceStart())
+        assertFalse("file=${fairfaxFile3.file} is NOT isAHundredsSequenceStart", fairfaxFile3.isAHundredsSequenceStart())
+        assertFalse("file=${fairfaxFile4.file} is NOT isAHundredsSequenceStart", fairfaxFile4.isAHundredsSequenceStart())
+        assertFalse("file=${fairfaxFile7.file} is NOT isAHundredsSequenceStart", fairfaxFile7.isAHundredsSequenceStart())
+        assertFalse("file=${fairfaxFile9.file} is NOT isAHundredsSequenceStart", fairfaxFile9.isAHundredsSequenceStart())
+    }
+
+    @Test
+    void correctFindsPostMissingSequenceFilesWhenHundredsSkipOkay() {
+        File file1 = new File("NAMed1-20180131-A01.pdf")
+        File file2 = new File("NAMed1-20180131-A02.pdf")
+        File file3 = new File("NAMed1-20180131-A03.pdf")
+        File file4 = new File("NAMed1-20180131-A04.pdf")
+        File file5 = new File("NAMed1-20180131-400.pdf")
+        File file6 = new File("NAMed1-20180131-01.pdf")
+        File file7 = new File("NAMed1-20180131-02.pdf")
+        File file8 = new File("NAMed1-20180131-03.pdf")
+        File file9 = new File("NAMed1-20180131-05.pdf")
+        File file10 = new File("NAMed1-20180131-101.pdf")
+        File file11 = new File("NAMFEE-20180131-B02.pdf")
+        File file12 = new File("NAMFEE-20180131-B04.pdf")
+        File file13 = new File("NAMFEE-20180131-C06.pdf")
+        File file14 = new File("NAMFEE-20180131-401.pdf")
+
+        FairfaxFile fairfaxFile1 = new FairfaxFile(file1)
+        FairfaxFile fairfaxFile2 = new FairfaxFile(file2)
+        FairfaxFile fairfaxFile3 = new FairfaxFile(file3)
+        FairfaxFile fairfaxFile4 = new FairfaxFile(file4)
+        FairfaxFile fairfaxFile5 = new FairfaxFile(file5)
+        FairfaxFile fairfaxFile6 = new FairfaxFile(file6)
+        FairfaxFile fairfaxFile7 = new FairfaxFile(file7)
+        FairfaxFile fairfaxFile8 = new FairfaxFile(file8)
+        FairfaxFile fairfaxFile9 = new FairfaxFile(file9)
+        FairfaxFile fairfaxFile10 = new FairfaxFile(file10)
+        FairfaxFile fairfaxFile11 = new FairfaxFile(file11)
+        FairfaxFile fairfaxFile12 = new FairfaxFile(file12)
+        FairfaxFile fairfaxFile13 = new FairfaxFile(file13)
+        FairfaxFile fairfaxFile14 = new FairfaxFile(file14)
+
+        FairfaxProcessingParameters processingParameters = new FairfaxProcessingParameters(
+                sectionCodes: [ "ed1", "TWO", "FEE" ])
+        processingParameters.rules = [ ProcessingRule.NumericStartsInHundredsNotConsideredSequenceSkips ]
+
+        List<FairfaxFile> original = [ fairfaxFile14, fairfaxFile13, fairfaxFile12, fairfaxFile11,
+                                       fairfaxFile9, fairfaxFile8, fairfaxFile7, fairfaxFile6, fairfaxFile5,
+                                       fairfaxFile10, fairfaxFile4, fairfaxFile3, fairfaxFile2, fairfaxFile1 ]
+        List<FairfaxFile> expected = [ fairfaxFile9, fairfaxFile10, fairfaxFile11, fairfaxFile12,
+                                       fairfaxFile13 ]
+        List<FairfaxFile> postMissing = FairfaxFile.postMissingSequenceFiles(original, processingParameters)
+        assertThat("Post missing correctly found from=${FairfaxFile.asFilenames(original)} postMissing=${FairfaxFile.asFilenames(postMissing)}",
+                postMissing, is(expected))
+    }
+
+    @Test
+    void correctFindsPostMissingSequenceFilesWhenHundredsSkipNotOkay() {
+        File file1 = new File("NAMed1-20180131-A01.pdf")
+        File file2 = new File("NAMed1-20180131-A02.pdf")
+        File file3 = new File("NAMed1-20180131-A03.pdf")
+        File file4 = new File("NAMed1-20180131-A04.pdf")
+        File file5 = new File("NAMed1-20180131-400.pdf")
+        File file6 = new File("NAMed1-20180131-01.pdf")
+        File file7 = new File("NAMed1-20180131-02.pdf")
+        File file8 = new File("NAMed1-20180131-03.pdf")
+        File file9 = new File("NAMed1-20180131-05.pdf")
+        File file10 = new File("NAMed1-20180131-101.pdf")
+        File file11 = new File("NAMFEE-20180131-B02.pdf")
+        File file12 = new File("NAMFEE-20180131-B04.pdf")
+        File file13 = new File("NAMFEE-20180131-C06.pdf")
+        File file14 = new File("NAMFEE-20180131-401.pdf")
+
+        FairfaxFile fairfaxFile1 = new FairfaxFile(file1)
+        FairfaxFile fairfaxFile2 = new FairfaxFile(file2)
+        FairfaxFile fairfaxFile3 = new FairfaxFile(file3)
+        FairfaxFile fairfaxFile4 = new FairfaxFile(file4)
+        FairfaxFile fairfaxFile5 = new FairfaxFile(file5)
+        FairfaxFile fairfaxFile6 = new FairfaxFile(file6)
+        FairfaxFile fairfaxFile7 = new FairfaxFile(file7)
+        FairfaxFile fairfaxFile8 = new FairfaxFile(file8)
+        FairfaxFile fairfaxFile9 = new FairfaxFile(file9)
+        FairfaxFile fairfaxFile10 = new FairfaxFile(file10)
+        FairfaxFile fairfaxFile11 = new FairfaxFile(file11)
+        FairfaxFile fairfaxFile12 = new FairfaxFile(file12)
+        FairfaxFile fairfaxFile13 = new FairfaxFile(file13)
+        FairfaxFile fairfaxFile14 = new FairfaxFile(file14)
+
+        FairfaxProcessingParameters processingParameters = new FairfaxProcessingParameters(
+                sectionCodes: [ "ed1", "TWO", "FEE" ])
+        processingParameters.rules = [ ProcessingRule.NumericStartsInHundredsConsideredSequenceSkips ]
+
+        List<FairfaxFile> original = [ fairfaxFile14, fairfaxFile13, fairfaxFile12, fairfaxFile11,
+                                       fairfaxFile9, fairfaxFile8, fairfaxFile7, fairfaxFile6, fairfaxFile5,
+                                       fairfaxFile10, fairfaxFile4, fairfaxFile3, fairfaxFile2, fairfaxFile1 ]
+        List<FairfaxFile> expected = [ fairfaxFile9, fairfaxFile10, fairfaxFile5, fairfaxFile14, fairfaxFile11,
+                                       fairfaxFile12, fairfaxFile13 ]
         List<FairfaxFile> postMissing = FairfaxFile.postMissingSequenceFiles(original, processingParameters)
         assertThat("Post missing correctly found from=${FairfaxFile.asFilenames(original)} postMissing=${FairfaxFile.asFilenames(postMissing)}",
                 postMissing, is(expected))

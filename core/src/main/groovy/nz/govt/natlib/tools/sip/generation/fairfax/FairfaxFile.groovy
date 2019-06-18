@@ -8,6 +8,7 @@ import groovy.util.logging.Log4j2
 import nz.govt.natlib.tools.sip.Sip
 import nz.govt.natlib.tools.sip.SipFileWrapperFactory
 import nz.govt.natlib.tools.sip.generation.fairfax.parameters.ProcessingOption
+import nz.govt.natlib.tools.sip.generation.fairfax.parameters.ProcessingRule
 import nz.govt.natlib.tools.sip.pdf.PdfDimensionFinder
 import nz.govt.natlib.tools.sip.utils.FileUtils
 import org.apache.commons.collections4.CollectionUtils
@@ -118,7 +119,14 @@ class FairfaxFile {
         sorted.each { FairfaxFile testFile ->
             if (previousFile != null) {
                 if (!testFile.canComeDirectlyAfter(previousFile, processingParameters.editionDiscriminators)) {
-                    postMissingFiles.add(testFile)
+                    if (testFile.isAHundredsSequenceStart() &&
+                            processingParameters.rules.contains(ProcessingRule.NumericStartsInHundredsNotConsideredSequenceSkips)) {
+                        // We don't consider this a skip in the sequence.
+                        // Note that there's a small edge case where there are hundreds of pages, such as:
+                        // 397, 398, 400, 401, ... -> this would be considered okay, even though there is a page missing.
+                    } else {
+                        postMissingFiles.add(testFile)
+                    }
                 }
                 previousFile = testFile
             } else {
@@ -421,5 +429,16 @@ class FairfaxFile {
 
     File getOriginalFileOrFile() {
         return originalFile == null ? file : originalFile
+    }
+
+    boolean isAHundredsSequenceStart() {
+        // TODO the case that we've seen is STL/SOT (Southland Times) with 401, 402 sequences
+        // so we have set this at 400 so that cases like 98, 100, 101 will catch missing files.
+        if (sequenceNumber < 400) {
+            return false
+        }
+        int hundredRemainder = sequenceNumber % 100
+
+        return hundredRemainder == 0 || hundredRemainder == 1
     }
 }
