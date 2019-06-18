@@ -50,6 +50,10 @@ class FairfaxFilesProcessor {
                                         List<File> filesForProcessing) {
         FairfaxFilesProcessor fairfaxFilesProcessor = new FairfaxFilesProcessor(processingParameters,
                 filesForProcessing)
+        if (processingParameters.rules.contains(ProcessingRule.ForceSkip)) {
+            log.info("Skipping processing sourceFolder=${processingParameters.sourceFolder.canonicalPath} as processing rules include=${ProcessingRule.ForceSkip.fieldValue}")
+            return ""
+        }
         return fairfaxFilesProcessor.process()
     }
 
