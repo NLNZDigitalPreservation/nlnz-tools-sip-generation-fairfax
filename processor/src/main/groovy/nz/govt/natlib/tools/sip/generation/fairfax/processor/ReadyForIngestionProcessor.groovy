@@ -269,7 +269,12 @@ class ReadyForIngestionProcessor {
                     JvmPerformanceLogger.logState("ReadyForIngestionProcessor Current thread state at end of ${titleCodeFolderMessage}",
                             false, true, true, false, true, false, true)
                 } catch (Exception e) {
-                    log.error("Exception processing ${titleCodeFolderMessage}", e)
+                    log.error("Exception processing ${titleCodeFolderMessage}, note that Processing WILL continue", e)
+                } catch (OutOfMemoryError e) {
+                    log.error("Exception processing ${titleCodeFolderMessage}, note that Processing WILL continue", e)
+                    log.error("Number of threads currently generating thumbnails queue length=${ThreadedThumbnailGenerator.numberThreadsGeneratingThumbnails()}")
+                    JvmPerformanceLogger.logState("ReadyForIngestionProcessor Current thread state at end of ${titleCodeFolderMessage}",
+                            false, true, true, false, true, true, true)
                 }
             }
         }
