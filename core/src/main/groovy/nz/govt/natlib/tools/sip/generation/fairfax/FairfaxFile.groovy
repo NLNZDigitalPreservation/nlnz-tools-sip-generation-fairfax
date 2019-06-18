@@ -51,6 +51,7 @@ class FairfaxFile {
     boolean validForProcessing
     boolean validPdf
     Point dimensionsInPoints = UNDIMENSIONED
+    boolean zeroLengthFile = false
 
     static List<FairfaxFile> differences(List<FairfaxFile> list1, List<FairfaxFile> list2) {
         List<FairfaxFile> list1MinusList2 = CollectionUtils.subtract(list1, list2)
@@ -382,12 +383,12 @@ class FairfaxFile {
                 this.sequenceNumber == fairfaxFile.sequenceNumber
     }
 
-    boolean hasDimensions() {
+    boolean isDimensioned() {
         return dimensionsInPoints.x > 0 && dimensionsInPoints.y > 0
     }
 
     void updateDimensions(boolean whenNotDimensioned = true) {
-        if ((whenNotDimensioned && !hasDimensions()) || !whenNotDimensioned) {
+        if ((whenNotDimensioned && !isDimensioned()) || !whenNotDimensioned) {
             this.dimensionsInPoints = PdfDimensionFinder.getDimensions(this.file, 0)
         }
     }

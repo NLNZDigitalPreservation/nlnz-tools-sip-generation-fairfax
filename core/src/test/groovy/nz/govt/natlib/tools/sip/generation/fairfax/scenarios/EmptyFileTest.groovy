@@ -5,6 +5,7 @@ import nz.govt.natlib.tools.sip.IEEntityType
 import nz.govt.natlib.tools.sip.extraction.SipXmlExtractor
 import nz.govt.natlib.tools.sip.generation.fairfax.FairfaxFile
 import nz.govt.natlib.tools.sip.generation.fairfax.parameters.ProcessingOption
+import nz.govt.natlib.tools.sip.generation.fairfax.parameters.ProcessingRule
 import nz.govt.natlib.tools.sip.generation.fairfax.processor.FairfaxFilesProcessor
 import nz.govt.natlib.tools.sip.generation.fairfax.FairfaxProcessingParameters
 import nz.govt.natlib.tools.sip.generation.fairfax.TestHelper
@@ -54,7 +55,7 @@ class EmptyFileTest {
     }
 
     /**
-     * Note to developers: Ensure that this is exactly the same test as {@link #correctlyAssembleSipFromFiles()}, except
+     * Note to developers: Ensure that this is exactly the same test as {@link #correctlyAssemblesSipsFromFilesNoReplacementPdf()}, except
      * that this test only reads from the file system, not a resource file.
      *
      * This test should use the local filesystem when running from within an IDE.
@@ -64,7 +65,27 @@ class EmptyFileTest {
     @Test
     // TODO Ignore this test before making a code commit
     @Ignore
-    void correctlyAssembleSipFromFilesOnFilesystem() {
+    void correctlyAssemblesSipsFromFilesOnFilesystemNoReplacementPdf() {
+        correctlyAssemblesSipFromFilesOnFilesystem([ ProcessingRule.ZeroLengthPdfSkipped ])
+    }
+
+    /**
+     * Note to developers: Ensure that this is exactly the same test as {@link #correctAssemblesSipsFromFilesWithReplacementPdf()}, except
+     * that this test only reads from the file system, not a resource file.
+     *
+     * This test should use the local filesystem when running from within an IDE.
+     *
+     * This test then becomes a starting point for scripts that create and process SIPs.
+     */
+    @Test
+    // TODO Ignore this test before making a code commit
+    @Ignore
+    void correctlyAssemblesSipsFromFilesOnFilesystemWithReplacementPdf() {
+        correctlyAssemblesSipFromFilesOnFilesystem([ ProcessingRule.ZeroLengthPdfReplacedWithPageUnavailablePdf ])
+    }
+
+
+    void correctlyAssemblesSipFromFilesOnFilesystem(List<ProcessingRule> overrideRules) {
         boolean forLocalFilesystem = true
         TestHelper.initializeTestMethod(testMethodState, "EmptyFileTest-", forLocalFilesystem)
 
@@ -75,11 +96,20 @@ class EmptyFileTest {
         List<File> filesForProcessing = TestHelper.getFilesForProcessingFromFileSystem(isRegexNotGlob, matchFilenameOnly,
                 sortFiles, testMethodState.localPath, ".*?\\.[pP]{1}[dD]{1}[fF]{1}")
 
-        processFiles(filesForProcessing)
+        processFiles(filesForProcessing, overrideRules)
     }
 
     @Test
-    void correctlyAssembleSipFromFiles() {
+    void correctlyAssemblesSipsFromFilesNoReplacementPdf() {
+        correctlyAssembleSipFromFiles([ ProcessingRule.ZeroLengthPdfSkipped ])
+    }
+
+    @Test
+    void correctAssemblesSipsFromFilesWithReplacementPdf() {
+        correctlyAssembleSipFromFiles([ ProcessingRule.ZeroLengthPdfReplacedWithPageUnavailablePdf ])
+    }
+
+    void correctlyAssembleSipFromFiles(List<ProcessingRule> overrideRules) {
         boolean forLocalFilesystem = false
         TestHelper.initializeTestMethod(testMethodState, "EmptyFileTest-", forLocalFilesystem)
 
@@ -90,21 +120,27 @@ class EmptyFileTest {
         List<File> filesForProcessing = TestHelper.getFilesForProcessingFromResource(isRegexNotGlob, matchFilenameOnly,
                 sortFiles, testMethodState.resourcePath, testMethodState.localPath, ".*?\\.[pP]{1}[dD]{1}[fF]{1}")
 
-        processFiles(filesForProcessing)
+        processFiles(filesForProcessing, overrideRules)
     }
 
-    void processFiles(List<File> filesForProcessing) {
+    void processFiles(List<File> filesForProcessing, List<ProcessingRule> overrideRules) {
         String dateString = "20181123"
         LocalDate processingDate = LocalDate.parse(dateString, FairfaxFile.LOCAL_DATE_TIME_FORMATTER)
 
         File sourceFolder = new File(testMethodState.localPath)
         List<FairfaxProcessingParameters> parametersList = FairfaxProcessingParameters.build("TST",
-                [ ProcessingType.ParentGrouping ], sourceFolder, processingDate, testMethodState.fairfaxSpreadsheet)
+                [ ProcessingType.ParentGrouping ], sourceFolder, processingDate, testMethodState.fairfaxSpreadsheet,
+                overrideRules)
 
         assertThat("Only a single FairfaxProcessingParameters is returned, size=${parametersList.size()}",
                 parametersList.size(), is(1))
 
         FairfaxProcessingParameters processingParameters = parametersList.first()
+
+        overrideRules.each { ProcessingRule rule ->
+            assertTrue("processingParameters rules contains override=${rule}",
+                    processingParameters.rules.contains(rule))
+        }
 
         processingParameters.sipProcessingState = testMethodState.sipProcessingState
         String sipAsXml = FairfaxFilesProcessor.processCollectedFiles(processingParameters, filesForProcessing)
@@ -113,6 +149,7 @@ class EmptyFileTest {
         log.info(processingParameters.detailedDisplay(0, true))
         log.info(System.lineSeparator())
 
+        boolean replaceZeroLengthPdfWithPageUnavailable = processingParameters.rules.contains(ProcessingRule.ZeroLengthPdfReplacedWithPageUnavailablePdf)
         int expectedNumberOfFilesProcessed = 10
         int expectedNumberOfSipFiles = 10
         int expectedNumberOfThumbnailPageFiles = 10
@@ -137,7 +174,7 @@ class EmptyFileTest {
         }
 
         log.info("SIP validation")
-        sipConstructedCorrectly(sipAsXml)
+        sipConstructedCorrectly(sipAsXml, replaceZeroLengthPdfWithPageUnavailable)
         log.info("ENDING SIP validation")
         log.info("Process output path=${testMethodState.processOutputInterceptor.path}")
         Path processingStateFilePath = testMethodState.sipProcessingState.toTempFile()
@@ -147,7 +184,7 @@ class EmptyFileTest {
         // would be moved/copied to a processing completed directory based on the processing state.
     }
 
-    void sipConstructedCorrectly(String sipXml) {
+    void sipConstructedCorrectly(String sipXml, boolean replaceZeroLengthPdfWithPageUnavailable) {
         SipXmlExtractor sipForValidation = new SipXmlExtractor(sipXml)
 
         assertTrue("SipXmlExtractor has content", sipForValidation.xml.length() > 0)
@@ -160,34 +197,39 @@ class EmptyFileTest {
                 "PRESERVATION_MASTER", "VIEW", true, 1)
 
         TestHelper.assertExpectedSipFileValues(sipForValidation, 1, "TSTPB1-20181123-001.pdf", "TSTPB1-20181123-001.pdf",
-                11438L, "MD5", "b8b673eeaa076ff19501318a27f85e9c", "0001", "application/pdf")
+                739L, "MD5", "b5808604069f9f61d94e0660409616ba", "0001", "application/pdf")
 
         TestHelper.assertExpectedSipFileValues(sipForValidation, 2, "TSTPB1-20181123-002.pdf", "TSTPB1-20181123-002.pdf",
-                11437L, "MD5", "df39cff17991188d9994ff94bddf3985", "0002", "application/pdf")
+                739L, "MD5", "b5808604069f9f61d94e0660409616ba", "0002", "application/pdf")
 
         TestHelper.assertExpectedSipFileValues(sipForValidation, 3, "TSTPB1-20181123-003.pdf", "TSTPB1-20181123-003.pdf",
-                0L, "MD5", "d41d8cd98f00b204e9800998ecf8427e", "0003", "application/pdf")
+                739L, "MD5", "b5808604069f9f61d94e0660409616ba", "0003", "application/pdf")
 
         TestHelper.assertExpectedSipFileValues(sipForValidation, 4, "TSTPB1-20181123-004.pdf", "TSTPB1-20181123-004.pdf",
-                11554L, "MD5", "857326c06870577255acd4b21e1a64d7", "0004", "application/pdf")
+                739L, "MD5", "b5808604069f9f61d94e0660409616ba", "0004", "application/pdf")
 
         TestHelper.assertExpectedSipFileValues(sipForValidation, 5, "TSTPB1-20181123-005.pdf", "TSTPB1-20181123-005.pdf",
-                11605L, "MD5", "02e254147945f60a6a2be1c35ae0689e", "0005", "application/pdf")
+                739L, "MD5", "b5808604069f9f61d94e0660409616ba", "0005", "application/pdf")
 
         TestHelper.assertExpectedSipFileValues(sipForValidation, 6, "TSTPB1-20181123-006.pdf", "TSTPB1-20181123-006.pdf",
-                11430L, "MD5", "6b932154c4b004a2507d73dc3aaf0736", "0006", "application/pdf")
+                739L, "MD5", "b5808604069f9f61d94e0660409616ba", "0006", "application/pdf")
 
-        TestHelper.assertExpectedSipFileValues(sipForValidation, 7, "TSTPB1-20181123-007.PDF", "TSTPB1-20181123-007.PDF",
-                11543L, "MD5", "a7ceb9001aab17e78cfaf1559f130071", "0007", "application/pdf")
+        TestHelper.assertExpectedSipFileValues(sipForValidation, 7, "TSTPB1-20181123-007.pdf", "TSTPB1-20181123-007.pdf",
+                739L, "MD5", "b5808604069f9f61d94e0660409616ba", "0007", "application/pdf")
 
-        TestHelper.assertExpectedSipFileValues(sipForValidation, 8, "TSTPB1-20181123-008.PDF", "TSTPB1-20181123-008.PDF",
-                11436L, "MD5", "449dc86bd38979d10c8fb6c3b375a467", "0008", "application/pdf")
+        TestHelper.assertExpectedSipFileValues(sipForValidation, 8, "TSTPB1-20181123-008.pdf", "TSTPB1-20181123-008.pdf",
+                739L, "MD5", "b5808604069f9f61d94e0660409616ba", "0008", "application/pdf")
 
-        TestHelper.assertExpectedSipFileValues(sipForValidation, 9, "TSTPB1-20181123-009.pdf", "TSTPB1-20181123-009.pdf",
-                11612L, "MD5", "fee5322aa8d3c7a4fe7adeba7953e071", "0009", "application/pdf")
+        if (replaceZeroLengthPdfWithPageUnavailable) {
+            TestHelper.assertExpectedSipFileValues(sipForValidation, 9, "TSTPB1-20181123-009.pdf", "TSTPB1-20181123-009.pdf",
+                    15694L, "MD5", "c7670674e8304d565e40f3da43ad65c5", "0009", "application/pdf")
+        } else {
+            TestHelper.assertExpectedSipFileValues(sipForValidation, 9, "TSTPB1-20181123-009.pdf", "TSTPB1-20181123-009.pdf",
+                    0L, "MD5", "d41d8cd98f00b204e9800998ecf8427e", "0009", "application/pdf")
+        }
 
         TestHelper.assertExpectedSipFileValues(sipForValidation, 10, "TSTPB1-20181123-010.pdf", "TSTPB1-20181123-010.pdf",
-                11440L, "MD5", "f621c3081711e895d8fa3d2dd5e49ffa", "0010", "application/pdf")
+                739L, "MD5", "b5808604069f9f61d94e0660409616ba", "0010", "application/pdf")
     }
 
 }

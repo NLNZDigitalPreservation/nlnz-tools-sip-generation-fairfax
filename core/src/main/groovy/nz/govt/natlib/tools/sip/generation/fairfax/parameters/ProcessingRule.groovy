@@ -19,6 +19,8 @@ enum ProcessingRule {
     MissingSequenceError("missing_sequence_is_error"),
     MissingSequenceDoubleWideIgnored("missing_sequence_double_wide_is_ignored"),
     MissingSequenceDoubleWideError("missing_sequence_double_wide_is_error"),
+    ZeroLengthPdfReplacedWithPageUnavailablePdf("zero_length_pdf_replaced_with_page_unavailable"),
+    ZeroLengthPdfSkipped("zero_length_pdf_skipped")
 
     private static final Map<String, ProcessingRule> LOOKUP_BY_FIELD_VALUE = [ : ]
     private static final Map<ProcessingRule, List<ProcessingRule>> OVERRIDES_MAP = [ : ]
@@ -37,6 +39,8 @@ enum ProcessingRule {
             OVERRIDES_MAP.put(MissingSequenceDoubleWideError, [ MissingSequenceDoubleWideIgnored ])
             OVERRIDES_MAP.put(EditionDiscriminatorsUsingSmartSubstitute, [ EditionDiscriminatorsNotUsingSmartSubstitute ])
             OVERRIDES_MAP.put(EditionDiscriminatorsNotUsingSmartSubstitute, [ EditionDiscriminatorsUsingSmartSubstitute ])
+            OVERRIDES_MAP.put(ZeroLengthPdfReplacedWithPageUnavailablePdf, [ ZeroLengthPdfSkipped ])
+            OVERRIDES_MAP.put(ZeroLengthPdfSkipped, [ ZeroLengthPdfReplacedWithPageUnavailablePdf ])
         }
     }
 
