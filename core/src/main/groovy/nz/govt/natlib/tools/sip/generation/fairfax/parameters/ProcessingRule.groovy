@@ -9,6 +9,8 @@ enum ProcessingRule {
     HandleUnrecognised("handle_unrecognised"),
     HandleInvalid("handle_invalid"),
     Manual("manual"),
+    ForceSkip("force_skip"),
+    DoNotForceSkip("do_not_force_skip"),
     ProcessAllEditions("process_all_editions"),
     IgnoreEditionsWithoutMatchingFiles("ignore_editions_without_files"),
     EditionDiscriminatorsUsingSmartSubstitute("edition_discriminators_using_smart_substitute"),
@@ -31,6 +33,8 @@ enum ProcessingRule {
     static {
         values().each { ProcessingRule processingRule ->
             LOOKUP_BY_FIELD_VALUE.put(processingRule.fieldValue, processingRule)
+            OVERRIDES_MAP.put(ForceSkip, [ DoNotForceSkip ])
+            OVERRIDES_MAP.put(DoNotForceSkip, [ ForceSkip ])
             OVERRIDES_MAP.put(ProcessAllEditions, [ IgnoreEditionsWithoutMatchingFiles ])
             OVERRIDES_MAP.put(IgnoreEditionsWithoutMatchingFiles, [ ProcessAllEditions ])
             OVERRIDES_MAP.put(AllSectionsInSipRequired, [ AllSectionsInSipOptional ])
