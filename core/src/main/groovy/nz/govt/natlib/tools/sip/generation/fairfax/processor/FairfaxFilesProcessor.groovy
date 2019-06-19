@@ -375,10 +375,15 @@ class FairfaxFilesProcessor {
                 String thumbnailPageTitle = "${processingDifferentiator}_thumbnail_page.jpeg"
                 processingParameters.thumbnailPageFileFinalName = thumbnailPageTitle
                 File thumbnailPageFile = File.createTempFile("${thumbnailPagePrefix}_", ".jpeg")
+                // We want this temporary file to be deleted on exit. It will be copied to its final destination.
+                thumbnailPageFile.deleteOnExit()
                 ThumbnailParameters thumbnailParameters = new ThumbnailParameters(thumbnailHeight: 240,
                         useAffineTransformation: false, textJustification: ThumbnailParameters.TextJustification.RIGHT,
                         maximumPageWidth: 1200, pageTitleText: thumbnailPageTitle,
                         pageTitleFontJustification: ThumbnailParameters.TextJustification.RIGHT)
+                boolean useCommandLine = processingParameters.options.contains(ProcessingOption.UseCommandLinePdfToThumbnailGeneration)
+                thumbnailParameters.generateWithPdftoppm = useCommandLine
+
                 List<File> pdfFiles = fairfaxPdfFiles.collect { FairfaxFile sortedFile ->
                     sortedFile.file
                 }
