@@ -11,7 +11,9 @@ enum ProcessingOption {
     DoNotGenerateProcessedPdfThumbnailsPage("do_not_generate_processed_pdf_thumbnails_page"),
     AnyFirstSectionCode("any_first_section_code"),
     SkipThumbnailPageGenerationWhenNoErrors("skip_generation_thumbnail_page_when_error_free"),
-    AlwaysGenerateThumbnailPage("always_generate_thumbnail_page")
+    AlwaysGenerateThumbnailPage("always_generate_thumbnail_page"),
+    UseInMemoryPdfToThumbnailGeneration("use_in_memory_pdf_to_thumbnail_generation"),
+    UseCommandLinePdfToThumbnailGeneration("use_command_line_pdf_to_thumbnail_generation")
 
     private static final Map<String, ProcessingOption> LOOKUP_BY_FIELD_VALUE = [ : ]
     private static final Map<ProcessingOption, List<ProcessingOption>> OVERRIDES_MAP = [ : ]
@@ -27,6 +29,8 @@ enum ProcessingOption {
         OVERRIDES_MAP.put(DoNotGenerateProcessedPdfThumbnailsPage, [ GenerateProcessedPdfThumbnailsPage ])
         OVERRIDES_MAP.put(SkipThumbnailPageGenerationWhenNoErrors, [ AlwaysGenerateThumbnailPage ])
         OVERRIDES_MAP.put(AlwaysGenerateThumbnailPage, [ SkipThumbnailPageGenerationWhenNoErrors ])
+        OVERRIDES_MAP.put(UseInMemoryPdfToThumbnailGeneration, [ UseCommandLinePdfToThumbnailGeneration ])
+        OVERRIDES_MAP.put(UseCommandLinePdfToThumbnailGeneration, [ UseInMemoryPdfToThumbnailGeneration ])
     }
 
     static List<ProcessingOption> extract(String list, String separator = ",", List<ProcessingOption> defaults = [ ],

@@ -9,8 +9,9 @@ class PageUnavailableWriter {
     static File writeToToTemporaryDirectory(String filename = PAGE_NOT_AVAILABLE_PDF_RESOURCE,
                                             File parentDirectory = null) {
         String resourcePath = ""
+        boolean deleteOnExit = true
         File tempFile = FileUtils.writeResourceToTemporaryDirectory(filename, TEMPORARY_DIRECTORY_PREFIX, resourcePath,
-                PAGE_NOT_AVAILABLE_PDF_RESOURCE, parentDirectory)
+                PAGE_NOT_AVAILABLE_PDF_RESOURCE, parentDirectory, deleteOnExit)
 
         return tempFile
     }

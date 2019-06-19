@@ -96,11 +96,8 @@ dependencies {
     compile localGroovy()
     //compile 'org.codehaus.groovy:groovy-all:2.5.4'
 
-    // Use the latest version
-    compile "com.google.guava:guava:+"
-    // Use the latest version
-    compile "org.apache.commons:commons-lang3:+"
-    compile "commons-io:commons-io:2.+"
+    // Latest version
+    compile "org.apache.commons:commons-lang3:3.9"
     // Latest version
     compile "org.apache.commons:commons-collections4:4.3"
 
