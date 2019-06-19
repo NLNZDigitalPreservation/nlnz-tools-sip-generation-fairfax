@@ -22,8 +22,8 @@ import java.util.regex.Matcher
 @Canonical
 @Sortable(includes = ['titleCode', 'sectionCode', 'dateYear', 'dateMonthOfYear', 'dateDayOfMonth', 'sequenceLetter',
         'sequenceNumber', 'qualifier' ])
-@ToString(includeNames=true, includePackage=false, excludes=[ ])
-@EqualsAndHashCode(excludes = [ 'file', 'filename', 'qualifier', 'sequenceNumberString', 'validForProcessing', 'validPdf' ])
+@ToString(includeNames = true, includePackage = false, includes = [ 'filename', 'file' ])
+@EqualsAndHashCode(includes = [ 'titleCode', 'sectionCode', 'date', 'sequenceLetter', 'sequenceNumber' ])
 @Log4j2
 class FairfaxFile {
     // Note that the titleCode appears to be, in some cases 4 characters long (eg. JAZZTAB), but for most cases it is 3.
