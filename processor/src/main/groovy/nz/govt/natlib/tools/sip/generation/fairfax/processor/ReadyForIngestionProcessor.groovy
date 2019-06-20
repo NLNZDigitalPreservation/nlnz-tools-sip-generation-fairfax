@@ -20,6 +20,7 @@ import nz.govt.natlib.tools.sip.state.SipProcessingState
 import nz.govt.natlib.tools.sip.utils.FileUtils
 import nz.govt.natlib.tools.sip.utils.GeneralUtils
 
+import java.nio.charset.StandardCharsets
 import java.time.LocalDate
 
 /**
@@ -121,7 +122,9 @@ class ReadyForIngestionProcessor {
             // Write out the SIP file
             if (processingParameters.valid && !sipAsXml.isEmpty()) {
                 File sipFile = new File(sipAndFilesFolder, "content/mets.xml")
-                sipFile.write(sipAsXml)
+                sipFile.withWriter(StandardCharsets.UTF_8.name()) { Writer writer ->
+                    writer.write(sipAsXml)
+                }
             }
 
             // Write out the FairfaxProcessingParameters and SipProcessingState
@@ -129,7 +132,9 @@ class ReadyForIngestionProcessor {
             // We will assume that millisecond timestamps ensures that the filename will be unique
             File processingStateFile = new File(sourceFolder,
                     "${processingParameters.processingDifferentiator()}_parameters-and-state_${FileUtils.FILE_TIMESTAMP_FORMATTER.format(now)}.txt")
-            processingStateFile.write(processingParameters.detailedDisplay(0, true))
+            processingStateFile.withWriter(StandardCharsets.UTF_8.name()) { Writer writer ->
+                writer.write(processingParameters.detailedDisplay(0, true))
+            }
             if (sipAndFilesFolder.exists()) {
                 FileUtils.copyOrMoveFiles(false, [processingStateFile], sipAndFilesFolder)
             }

@@ -150,7 +150,7 @@ class FairfaxFilesProcessor {
             checkForManualProcessing()
 
             // See the note above about converting back and forth.
-            List<FairfaxFile> thumbnailPageFiles = processingParameters.sipProcessingState.sipFiles.collect { File file ->
+            List<FairfaxFile> thumbnailPageFiles = processingParameters.sipProcessingState.thumbnailPageFiles.collect { File file ->
                 new FairfaxFile(file)
             }
             generateThumbnailPage(thumbnailPageFiles)

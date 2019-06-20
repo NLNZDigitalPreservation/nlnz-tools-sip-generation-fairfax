@@ -5,6 +5,8 @@ import nz.govt.natlib.tools.sip.generation.parameters.SpreadsheetImporter
 import nz.govt.natlib.m11n.tools.gradle.BuildException
 import nz.govt.natlib.m11n.tools.gradle.ProjectHelper
 
+import java.nio.charset.StandardCharsets
+
 buildscript {
     repositories {
         mavenLocal()
@@ -167,7 +169,9 @@ task updateDefaultFairfaxImportParameters() {
         }
         JsonBuilder jsonBuilder = new JsonBuilder()
 
-        spreadsheetExportFile.write(JsonOutput.prettyPrint(spreadsheet.asJsonString()))
+        spreadsheetExportFile.withWriter(StandardCharsets.UTF_8.name()) { Writer writer ->
+            writer.write(JsonOutput.prettyPrint(spreadsheet.asJsonString()))
+        }
     }
 }
 
@@ -204,7 +208,9 @@ task exportDefaultFairfaxImportParameters() {
             logger.info(line.toString())
         }
 
-        spreadsheetExportFile.write(spreadsheet.asCsvString("|"))
+        spreadsheetExportFile.withWriter(StandardCharsets.UTF_8.name()) { Writer writer ->
+            writer.write(spreadsheet.asCsvString("|"))
+        }
     }
 }
 
