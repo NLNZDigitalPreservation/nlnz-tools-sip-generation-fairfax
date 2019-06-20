@@ -134,14 +134,16 @@ class FairfaxProcessingParameters {
             SipProcessingExceptionReason exceptionReason = new SipProcessingExceptionReason(
                     SipProcessingExceptionReasonType.MULTIPLE_DEFINITIONS, null, message)
             SipProcessingState replacementSipProcessingState = new SipProcessingState()
-            replacementSipProcessingState.exceptions = [SipProcessingException.createWithReason(exceptionReason)]
+            replacementSipProcessingState.exceptions = [ SipProcessingException.createWithReason(exceptionReason) ]
             log.warn(message)
             return new FairfaxProcessingParameters(valid: false, titleCode: titleCode, type: processingType,
+                    rules: processingType.defaultRules, options: processingType.defaultOptions,
                     sourceFolder: sourceFolder, date: processingDate, sipProcessingState: replacementSipProcessingState)
         } else if (matchingRows.size() == 0) {
             if (ProcessingType.CreateSipForFolder == processingType) {
                 Map<String, String> blankRow = [ : ]
                 return new FairfaxProcessingParameters(titleCode: titleCode, type: processingType,
+                        rules: processingType.defaultRules, options: processingType.defaultOptions,
                         sourceFolder: sourceFolder, date: processingDate, spreadsheetRow: blankRow)
             } else {
                 String message = "Unable to create processing parameters: No matching row for titleCode=${titleCode}".toString()
@@ -151,6 +153,7 @@ class FairfaxProcessingParameters {
                 replacementSipProcessingState.exceptions = [ SipProcessingException.createWithReason(exceptionReason) ]
                 log.warn(message)
                 return new FairfaxProcessingParameters(valid: false, titleCode: titleCode, type: processingType,
+                        rules: processingType.defaultRules, options: processingType.defaultOptions,
                         sourceFolder: sourceFolder, date: processingDate,
                         sipProcessingState: replacementSipProcessingState)
             }
@@ -162,6 +165,7 @@ class FairfaxProcessingParameters {
             replacementSipProcessingState.exceptions = [ SipProcessingException.createWithReason(exceptionReason) ]
             log.warn(message)
             return new FairfaxProcessingParameters(valid: false, titleCode: titleCode, type: processingType,
+                    rules: processingType.defaultRules, options: processingType.defaultOptions,
                     sourceFolder: sourceFolder, date: processingDate, sipProcessingState: replacementSipProcessingState)
         } else {
             // matchingRows.size() == 1

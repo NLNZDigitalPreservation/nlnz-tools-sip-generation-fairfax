@@ -41,7 +41,7 @@
 #
 #
 MMSID|title_parent|processing_type|processing_rules|processing_options|publication_key|title_code|edition_discriminators|section_codes|Access|Magazine|ingest_status|Frequency|entity_type|title_mets|ISSN online|Bib ID|Access condition|Date catalogued|Collector_folder|Cataloguer|Notes|first_issue_starting_page|last_issue_starting_page|has_volume_md|has_issue_md|has_number_md|previous_volume|previous_volume_date|previous_volume_frequency|previous_issue|previous_issue_date|previous_issue_frequency|previous_number|previous_number_date|previous_number_frequency
-9918762570902836|365 days of flowers : practical advice for growing and arranging your own flowers|parent_grouping||numeric_before_alpha|title_code|FLO||ED1|200|0|ONE||ONE
+9918762570902836|365 days of flowers : practical advice for growing and arranging your own flowers|parent_grouping||numeric_before_alpha|title_code|FLO||ED1|200|0|ONE||ONE||||||||||||||||||||||
 9918147749902836|Admire|parent_grouping_with_edition||alpha_before_numeric|title_code_section_code|ADM|NEL|NEL|200|1|STA||PER|Admire. Nelson-Tasman||||17/05/2017|Admire|Christina|Supplement to Nelson mail - If we aren't adding numbering to designations no problem.|||0|0|0|||||||||
 9918148070202836|Admire|parent_grouping_with_edition||alpha_before_numeric|title_code_section_code|ADM|MEX|MEX|200|1|STA||PER|Admire. Marlborough||||17/05/2017|Admire|Christina|Supplement to Marlborough Express - if we are not doing numbering in designations, then no problem with this.|||0|0|0|||||||||
 9917982733502836|Ag Trader|parent_grouping||alpha_before_numeric|title_code|AGT||ED1+QFS|200|1|STA||PER|Ag Trader||1798273|100-P|30/06/2016|Ag_Trader|Denise||||0|0|0|||||||||
@@ -59,7 +59,7 @@ MMSID|title_parent|processing_type|processing_rules|processing_options|publicati
 9918150270202836|Cambridge Edition|supplement_grouping||alpha_before_numeric||CBE||SPC|200|0|TEC|Annual|SS|... Maadi Cup||||7/06/2017|Cambridge_Edition|Christina|Can't anticipate next issue|CBESPC-20170322-001||0|0|0|||||||||
 9917974223502836|Central Districts Farmer|parent_grouping||alpha_before_numeric|title_code|CDF||ED1|200|0|TEC|Weekly|PER|Central Districts farmer||1797422|100-P|23/06/2016|Central_Districts_Farmer|Andrew R|Two title codes within the same collector folder|CDFED1-20150807-001||0|0|0|||||||||
 9917974223502836|Central Districts Farmer|parent_grouping||alpha_before_numeric|title_code|FCD||ED1|200|0|TEC|Weekly|PER|Central Districts farmer||1797422|100-P|23/06/2016|Central_Districts_Farmer|Andrew R|Two title codes within the same collector folder|CDFED1-20150807-001||0|0|0|||||||||
-9917974223502836|Central Districts Farmer|parent_grouping||numeric_before_alpha|title_code|CED||ED1|200|0|STA||PER
+9917974223502836|Central Districts Farmer|parent_grouping||numeric_before_alpha|title_code|CED||ED1|200|0|STA||PER||||||||||||||||||||||
 9917960673502836|Central District Times|parent_grouping||alpha_before_numeric|title_code|CDT||ED1|200|0|STA||PER|Central District Times||1796067|???|14/06/2016|Central_District_Times|Denise|Ceased|CDTED1-20150707-001|CDTED1-20160329-012|0|0|0|||||||||
 9917960423502836|Central Leader|parent_grouping||numeric_before_alpha|title_code|CEL||ED1|200|0|STA||PER|Central Leader|||||Central_Leader||Fairfax updated title code|||0|0|0|||||||||
 9917967113502836|Central Canterbury News|parent_grouping||alpha_before_numeric|title_code|CEN||ED1|200|0|STA||PER|Central Canterbury news||1796711|100-P|17/06/2016|Central_Canterbury_News|Denise|Ceased. Merged with Mid Canterbury herald to become Selwyn & Ashburton outlook.|CENED1-20150923-001|CENED1-20160504-020|0|0|0|||||||||
@@ -76,7 +76,7 @@ MMSID|title_parent|processing_type|processing_rules|processing_options|publicati
 9918150268002836|Country Living|parent_grouping||alpha_before_numeric|title_code|CL4||ED1|200|1|STA|Irregular|PER|Country living||||7/06/2017|Country_living|Christina|Can't see pattern to anticipate previous designation, if we are not doing numbering in designation this is not a problem.|CL4ED1-201612-001crop||1|0|0|||||||||
 9917960423502836|Central Leader|parent_grouping||alpha_before_numeric|title_code|CLD||ED1|200|0|PIL||PER|Central Leader||1796042|200|14/06/2016|Central_Leader|Denise||CLDED1-20150724-001||0|0|0|||||||||
 9914702963502836|Clutha Leader|parent_grouping||alpha_before_numeric|title_code|CLU||ED1|200|0|TEC||PER|Clutha leader||1470296|100-P|27/05/2016|Clutha_Leader|Andrew R|Shared bibliographic record with papers past content|||0|0|0|||||||||
-9914702963502836|Clutha Leader|parent_grouping||numeric_before_alpha|title_code|CLL||ED1|200|0|STA||PER
+9914702963502836|Clutha Leader|parent_grouping||numeric_before_alpha|title_code|CLL||ED1|200|0|STA||PER||||||||||||||||||||||
 9917960583502836|Christchurch Mail|parent_grouping||alpha_before_numeric|title_code|CML||NTW|200|0|PIL||PER|Christchurch mail||1796058|200|14/06/2016|Christchurch_Mail|Denise||CMLNTW-20150924-001||0|0|0|||||||||
 9917973293502836|Central South Island Farmer North|parent_grouping||alpha_before_numeric|title_code|CSN||ED1|200|0|PIL||PER|Central South Island farmer north||1797329|200|23/06/2016|Central_South_Island_Farmer_North|Andrew R||CSNED1-20150919-001||0|0|0|||||||||
 9917974103502836|Central South Island Farmer South|parent_grouping||alpha_before_numeric|title_code|CSS||ED1|200|0|PIL||PER|Central South Island farmer south||1797410|200|23/06/2016|Central_South_Island_Farmer_South|Andrew R||CSSED1-20150923-001||0|0|0|||||||||
@@ -106,13 +106,13 @@ MMSID|title_parent|processing_type|processing_rules|processing_options|publicati
 9917930793502836|East & Bays Courier|parent_grouping||alpha_before_numeric|title_code|EBC||ED1|200|0|STA||PER|East & Bays Courier||1793079|100-P|7/06/2016|East_&_Bays_Courier|Denise||||0|0|0|||||||||
 9917951973502836|Eastern Courier|parent_grouping||alpha_before_numeric|title_code|ESC||ED1|200|0|PIL||PER|Eastern Courier||1795197|100-P|10/06/2016|Eastern_Courier|Denise||||0|0|0|||||||||
 9917926863502836|The Eye|parent_grouping||alpha_before_numeric|title_code|EYE||ED1|200|0|PIL||PER|Eye||1792686|100-P|3/06/2016|The_Eye|Denise||||0|0|0|||||||||
-9917926863502836|The Eye|parent_grouping||numeric_before_alpha|title_code|INE||ED1|200|0|STA||PER
+9917926863502836|The Eye|parent_grouping||numeric_before_alpha|title_code|INE||ED1|200|0|STA||PER||||||||||||||||||||||
 9918150265002836|Franklin County News|||alpha_before_numeric||FCN||SPC|200|0|ONE||ONE|Fabulous Franklin||||7/06/2017|Franklin_County_News|Christina||FCNSPC-20161018-001|FCNSPC-20161018-032|0|0|0|||||||||
 9917905833502836|Franklin County News|parent_grouping||alpha_before_numeric|title_code|FCN||ED1+SPC+QFS|200|0|STA||PER|Franklin County News||1790583|100-P|2/06/2016|Franklin_County_News|Denise||||0|0|0|||||||||
 9917905833502836|Franklin County News|parent_grouping||numeric_before_alpha|title_code|FRC||ED1+SPC+QFS|200|0|STA||PER|Franklin County News|||||Franklin_County_News||Fairfax updated title code|||0|0|0|||||||||
 9917921613502836|Franklin County News|supplement_grouping||alpha_before_numeric||FCN||HML|200|0|SUP||SS|Home & living||1792161|100-P|2/06/2016|Franklin_County_News|Denise||||0|0|0|||||||||
 9917973633502836|Canterbury Farmer|parent_grouping||alpha_before_numeric|title_code|FCY||ED1|200|0|STA||PER|Canterbury farmer||1797363|100-P|23/06/2016|Canterbury_Farmer|Andrew R|Continues Central South Island farmer northern and southern editions|||0|0|0|||||||||
-9917973633502836|Canterbury Farmer|parent_grouping||numeric_before_alpha|title_code|CAF||ED1|200|0|STA||PER
+9917973633502836|Canterbury Farmer|parent_grouping||numeric_before_alpha|title_code|CAF||ED1|200|0|STA||PER||||||||||||||||||||||
 9918150264102836|Fieldays Focus|parent_grouping||alpha_before_numeric|title_code|FDF||ED1|200|1|STA||PER|Focus||||8/06/2017|Fieldays_Focus|Christina||||0|0|0|||||||||
 9917919593502836|Feilding Herald||manual|alpha_before_numeric||FDH||ED1|200|0|TEC||PER|Feilding Herald||1791959|100-P|2/06/2016|Feilding_Herald|Denise|All FDH title_code processed as Feilding-Rangitikei Herald. MMSID will need to be adjusted in Alma/Rosetta. Paper merged with Rangitikei mail (2005) and Central district times to form Feilding-Rangitikei Herald (IT MAY BE BETTER TO REMOVE the Fielding Herald from this spreadsheet since it doesn’t exist in the collection of digital files)|FDHED1-20150702-001|FDHED1-20160331-040|0|0|0|||||||||
 9917921803502836|Feilding-Rangitikei Herald|parent_grouping|manual|alpha_before_numeric||FDH||ED1|200|0|TEC||PER|Feilding-Rangitikei Herald||1792180|100-P|2/06/2016|Feilding_Herald|Denise|Paper merged with Rangitikei mail (2005) and Central district times to form Feilding-Rangitikei Herald|FDHED1-20160407-001||0|0|0|||||||||
@@ -124,7 +124,7 @@ MMSID|title_parent|processing_type|processing_rules|processing_options|publicati
 9917926363502836|Far North Real Estate|parent_grouping||alpha_before_numeric|title_code|FRE||ED1|200|0|PIL||PER|Far North Real Estate||1792636|100|3/06/2016|Far_North_Real_Estate|Denise||||0|0|0|||||||||
 9917975283502836|Waikato Farmer|parent_grouping||alpha_before_numeric|title_code|FWK||ED1|200|0|TEC||PER|Waikato Farmer|||100-P||Waikato_Farmer||Two title codes within the same collector folder - rename file FWKED1-20160516-026 (WFK seems to be a one-off)|||0|0|0|||||||||
 9917975283502836|Waikato Farmer|parent_grouping||alpha_before_numeric|title_code|WKF||ED1|200|0|TEC||PER|Waikato Farmer|||100-P||Waikato_Farmer||Seems to be a 2015-2016 Waikato Farmer title_code|||0|0|0|||||||||
-9917975283502836|Waikato Farmer|parent_grouping||numeric_before_alpha|title_code|WAF||ED1|200|0|STA||PER
+9917975283502836|Waikato Farmer|parent_grouping||numeric_before_alpha|title_code|WAF||ED1|200|0|STA||PER||||||||||||||||||||||
 9918150265702836|Cuisine Good Food Guide|parent_grouping||alpha_before_numeric|title_code|GFG||ED1|200|1|TEC||PER|Good food guide||||7/06/2017|Cuisine_Good_Food_Guide|Christina|One issue with different dates, multiple versions of pages|||0|0|0|||||||||
 9915719963502836|Get Growing|parent_grouping||alpha_before_numeric|title_code|GTG||ED1|200|1|STA||PER|Get growing||||7/06/2017|Get_growing|Christina||||0|0|0|||||||||
 9913270193502836|The Hastings Mail|parent_grouping||alpha_before_numeric|title_code|HAM||ED1|200|0|STA||PER|Hastings Mail||1327019|100-P|7/07/2016|The_Hastings_Mail|Denise||||0|0|0|||||||||
@@ -134,7 +134,7 @@ MMSID|title_parent|processing_type|processing_rules|processing_options|publicati
 9917905343502836|Hauraki Herald|supplement_grouping||numeric_before_alpha||HAU||PAP|200|0|SUP|Annual|SS|Paradise playground||1790534|100-P|27/05/2016|Hauraki_Herald|Denise||||0|0|0|||||||||
 9917905343502836|Hauraki Herald|supplement_grouping||numeric_before_alpha||HAU||QFS|200|0|SUP|Annual|SS|Paradise playground|||||Hauraki_Herald||Need to see if there any other *QFS in lost 2018 pages. Fairfax updated title code|||0|0|0|||||||||
 9917966653502836|South Canterbury Herald|parent_grouping||alpha_before_numeric|title_code|HCH||ED1|200|0|STA||PER|South Canterbury herald||1796665|100-P|17/06/2016|South_Canterbury_Herald|Denise||||0|0|0|||||||||
-9917966653502836|South Canterbury Herald|parent_grouping||numeric_before_alpha|title_code|SOC||ED1|200|0|STA
+9917966653502836|South Canterbury Herald|parent_grouping||numeric_before_alpha|title_code|SOC||ED1|200|0|STA||||||||||||||||||||||||
 9917667743502836|The Horowhenua Mail|parent_grouping||alpha_before_numeric|title_code|HML||ED1|200|0|STA||PER|Horowhenua Mail||1766774|100-P|27/05/2016|The_Horowhenua_Mail|Andrew R||||0|0|0|||||||||
 9917905443502836|Hamilton Press|parent_grouping||alpha_before_numeric|title_code|HMP||ED1|200|0|STA||PER|Hamilton Press||1790544|100-P|27/05/2016|Hamilton_Press|Denise||||0|0|0|||||||||
 9917667743502836|The Horowhenua Mail|parent_grouping||numeric_before_alpha|title_code|HOM||ED1|200|0|STA||PER|Horowhenua Mail||1766774|100-P|27/05/2016|The_Horowhenua_Mail|Andrew R|Fairfax updated title code|||0|0|0|||||||||
@@ -146,7 +146,7 @@ MMSID|title_parent|processing_type|processing_rules|processing_options|publicati
 9917913883502836|Kapiti Observer|parent_grouping||numeric_before_alpha|title_code|KAO||ED1|200|0|STA||PER|Kapiti Observer|||||Kapiti_Observer||Fairfax updated title code|||0|0|0|||||||||
 9917913883502836|Kapiti Observer|parent_grouping||alpha_before_numeric|title_code|KAP||ED1|200|0|STA||PER|Kapiti Observer||1791388|100-P|1/06/2016|Kapiti_Observer|Andrew E||||0|0|0|||||||||
 9917913773502836|Kaikoura Star|parent_grouping||alpha_before_numeric|title_code|KKS||ED1|200|0|STC||PER|Kaikoura star||1791377|200|1/06/2016|Kaikoura_Star|Andrew E||||0|0|0|||||||||
-9917913773502836|Kaikoura Star|parent_grouping||numeric_before_alpha|title_code|KAS||ED1|200|0
+9917913773502836|Kaikoura Star|parent_grouping||numeric_before_alpha|title_code|KAS||ED1|200|0|||||||||||||||||||||||||
 9917947923502836|Kaikoura Star|supplement_grouping||alpha_before_numeric||KKS||TAB+SPC|200|0|TEC|Biannual|SS|Experience Kaikoura||1794792|100|10/06/2016|Kaikoura_Star|Andrew E|Variations in edition, can't anticipate next issue|||0|0|0|||||||||
 9917913663502836|Kapi-Mana News|parent_grouping||alpha_before_numeric|title_code|KPN||ED1|200|0|STA||PER|Kapi-Mana News||1791366|100-P|1/06/2016|Kapi-Mana_News|Andrew E||||0|0|0|||||||||
 9918150132802836|Kapi-Mana News|supplement_grouping||alpha_before_numeric||KPN||SPC|200|0|TEC|Annual|SS|Porirua Sports Awards||||9/06/2017|Kapi-Mana_news|Denise|Can't anticipate next issue|KPNSPC-20161101-001||0|0|0|||||||||
@@ -194,7 +194,7 @@ MMSID|title_parent|processing_type|processing_rules|processing_options|publicati
 9917975923502836|The Nelson Mail|parent_grouping||numeric_before_alpha|title_code|NEM||ED1+TAB+SUM|200|0|STC||PER|Nelson mail||1797592|200|24/06/2016|The_Nelson_Mail|Andrew E|Fairfax updated title code|||0|0|0|||||||||
 9917921493502836|North Harbour News|parent_grouping||alpha_before_numeric|title_code|NHN||ED1|200|0|STA||PER|North Harbour News||1792149|100-P|2/06/2016|North_Harbour_News|Christina||||0|0|0|||||||||
 9917920023502836|News Link|parent_grouping||alpha_before_numeric|title_code|NLK||ED1|200|0|STA||PER|Newslink||1792002|100-P|2/06/2016|News_Link|Christina||||0|0|0|||||||||
-9917920023502836|News Link|parent_grouping||numeric_before_alpha|title_code|NEW||ED1|200|0|STA||PER
+9917920023502836|News Link|parent_grouping||numeric_before_alpha|title_code|NEW||ED1|200|0|STA||PER||||||||||||||||||||||
 9918148153302836|The Nelson Mail|||alpha_before_numeric||NM||SUM|200|0|ONE||ONE|Nelson Marlborough Rescue Helicopter : celebrating 25 years.||||2/06/2017|The_Nelson_Mail|Denise||NELTAB-20160523-001|NELTAB-20160523-020|0|0|0|||||||||
 9918148153402836|The Nelson Mail|supplement_grouping||alpha_before_numeric||NM||SUM|200|0|TEC|Weekly|SS|Summit property weekly||||2/06/2017|The_Nelson_Mail|Denise|Can't find all the issues|||0|0|0|||||||||
 9917961933502836|Northern News|parent_grouping||alpha_before_numeric|title_code|NNW||ED1|200|0|STA||PER|Northern News||1796193|100-P|14/06/2016|Northern_News|Christina||||0|0|0|||||||||
@@ -216,7 +216,7 @@ MMSID|title_parent|processing_type|processing_rules|processing_options|publicati
 9918150572002836|Style of Life|parent_grouping||alpha_before_numeric|title_code|SNA||SPC|200|1|TEC||PER|Style of life||||12/06/2017|Style_of_Life|Christina|Two title name codes|||0|0|0|||||||||
 9917974563502836|Outlook Real Estate|parent_grouping||alpha_before_numeric|title_code|ORE||ED1|200|0|TEC||PER|Outlook Real Estate||1797456|100|23/06/2016|Outlook_Real_Estate|Christina|TDNYPW-20160806-001 just page 1 - sitting in Taranaki Daily news folder|||0|0|0|||||||||
 9917974203502836|Otago Southland Farmer|parent_grouping||alpha_before_numeric|title_code|OSF||ED1+TAB|200|0|STA||PER|Otago Southland farmer||1797420|100-P|23/06/2016|Otago_Southland_Farmer|Christina||||0|0|0|||||||||
-9917974203502836|Otago Southland Farmer|parent_grouping||numeric_before_alpha|title_code|OTS||ED1|200|0|STA||PER
+9917974203502836|Otago Southland Farmer|parent_grouping||numeric_before_alpha|title_code|OTS||ED1|200|0|STA||PER||||||||||||||||||||||
 9917966453502836|Papakura Courier|parent_grouping||numeric_before_alpha|title_code|PAC||ED1|200|0|STA||PER|Papakura Courier|||||Papakura_Courier||Fairfax updated title code|||0|0|0|||||||||
 9917966443502836|Piako Post|parent_grouping||numeric_before_alpha|title_code|PIP||ED1|200|0|STA||PER|Piako Post|||||Piako_Post||Fairfax updated title code|||0|0|0|||||||||
 9917966453502836|Papakura Courier|parent_grouping||alpha_before_numeric|title_code|PKC||ED1|200|0|STA||PER|Papakura Courier||1796645|100-P|17/06/2016|Papakura_Courier|Denise||||0|0|0|||||||||
@@ -227,7 +227,7 @@ MMSID|title_parent|processing_type|processing_rules|processing_options|publicati
 9917906003502836|The Press|supplement_grouping||numeric_before_alpha||PRS||YWE|200|0|SUP||SS|Your weekend||1790600|200|27/05/2016|The_Press|Andrew R|Fairfax updated title code|||0|0|0|||||||||
 9918647057402836|The Press|supplement_grouping||numeric_before_alpha|title_code|PRS||TAB|200|0|TEC||PER|Homed|||||TBD||New title. Need missing pages. May be a continuation of At home (The Press)|||0|0|0|||||||||
 9918647057502836|Property weekly|parent_grouping||alpha_before_numeric|title_code|PWM||ED1|200|0|TEC||PER|Property weekly|||||TBD||New title. Need missing pages|||0|0|0|||||||||
-9918762570402836|South Canterbury premium property weekly|parent_grouping||numeric_before_alpha|title_code|PSC||ED1|200|0|STA
+9918762570402836|South Canterbury premium property weekly|parent_grouping||numeric_before_alpha|title_code|PSC||ED1|200|0|STA||||||||||||||||||||||||
 9917975563502836|Mirror|parent_grouping_with_edition|edition_discriminators_using_smart_substitute,optional_all_sections_in_sip|alpha_before_numeric|title_code_section_code|QCM|ED1|ED1|200|0|STC||PER|Mirror (Queenstown)||1797556|100-P|24/06/2016|Mirror|Jenny|This edition has largely same content as Queenstown, with a few pages specific to this edition, fairfax files only show specific otago ed pages.|||0|0|0|||||||||
 9917975673502836|Mirror|parent_grouping_with_edition|edition_discriminators_using_smart_substitute,optional_all_sections_in_sip|alpha_before_numeric|title_code_section_code|QCM|ED2|ED1|200|0|STC||PER|Mirror (Central Otago)||1797567|100-P|24/06/2016|Mirror|Jenny|This edition has largely same content as Queenstown, with a few pages specific to this edition, fairfax files only show specific Wanaka ed pages.|||0|0|0|||||||||
 9917975753502836|Mirror|parent_grouping_with_edition|edition_discriminators_using_smart_substitute,optional_all_sections_in_sip|alpha_before_numeric|title_code_section_code|QCM|ED3|ED1|200|0|STC||PER|Mirror (Wanaka)||1797575|100-P|24/06/2016|Mirror|Jenny|Advised JG - Too hard for this iteration because of the versioning/editions stuff 22/9/17|||0|0|0|||||||||
@@ -238,12 +238,12 @@ MMSID|title_parent|processing_type|processing_rules|processing_options|publicati
 9918150135402836|Visitor handbook : Central Districts Field Days|parent_grouping||alpha_before_numeric|title_code|RLP||FDH|200|1|STA|Annual|PER|Visitor handbook : Central Districts Field Days||||9/06/2017|Central_Districts_Field_Days_Visitor_Handbook|Denise||||0|0|0|||||||||
 9917966493502836|Rodney Times|parent_grouping||alpha_before_numeric|title_code|ROD||ED1|200|0|STA||PER|Rodney Times||1796649|100-P|17/06/2016|Rodney_Times|Denise||||0|0|0|||||||||
 9917966553502836|Rotorua Review|parent_grouping||alpha_before_numeric|title_code|ROT||ED1|200|0|STA||PER|Rotorua Review||1796655|100-P|17/06/2016|Rotorua_Review|Denise||||0|0|0|||||||||
-9917966553502836|Rotorua Review|parent_grouping||numeric_before_alpha|title_code|ROR||ED1|200|0|STA||PER
+9917966553502836|Rotorua Review|parent_grouping||numeric_before_alpha|title_code|ROR||ED1|200|0|STA||PER||||||||||||||||||||||
 9917966623502836|Ruapehu Press|parent_grouping||alpha_before_numeric|title_code|RUA||ED1|200|0|STA||PER|Ruapehu Press||1796662|100-P|17/06/2016|Ruapehu_Press|Denise||||0|0|0|||||||||
-9917966623502836|Ruapehu Press|parent_grouping||numeric_before_alpha|title_code|RUP||ED1|200|0|STA||PER
+9917966623502836|Ruapehu Press|parent_grouping||numeric_before_alpha|title_code|RUP||ED1|200|0|STA||PER||||||||||||||||||||||
 9917907173502836|Saturday Express|parent_grouping||numeric_before_alpha|title_code|SAE||ED1|200|0|STA||PER|Saturday express|||||Saturday_Express||Fairfax updated title code|||0|0|0|||||||||
 9918150572602836|Selwyn & Ashburton Outlook|parent_grouping||alpha_before_numeric|title_code|SAO||ED1|200|0|STA||PER|Selwyn & Ashburton Outlook||||12/06/2017|Selwyn_&_Ashburton_Outlook|Christina||||0|0|0|||||||||
-9918150572602836|Selwyn & Ashburton Outlook|parent_grouping||numeric_before_alpha|title_code|SEA||ED1|200|0|STA||PER
+9918150572602836|Selwyn & Ashburton Outlook|parent_grouping||numeric_before_alpha|title_code|SEA||ED1|200|0|STA||PER||||||||||||||||||||||
 9917907173502836|Saturday Express|parent_grouping||alpha_before_numeric|title_code|SAT||ED1+TAB|200|0|TEC||PER|Saturday express||1790717|100-P|3/06/2016|Saturday_Express|Andrew R||||0|0|0|||||||||
 9917923813502836|Saturday Express|supplement_grouping||alpha_before_numeric||SAT+MMW||TAB+TAB|200|0|TEC|Saturdays|SS|Marlborough property guide||1792381|100-P|3/06/2016|Saturday_Express|Andrew R|Variations in name collector code and edition - MMWTAB-20161221-001 files are a duplicate issue|||0|0|0|||||||||
 9917984313502836|Sunday News|parent_grouping||numeric_before_alpha|title_code|SDN||ED1|200|0|STA||PER|Sunday News|||||Sunday_News||Fairfax updated title code|||0|0|0|||||||||
@@ -289,9 +289,9 @@ MMSID|title_parent|processing_type|processing_rules|processing_options|publicati
 9917962373502836|Taupo Times|parent_grouping||numeric_before_alpha|title_code|TAT||ED1+TAB+QFS|200|0|STA||PER|Taupo Times|||||Taupo_Times||Fairfax updated title code|||0|0|0|||||||||
 9918647057402836|Taupo Times|supplement_grouping|manual|alpha_before_numeric||TPO||TAB|200|0|TEC||PER|Paradise playground : the very best of Tauranga to Taupo|||||TBD||New title|||0|0|0|||||||||
 9917962343502836|The Tribune|parent_grouping||alpha_before_numeric|title_code|TRB||ED1|200|0|STA||PER|Tribune||1796234|100-P|15/06/2016|The_Tribune|Denise||||0|0|0|||||||||
-9917962343502836|The Tribune|parent_grouping||numeric_before_alpha|title_code|TBN||ED1|200|0
+9917962343502836|The Tribune|parent_grouping||numeric_before_alpha|title_code|TBN||ED1|200|0|||||||||||||||||||||||||
 9918148169602836|The Tribune|supplement_grouping||alpha_before_numeric||TRB||TAB|200|0|TEC|Annual|SS|Christmas guide 2015||||22/05/2017|The_Tribune|Denise|Can't anticipate next issue|TRBTAB-20151209-001||0|0|0|||||||||
-9918762570902836|New Zealand Trucking|parent_grouping||numeric_before_alpha|title_code|TRK||ED1|200|1|STA||PER
+9918762570902836|New Zealand Trucking|parent_grouping||numeric_before_alpha|title_code|TRK||ED1|200|1|STA||PER||||||||||||||||||||||
 9917981683502836|TV Guide|parent_grouping||alpha_before_numeric|title_code|TVG||ED1|200|1|STA||PER|TV guide||1798168|200|29/06/2016|TV_Guide|Denise||||0|0|0|||||||||
 9917975793502836|Urban and Country|parent_grouping||alpha_before_numeric|title_code|UAC||ED1|200|1|STA||PER|Urban and Country||1797579|100-P|24/06/2016|Urban_and_Country|Denise||||0|0|0|||||||||
 9918147571402836|Upper Hutt Leader|||alpha_before_numeric||UHL||TAB|200|0|ONE||ONE|50th Anniversary Upper Hutt City 1966-2016||||15/05/2017|Upper_Hutt_Leader|Denise||uhltab-20160525-001|uhltab-20160525-015|0|0|0|||||||||
@@ -301,7 +301,7 @@ MMSID|title_parent|processing_type|processing_rules|processing_options|publicati
 9917923483502836|Western Leader|parent_grouping||alpha_before_numeric|title_code|WEL||ED1|200|0|STA||PER|Western Leader||1792348|100-P|3/06/2016|Western_Leader|Denise||||0|0|0|||||||||
 9917924613502836|Wellingtonian|parent_grouping||alpha_before_numeric|title_code|WGN||ED1|200|0|STA||PER|Wellingtonian||1792461|100|3/06/2016|The_Wellingtonian|Denise||||0|0|0|||||||||
 9917924353502836|Waitaki Herald|parent_grouping||alpha_before_numeric|title_code|WHD||ED1|200|0|STA||PER|Waitaki herald||1792435|100-P|3/06/2016|Waitaki_Herald|Denise||||0|0|0|||||||||
-9917924353502836|Waitaki Herald|parent_grouping||numeric_before_alpha|title_code|WAH||ED1|200|0|STA||PER
+9917924353502836|Waitaki Herald|parent_grouping||numeric_before_alpha|title_code|WAH||ED1|200|0|STA||PER||||||||||||||||||||||
 9917923503502836|Whangarei Leader|parent_grouping||alpha_before_numeric|title_code|WHL||ED1|200|0|STA||PER|Whangarei Leader||1792350|100-P|3/06/2016|Whangarei_Leader|Denise||||0|0|0|||||||||
 9917925423502836|Western Homes|parent_grouping||alpha_before_numeric|title_code|WHM||ED1|200|0|STA||PER|Western Homes||1792542|100-P|3/06/2016|Western_Homes|Denise||||0|0|0|||||||||
 9917982213502836|Waikato Times|parent_grouping||alpha_before_numeric|title_code|WKM||ED1|200|0|STA||PER|Motor Times||1798221|100-P|30/06/2016|Motor_Times|Denise|Part of Waikato Times (Advertised on Leader). May need to change collector folder name. Files still foldered up on Pawai - YaY|||0|0|0|||||||||
@@ -324,11 +324,11 @@ MMSID|title_parent|processing_type|processing_rules|processing_options|publicati
 9918147572402836|Waikato Times|supplement_grouping||alpha_before_numeric||WKT||SPC|200|0|TEC|Annual|SS|Design & build winter 2016||||16/05/2017|Waikato_times|Denise|Can't anticipate next issue|WKTSPC-20160819-001||0|0|0|||||||||
 9917923503502836|Whangarei Leader|parent_grouping||numeric_before_alpha|title_code|WLD||ED1|200|0|STA||PER|Whangarei Leader||1792350|100-P|3/06/2016|Whangarei_Leader|Denise|Fairfax updated title code|||0|0|0|||||||||
 9917975423502836|Waiheke Marketplace|parent_grouping||alpha_before_numeric|title_code|WMP||ED1+TAB|200|0|STC||PER|Waiheke Marketplace||1797542|100-P|24/06/2016|Waiheke_Marketplace|Denise|From 26 Mar 2016 supplement's naming convention changed to Section L|||0|0|0|||||||||
-9917975423502836|Waiheke Marketplace|parent_grouping||numeric_before_alpha|title_code|WAM||ED1|200|0|STA
+9917975423502836|Waiheke Marketplace|parent_grouping||numeric_before_alpha|title_code|WAM||ED1|200|0|STA||||||||||||||||||||||||
 9917975633502836|Waiheke Marketplace|supplement_grouping||alpha_before_numeric||WMP||TAB|200|0|TEC|Annual|SS|Waiheke Island garden safari||1797563|100|24/06/2016|Waiheke_Marketplace|Denise|Can't anticipate next issue|||0|0|0|||||||||
 9917975173502836|Waikato Location Edition|parent_grouping||alpha_before_numeric|title_code|WPG||ED1|200|0|STA||PER|Waikato Location Edition||1797517|100|24/06/2016|Waikato_Location_Edition|Denise|From 26 Mar 2016 supplement's naming convention changed to Section G|||0|0|0|||||||||
 9917961863502836|Wairarapa News|parent_grouping||alpha_before_numeric|title_code|WRN||ED1+QFS|200|0|STA||PER|Wairarapa News||1796186|100-P|14/06/2016|Wairarapa_News|Denise||||0|0|0|||||||||
-9917961863502836|Wairarapa News|parent_grouping||numeric_before_alpha|title_code|WAN||ED1+QFS|200|0|STA
+9917961863502836|Wairarapa News|parent_grouping||numeric_before_alpha|title_code|WAN||ED1+QFS|200|0|STA||||||||||||||||||||||||
 9917923483502836|Western Leader|parent_grouping||numeric_before_alpha|title_code|WSL||ED1|200|0|STA||PER|Western Leader|||||Western_Leader||Fairfax updated title code|||0|0|0|||||||||
 9917982913502836|A-Z Business Directory Coromandel Peninsula|parent_grouping||alpha_before_numeric|title_code|ZCP||ED1|200|1|STA||PER|A-Z Business Directory Coromandel Peninsula||1798291|???|30/06/2016|A-Z_Business_Directory_Coromandel_Peninsula|Denise||||0|0|0|||||||||
 9917983323502836|A-Z Business Directory Franklin|parent_grouping||alpha_before_numeric|title_code|ZFR||ED1|200|1|STA||PER|A-Z Business Directory Franklin||1798332|???|30/06/2016|A-Z_Business_Directory_Franklin|Christina||||0|0|0|||||||||
