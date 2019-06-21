@@ -32,7 +32,7 @@ class FairfaxFile {
     static final String PDF_FILE_WITH_TITLE_SECTION_DATE_SEQUENCE_GROUPING_PATTERN = "(?<titleCode>[a-zA-Z0-9]{3,4})" +
             "(?<sectionCode>[a-zA-Z0-9]{2,3})-(?<date>\\d{8})-(?<sequenceLetter>[A-Za-z]{0,2})" +
             "(?<sequenceNumber>\\d{1,4})(?<qualifier>.*?)\\.[pP]{1}[dD]{1}[fF]{1}"
-    static final String PDF_FILE_WITH_TITLE_SECTION_DATE_SEQUENCE_PATTERN = '\\w{5,7}-\\d{8}-\\w{3,4}.*?\\.[pP]{1}[dD]{1}[fF]{1}'
+    static final String PDF_FILE_WITH_TITLE_SECTION_DATE_SEQUENCE_PATTERN = '\\w{5,7}-\\d{8}-\\w{1,4}.*?\\.[pP]{1}[dD]{1}[fF]{1}'
     static final String PDF_FILE_WITH_TITLE_SECTION_DATE_PATTERN = '\\w{5,7}-\\d{8}-.*?\\.[pP]{1}[dD]{1}[fF]{1}'
     static final DateTimeFormatter LOCAL_DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyyMMdd")
     static final Point UNDIMENSIONED = new Point(-1, -1)

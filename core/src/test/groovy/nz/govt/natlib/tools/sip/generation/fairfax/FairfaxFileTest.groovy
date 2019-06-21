@@ -28,6 +28,57 @@ class FairfaxFileTest {
     File mockFile, mockFile1, mockFile2, mockFile3
 
     @Test
+    void correctlyMatchesFilenamesUsingDifferentRegexPatterns() {
+        checkRegexFilenamePatternMatches("abcDE-20180425-1.pDF", true, true, true)
+        checkRegexFilenamePatternMatches("abcDE-20180425-A1.pDF", true, true, true)
+        checkRegexFilenamePatternMatches("abcDEF-20180425-A01.pDF", true, true, true)
+        checkRegexFilenamePatternMatches("abcDEFG-20180425-A001.PDF", true, true, true)
+        checkRegexFilenamePatternMatches("abcDEFG-20180425-0001.PDF", true, true, true)
+        checkRegexFilenamePatternMatches("abcDEFG-20180425-A001.PDF", true, true, true)
+        checkRegexFilenamePatternMatches("abcDE-20180425-A1some-qualifier.pDF", true, true, true)
+        checkRegexFilenamePatternMatches("abcDE-20180425-A1-another-qualifier.pDF", true, true, true)
+        // NOTE: This does match, but the '1' at the end is included in the qualifier.
+        checkRegexFilenamePatternMatches("abcDEF-20180425-A0001.pdf", true, true, true)
+
+        checkRegexFilenamePatternMatches("abcDE201804251.pDF", false, false, false)
+        checkRegexFilenamePatternMatches("abcDE-201804250-1.pDF", false, false, false)
+        checkRegexFilenamePatternMatches("abcd-20180425-1.pDF", false, false, false)
+        checkRegexFilenamePatternMatches("abcDEFG-nodate-A001.PDF", false, false, false)
+        checkRegexFilenamePatternMatches("abcDEFGH-20180425-A001.PDF", false, false, false)
+        checkRegexFilenamePatternMatches("abcDEFGH-20180425-A001", false, false, false)
+        checkRegexFilenamePatternMatches("abcDEF-20180425-A001.pdf2", false, false, false)
+        checkRegexFilenamePatternMatches("abc4-20180425-A001.pdf", false, false, false)
+        checkRegexFilenamePatternMatches("abc-20180425-A001.pdf", false, false, false)
+        checkRegexFilenamePatternMatches("ab-20180425-A001.pdf", false, false, false)
+        checkRegexFilenamePatternMatches("", false, false, false)
+    }
+
+    void checkRegexFilenamePatternMatches(String valueToCheck, boolean matchesWithGroupingRegex,
+                                          boolean matchesWithDateSequencePattern, boolean matchesWithDateOnlyPattern) {
+        if (matchesWithGroupingRegex) {
+            assertTrue("value=${valueToCheck} matches pattern=${FairfaxFile.PDF_FILE_WITH_TITLE_SECTION_DATE_SEQUENCE_GROUPING_PATTERN}",
+                    valueToCheck ==~ /${FairfaxFile.PDF_FILE_WITH_TITLE_SECTION_DATE_SEQUENCE_GROUPING_PATTERN}/)
+        } else {
+            assertFalse("value=${valueToCheck} does NOT match pattern=${FairfaxFile.PDF_FILE_WITH_TITLE_SECTION_DATE_SEQUENCE_GROUPING_PATTERN}",
+                    valueToCheck ==~ /${FairfaxFile.PDF_FILE_WITH_TITLE_SECTION_DATE_SEQUENCE_GROUPING_PATTERN}/)
+        }
+        if (matchesWithDateSequencePattern) {
+            assertTrue("value=${valueToCheck} matches pattern=${FairfaxFile.PDF_FILE_WITH_TITLE_SECTION_DATE_SEQUENCE_PATTERN}",
+                    valueToCheck ==~ /${FairfaxFile.PDF_FILE_WITH_TITLE_SECTION_DATE_SEQUENCE_PATTERN}/)
+        } else {
+            assertFalse("value=${valueToCheck} does NOT match pattern=${FairfaxFile.PDF_FILE_WITH_TITLE_SECTION_DATE_SEQUENCE_PATTERN}",
+                    valueToCheck ==~ /${FairfaxFile.PDF_FILE_WITH_TITLE_SECTION_DATE_SEQUENCE_PATTERN}/)
+        }
+        if (matchesWithDateOnlyPattern) {
+            assertTrue("value=${valueToCheck} matches pattern=${FairfaxFile.PDF_FILE_WITH_TITLE_SECTION_DATE_PATTERN}",
+                    valueToCheck ==~ /${FairfaxFile.PDF_FILE_WITH_TITLE_SECTION_DATE_PATTERN}/)
+        } else {
+            assertFalse("value=${valueToCheck} does NOT match pattern=${FairfaxFile.PDF_FILE_WITH_TITLE_SECTION_DATE_PATTERN}",
+                    valueToCheck ==~ /${FairfaxFile.PDF_FILE_WITH_TITLE_SECTION_DATE_PATTERN}/)
+        }
+    }
+
+    @Test
     void createsCorrectlyWithLetterSequence() {
         String originalFilename = "TSTED1-20181022-B024.pdf"
         when(mockFile.getName()).thenReturn(originalFilename)
