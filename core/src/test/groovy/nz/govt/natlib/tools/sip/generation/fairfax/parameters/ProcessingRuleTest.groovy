@@ -20,29 +20,29 @@ class ProcessingRuleTest {
 
     @Test
     void correctlyMergesOverridesWhenOverrideDoesNotExist() {
-        List<ProcessingRule> current = [ ProcessingRule.HandleUnprocessed, ProcessingRule.HandleUnrecognised ]
+        List<ProcessingRule> current = [ProcessingRule.HandleIgnored, ProcessingRule.HandleUnrecognised ]
         List<ProcessingRule> overrides = [ ProcessingRule.AllSectionsInSipOptional ]
         List<ProcessingRule> merged = ProcessingRule.mergeOverrides(current, overrides)
 
-        List<ProcessingRule> expected = [ ProcessingRule.HandleUnprocessed, ProcessingRule.HandleUnrecognised,
-                                          ProcessingRule.AllSectionsInSipOptional ]
+        List<ProcessingRule> expected = [ProcessingRule.HandleIgnored, ProcessingRule.HandleUnrecognised,
+                                         ProcessingRule.AllSectionsInSipOptional ]
         assertThat("ProcessingRule merges correctly", merged, is(expected))
     }
 
     @Test
     void extractsCorrectlyWithoutDefaults() {
-        List<ProcessingRule> rules = ProcessingRule.extract("handle_unprocessed,required_all_sections_in_sip",
+        List<ProcessingRule> rules = ProcessingRule.extract("handle_ignored,required_all_sections_in_sip",
                 ",", [ ], true)
-        List<ProcessingRule> expected = [ ProcessingRule.HandleUnprocessed, ProcessingRule.AllSectionsInSipRequired ]
+        List<ProcessingRule> expected = [ProcessingRule.HandleIgnored, ProcessingRule.AllSectionsInSipRequired ]
         assertThat("ProcessingRule extracted without defaults correctly", rules, is(expected))
     }
 
     @Test
     void extractsCorrectlyWithDefaults() {
-        List<ProcessingRule> rules = ProcessingRule.extract("handle_unprocessed,optional_all_sections_in_sip",
+        List<ProcessingRule> rules = ProcessingRule.extract("optional_all_sections_in_sip,handle_ignored",
                 ",", [ ProcessingRule.AllSectionsInSipRequired, ProcessingRule.HandleInvalid ], true)
         List<ProcessingRule> expected = [ ProcessingRule.AllSectionsInSipOptional, ProcessingRule.HandleInvalid,
-                                          ProcessingRule.HandleUnprocessed ]
+                                          ProcessingRule.HandleIgnored ]
         assertThat("ProcessingRule extracted with defaults correctly", rules, is(expected))
     }
 

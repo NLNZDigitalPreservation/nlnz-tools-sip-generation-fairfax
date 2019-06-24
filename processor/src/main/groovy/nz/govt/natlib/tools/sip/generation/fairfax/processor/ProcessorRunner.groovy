@@ -22,7 +22,7 @@ class ProcessorRunner implements ProcessorConfiguration, Callable<Void> {
 Output is used by readyForIngestion.
 Requires sourceFolder, targetPreProcessingFolder, forReviewFolder.
 Uses startingDate, endingDate.
-Optional createDestination, moveFiles.
+Optional createDestination, moveFiles, parallelizeProcessing, numberOfThreads.
 This is a processing operation and must run exclusively of other processing operations.""")
     boolean preProcess = false
 
@@ -31,13 +31,13 @@ Output is ready for ingestion by Rosetta.
 Requires sourceFolder, targetForIngestionFolder, forReviewFolder, processingType.
 Uses startingDate, endingDate.
 Optional createDestination. Note that moveFiles is not supported at this time.
-Optional maximumThumbnailPageThreads.
+Optional parallelizeProcessing, numberOfThreads, maximumThumbnailPageThreads.
 This is a processing operation and must run exclusively of other processing operations.""")
     boolean readyForIngestion = false
 
     @Option(names = ["-l", "--listFiles" ], description = """List the source files in an organized way.
 Requires sourceFolder.
-This is a reporting operation and cannot be run with any processing operations.""")
+This is a reporting operation and cannot be run with any other processing operations.""")
     boolean listFiles = false
 
     @Option(names = ["--statisticalAudit" ], description = """Statistical audit.
@@ -47,7 +47,7 @@ This is a reporting operation and cannot be run with any processing operations."
 
     @Option(names = ["--extractMetadata"], description = """Extract and list the metadata from the source files.
 Requires sourceFolder.
-This is a reporting operation and cannot be run with any processing operations.""")
+This is a reporting operation and cannot be run with any other processing operations.""")
     boolean extractMetadata = false
 
     @Option(names = ["--generateThumbnailPageFromPdfs" ], description = """Generate a thumbnail page from the PDFs in the given folder.
@@ -91,7 +91,7 @@ The default is 1.""")
     @Option(names = ["--maximumThumbnailPageThreads"], paramLabel = "MAXIMUM_THUMBNAIL_PAGE_THREADS",
             description = """Maximum of threads that can be used to generate thumbnail pages when running operations in parallel.
 The default is 1.
-This limit is in place because thumbnail page generation can be quite resource intensive and can overload the JVM.""")
+This limit is in place because in-memory thumbnail page generation can be quite resource intensive and can overload the JVM.""")
     int maximumThumbnailPageThreads = 1
 
     @Option(names = ["--moveOrCopyEvenIfNoRosettaDoneFile" ],
@@ -103,42 +103,48 @@ Default is no move or copy unless there IS a Rosetta done file (false).""")
     @Option(names = ["--detailedTimings"], description = """Include detailed timings (for specific operations).""")
     boolean includeDetailedTimings = false
 
-    @Option(names = ["--verbose"], description = """Include verbose output""")
+    @Option(names = ["--verbose"], description = """Include verbose output.""")
     boolean verbose = false
 
     @Option(names = ["-h", "--help" ], usageHelp = true, description = 'Display a help message.')
     boolean helpRequested = false
 
     @Option(names = ["-b", "--startingDate"], paramLabel = "STARTING_DATE",
-            description = """Starting date in the format yyyy-MM-dd.
+            description = """Starting date in the format yyyy-MM-dd (inclusive).
+Dates are usually based on file name (not timestamp).
 Default is 2015-01-01.""")
     // TODO Need a custom converter
     LocalDate startingDate = DEFAULT_STARTING_DATE
 
     @Option(names = ["-e", "--endingDate"], paramLabel = "ENDING_DATE",
-            description = """Ending date in the format yyyy-MM-dd.
-Default is today.""")
+            description = """Ending date in the format yyyy-MM-dd (inclusive).
+Default is today. Files after this date are ignored.""")
     LocalDate endingDate = DEFAULT_ENDING_DATE
 
     @Option(names = ["-s", "--sourceFolder"], paramLabel = "SOURCE_FOLDER",
-            description = 'source folder in the format /path/to/folder')
+            description = """Source folder in the format /path/to/folder.
+This folder must exist and must be a directory.""")
     File sourceFolder
 
     @Option(names = ["--targetFolder"], paramLabel = "TARGET_FOLDER",
-            description = """target folder in the format /path/to/folder.
-This is the destination folder used when no other destination folders are specified.""")
+            description = """Target folder in the format /path/to/folder.
+This is the destination folder used when no other destination folders are specified.
+Use --createDestination to force its creation.""")
     File targetFolder
 
     @Option(names = ["--targetPreProcessingFolder"], paramLabel = "TARGET_PRE_PROCESS_FOLDER",
-            description = """target pre-processing folder in the format /path/to/folder""")
+            description = """Target pre-processing folder in the format /path/to/folder.
+Use --createDestination to force its creation.""")
     File targetPreProcessingFolder
 
     @Option(names = ["--targetForIngestionFolder"], paramLabel = "TARGET_FOR_INGESTION_FOLDER",
-            description = """target for-ingestion folder in the format /path/to/folder""")
+            description = """Target for-ingestion folder in the format /path/to/folder.
+Use --createDestination to force its creation.""")
     File targetForIngestionFolder
 
     @Option(names = ["--targetPostProcessedFolder"], paramLabel = "TARGET_POST_PROCESSED_FOLDER",
-            description = """target post-processed folder in the format /path/to/folder""")
+            description = """Target post-processed folder in the format /path/to/folder.
+Use --createDestination to force its creation.""")
     File targetPostProcessedFolder
 
     @Option(names = ["--forIngestionProcessingTypes"], paramLabel = "PROCESSING_TYPES",
@@ -167,7 +173,9 @@ See the class ProcessorOption for a list of what those options are.""")
     // TODO Some of the existing options could be folded into this option (instead of keeping them separate)
     List<ProcessorOption> processorOptions
 
-    @Option(names = ["-r", "--forReviewFolder"], paramLabel = "FOR_REVIEW_FOLDER", description = 'for-review folder in the format /path/to/folder')
+    @Option(names = ["-r", "--forReviewFolder"], paramLabel = "FOR_REVIEW_FOLDER",
+            description = """For-review folder in the format /path/to/folder.
+For processing exceptions, depending on processor.""")
     File forReviewFolder
 
     static void main(String[] args) {
