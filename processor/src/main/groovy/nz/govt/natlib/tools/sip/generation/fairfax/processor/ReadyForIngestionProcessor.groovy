@@ -86,9 +86,12 @@ class ReadyForIngestionProcessor {
             File contentStreamsFolder = new File(sipAndFilesFolder, "content/streams")
             // Note that unrecognized only gets moved/copied if ProcessingRule.HandleUnrecognised
             File invalidFilesFolder = new File(forReviewFolder, "INVALID/${dateString}/${processingParameters.titleCode}")
+            File ignoredFilesFolder = new File(forReviewFolder, "IGNORED/${dateString}/${processingParameters.titleCode}")
             File unrecognizedFilesFolder = new File(forReviewFolder, "UNRECOGNIZED/${dateString}/${processingParameters.titleCode}")
 
             boolean hasSipAndFilesFolder
+            boolean hasInvalidFilesFolder
+            boolean hasIgnoredFilesFolder
             boolean hasUnrecognizedFilesFolder
             // Move or copy the processed files to the destination folder
             if ((sipProcessingState.validFiles.size() > 0 || sipProcessingState.invalidFiles.size() > 0)) {
@@ -105,18 +108,45 @@ class ReadyForIngestionProcessor {
             }
             FileUtils.copyOrMoveFiles(processorConfiguration.moveFiles, sipProcessingState.sipFiles, contentStreamsFolder)
             if (processingParameters.rules.contains(ProcessingRule.HandleInvalid)) {
-                FileUtils.copyOrMoveFiles(processorConfiguration.moveFiles, sipProcessingState.invalidFiles, invalidFilesFolder)
+                // If the files are invalid, then dump the files in an exception folder.
+                if (sipProcessingState.invalidFiles.size() > 0) {
+                    hasInvalidFilesFolder = invalidFilesFolder.exists()
+                    if (!hasInvalidFilesFolder && processorConfiguration.createDestination) {
+                        invalidFilesFolder.mkdirs()
+                        hasInvalidFilesFolder = true
+                    }
+                }
+                if (hasInvalidFilesFolder) {
+                    FileUtils.copyOrMoveFiles(processorConfiguration.moveFiles, sipProcessingState.invalidFiles, invalidFilesFolder)
+                }
+            }
+
+            if (processingParameters.rules.contains(ProcessingRule.HandleIgnored)) {
+                // If the files are ignored, then dump the files in an exception folder.
+                if (sipProcessingState.ignoredFiles.size() > 0) {
+                    hasIgnoredFilesFolder = ignoredFilesFolder.exists()
+                    if (!hasIgnoredFilesFolder && processorConfiguration.createDestination) {
+                        ignoredFilesFolder.mkdirs()
+                        hasIgnoredFilesFolder = true
+                    }
+                }
+                if (hasIgnoredFilesFolder) {
+                    FileUtils.copyOrMoveFiles(processorConfiguration.moveFiles, sipProcessingState.ignoredFiles, ignoredFilesFolder)
+                }
             }
 
             if (processingParameters.rules.contains(ProcessingRule.HandleUnrecognised)) {
-                // If the files aren't recognized, then dump the files in an exception folder
+                // If the files aren't recognized, then dump the files in an exception folder.
                 if (sipProcessingState.unrecognizedFiles.size() > 0) {
-                    hasUnrecognizedFilesFolder = true
-                    if (!unrecognizedFilesFolder.exists() && processorConfiguration.createDestination) {
+                    hasUnrecognizedFilesFolder = unrecognizedFilesFolder.exists()
+                    if (!hasUnrecognizedFilesFolder && processorConfiguration.createDestination) {
                         unrecognizedFilesFolder.mkdirs()
+                        hasUnrecognizedFilesFolder = true
                     }
                 }
-                FileUtils.copyOrMoveFiles(processorConfiguration.moveFiles, sipProcessingState.unrecognizedFiles, unrecognizedFilesFolder)
+                if (hasUnrecognizedFilesFolder) {
+                    FileUtils.copyOrMoveFiles(processorConfiguration.moveFiles, sipProcessingState.unrecognizedFiles, unrecognizedFilesFolder)
+                }
             }
 
             // Write out the SIP file

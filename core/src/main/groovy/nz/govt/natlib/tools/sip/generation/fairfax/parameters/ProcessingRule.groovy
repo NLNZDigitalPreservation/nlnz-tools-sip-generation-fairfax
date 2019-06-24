@@ -5,24 +5,39 @@ import nz.govt.natlib.tools.sip.state.SipProcessingException
 
 @Log4j2
 enum ProcessingRule {
-    HandleUnprocessed("handle_unprocessed"),
+    HandleIgnored("handle_ignored"),
+    SkipIgnored("skip_ignored"),
+
     HandleUnrecognised("handle_unrecognised"),
+    SkipUnrecognised("skip_unrecognised"),
+
     HandleInvalid("handle_invalid"),
+    SkipInvalid("skip_invalid"),
+
     Manual("manual"),
+    Automatic("automatic"),
+
     ForceSkip("force_skip"),
     DoNotForceSkip("do_not_force_skip"),
+
     ProcessAllEditions("process_all_editions"),
     IgnoreEditionsWithoutMatchingFiles("ignore_editions_without_files"),
+
     EditionDiscriminatorsUsingSmartSubstitute("edition_discriminators_using_smart_substitute"),
     EditionDiscriminatorsNotUsingSmartSubstitute("edition_discriminators_not_using_smart_substitute"),
+
     AllSectionsInSipRequired("required_all_sections_in_sip"),
     AllSectionsInSipOptional("optional_all_sections_in_sip"),
+
     MissingSequenceIgnored("missing_sequence_is_ignored"),
     MissingSequenceError("missing_sequence_is_error"),
+
     MissingSequenceDoubleWideIgnored("missing_sequence_double_wide_is_ignored"),
     MissingSequenceDoubleWideError("missing_sequence_double_wide_is_error"),
+
     ZeroLengthPdfReplacedWithPageUnavailablePdf("zero_length_pdf_replaced_with_page_unavailable"),
     ZeroLengthPdfSkipped("zero_length_pdf_skipped"),
+
     NumericStartsInHundredsConsideredSequenceSkips("numeric_starts_in_hundreds_considered_sequence_skips"),
     NumericStartsInHundredsNotConsideredSequenceSkips("numeric_starts_in_hundreds_not_considered_sequence_skips")
 
@@ -33,20 +48,39 @@ enum ProcessingRule {
     static {
         values().each { ProcessingRule processingRule ->
             LOOKUP_BY_FIELD_VALUE.put(processingRule.fieldValue, processingRule)
+            OVERRIDES_MAP.put(HandleIgnored, [SkipIgnored ])
+            OVERRIDES_MAP.put(SkipIgnored, [HandleIgnored ])
+
+            OVERRIDES_MAP.put(HandleUnrecognised, [ SkipUnrecognised ])
+            OVERRIDES_MAP.put(SkipUnrecognised, [ HandleUnrecognised ])
+
+            OVERRIDES_MAP.put(HandleInvalid, [ SkipInvalid ])
+            OVERRIDES_MAP.put(SkipInvalid, [ HandleInvalid ])
+
+            OVERRIDES_MAP.put(Manual, [ Automatic ])
+            OVERRIDES_MAP.put(Automatic, [ Manual ])
+
             OVERRIDES_MAP.put(ForceSkip, [ DoNotForceSkip ])
             OVERRIDES_MAP.put(DoNotForceSkip, [ ForceSkip ])
+
             OVERRIDES_MAP.put(ProcessAllEditions, [ IgnoreEditionsWithoutMatchingFiles ])
             OVERRIDES_MAP.put(IgnoreEditionsWithoutMatchingFiles, [ ProcessAllEditions ])
-            OVERRIDES_MAP.put(AllSectionsInSipRequired, [ AllSectionsInSipOptional ])
-            OVERRIDES_MAP.put(AllSectionsInSipOptional, [ AllSectionsInSipRequired ])
-            OVERRIDES_MAP.put(MissingSequenceIgnored, [ MissingSequenceError ])
-            OVERRIDES_MAP.put(MissingSequenceError, [ MissingSequenceIgnored ])
-            OVERRIDES_MAP.put(MissingSequenceDoubleWideIgnored, [ MissingSequenceDoubleWideError ])
-            OVERRIDES_MAP.put(MissingSequenceDoubleWideError, [ MissingSequenceDoubleWideIgnored ])
+
             OVERRIDES_MAP.put(EditionDiscriminatorsUsingSmartSubstitute, [ EditionDiscriminatorsNotUsingSmartSubstitute ])
             OVERRIDES_MAP.put(EditionDiscriminatorsNotUsingSmartSubstitute, [ EditionDiscriminatorsUsingSmartSubstitute ])
+
+            OVERRIDES_MAP.put(AllSectionsInSipRequired, [ AllSectionsInSipOptional ])
+            OVERRIDES_MAP.put(AllSectionsInSipOptional, [ AllSectionsInSipRequired ])
+
+            OVERRIDES_MAP.put(MissingSequenceIgnored, [ MissingSequenceError ])
+            OVERRIDES_MAP.put(MissingSequenceError, [ MissingSequenceIgnored ])
+
+            OVERRIDES_MAP.put(MissingSequenceDoubleWideIgnored, [ MissingSequenceDoubleWideError ])
+            OVERRIDES_MAP.put(MissingSequenceDoubleWideError, [ MissingSequenceDoubleWideIgnored ])
+
             OVERRIDES_MAP.put(ZeroLengthPdfReplacedWithPageUnavailablePdf, [ ZeroLengthPdfSkipped ])
             OVERRIDES_MAP.put(ZeroLengthPdfSkipped, [ ZeroLengthPdfReplacedWithPageUnavailablePdf ])
+
             OVERRIDES_MAP.put(NumericStartsInHundredsConsideredSequenceSkips, [ NumericStartsInHundredsNotConsideredSequenceSkips ])
             OVERRIDES_MAP.put(NumericStartsInHundredsNotConsideredSequenceSkips, [ NumericStartsInHundredsConsideredSequenceSkips ])
         }
