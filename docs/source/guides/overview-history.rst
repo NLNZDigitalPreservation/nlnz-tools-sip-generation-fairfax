@@ -23,6 +23,8 @@ Following this introduction, this Overview and History Guide includes the follow
 
 -   **History** - Covers the history of the tool from its inception to today.
 
+-   **Documentation corrections** - Covers a process to submit corrections to the documentation.
+
 -   **License**  - Covers the license used.
 
 -   **Release history** - Covers significant changes made in each release.
@@ -60,6 +62,17 @@ Project objectives
 -   Possibly provide helpful functionality or example processing to other users and institutions.
 
 The tool is open-source software and is freely available for the benefit of the international archiving community.
+
+
+Documentation corrections
+=========================
+
+This documentation is generated from ``.rst`` files in the ``docs`` folder of the codebase, found at
+https://github.com/NLNZDigitalPreservation/nlnz-tools-sip-generation-fairfax . However, it is expected that some users
+might not be willing to edit those files directly and submit changes via git. Another way to document desired changes
+in the documentation is to download the documentation as a ``pdf`` from its location on readthedocs, namely,
+https://nlnz-tools-sip-generation-fairfax.readthedocs.io , annotate that pdf with the desired changes, and then
+submit that annotated pdf in a github request to change the documentation.
 
 
 License
