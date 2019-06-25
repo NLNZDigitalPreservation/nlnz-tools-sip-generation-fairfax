@@ -1,6 +1,6 @@
-==========
-User Guide
-==========
+===================
+Script Runner Guide
+===================
 
 Additional TODO
 ===============
@@ -26,19 +26,23 @@ user interface. See the **Future milestones** section of the :doc:`developer-gui
 About this document
 -------------------
 
-This document is the NLNZ Tools SIP Generation Fairfax User Guide. It describes how to use the tools provided by the
-project.
+This document is the NLNZ Tools SIP Generation Fairfax Script Runner Guide. It describes how to use the command-line
+tools provided by the project to perform various workflow operations.
 
-The manual is divided into chapters, each of which deals with a particular tool.
+The manual is divided into chapters, each of which deals with a particular scripting operation.
+
+See also:
+
+-   :doc:`Workflow Guide<workflow-guide>`
+-   :doc:`Developer Guide<developer-guide>`
+-   :doc:`Librarian Guide<librarian-guide>`
+-   :doc:`FAQ<faq>`
+
 
 Contents of this document
 -------------------------
 
 Following this introduction, this User Guide includes the following sections:
-
--   **PDF filenames** - Covers the structure of a PDF filename.
-
--   **Processing stages** - Covers the different processing stages.
 
 -   **ProcessorRunner general usage** - Covers general processing parameters.
 
@@ -48,13 +52,11 @@ Following this introduction, this User Guide includes the following sections:
 
 -   **Ready-for-ingestion stage** - Covers ready-for-ingestion stage.
 
--   **Copying ingested loads to ingested folder** - Covers...
+-   **Copying ingested loads to ingested folder** - Covers copying ingested loads to their final ingested folder.
 
--   **For-review** - Covers...
+-   **Additional tools** - Covers additional scripting tools.
 
--   **Additional tools** - Covers...
-
--   **Converting the spreadsheet to JSON and vice-versa** - Covers...
+-   **Converting the spreadsheet to JSON and vice-versa** - Covers converting the parameters spreadsheet between formats.
 
 -   **Copying and moves** - Covers how copying files and moving files ensure data integrity.
 
@@ -63,61 +65,13 @@ Relationships with other scripting code
 =======================================
 
 Some of this scripting code is related to the codebase *nlnz-tools-scripts-ingestion* found in the github
-repository: https://github.com/NLNZDigitalPreservation/nlnz-tools-scripts-ingestion and there is an expectation
-that the two codebases will work together.
+repository https://github.com/NLNZDigitalPreservation/nlnz-tools-scripts-ingestion . See the documentation for that
+codebase at https://nlnz-tools-sip-generation.readthedocs.io . There is an expectation that the two codebases will work
+together.
 
-
-PDF filenames
-=============
-
-The PDF files produced by Fairfax have the following filename structure::
-
-    <title_code><section_code>-yyyyMMdd-<optional-sequence-letter><optional-sequence-number><optional-qualifier>.pdf
-
-For example, the filename ```DOMED1-20190617-A01-my-first.pdf`` has the following values::
-
-    title_code: DOM
-    section_code: ED1
-    date: 20190617
-    sequence_letter: A
-    sequence_number: 01
-    qualifier: -my-first
-
-- A ``title_code`` is generally 3 - 4 characters long.
-- A ``section_code`` is generall 2 - 3 characters long.
-- A ``date`` is always of the format yyyyMMdd.
-- A ``sequence_letter`` is optional, and is generally of the form A, B, C, ...
-- A ``sequence_number`` is required, and is generally of the form 1, 2, 3, ... or 01, 02, 03, ... or 001, 002, 003, ...
-- A ``qualifier`` is optional and is anything past the ``sequence_number``.
-- The extenstion is some form of ``pdf``, in either lower, upper or mixed case (for example, ``pDf`` is acceptable).
-
-As an example, `SHMED1-20181108-011.pdf` and `WHMED1-20181108-G012new-page.Pdf` are valid filenames.
-
-As an example, `ABC-20181108-011.pdf` and `WHMED1-2018-11-08-G012.pdf` are invalid filenames.
-
-
-Processing stages
-=================
-
-Files moves through the different processing stages. Each processing stage has its own folder structure.
-
-Stages list
------------
-The stages are as follows:
-
-    1. *FTP stage* - this is where files are placed from the file producer.
-    2. *Pre-processing stage* - Files are moved from the FTP stage in preparation for processing.
-    3. *Ready-for-ingestion stage* - Files are processed and sips are created. This stage is where files are ingested into
-       Rosetta.
-    4. *Ingested stage* - Files have been ingested into Rosetta.
-    5. *For-review stage* - Exceptions or issues with the files means that a review is necessary before the files can be
-       moved to the correct stage.
-
-Process a single stage at a time
---------------------------------
-While it is possible to multiple processing stages in the same run, note that they often the same ``sourceFolder`` and
-``targetFolder`` parameters. The source and target folders have different structures and different purposes, so we
-recommend running a single stages at a time.
+There is also some additional scripts in the github repository:
+https://github.com/NLNZDigitalPreservation/nlnz-tools-scripts-ingestion . See the documentation for those scripts
+found at https://nlnz-tools-scripts-ingestion.readthedocs.io .
 
 
 ProcessorRunner general usage
@@ -127,6 +81,8 @@ ProcessorRunner runs different processors based on command-line options.
 
 Processing for different processing stages
 ------------------------------------------
+Processing stages are discussed in more detail in :doc:`workflow-guide`.
+
 +-------------------------------------+--------------------------------------------------------------------------------+
 | Processing stage                    | Description                                                                    |
 +=====================================+================================================================================+
@@ -424,6 +380,9 @@ The *Ready-for-ingestion* folder structure is how Rosetta ingests the files. Mag
 
 Processing spreadsheet
 ----------------------
+The processing spreadsheet is used in the ready-for-ingestion stage to determine how a particular set of files
+associated with a title code are processed.
+
 Default spreadsheet
 ~~~~~~~~~~~~~~~~~~~
 A spreadsheet exists that determines how a given title code is processed for a given processing type. A default
@@ -438,65 +397,7 @@ Build script tasks exist to conver a ``.csv`` spreadsheet to a ``.json`` file. S
 
 Spreadsheet structure
 ~~~~~~~~~~~~~~~~~~~~~
-While the spreadsheet has many columns, not all columns will be listed as some of them pertain to how the files were
-initially catalogued. For example the Taupo Times has the following entry (with column headers)::
-
-    MMSID|title_parent|processing_type|processing_rules|processing_options|publication_key|title_code|edition_discriminators|section_codes|Access|Magazine|ingest_status|Frequency|entity_type|title_mets|ISSN online|Bib ID|Access condition|Date catalogued|Collector_folder|Cataloguer|Notes|first_issue_starting_page|last_issue_starting_page|has_volume_md|has_issue_md|has_number_md|previous_volume|previous_volume_date|previous_volume_frequency|previous_issue|previous_issue_date|previous_issue_frequency|previous_number|previous_number_date|previous_number_frequency
-    9917962373502836|Taupo Times|parent_grouping||numeric_before_alpha|title_code|TAT||ED1+TAB+QFS|200|0|STA||PER|Taupo Times|||||Taupo_Times||Fairfax updated title code|||0|0|0|||||||||
-
-Columns used by ready-for-ingestion processing
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-``MMSID``
-    The MMSID of the entity. This is use in the generated ``mets.xml`` file as the ``objectIdentifierValue``.
-
-``title_parent``
-    The title of the parent publication. A parent publication can have multiple supplement grouping publications. This
-    title is used in the ``mets.xml`` file as the ``dc:title`` for a parent publication.
-
-``title_mets``
-    The title of of the publication (for a supplemental publication). This title is used in the ``mets.xml`` file as the
-    ``dc:title``.
-
-``processing_type``
-    The processing type for this particular row.
-
-``processing_rules``
-    Additional processing rules for this row. These rules will override the default rules for the given processing type.
-
-``processing_options``
-    Additional processing options for this row. These options will override the default options for the given
-    processing type.
-
-``publication_key``
-    Usually ``title_code`` or ``title_code_section_code``. However, current processing ignores these values and they
-    may be removed in the future. TODO Remove them if they aren't used.
-
-``title_code``
-    The title code of the publication.
-
-``edition_discriminators``
-    The section code names that indicate a different edition. They are separated by the ``+`` sign, as in
-    ``ED1+ED2+ED3``.
-
-``section_codes``
-    The section codes that will be included in the publication. For different editions, only the first edition code
-    needs to be included. Section codes are included in the publication in the same order they are given here. They are
-    separated by the ``+`` sign, as in ``ED1+TAB+YWE``.
-
-``Access``
-    The publication access. This is usually ``200``.
-
-``Magazine``
-    A ``1`` indicates a magazine. A ``0`` usually indicates newspaper. Magazines and newspapers have different material
-    flows and are separated into ``magazine`` and ``newspaper`` subfolders for that reason.
-
-Some of the other columns (not used in the code)
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-``ingest_status``
-    ``pilot=PIL, standard=STA, standard_complex=STC, supplement=SUP, oneoff=ONE, technical_issues=TEC``.
-
-``entity_type``
-    ``periodic=PER, serial_supplement=SS, oneoff=ONE``.
+The structure of the spreadsheet is discussed in the :doc:`librarian-guide`.
 
 JSON file structure
 ~~~~~~~~~~~~~~~~~~~
@@ -546,23 +447,7 @@ processing input. For example, the Taupo Times has the following entry::
 
 Folder structure
 ----------------
-Note that Rosetta ingestion requires that the ``content`` folder's parent parent be the folder used in Rosetta's
-Submission Format. In this case that folder is either ``magazine`` or ``newspaper``, with the folder for an individual
-publication's ingestion directly underneath::
-
-    <targetFolder>/<magazine|newspaper>/<date-in-yyyyMMdd>_<tile_code>_<processing_type>_<optional-edition>__<full-name-of-publication>/content/streams/{files for that title_code/section_code}
-
-For example, the folder ```newspaper/20180905_DOM_parent_grouping_ED1__The_Dominion_Post`` has the following values::
-
-    newspaper: this folder is for *newspaper* material flows (as opposed to *magazine*).
-    date: the publication date, in this case 20180905.
-    title_code: DOM
-    processing_type: parent_grouping
-    edition: ED1 (for some publications there are more than 1 edition).
-    full-name-of-publication: The_Dominion_Post (note that spaces are replaced with underscores)
-
-
-The ``mets.xml`` file is placed in the ``content`` folder.
+The structure of the ready-for-ingestion output is discussed in the :doc:`librarian-guide`.
 
 Deciding how to process: Processing types, spreadsheets and folders
 -------------------------------------------------------------------
@@ -832,26 +717,9 @@ The following snippet illustrates a ready-for-ingestion processing command::
 
 For-review
 ----------
-If a file or set of files is unable to be processed for some reason, it will be placed in the *For-review* folder. There
-is no processor that operates on the *For-review* stage. Processors that output to the *For-review* folder use the
-parameter ``forReviewFolder`` to set the location of the *For-review* folder.
+See the :doc:`librarian-guide` for a discussion of the for-review output and how a librarian handles the different
+exceptions to processing.
 
-For ready-for-ingestion processing, for-review is subdivided into specific error type directories, such as
-``has-zero-length-files``, ``as-incomprehensible-files``, ``no-matching-definition``, ``invalid-filenames``,
-``invalid-pdfs``, ``duplicate-files``, ``multiple-definitions``, ``manual-processing``.
-
-The file structure under these specific error types follows the same structure as the `Folder structure`_ mentioned
-above.
-
-When the processing rules ``handle_ignored``, ``handle_unrecognised`` and/or ``handle_invalid`` are used, those
-specific files will show up in the following subfolders::
-
-    <forReviewFolder>/[IGNORED|UNRECOGNIZED|INVALID]/<date-in-yyyyMMdd>/<TitleCode>/{files for that titleCode}
-
-Ready-for-ingestion for-review workflow
----------------------------------------
-TODO Discuss how to deal with the various for-review exceptions. Include the ``parameters-and-state`` file, the ``log``
-file and the thumbnail page and how they all help in dealing with exceptions.
 
 Copying ingested loads to ingested folder
 =========================================
@@ -1031,15 +899,11 @@ file system having an incomplete file.
 
 With that in mind, file moves have the following characteristics:
 
-    - If a file move can be done atomicly (as determined by the Java runtime), it is done atomicly.
-
-    - If the file move cannot be done atomicly (as determined by the Java runtime), the file moves take the following steps:
-
-        1. The file is copied across to the target file system with a ``.tmpcopy`` extension.
-
-        2. The file is renamed to the target file name.
-
-        3. The source file is deleted.
+- If a file move can be done atomicly (as determined by the Java runtime), it is done atomicly.
+- If the file move cannot be done atomicly (as determined by the Java runtime), the file moves take the following steps:
+    1. The file is copied across to the target file system with a ``.tmpcopy`` extension.
+    2. The file is renamed to the target file name.
+    3. The source file is deleted.
 
 This means that if at any point the operation is interrupted, a recovery can take place. A move when the file already
 exists in the target folder will trigger a MD5 hash comparison. If the source file and the target file are identical,
@@ -1047,8 +911,3 @@ the source file is deleted. Otherwise, the target file is moved across (using th
 in the filename. These ``-DUPLICATE-#`` files need to be checked manually to determine which file is correct.
 
 We hope these mitigations will prevent any data loss.
-
-
-
-
-

@@ -29,10 +29,12 @@ General help
 
 Refer to the following guides:
 
--   :doc:`User Guide<user-guide>`
--   :doc:`Developer Guide<developer-guide>`
--   :doc:`Release Notes<release-notes>`
--   :doc:`FAQ<faq>`
+-   :doc:`workflow-guide`
+-   :doc:`librarian-guide`
+-   :doc:`script-runner-guide`
+-   :doc:`developer-guide`
+-   :doc:`release-notes`
+-   :doc:`faq`
 
 
 Known issues
