@@ -1,0 +1,15 @@
+# Based on https://docs.cucumber.io/
+#
+@tag
+Feature: Processing matches correctly to the first section code.
+
+   The first section code matches correctly to the right spreadsheet row.
+
+   Scenario: The publication issue has multiple PDF pages that have a given section code
+     Given The publication has PDF pages with a given section code
+     And there are multiple spreadsheet rows with the same title code
+     And one row's section codes starts with a given section code that does not exist in the filenames
+     And one row's section codes starts with a given section code that does exist in the filenames
+     And the processing rule is that the first section code must match the files in the list
+     When the publication issue is processed
+     Then the correct spreadsheet row is used to process the files

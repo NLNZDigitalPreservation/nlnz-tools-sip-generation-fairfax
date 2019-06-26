@@ -112,7 +112,8 @@ class AllSectionCodesRequiredTest {
                 is([ 'PB1', 'BOO', 'ZOO', 'AAT' ]))
 
         processingParameters.sipProcessingState = testMethodState.sipProcessingState
-        String sipAsXml = FairfaxFilesProcessor.processCollectedFiles(processingParameters, filesForProcessing)
+        FairfaxFilesProcessor.processCollectedFiles(processingParameters, filesForProcessing)
+        String sipAsXml = processingParameters.sipProcessingState.sipAsXml
 
         log.info("${System.lineSeparator()}FairfaxProcessingParameters and SipProcessingState:")
         log.info(processingParameters.detailedDisplay(0, true))

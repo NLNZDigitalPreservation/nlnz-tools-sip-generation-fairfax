@@ -29,6 +29,10 @@ import nz.govt.natlib.tools.sip.state.SipProcessingState
 
 import java.time.LocalDate
 
+/**
+ * The main processing class. Takes a given set of processing parameters and
+ * a set of files and processes them according to the parameters.
+ */
 @Log4j2
 class FairfaxFilesProcessor {
     FairfaxProcessingParameters processingParameters
@@ -43,18 +47,20 @@ class FairfaxFilesProcessor {
                 preservationType: 'UNKNOWN_PRESERVATION_TYPE', usageType: 'UNKNOWN_USAGE_TYPE',
                 digitalOriginal: true, revisionNumber: 1,
                 year: 2038, month: 12, dayOfMonth: 31)
-
+        return sip
     }
 
-    static String processCollectedFiles(FairfaxProcessingParameters processingParameters,
+    static void processCollectedFiles(FairfaxProcessingParameters processingParameters,
                                         List<File> filesForProcessing) {
         FairfaxFilesProcessor fairfaxFilesProcessor = new FairfaxFilesProcessor(processingParameters,
                 filesForProcessing)
         if (processingParameters.rules.contains(ProcessingRule.ForceSkip)) {
             log.info("Skipping processing sourceFolder=${processingParameters.sourceFolder.canonicalPath} as processing rules include=${ProcessingRule.ForceSkip.fieldValue}")
-            return ""
+            processingParameters.skip = true
+            processingParameters.sipProcessingState.sipAsXml = SipProcessingState.EMPTY_SIP_AS_XML
+            return
         }
-        return fairfaxFilesProcessor.process()
+        fairfaxFilesProcessor.process()
     }
 
     FairfaxFilesProcessor(FairfaxProcessingParameters processingParameters, List<File> filesForProcessing) {
@@ -62,13 +68,12 @@ class FairfaxFilesProcessor {
         this.filesForProcessing = filesForProcessing
     }
 
-    String process() {
+    void process() {
         log.info("STARTING process for processingParameters=${processingParameters}")
         JvmPerformanceLogger.logState("FairfaxFilesProcessor Current thread state at start",
                 false, true, true, false, true, false, true)
         processedFairfaxFiles = [ : ]
 
-        String sipAsXml = ""
         if (this.processingParameters.valid) {
             List<FairfaxFile> fairfaxFilesForProcessing = filesForProcessing.collect { File rawFile ->
                 new FairfaxFile(rawFile)
@@ -104,67 +109,74 @@ class FairfaxFilesProcessor {
                     break
             }
 
-            processingParameters.sipProcessingState.ignoredFiles =
-                    FairfaxFile.differences(validNamedFiles, sortedFilesForProcessing).
-                            collect { FairfaxFile fairfaxFile ->
-                        fairfaxFile.file
-                    }
+            if (processingParameters.skip) {
+                log.info("Skipping processing for processingParameters=${processingParameters}")
+            } else {
+                List<FairfaxFile> sipFiles = differentiateFiles(validNamedFiles, sortedFilesForProcessing)
 
-            if (processingParameters.sipProcessingState.ignoredFiles.size() > 0 &&
-                    processingParameters.rules.contains(ProcessingRule.AllSectionsInSipRequired)) {
-                // Strip the ignored of any editionDiscriminator files
-                List<FairfaxFile> withoutEditionFiles = processingParameters.sipProcessingState.ignoredFiles.findAll {
-                    File file ->
-                        FairfaxFile fairfaxFile = new FairfaxFile(file)
-                        !processingParameters.editionDiscriminators.contains(fairfaxFile.sectionCode)
-                }
-                if (!withoutEditionFiles.isEmpty()) {
-                    String detailedReason = "${ProcessingRule.AllSectionsInSipRequired.fieldValue} but these files are not processed=${withoutEditionFiles}".toString()
-                    if (processingParameters.rules.contains(ProcessingRule.AllSectionsInSipRequired)) {
-                        SipProcessingExceptionReason exceptionReason = new SipProcessingExceptionReason(
-                                SipProcessingExceptionReasonType.ALL_FILES_CANNOT_BE_PROCESSED, null,
-                                detailedReason)
-                        SipProcessingException sipProcessingException = SipProcessingException.createWithReason(exceptionReason)
-                        processingParameters.sipProcessingState.addException(sipProcessingException)
-                        log.warn(detailedReason)
-                    } else {
-                        log.info(detailedReason)
-                    }
-                }
+                String sipAsXml = generateSipAsXml(sipFiles, processingParameters.date)
+                processingParameters.sipProcessingState.sipAsXml = sipAsXml
             }
-
-            sortedFilesForProcessing.each { FairfaxFile fileForProcessing ->
-                processFile(fileForProcessing)
-            }
-            // TODO We are converting back and forth between FairfaxFile and File for different processing stages to
-            // ensure that the sip-generation-core classes don't get polluted with Fairfax-specific functionality.
-            // At some point we need to look at finding a better way. Perhaps there's an interface that might expose
-            // a wrapper so that it can be processed through implementation-specific processing.
-            // For the moment we do the conversion. This is something to consider when refactoring/redesigning this
-            // application.
-            List<FairfaxFile> sipFiles = processingParameters.sipProcessingState.sipFiles.collect { File file ->
-                new FairfaxFile(file)
-            }
-            checkForMissingSequenceFiles(sipFiles)
-
-            checkForManualProcessing()
-
-            // See the note above about converting back and forth.
-            List<FairfaxFile> thumbnailPageFiles = processingParameters.sipProcessingState.thumbnailPageFiles.collect { File file ->
-                new FairfaxFile(file)
-            }
-            generateThumbnailPage(thumbnailPageFiles)
-            // TODO If we are generating a thumbnail page when there are errors we may want to consider generating a
-            // TODO thumbnail page for ALL the files (this could help in understanding the problem).
-
-            sipAsXml = generateSipAsXml(sipFiles, processingParameters.date)
         }
 
         JvmPerformanceLogger.logState("FairfaxFilesProcessor Current thread state at end",
                 false, true, true, false, true, false, true)
         log.info("ENDING process for processingParameters=${processingParameters}")
+    }
 
-        return sipAsXml
+    List<FairfaxFile> differentiateFiles(List<FairfaxFile> validNamedFiles, List<FairfaxFile> sortedFilesForProcessing) {
+        processingParameters.sipProcessingState.ignoredFiles =
+                FairfaxFile.differences(validNamedFiles, sortedFilesForProcessing).collect { FairfaxFile ffxFile ->
+                    ffxFile.file
+                }
+
+        if (processingParameters.sipProcessingState.ignoredFiles.size() > 0 &&
+                processingParameters.rules.contains(ProcessingRule.AllSectionsInSipRequired)) {
+            // Strip the ignored of any editionDiscriminator files
+            List<FairfaxFile> withoutEditionFiles = processingParameters.sipProcessingState.ignoredFiles.findAll {
+                File file ->
+                    FairfaxFile fairfaxFile = new FairfaxFile(file)
+                    !processingParameters.editionDiscriminators.contains(fairfaxFile.sectionCode)
+            }
+            if (!withoutEditionFiles.isEmpty()) {
+                String detailedReason = "${ProcessingRule.AllSectionsInSipRequired.fieldValue} but these files are not processed=${withoutEditionFiles}".toString()
+                if (processingParameters.rules.contains(ProcessingRule.AllSectionsInSipRequired)) {
+                    SipProcessingExceptionReason exceptionReason = new SipProcessingExceptionReason(
+                            SipProcessingExceptionReasonType.ALL_FILES_CANNOT_BE_PROCESSED, null,
+                            detailedReason)
+                    SipProcessingException sipProcessingException = SipProcessingException.createWithReason(exceptionReason)
+                    processingParameters.sipProcessingState.addException(sipProcessingException)
+                    log.warn(detailedReason)
+                } else {
+                    log.info(detailedReason)
+                }
+            }
+        }
+
+        sortedFilesForProcessing.each { FairfaxFile fileForProcessing ->
+            processFile(fileForProcessing)
+        }
+        // TODO We are converting back and forth between FairfaxFile and File for different processing stages to
+        // ensure that the sip-generation-core classes don't get polluted with Fairfax-specific functionality.
+        // At some point we need to look at finding a better way. Perhaps there's an interface that might expose
+        // a wrapper so that it can be processed through implementation-specific processing.
+        // For the moment we do the conversion. This is something to consider when refactoring/redesigning this
+        // application.
+        List<FairfaxFile> sipFiles = processingParameters.sipProcessingState.sipFiles.collect { File file ->
+            new FairfaxFile(file)
+        }
+        checkForMissingSequenceFiles(sipFiles)
+
+        checkForManualProcessing()
+
+        // See the note above about converting back and forth.
+        List<FairfaxFile> thumbnailPageFiles = processingParameters.sipProcessingState.thumbnailPageFiles.collect { File file ->
+            new FairfaxFile(file)
+        }
+        generateThumbnailPage(thumbnailPageFiles)
+        // TODO If we are generating a thumbnail page when there are errors we may want to consider generating a
+        // TODO thumbnail page for ALL the files (this could help in understanding the problem).
+        return sipFiles
     }
 
     List<FairfaxFile> extractValidNamedFiles(List<FairfaxFile> originalList) {

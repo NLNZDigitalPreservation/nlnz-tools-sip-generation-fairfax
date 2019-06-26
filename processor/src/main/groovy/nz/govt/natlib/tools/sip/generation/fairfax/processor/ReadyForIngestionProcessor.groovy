@@ -60,121 +60,17 @@ class ReadyForIngestionProcessor {
         File sipAndFilesFolder
 
         try {
-            File sourceFolder = processingParameters.sourceFolder
-
             log.info("START Processing sourceFolder=${processingParameters.sourceFolderPath()}")
             processorConfiguration.timekeeper.logElapsed()
 
-            String sipAsXml = ""
             if (processingParameters.valid) {
-                sipAsXml = processValidTitleCodeFolder(processingParameters)
+                processValidTitleCodeFolder(processingParameters)
             }
 
-            SipProcessingState sipProcessingState = processingParameters.sipProcessingState
-
-            String folderName = "${dateString}_${processingParameters.titleCode}_${processingParameters.type.getFieldValue()}"
-            if (sipProcessingState.identifier != null) {
-                folderName = "${folderName}_${sipProcessingState.identifier}"
-            }
-            String typeFolderNamePath = "${sipProcessingState.ieEntityType.getDisplayName()}${File.separator}${folderName}"
-            if (sipProcessingState.complete && sipProcessingState.successful) {
-                sipAndFilesFolder = new File(destinationFolder, typeFolderNamePath)
+            if (processingParameters.skip) {
+                log.info("Skipping processing of sourceFolder=${processingParameters.sourceFolderPath()}")
             } else {
-                sipAndFilesFolder = new File(forReviewFolder,
-                        "${sipProcessingState.failureReasonSummary}${File.separator}${typeFolderNamePath}")
-            }
-            File contentStreamsFolder = new File(sipAndFilesFolder, "content/streams")
-            // Note that unrecognized only gets moved/copied if ProcessingRule.HandleUnrecognised
-            File invalidFilesFolder = new File(forReviewFolder, "INVALID/${dateString}/${processingParameters.titleCode}")
-            File ignoredFilesFolder = new File(forReviewFolder, "IGNORED/${dateString}/${processingParameters.titleCode}")
-            File unrecognizedFilesFolder = new File(forReviewFolder, "UNRECOGNIZED/${dateString}/${processingParameters.titleCode}")
-
-            boolean hasSipAndFilesFolder
-            boolean hasInvalidFilesFolder
-            boolean hasIgnoredFilesFolder
-            boolean hasUnrecognizedFilesFolder
-            // Move or copy the processed files to the destination folder
-            if ((sipProcessingState.validFiles.size() > 0 || sipProcessingState.invalidFiles.size() > 0)) {
-                hasSipAndFilesFolder = true
-                if (!sipAndFilesFolder.exists() && processorConfiguration.createDestination) {
-                    sipAndFilesFolder.mkdirs()
-                    contentStreamsFolder.mkdirs()
-                }
-            } else {
-                hasSipAndFilesFolder = true
-                if (!sipAndFilesFolder.exists() && processorConfiguration.createDestination) {
-                    sipAndFilesFolder.mkdirs()
-                }
-            }
-            FileUtils.copyOrMoveFiles(processorConfiguration.moveFiles, sipProcessingState.sipFiles, contentStreamsFolder)
-            if (processingParameters.rules.contains(ProcessingRule.HandleInvalid)) {
-                // If the files are invalid, then dump the files in an exception folder.
-                if (sipProcessingState.invalidFiles.size() > 0) {
-                    hasInvalidFilesFolder = invalidFilesFolder.exists()
-                    if (!hasInvalidFilesFolder && processorConfiguration.createDestination) {
-                        invalidFilesFolder.mkdirs()
-                        hasInvalidFilesFolder = true
-                    }
-                }
-                if (hasInvalidFilesFolder) {
-                    FileUtils.copyOrMoveFiles(processorConfiguration.moveFiles, sipProcessingState.invalidFiles, invalidFilesFolder)
-                }
-            }
-
-            if (processingParameters.rules.contains(ProcessingRule.HandleIgnored)) {
-                // If the files are ignored, then dump the files in an exception folder.
-                if (sipProcessingState.ignoredFiles.size() > 0) {
-                    hasIgnoredFilesFolder = ignoredFilesFolder.exists()
-                    if (!hasIgnoredFilesFolder && processorConfiguration.createDestination) {
-                        ignoredFilesFolder.mkdirs()
-                        hasIgnoredFilesFolder = true
-                    }
-                }
-                if (hasIgnoredFilesFolder) {
-                    FileUtils.copyOrMoveFiles(processorConfiguration.moveFiles, sipProcessingState.ignoredFiles, ignoredFilesFolder)
-                }
-            }
-
-            if (processingParameters.rules.contains(ProcessingRule.HandleUnrecognised)) {
-                // If the files aren't recognized, then dump the files in an exception folder.
-                if (sipProcessingState.unrecognizedFiles.size() > 0) {
-                    hasUnrecognizedFilesFolder = unrecognizedFilesFolder.exists()
-                    if (!hasUnrecognizedFilesFolder && processorConfiguration.createDestination) {
-                        unrecognizedFilesFolder.mkdirs()
-                        hasUnrecognizedFilesFolder = true
-                    }
-                }
-                if (hasUnrecognizedFilesFolder) {
-                    FileUtils.copyOrMoveFiles(processorConfiguration.moveFiles, sipProcessingState.unrecognizedFiles, unrecognizedFilesFolder)
-                }
-            }
-
-            // Write out the SIP file
-            if (processingParameters.valid && !sipAsXml.isEmpty()) {
-                File sipFile = new File(sipAndFilesFolder, "content/mets.xml")
-                sipFile.withWriter(StandardCharsets.UTF_8.name()) { Writer writer ->
-                    writer.write(sipAsXml)
-                }
-            }
-
-            // Write out the FairfaxProcessingParameters and SipProcessingState
-            Date now = new Date()
-            // We will assume that millisecond timestamps ensures that the filename will be unique
-            File processingStateFile = new File(sourceFolder,
-                    "${processingParameters.processingDifferentiator()}_parameters-and-state_${FileUtils.FILE_TIMESTAMP_FORMATTER.format(now)}.txt")
-            processingStateFile.withWriter(StandardCharsets.UTF_8.name()) { Writer writer ->
-                writer.write(processingParameters.detailedDisplay(0, true))
-            }
-            if (sipAndFilesFolder.exists()) {
-                FileUtils.copyOrMoveFiles(false, [processingStateFile], sipAndFilesFolder)
-            }
-
-            // Move the thumbnail page file to the sipAndFilesFolder
-            if (processingParameters.thumbnailPageFile != null && processingParameters.thumbnailPageFile.exists()) {
-                File thumbnailPageFileNewFile = new File(processingParameters.thumbnailPageFile.parentFile,
-                        processingParameters.thumbnailPageFileFinalName)
-                processingParameters.thumbnailPageFile.renameTo(thumbnailPageFileNewFile)
-                FileUtils.copyOrMoveFiles(true, [thumbnailPageFileNewFile], sipAndFilesFolder)
+                sipAndFilesFolder = postProcess(processingParameters, destinationFolder, forReviewFolder, dateString)
             }
 
             log.info("END Processing sourceFolder=${processingParameters.sourceFolderPath()}")
@@ -196,7 +92,123 @@ class ReadyForIngestionProcessor {
         return processingParameters.sipProcessingState
     }
 
-    String processValidTitleCodeFolder(FairfaxProcessingParameters processingParameters) {
+    File postProcess(FairfaxProcessingParameters processingParameters, File destinationFolder, File forReviewFolder,
+                     String dateString) {
+        File sourceFolder = processingParameters.sourceFolder
+        File sipAndFilesFolder
+        SipProcessingState sipProcessingState = processingParameters.sipProcessingState
+
+        String folderName = "${dateString}_${processingParameters.titleCode}_${processingParameters.type.getFieldValue()}"
+        if (sipProcessingState.identifier != null) {
+            folderName = "${folderName}_${sipProcessingState.identifier}"
+        }
+        String typeFolderNamePath = "${sipProcessingState.ieEntityType.getDisplayName()}${File.separator}${folderName}"
+        if (sipProcessingState.complete && sipProcessingState.successful) {
+            sipAndFilesFolder = new File(destinationFolder, typeFolderNamePath)
+        } else {
+            sipAndFilesFolder = new File(forReviewFolder,
+                    "${sipProcessingState.failureReasonSummary}${File.separator}${typeFolderNamePath}")
+        }
+        File contentStreamsFolder = new File(sipAndFilesFolder, "content/streams")
+        // Note that unrecognized only gets moved/copied if ProcessingRule.HandleUnrecognised
+        File invalidFilesFolder = new File(forReviewFolder, "INVALID/${dateString}/${processingParameters.titleCode}")
+        File ignoredFilesFolder = new File(forReviewFolder, "IGNORED/${dateString}/${processingParameters.titleCode}")
+        File unrecognizedFilesFolder = new File(forReviewFolder, "UNRECOGNIZED/${dateString}/${processingParameters.titleCode}")
+
+        boolean hasSipAndFilesFolder
+        boolean hasInvalidFilesFolder
+        boolean hasIgnoredFilesFolder
+        boolean hasUnrecognizedFilesFolder
+        // Move or copy the processed files to the destination folder
+        if ((sipProcessingState.validFiles.size() > 0 || sipProcessingState.invalidFiles.size() > 0)) {
+            hasSipAndFilesFolder = sipAndFilesFolder.exists()
+            if (!hasSipAndFilesFolder && processorConfiguration.createDestination) {
+                sipAndFilesFolder.mkdirs()
+                hasSipAndFilesFolder = true
+                contentStreamsFolder.mkdirs()
+            }
+        } else {
+            hasSipAndFilesFolder = sipAndFilesFolder.exists()
+            if (!hasSipAndFilesFolder && processorConfiguration.createDestination) {
+                sipAndFilesFolder.mkdirs()
+                hasSipAndFilesFolder = true
+            }
+        }
+        FileUtils.copyOrMoveFiles(processorConfiguration.moveFiles, sipProcessingState.sipFiles, contentStreamsFolder)
+        if (processingParameters.rules.contains(ProcessingRule.HandleInvalid)) {
+            // If the files are invalid, then dump the files in an exception folder.
+            if (sipProcessingState.invalidFiles.size() > 0) {
+                hasInvalidFilesFolder = invalidFilesFolder.exists()
+                if (!hasInvalidFilesFolder && processorConfiguration.createDestination) {
+                    invalidFilesFolder.mkdirs()
+                    hasInvalidFilesFolder = true
+                }
+            }
+            if (hasInvalidFilesFolder) {
+                FileUtils.copyOrMoveFiles(processorConfiguration.moveFiles, sipProcessingState.invalidFiles, invalidFilesFolder)
+            }
+        }
+
+        if (processingParameters.rules.contains(ProcessingRule.HandleIgnored)) {
+            // If the files are ignored, then dump the files in an exception folder.
+            if (sipProcessingState.ignoredFiles.size() > 0) {
+                hasIgnoredFilesFolder = ignoredFilesFolder.exists()
+                if (!hasIgnoredFilesFolder && processorConfiguration.createDestination) {
+                    ignoredFilesFolder.mkdirs()
+                    hasIgnoredFilesFolder = true
+                }
+            }
+            if (hasIgnoredFilesFolder) {
+                FileUtils.copyOrMoveFiles(processorConfiguration.moveFiles, sipProcessingState.ignoredFiles, ignoredFilesFolder)
+            }
+        }
+
+        if (processingParameters.rules.contains(ProcessingRule.HandleUnrecognised)) {
+            // If the files aren't recognized, then dump the files in an exception folder.
+            if (sipProcessingState.unrecognizedFiles.size() > 0) {
+                hasUnrecognizedFilesFolder = unrecognizedFilesFolder.exists()
+                if (!hasUnrecognizedFilesFolder && processorConfiguration.createDestination) {
+                    unrecognizedFilesFolder.mkdirs()
+                    hasUnrecognizedFilesFolder = true
+                }
+            }
+            if (hasUnrecognizedFilesFolder) {
+                FileUtils.copyOrMoveFiles(processorConfiguration.moveFiles, sipProcessingState.unrecognizedFiles, unrecognizedFilesFolder)
+            }
+        }
+
+        // Write out the SIP file
+        String sipAsXml = processingParameters.sipProcessingState.sipAsXml
+        if (processingParameters.valid && !sipAsXml.isEmpty()) {
+            File sipFile = new File(sipAndFilesFolder, "content/mets.xml")
+            sipFile.withWriter(StandardCharsets.UTF_8.name()) { Writer writer ->
+                writer.write(sipAsXml)
+            }
+        }
+
+        // Write out the FairfaxProcessingParameters and SipProcessingState
+        Date now = new Date()
+        // We will assume that millisecond timestamps ensures that the filename will be unique
+        File processingStateFile = new File(sourceFolder,
+                "${processingParameters.processingDifferentiator()}_parameters-and-state_${FileUtils.FILE_TIMESTAMP_FORMATTER.format(now)}.txt")
+        processingStateFile.withWriter(StandardCharsets.UTF_8.name()) { Writer writer ->
+            writer.write(processingParameters.detailedDisplay(0, true))
+        }
+        if (sipAndFilesFolder.exists()) {
+            FileUtils.copyOrMoveFiles(false, [processingStateFile], sipAndFilesFolder)
+        }
+
+        // Move the thumbnail page file to the sipAndFilesFolder
+        if (processingParameters.thumbnailPageFile != null && processingParameters.thumbnailPageFile.exists()) {
+            File thumbnailPageFileNewFile = new File(processingParameters.thumbnailPageFile.parentFile,
+                    processingParameters.thumbnailPageFileFinalName)
+            processingParameters.thumbnailPageFile.renameTo(thumbnailPageFileNewFile)
+            FileUtils.copyOrMoveFiles(true, [thumbnailPageFileNewFile], sipAndFilesFolder)
+        }
+        sipAndFilesFolder
+    }
+
+    void processValidTitleCodeFolder(FairfaxProcessingParameters processingParameters) {
         boolean isRegexNotGlob = true
         boolean matchFilenameOnly = true
         boolean sortFiles = true
@@ -211,9 +223,7 @@ class ReadyForIngestionProcessor {
         // Process the folder as a single collection of files
         // Note that the folder is processed for a single processingType (so there could be multiple passes, one for
         // each processingType).
-        String sipAsXml = FairfaxFilesProcessor.processCollectedFiles(processingParameters, allFiles)
-
-        return sipAsXml
+        FairfaxFilesProcessor.processCollectedFiles(processingParameters, allFiles)
     }
 
     // See README.md for folder descriptions and structures.

@@ -133,7 +133,8 @@ class ParentGroupingWithEditionMultipleSameDayTest {
 
             testMethodState.sipProcessingState = originalSipProcessingState.clone()
             currentProcessingParameters.sipProcessingState = testMethodState.sipProcessingState
-            String sipAsXml = FairfaxFilesProcessor.processCollectedFiles(currentProcessingParameters, filesForProcessing)
+            FairfaxFilesProcessor.processCollectedFiles(currentProcessingParameters, filesForProcessing)
+            String sipAsXml = currentProcessingParameters.sipProcessingState.sipAsXml
 
             assertTrue("Processing rules includes EditionDiscriminatorsUsingSmartSubstitute",
                     currentProcessingParameters.rules.contains(ProcessingRule.EditionDiscriminatorsUsingSmartSubstitute))
