@@ -1,0 +1,11 @@
+# Based on https://docs.cucumber.io/
+#
+@tag
+Feature: Supplement grouping is handled
+
+   Supplement grouping is handled.
+
+   Scenario: The same publication has multiple supplement groupings for the same day
+     Given The publication has more than one supplement grouping for the same day
+     When the publication issue is processed
+     Then the different supplement groupings have the correct files associated with each supplement grouping

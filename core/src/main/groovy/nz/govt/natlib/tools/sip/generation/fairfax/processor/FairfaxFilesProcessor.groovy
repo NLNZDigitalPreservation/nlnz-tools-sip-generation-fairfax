@@ -15,6 +15,7 @@ import nz.govt.natlib.tools.sip.generation.fairfax.parameters.ProcessingType
 import nz.govt.natlib.tools.sip.generation.fairfax.processor.type.ParentGroupingProcessor
 import nz.govt.natlib.tools.sip.generation.fairfax.processor.type.ParentGroupingWithEditionProcessor
 import nz.govt.natlib.tools.sip.generation.fairfax.processor.type.SipForFolderProcessor
+import nz.govt.natlib.tools.sip.generation.fairfax.processor.type.SupplementGroupingProcessor
 import nz.govt.natlib.tools.sip.generation.fairfax.special.PageUnavailableWriter
 import nz.govt.natlib.tools.sip.logging.JvmPerformanceLogger
 import nz.govt.natlib.tools.sip.pdf.PdfValidator
@@ -87,6 +88,9 @@ class FairfaxFilesProcessor {
                     break
                 case ProcessingType.ParentGroupingWithEdition:
                     sortedFilesForProcessing = ParentGroupingWithEditionProcessor.selectAndSort(processingParameters, validNamedFiles)
+                    break
+                case ProcessingType.SupplementGrouping:
+                    sortedFilesForProcessing = SupplementGroupingProcessor.selectAndSort(processingParameters, validNamedFiles)
                     break
                 case ProcessingType.CreateSipForFolder:
                     sortedFilesForProcessing = SipForFolderProcessor.selectAndSort(processingParameters, validNamedFiles)
@@ -263,7 +267,10 @@ class FairfaxFilesProcessor {
             processingParameters.sipProcessingState.addException(sipProcessingException)
             log.warn(detailedReason)
         } else {
-            Sip sip = SipFactory.fromMap(processingParameters.spreadsheetRow)
+            String titleKey = processingParameters.type == ProcessingType.SupplementGrouping ?
+                    SipFactory.TITLE_METS_KEY :
+                    SipFactory.TITLE_PARENT_KEY
+            Sip sip = SipFactory.fromMap(processingParameters.spreadsheetRow, [ ], false, false, titleKey)
             sip.year = sipDate.year
             sip.month = sipDate.monthValue
             sip.dayOfMonth = sipDate.dayOfMonth
@@ -302,9 +309,20 @@ class FairfaxFilesProcessor {
     }
 
     String formatSipProcessingStateIdentifier() {
-        String title = processingParameters.getTitleParent()
-        String titleWithUnderscores = title.trim().replace(' ', '_')
 
+        String titleWithUnderscores
+        if (processingParameters.type == ProcessingType.SupplementGrouping) {
+            // supplement_grouping needs to add a few more things for uniqueness
+            // as it's possible for multiple supplements to have the same title code
+            String sectionCodesString = processingParameters.sectionCodesString.
+                    replace("+", "-").replace(",", "-")
+            String titleAndId = processingParameters.titleMets.strip().replace(' ', '_') +
+                    "_" + processingParameters.mmsid
+            titleWithUnderscores = sectionCodesString.isEmpty() ? titleAndId : "${sectionCodesString}_${titleAndId}"
+        } else {
+            String title = processingParameters.getTitleParent()
+            titleWithUnderscores = title.trim().replace(' ', '_')
+        }
         if (processingParameters.currentEdition == null) {
             return "_${titleWithUnderscores}"
         } else {

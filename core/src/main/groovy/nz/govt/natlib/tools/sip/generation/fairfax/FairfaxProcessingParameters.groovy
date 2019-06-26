@@ -59,6 +59,14 @@ class FairfaxProcessingParameters {
                     candidate.options = ProcessingOption.mergeOverrides(candidate.options, overrideOptions)
                     parametersList.add(candidate)
                 }
+            } else if (processingType == ProcessingType.SupplementGrouping) {
+                matchingRows.each { Map<String, String> singleRow ->
+                    FairfaxProcessingParameters candidate = buildForRows(titleCode, processingType, sourceFolder,
+                            processingDate, [ singleRow ])
+                    candidate.rules = ProcessingRule.mergeOverrides(candidate.rules, overrideRules)
+                    candidate.options = ProcessingOption.mergeOverrides(candidate.options, overrideOptions)
+                    parametersList.add(candidate)
+                }
             } else {
                 FairfaxProcessingParameters candidate = buildForRows(titleCode, processingType, sourceFolder, processingDate, matchingRows)
                 candidate.rules = ProcessingRule.mergeOverrides(candidate.rules, overrideRules)
@@ -244,6 +252,30 @@ class FairfaxProcessingParameters {
             titleParent = "NO-TITLE-GIVEN"
         }
         return titleParent
+    }
+
+    String getTitleMets() {
+        String titleMets = spreadsheetRow.get(FairfaxSpreadsheet.TITLE_METS_KEY)
+        if (titleMets == null || titleMets.strip().isEmpty()) {
+            titleMets = "NO-TITLE-METS-GIVEN"
+        }
+        return titleMets
+    }
+
+    String getMmsid() {
+        String mmsId = spreadsheetRow.get(FairfaxSpreadsheet.MMSID_COLUMN_NAME)
+        if (mmsId == null || mmsId.strip().isEmpty()) {
+            mmsId = "NO-MMSID-GIVEN"
+        }
+        return mmsId
+    }
+
+    String getSectionCodesString() {
+        String sectionCodesString = spreadsheetRow.get(FairfaxSpreadsheet.SECTION_CODE_KEY)
+        if (sectionCodesString == null || sectionCodesString.strip().isEmpty()) {
+            sectionCodesString = ""
+        }
+        return sectionCodesString
     }
 
     boolean hasCurrentEdition() {

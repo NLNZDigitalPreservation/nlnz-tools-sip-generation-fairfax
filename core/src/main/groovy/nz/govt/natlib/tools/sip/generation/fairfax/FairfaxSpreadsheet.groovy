@@ -23,6 +23,7 @@ class FairfaxSpreadsheet {
     static String TITLE_CODE_KEY = "title_code"
     static String SECTION_CODE_KEY = "section_codes"
     static String TITLE_PARENT_KEY = "title_parent"
+    static String TITLE_METS_KEY = "title_mets"
     static String EDITION_DISCRIMINATOR_KEY = "edition_discriminators"
     static String IS_MAGAZINE_KEY = "Magazine"
 
