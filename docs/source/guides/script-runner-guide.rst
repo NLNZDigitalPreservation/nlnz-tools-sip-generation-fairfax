@@ -474,7 +474,7 @@ The processing types are checked in the following order:
     ``skip_ignored``, ``skip_unrecognised``, ``skip_invalid``, ``automatic``, ``required_all_sections_in_sip``,
     ``missing_sequence_is_error``, ``missing_sequence_double_wide_is_ignored``, ``ignore_editions_without_files``,
     ``zero_length_pdf_replaced_with_page_unavailable``, ``do_not_force_skip``,
-    ``numeric_starts_in_hundreds_not_considered_sequence_skips``.
+    ``numeric_starts_in_hundreds_not_considered_sequence_skips``, ``do_not_require_first_section_code_for_match``.
 
 ``parent_grouping_with_edition`` default options:
     ``numeric_before_alpha``, ``generate_processed_pdf_thumbnails_page``,
@@ -487,7 +487,7 @@ The processing types are checked in the following order:
     ``skip_ignored``, ``skip_unrecognised``, ``skip_invalid``, ``automatic``, ``required_all_sections_in_sip``,
     ``missing_sequence_is_error``, ``missing_sequence_double_wide_is_ignored``, ``ignore_editions_without_files``,
     ``zero_length_pdf_replaced_with_page_unavailable``, ``do_not_force_skip``,
-    ``numeric_starts_in_hundreds_not_considered_sequence_skips``.
+    ``numeric_starts_in_hundreds_not_considered_sequence_skips``, ``do_not_require_first_section_code_for_match``.
 
 ``parent_grouping`` default options:
     ``numeric_before_alpha``, ``generate_processed_pdf_thumbnails_page``,
@@ -502,7 +502,7 @@ The processing types are checked in the following order:
     ``skip_ignored``, ``skip_unrecognised``, ``skip_invalid``, ``automatic``, ``optional_all_sections_in_sip``,
     ``missing_sequence_is_error``, ``missing_sequence_double_wide_is_ignored``, ``ignore_editions_without_files``,
     ``zero_length_pdf_replaced_with_page_unavailable``, ``do_not_force_skip``,
-    ``numeric_starts_in_hundreds_not_considered_sequence_skips``.
+    ``numeric_starts_in_hundreds_not_considered_sequence_skips``, ``require_first_section_code_for_match``.
 
 ``supplement_grouping`` default options:
     ``numeric_before_alpha``, ``generate_processed_pdf_thumbnails_page``,
@@ -517,7 +517,7 @@ The processing types are checked in the following order:
     ``skip_ignored``, ``skip_unrecognised``, ``skip_invalid``, ``automatic``, ``required_all_sections_in_sip``,
     ``missing_sequence_is_error``, ``missing_sequence_double_wide_is_ignored``, ``ignore_editions_without_files``,
     ``zero_length_pdf_replaced_with_page_unavailable``, ``do_not_force_skip``,
-    ``numeric_starts_in_hundreds_not_considered_sequence_skips``.
+    ``numeric_starts_in_hundreds_not_considered_sequence_skips``, ``do_not_require_first_section_code_for_match``.
 
 ``create_sip_for_folder`` default options:
     ``numeric_before_alpha``, ``generate_processed_pdf_thumbnails_page``,
@@ -570,6 +570,17 @@ that can be used to override its value.
     Only processes edition for a given title_code that has actual edition-specific files. For example, there might be
     ``edition_discriminators`` ``ED1+ED2+ED3``, but only ``ED1`` and ``ED2`` files exist. In that case, only ``ED1`` and
     ``ED2`` output would be created. Override is ``process_all_editions``.
+
+``require_first_section_code_for_match``
+    The sorted file list's first file's section code must match the first section code in the list of ``section_codes``.
+    Otherwise the spreadsheet row will not match. This rule only exists for situations where a particular section code
+    for a supplement sometimes comes on its own and needs to be processed with its own MMSID. For example, MEXTAB. Use
+    this rule carefully because of possible non-matching side effects. Override is
+    ``do_not_require_first_section_code_for_match``.
+
+``do_not_require_first_section_code_for_match``
+    Do not require the sorted file list's first file's section code must match the first section code in the list of
+    ``section_codes``. This is the usual default. Override is ``require_first_section_code_for_match``.
 
 ``edition_discriminators_using_smart_substitute``
     For processing type ``parent_grouping_with_edition``, the ``title_code`` and a specific ``section_code`` form the
