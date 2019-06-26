@@ -253,6 +253,16 @@ For ready-for-ingestion processing, for-review is subdivided into specific error
 Some exception-types simply need a librarian to verify that the exception is acceptable. Other exceptions will require
 some manual changes so that the files can be ingested properly into Rosetta.
 
+It is possible in some of the processing that there are multiple matches for a given set of files where one match gets
+processed correctly and another match fails and shows up in the for-review folder. An example would be ``WKTGDN`` which
+will get processed as the processing type ``parent_grouping`` with the title code ``WKT`` (and will fail because it
+doesn't have the necessary section codes) and also as the processing type ``parent_grouping_with_edition`` with the
+title code ``WKT`` and edition ``GDN``, which will succeed. Although it's possible to change the code to ensure the
+``parent_grouping`` does not match, the code may become too complicated. Given that the ``GDN`` edition is quite rare,
+it's better to leave the odd exception like this in place.
+
+TODO Perhaps we have a section to track exceptions like these.
+
 ``has-zero-length-files``
     There is at least one file that is of zero-length. If the ``zero_length_pdf_replaced_with_page_unavailable`` has
     been set, this zero-length file will have been replaced by a *page unavailable* file.

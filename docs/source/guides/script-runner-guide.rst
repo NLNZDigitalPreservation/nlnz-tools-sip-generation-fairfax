@@ -465,7 +465,14 @@ There are different processing types that have slightly different ways of dealin
 folder. When multiple processing types are specified, the processing types checked in order until a spreadsheet row
 is found that matches. Processing types themselves correspond to the class ``ProcessingType``.
 
-The processing types are checked in the following order:
+The processing types are checked in the following order: ``parent_grouping_with_edition``, ``parent_grouping``,
+``supplement_grouping`` and finally ``create_sip_for_folder``.
+
+parent_grouping_with_edition
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+This is for processing where the title code and edition discriminator combine to form a unique key. There are some
+publications where this is the case. One example is the title code ``ADM``, which has two different editions,
+``NEL`` and ``MEX``, each with their own MMSID. The ``title_parent`` is used as the publication title.
 
 ``parent_grouping_with_edition``
     The ``title_code`` is combined with the first ``edition_discriminators`` to produce a spreadsheet row match.
@@ -480,6 +487,11 @@ The processing types are checked in the following order:
     ``numeric_before_alpha``, ``generate_processed_pdf_thumbnails_page``,
     ``skip_generation_thumbnail_page_when_error_free``, ``use_in_memory_pdf_to_thumbnail_generation``.
 
+parent_grouping
+~~~~~~~~~~~~~~~
+This is the most common grouping where the title code by itself is enough to determine the publication. The
+``title_parent`` is used as the publication title.
+
 ``parent_grouping``
     The ``title_code`` is used to produce a spreadsheet row match.
 
@@ -492,6 +504,17 @@ The processing types are checked in the following order:
 ``parent_grouping`` default options:
     ``numeric_before_alpha``, ``generate_processed_pdf_thumbnails_page``,
     ``skip_generation_thumbnail_page_when_error_free``, ``use_in_memory_pdf_to_thumbnail_generation``.
+
+supplement_grouping
+~~~~~~~~~~~~~~~~~~~
+For some publications we want to extract a subset of the ``title_parent`` publication into a separate publication that
+is loaded with its own separate MMSID. The ``title_mets`` is used as the publication title.
+
+TODO The code for this extraction is not complete and will require some more tweaking and default spreadsheet changes.
+For example, some supplements are based on having certain sequence letters. There may be multiple supplements that match
+on the same set of files (for example, the TAB section code, which often maps to a different supplement). They may rely
+on being on a certain day of the week or month of the year. Much of the determination of what the publication maps to
+may rely on human intervention.
 
 ``supplement_grouping``
     The ``title_code`` and ``section_code`` is used to produce a spreadsheet row match. This is generally used for
@@ -507,6 +530,13 @@ The processing types are checked in the following order:
 ``supplement_grouping`` default options:
     ``numeric_before_alpha``, ``generate_processed_pdf_thumbnails_page``,
     ``skip_generation_thumbnail_page_when_error_free``, ``use_in_memory_pdf_to_thumbnail_generation``.
+
+create_sip_for_folder
+~~~~~~~~~~~~~~~~~~~~~
+This is a catch-all for all the publications that don't have a corresponding spreadsheet row. The ``mets.xml`` will
+still be created, but it will need to be edited to have the correct MMSID and publication title. It can be helpful to
+include this processing type in the set of processing types so that much of the work processing one-off publications
+can be done automatically without having to make changes to the parameters spreadsheet.
 
 ``create_sip_for_folder``
     This a catch all for when there is no spreadsheet row match. The ``title_code`` is still used to produce an output
@@ -687,6 +717,17 @@ For example, the ``parent_grouping`` processing type has default processing opti
 processing the title code ``DPT``, this default option is overridden by ``alpha_before_numeric`` for the DPT row
 for ``parent_grouping``. Finally, it is possible to specify a processing option ``numeric_before_alpha`` on the
 command line, which would mean that all processing sorts the ordering of PDFs as ``numeric_before_alpha``.
+
+File processed indicator: *Ready-for-ingestion-COMPLETED* file
+--------------------------------------------------------------
+Currently the ready-for-ingestion processing runs each separate title code folder on its own individual thread. When
+an exception occurs that halts processing for a specific thread, other threads will continue processing. It is possible
+for processing for many folders to be incomplete while at the same time others have completed. For example, the
+processing may lose its connection to the source and target folders in the middle of processing. To help determine which
+processing has successfully completed, the ready-for-ingestion processor will write an empty file
+``Ready-for-ingestion-COMPLETED`` in the target folder to indicate that all processing stages were successfully
+completed. If this file is not present it means that the processing for that folder was interrupted for some reason and
+will need to be re-run.
 
 Example processing command
 --------------------------
