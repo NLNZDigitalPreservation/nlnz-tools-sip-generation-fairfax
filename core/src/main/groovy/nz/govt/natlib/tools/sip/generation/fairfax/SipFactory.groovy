@@ -9,6 +9,7 @@ import nz.govt.natlib.tools.sip.SipFileWrapperFactory
  */
 class SipFactory {
     static String TITLE_PARENT_KEY = "title_parent"
+    static String TITLE_METS_KEY = "title_mets"
     static String ALMA_MMS_ID_KEY = "MMSID"
     static String POLICY_ID_KEY = "Access"
     static String PRESERVATION_TYPE = "PRESERVATION_MASTER"
@@ -18,8 +19,8 @@ class SipFactory {
     static Boolean DEFAULT_DIGITAL_ORIGINAL = true
 
     static Sip fromMap(Map<String, String> parameterMap, List<File> files = [ ], boolean useFilenameOnly = false,
-                       boolean generateMD5Hash = false) {
-        String title = parameterMap.get(TITLE_PARENT_KEY)
+                       boolean generateMD5Hash = false, String titleKey = TITLE_PARENT_KEY) {
+        String title = parameterMap.get(titleKey)
         String almaMmsId = parameterMap.get(ALMA_MMS_ID_KEY)
         String policyId = parameterMap.get(POLICY_ID_KEY)
 
