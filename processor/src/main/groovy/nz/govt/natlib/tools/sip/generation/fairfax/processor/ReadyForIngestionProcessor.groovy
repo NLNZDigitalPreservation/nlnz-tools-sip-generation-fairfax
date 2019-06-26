@@ -28,6 +28,8 @@ import java.time.LocalDate
  */
 @Log4j2
 class ReadyForIngestionProcessor {
+    static final String READY_FOR_INGESTION_COMPLETED_FILENAME = "Ready-for-ingestion-COMPLETED"
+
     FairfaxSpreadsheet fairfaxSpreadsheet
     ProcessorConfiguration processorConfiguration
     List<ProcessingType> processingTypes
@@ -80,6 +82,10 @@ class ReadyForIngestionProcessor {
 
             processorConfiguration.timekeeper.logElapsed()
 
+            if (sipAndFilesFolder != null && sipAndFilesFolder.exists()) {
+                File completedFile = new File(sipAndFilesFolder, READY_FOR_INGESTION_COMPLETED_FILENAME)
+                completedFile.createNewFile()
+            }
         } finally {
             PerThreadLogFileAppender.stopAndRemove(appenderId)
             if (sipAndFilesFolder != null) {
