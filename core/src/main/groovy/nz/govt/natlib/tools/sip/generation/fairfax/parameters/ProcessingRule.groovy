@@ -23,6 +23,9 @@ enum ProcessingRule {
     ProcessAllEditions("process_all_editions"),
     IgnoreEditionsWithoutMatchingFiles("ignore_editions_without_files"),
 
+    FirstSectionCodeRequiredForMatch("require_first_section_code_for_match"),
+    FirstSectionCodeNotRequiredForMatch("do_not_require_first_section_code_for_match"),
+
     EditionDiscriminatorsUsingSmartSubstitute("edition_discriminators_using_smart_substitute"),
     EditionDiscriminatorsNotUsingSmartSubstitute("edition_discriminators_not_using_smart_substitute"),
 
@@ -65,6 +68,9 @@ enum ProcessingRule {
 
             OVERRIDES_MAP.put(ProcessAllEditions, [ IgnoreEditionsWithoutMatchingFiles ])
             OVERRIDES_MAP.put(IgnoreEditionsWithoutMatchingFiles, [ ProcessAllEditions ])
+
+            OVERRIDES_MAP.put(FirstSectionCodeRequiredForMatch, [ FirstSectionCodeNotRequiredForMatch ])
+            OVERRIDES_MAP.put(FirstSectionCodeNotRequiredForMatch, [ FirstSectionCodeRequiredForMatch ])
 
             OVERRIDES_MAP.put(EditionDiscriminatorsUsingSmartSubstitute, [ EditionDiscriminatorsNotUsingSmartSubstitute ])
             OVERRIDES_MAP.put(EditionDiscriminatorsNotUsingSmartSubstitute, [ EditionDiscriminatorsUsingSmartSubstitute ])

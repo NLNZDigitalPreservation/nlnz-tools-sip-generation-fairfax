@@ -9,6 +9,9 @@ import nz.govt.natlib.tools.sip.state.SipProcessingException
 import nz.govt.natlib.tools.sip.state.SipProcessingExceptionReason
 import nz.govt.natlib.tools.sip.state.SipProcessingExceptionReasonType
 
+/**
+ * Wraps a {@link Spreadsheet} with Fairfax-specific functionality.
+ */
 @Log4j2
 class FairfaxSpreadsheet {
     // Note that the CSV 'standard' generally only allows 1 character as a separator

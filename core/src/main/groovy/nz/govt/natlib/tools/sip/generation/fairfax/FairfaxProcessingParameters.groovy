@@ -16,6 +16,9 @@ import org.apache.commons.lang3.StringUtils
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
+/**
+ * Encapsulates all the parameters needed to process a set of files.
+ */
 @Canonical
 @ToString(includeNames=true, includePackage=false, excludes=[ 'spreadsheetRow', 'sipProcessingState' ])
 @AutoClone(excludes = [ 'currentEdition' ])
@@ -23,6 +26,7 @@ import java.time.format.DateTimeFormatter
 class FairfaxProcessingParameters {
     static DateTimeFormatter READABLE_DATE_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd")
     boolean valid = true
+    boolean skip = false
     String titleCode
     File sourceFolder
     ProcessingType type

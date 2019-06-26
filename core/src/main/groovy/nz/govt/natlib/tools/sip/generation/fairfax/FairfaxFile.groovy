@@ -19,6 +19,9 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.regex.Matcher
 
+/**
+ * Encapsulates the characteristics of Fairfax file. Includes methods for operating on lists of such files.
+ */
 @Canonical
 @Sortable(includes = ['titleCode', 'sectionCode', 'dateYear', 'dateMonthOfYear', 'dateDayOfMonth', 'sequenceLetter',
         'sequenceNumber', 'qualifier' ])
@@ -66,11 +69,13 @@ class FairfaxFile {
         return differences
     }
 
-    static Set<String> allSectionCodes(List<FairfaxFile> files) {
-        Set<String> sectionCodes = [ ]
+    static List<String> allSectionCodes(List<FairfaxFile> files) {
+        List<String> sectionCodes = [ ]
         files.each { FairfaxFile fairfaxFile ->
             if (fairfaxFile.sectionCode != null && !fairfaxFile.sectionCode.isEmpty()) {
-                sectionCodes.add(fairfaxFile.sectionCode)
+                if (!sectionCodes.contains(fairfaxFile.sectionCode)) {
+                    sectionCodes.add(fairfaxFile.sectionCode)
+                }
             }
         }
         return sectionCodes
