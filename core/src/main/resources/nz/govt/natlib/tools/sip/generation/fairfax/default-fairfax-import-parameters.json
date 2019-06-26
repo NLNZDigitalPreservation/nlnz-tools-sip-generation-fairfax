@@ -3049,7 +3049,7 @@
             "MMSID": "9917921803502836",
             "title_parent": "Feilding-Rangitikei Herald",
             "processing_type": "parent_grouping",
-            "processing_rules": "manual",
+            "processing_rules": "",
             "processing_options": "alpha_before_numeric",
             "publication_key": "",
             "title_code": "FDH",
