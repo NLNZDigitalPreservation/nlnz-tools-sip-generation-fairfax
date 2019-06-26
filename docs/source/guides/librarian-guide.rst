@@ -54,7 +54,7 @@ The PDF files produced by Fairfax have the following filename structure::
 
     <title_code><section_code>-yyyyMMdd-<optional-sequence-letter><optional-sequence-number><optional-qualifier>.pdf
 
-For example, the filename ```DOMED1-20190617-A01-my-first.pdf`` has the following values::
+For example, the filename ``DOMED1-20190617-A01-my-first.pdf`` has the following values::
 
     title_code: DOM
     section_code: ED1
@@ -64,16 +64,17 @@ For example, the filename ```DOMED1-20190617-A01-my-first.pdf`` has the followin
     qualifier: -my-first
 
 - A ``title_code`` is generally 3 - 4 characters long.
-- A ``section_code`` is generall 2 - 3 characters long.
+- A ``section_code`` is generally 2 - 3 characters long.
 - A ``date`` is always of the format yyyyMMdd.
 - A ``sequence_letter`` is optional, and is generally of the form A, B, C, ...
 - A ``sequence_number`` is required, and is generally of the form 1, 2, 3, ... or 01, 02, 03, ... or 001, 002, 003, ...
 - A ``qualifier`` is optional and is anything past the ``sequence_number``.
-- The extenstion is some form of ``pdf``, in either lower, upper or mixed case (for example, ``pDf`` is acceptable).
+- The extension is some form of ``pdf``, in either lower, upper or mixed case (for example, ``pDf`` is acceptable).
 
 As an example, `SHMED1-20181108-011.pdf` and `WHMED1-20181108-G012new-page.Pdf` are valid filenames.
 
-As an example, `ABC-20181108-011.pdf` and `WHMED1-2018-11-08-G012.pdf` are invalid filenames.
+As an example, `ABC-20181108-011.pdf` and `WHMED1-2018-11-08-G012.pdf` are invalid filenames. The first does not have a
+long enough title_code/section_code block, and the second's date is not the correct format.
 
 
 Processing spreadsheet

@@ -66,13 +66,24 @@ The tool is open-source software and is freely available for the benefit of the 
 
 Documentation corrections
 =========================
-
 This documentation is generated from ``.rst`` files in the ``docs`` folder of the codebase, found at
-https://github.com/NLNZDigitalPreservation/nlnz-tools-sip-generation-fairfax . However, it is expected that some users
-might not be willing to edit those files directly and submit changes via git. Another way to document desired changes
-in the documentation is to download the documentation as a ``pdf`` from its location on readthedocs, namely,
-https://nlnz-tools-sip-generation-fairfax.readthedocs.io , annotate that pdf with the desired changes, and then
-submit that annotated pdf in a github request to change the documentation.
+https://github.com/NLNZDigitalPreservation/nlnz-tools-sip-generation-fairfax .
+
+There are two approaches to making documentation corrections. Both approaches require a Github account.
+
+Edit the files directly in the repository
+-----------------------------------------
+Github describes the process of editing files directly in the repository here:
+https://help.github.com/en/articles/editing-files-in-your-repository . Follow this process to edit the problematic
+``.rst`` files directly.
+
+Annotate a PDF with changes and suggestions
+-------------------------------------------
+Some readers might not be willing to edit those files directly and submit changes via Github. Another way to document
+desired changes in the documentation is to download the documentation as a ``pdf`` from its location on readthedocs,
+namely, https://nlnz-tools-sip-generation-fairfax.readthedocs.io , annotate that pdf with the desired changes, and then
+submit that annotated pdf in a github issue. Github describes the process of creating an issue here:
+https://help.github.com/en/articles/creating-an-issue .
 
 
 License

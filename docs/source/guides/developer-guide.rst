@@ -159,8 +159,21 @@ Iteration 1: Understanding the problem
 The first iteration of any solution becomes an expression of understanding the problem. The subsequent iteration is
 to provide a better solution. Unfortunately, most development often stops at the first iteration.
 
-Iteration 2: Incorporating better technologies
-----------------------------------------------
+Iteration 2a: Choosing a different approach
+-------------------------------------------
+The current codebase started with the assumption of a single match for a group of files. When the problem domain
+expanded to multiple matches for the same set of files the manner of processing became much more complicated.
+
+A better approach might be akin to a filter chain, where a set of files is passed from one potential processor to
+another. The filter may process the files and then pass them on, or process them and stop the chain. One issue with
+this approach is that one filter's choice of processing may be affected by the choices of another filter.
+
+Whatever the approach, the end results needs to be a simpler, easier-to-understand codebase. The current codebase
+is becoming too complicated to reliably maintain. The use of scenario tests to ensure that certain use cases are
+processed correctly is integral to ensuring that the codebase remains functional despite its complexity.
+
+Iteration 2b: Incorporating better technologies
+-----------------------------------------------
 Future development will likely focus on solving bulk ingestion of other digital media. That other use case would
 provide a better understanding of commonalities of bulk ingestion and provide insight into how to develop a generic
 approach with specific applications for different publication to ingestion pipelines.
@@ -173,6 +186,7 @@ Some useful technologies that might enable a better solution:
     https://spring.io/projects/spring-batch .
 -   Using stream processing and other Java 8 features as an approach to make the code more flexible and usable. There's
     some excellent Youtube video that demonstrates this approach. See some excellent videos by Victor Rentea:
+
         - Clean Code with Java8 4 years later (V. Rentea) https://www.youtube.com/watch?v=-WInMyeAqTE
         - The Art of Clean Code by Victor Rentea https://www.youtube.com/watch?v=AeWbJ5LIFNg
         - The Art Of Clean Code by Victor Rentea https://www.youtube.com/watch?v=J4OIo4T7I_E
