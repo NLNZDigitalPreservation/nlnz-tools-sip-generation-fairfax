@@ -516,6 +516,17 @@ on the same set of files (for example, the TAB section code, which often maps to
 on being on a certain day of the week or month of the year. Much of the determination of what the publication maps to
 may rely on human intervention.
 
+TODO One approach for dealing with extracting supplements that are specific to certain sequence letters is to add a new
+spreadsheet column ``sequence_letters`` and the supplement grouping would only select the files for processing if the
+given set of sequence letters existed in the files in the title code folder. This is similar to how
+``parent_grouping_with_edition`` works with editions. In other words, if the sequence letters have been set in the
+spreadsheet row and they do exist in the set of files, then process the supplement grouping against the set of files.
+Otherwise, there isn't a match and that supplement grouping is skipped. This would likely require an additional rule
+so that the sequence letters would be used as a filter for processing files.
+
+TODO The use of ``sequence_letters`` could also be used to determine the ordering of the pages if a non-alphabetical
+ordering is required. This would likely require an additional rule so that ordering would be used.
+
 ``supplement_grouping``
     The ``title_code`` and ``section_code`` is used to produce a spreadsheet row match. This is generally used for
     publications that are part of a parent publication (for example, a parent publication might have a special section

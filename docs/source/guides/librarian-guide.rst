@@ -144,6 +144,13 @@ Columns used by ready-for-ingestion processing
     A ``1`` indicates a magazine. A ``0`` usually indicates newspaper. Magazines and newspapers have different material
     flows and are separated into ``magazine`` and ``newspaper`` subfolders for that reason.
 
+``sequence_letters`` (TODO not implemented yet)
+    A list of letters separated by the ``+`` sign that could indicate the ordering of the sequence letters in a
+    publication if a non-alphabetical ordering is desired. This field could also be used to determine if a
+    ``supplement_grouping`` applies. See the *supplement_grouping* section of the :doc:`script-runner-guide` for more
+    details of how this field would be used. Note that sequence_letters has not been implemented in the codebase and
+    does not exist as a column in the default spreadsheet.
+
 Some of the other columns (not used in the code)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ``ingest_status``

@@ -109,17 +109,22 @@ targets.
 
 Dependencies
 ~~~~~~~~~~~~
-TODO Verify these dependencies. Perhaps refer to their read-the-docs and repository URLs.
+Most of this project's dependencies can be pulled from Maven Central, but this project also depends on some other
+projects and those projects need to be built before this project can compile and build. The project dependencies are,
+in order:
 
-    - nz.govt.natlib.m11n.tools:automation-core
-    - The nz.govt.natlib.tools:sip-generation-core/nz.govt.natlib.tools:sip-generation-gradle-plugin
+-   *nlnz-m11n-tools-gradle*. The nlnz-m11-tools project can be found at
+    https://github.com/NLNZDigitalPreservation/nlnz-m11n-tools-gradle .
+-   *nlnz-m11n-tools-automation*. The nlnz-m11n-tools-automation project can be found at
+    https://github.com/NLNZDigitalPreservation/nlnz-m11n-tools-automation .
+-   *nlnz-tools-sip-generation*. The nlnz-tools-sip-generation project can be found at
+    https://github.com/NLNZDigitalPreservation/nlnz-tools-sip-generation .
 
 Development platforms
 ~~~~~~~~~~~~~~~~~~~~~
 The following platforms have been used during the development of the NLNZ Tools Sip Generation Fairfax:
 
 -  Ubuntu GNU/Linux 18.04 LTS and later
-
 
 Installation
 ------------
@@ -128,10 +133,13 @@ used.
 
 Build commands
 --------------
-
 See the *Build commands for Gradle-based projects* section of the *Java Development Guide* of the
 *National Library of New Zealand Developer Guidelines* for a description of the build commands used for this project.
 These guidelines can be found at https://nlnz-developer-guidelines.readthedocs.io .
+
+The primary build command for this project is::
+
+    gradle clean build publishToMavenLocal
 
 Versioning
 ----------
