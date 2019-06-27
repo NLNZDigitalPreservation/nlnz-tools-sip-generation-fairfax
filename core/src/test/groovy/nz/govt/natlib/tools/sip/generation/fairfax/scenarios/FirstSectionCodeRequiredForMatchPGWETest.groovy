@@ -26,7 +26,7 @@ import static org.hamcrest.core.Is.is
 import static org.junit.Assert.*
 
 /**
- * Tests the {@code first-secction-code-match-parent-grouping-with-edition} scenario.
+ * Tests the {@code first-section-code-match-parent-grouping-with-edition} scenario.
  *
  * Note that this test is complicated by the files either being part of a directory structure or in a resource file (jar),
  * so the {@link TestHelper} class is used to handle both scenarios. In real-life processing the files would be on the
@@ -193,7 +193,7 @@ class FirstSectionCodeRequiredForMatchPGWETest {
         assertTrue("SipProcessingState is complete", testMethodState.sipProcessingState.isComplete())
         assertTrue("SipProcessingState is successful", testMethodState.sipProcessingState.isSuccessful())
 
-        TestHelper.assertExpectedSipMetadataValues(sipForValidation, "Test Publication Zoo", 2018, 11, 23,
+        TestHelper.assertExpectedSipMetadataValues(sipForValidation, "Test Publication Zoo", "2018", "11", "23 [ZOO]",
                 IEEntityType.NewspaperIE, "ALMAMMS", "test-mms-id-zoo", "200",
                 "PRESERVATION_MASTER", "VIEW", true, 1)
 

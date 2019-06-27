@@ -161,7 +161,7 @@ class AllSectionCodesRequiredTest {
         assertTrue("SipProcessingState is complete", testMethodState.sipProcessingState.isComplete())
         TestHelper.assertExpectedExceptionReason(testMethodState.sipProcessingState, SipProcessingExceptionReasonType.ALL_FILES_CANNOT_BE_PROCESSED)
 
-        TestHelper.assertExpectedSipMetadataValues(sipForValidation, "Test Publication One", 2018, 11, 23,
+        TestHelper.assertExpectedSipMetadataValues(sipForValidation, "Test Publication One", "2018", "11", "23",
                 IEEntityType.NewspaperIE, "ALMAMMS", "test-mms-id-one", "200",
                 "PRESERVATION_MASTER", "VIEW", true, 1)
 

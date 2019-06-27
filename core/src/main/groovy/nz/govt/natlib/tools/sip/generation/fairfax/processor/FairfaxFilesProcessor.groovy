@@ -48,6 +48,7 @@ class FairfaxFilesProcessor {
                 preservationType: 'UNKNOWN_PRESERVATION_TYPE', usageType: 'UNKNOWN_USAGE_TYPE',
                 digitalOriginal: true, revisionNumber: 1,
                 year: 2038, month: 12, dayOfMonth: 31)
+        sip.updateFromDateFields()
         return sip
     }
 
@@ -271,9 +272,15 @@ class FairfaxFilesProcessor {
                     SipFactory.TITLE_METS_KEY :
                     SipFactory.TITLE_PARENT_KEY
             Sip sip = SipFactory.fromMap(processingParameters.spreadsheetRow, [ ], false, false, titleKey)
+
             sip.year = sipDate.year
             sip.month = sipDate.monthValue
             sip.dayOfMonth = sipDate.dayOfMonth
+            sip.updateFromDateFields()
+
+            if (processingParameters.hasCurrentEdition()) {
+                sip.dcCoverage = "${sipDate.dayOfMonth} [${processingParameters.currentEdition}]"
+            }
             processingParameters.sipProcessingState.ieEntityType = sip.ieEntityType
             processingParameters.sipProcessingState.identifier = formatSipProcessingStateIdentifier()
 

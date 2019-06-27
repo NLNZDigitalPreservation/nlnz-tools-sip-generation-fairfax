@@ -256,7 +256,7 @@ class ParentGroupingWithEditionMultipleSameDayTest {
         assertTrue("SipProcessingState is complete", testMethodState.sipProcessingState.isComplete())
         assertTrue("SipProcessingState is successful", testMethodState.sipProcessingState.isSuccessful())
 
-        TestHelper.assertExpectedSipMetadataValues(sipForValidation, "Test Publication One", 2018, 11, 23,
+        TestHelper.assertExpectedSipMetadataValues(sipForValidation, "Test Publication One", "2018", "11", "23 [PB1]",
                 IEEntityType.NewspaperIE, "ALMAMMS", "test-mms-id-one", "200",
                 "PRESERVATION_MASTER", "VIEW", true, 1)
 
@@ -308,7 +308,7 @@ class ParentGroupingWithEditionMultipleSameDayTest {
         assertTrue("SipProcessingState is complete", testMethodState.sipProcessingState.isComplete())
         assertTrue("SipProcessingState is successful", testMethodState.sipProcessingState.isSuccessful())
 
-        TestHelper.assertExpectedSipMetadataValues(sipForValidation, "Test Publication Two", 2018, 11, 23,
+        TestHelper.assertExpectedSipMetadataValues(sipForValidation, "Test Publication Two", "2018", "11", "23 [PB2]",
                 IEEntityType.NewspaperIE, "ALMAMMS", "test-mms-id-two", "200",
                 "PRESERVATION_MASTER", "VIEW", true, 1)
 

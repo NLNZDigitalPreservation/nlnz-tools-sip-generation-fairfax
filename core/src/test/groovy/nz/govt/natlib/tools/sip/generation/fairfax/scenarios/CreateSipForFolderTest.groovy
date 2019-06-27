@@ -153,7 +153,7 @@ class CreateSipForFolderTest {
         assertTrue("SipProcessingState is complete", testMethodState.sipProcessingState.isComplete())
         TestHelper.assertExpectedExceptionReason(testMethodState.sipProcessingState, SipProcessingExceptionReasonType.NO_MATCHING_SIP_DEFINITION)
 
-        TestHelper.assertExpectedSipMetadataValues(sipForValidation, "UNKNOWN_TITLE", 2018, 11, 23,
+        TestHelper.assertExpectedSipMetadataValues(sipForValidation, "UNKNOWN_TITLE", "2018", "11", "23",
                 IEEntityType.UNKNOWN, "ALMAMMS", "UNKNOWN_MMSID",
                 "200", "PRESERVATION_MASTER", "VIEW", true, 1)
 

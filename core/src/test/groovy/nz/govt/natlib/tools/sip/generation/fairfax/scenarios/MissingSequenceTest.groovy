@@ -162,7 +162,7 @@ class MissingSequenceTest {
         String expectedReason = "One or more skipped sequences precedes these files=[TSTPB1-20181123-004.pdf, TSTPB1-20181123-A02.pdf, TSTPB1-20181123-B03.pdf]"
         assertThat("SipProcessingState firstExceptionReason is ${expectedReason}", firstExceptionReason.toString(), is(expectedReason))
 
-        TestHelper.assertExpectedSipMetadataValues(sipForValidation, "Test Publication One", 2018, 11, 23,
+        TestHelper.assertExpectedSipMetadataValues(sipForValidation, "Test Publication One", "2018", "11", "23",
                 IEEntityType.NewspaperIE, "ALMAMMS", "test-mms-id-one", "200",
                 "PRESERVATION_MASTER", "VIEW", true, 1)
 

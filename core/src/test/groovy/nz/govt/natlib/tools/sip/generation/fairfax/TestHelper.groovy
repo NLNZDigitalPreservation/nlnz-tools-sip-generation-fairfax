@@ -253,14 +253,15 @@ class TestHelper {
                 sipProcessingState.thumbnailPageFiles.size(), is(expectedThumbnailPageFiles))
     }
 
-    static void assertExpectedSipMetadataValues(SipXmlExtractor sipForValidation, String title, int year, int month,
-                                                int dayOfMonth, IEEntityType ieEntityType, String objectIdentifierType,
-                                                String objectcIdentifierValue, String policyId, String preservationType,
-                                                String usageType, boolean isDigitalOriginal, int revisionNumber) {
+    static void assertExpectedSipMetadataValues(SipXmlExtractor sipForValidation, String title, String dcDate,
+                                                String dcTermsAvailable, String dcCoverage, IEEntityType ieEntityType,
+                                                String objectIdentifierType, String objectcIdentifierValue,
+                                                String policyId, String preservationType, String usageType,
+                                                boolean isDigitalOriginal, int revisionNumber) {
         assertThat("title", sipForValidation.extractTitle(), is(title))
-        assertThat("year", sipForValidation.extractYear(), is(year))
-        assertThat("month", sipForValidation.extractMonth(), is(month))
-        assertThat("dayOfMonth", sipForValidation.extractDayOfMonth(), is(dayOfMonth))
+        assertThat("dcDate", sipForValidation.extractDcDate(), is(dcDate))
+        assertThat("dcTermsAvailable", sipForValidation.extractDcTermsAvailable(), is(dcTermsAvailable))
+        assertThat("dcCoverage", sipForValidation.extractDcCoverage(), is(dcCoverage))
         assertThat("ieEntityType", sipForValidation.extractIEEntityType(), is(ieEntityType))
         assertThat("objectIdentifierType", sipForValidation.extractObjectIdentifierType(), is(objectIdentifierType))
         assertThat("objectIdentifierValue", sipForValidation.extractObjectIdentifierValue(), is(objectcIdentifierValue))
