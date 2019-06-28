@@ -25,6 +25,8 @@ import java.time.format.DateTimeFormatter
 @Log4j2
 class FairfaxProcessingParameters {
     static DateTimeFormatter READABLE_DATE_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+    static final List<String> IGNORE_EDITIONS_FOR_DC_COVERAGE = [ 'TAB', 'NEL', 'MEX' ]
+
     boolean valid = true
     boolean skip = false
     String titleCode
@@ -318,7 +320,12 @@ class FairfaxProcessingParameters {
         }
     }
 
+    boolean isIncludeCurrentEditionForDcCoverage() {
+        return hasCurrentEdition() && !IGNORE_EDITIONS_FOR_DC_COVERAGE.contains(currentEdition)
+    }
+
     String detailedDisplay(int offset = 0, boolean includeSipProcessingState = false) {
+
         String initialOffset = StringUtils.repeat(' ', offset)
         StringBuilder stringBuilder = new StringBuilder(initialOffset)
         stringBuilder.append("${this.getClass().getName()}:")
