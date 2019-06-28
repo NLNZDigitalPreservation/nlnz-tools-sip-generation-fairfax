@@ -38,13 +38,14 @@ project.ext {
             'class'      : 0.0  // currently at 0.0%
     ]
 
+    String coreResourcePath = "core/src/main/resources/nz/govt/natlib/tools/sip/generation/fairfax/".replace("/", File.separator)
     // Command-line variables used for specific tasks
     // Task updateDefaultFairfaxImportParameters
     doUpdateDefaultFairfaxImportParameters = ProjectHelper.hasAnyTasks(project, [ "updateDefaultFairfaxImportParameters" ])
     fairfaxSpreadsheetImportFilenameValue = project.hasProperty('fairfaxSpreadsheetImportFilename') ?
             project.fairfaxSpreadsheetImportFilename : null
     fairfaxSpreadsheetExportFilenameValue = project.hasProperty('fairfaxSpreadsheetExportFilename') ?
-            project.fairfaxSpreadsheetExportFilename : "core/src/main/resources/nz/govt/natlib/tools/sip/generation/fairfax/default-fairfax-import-parameters.json"
+            project.fairfaxSpreadsheetExportFilename : "${coreResourcePath}default-fairfax-import-parameters.json"
 
     // Task updateDefaultFairfaxImportParameters
     doExportDefaultFairfaxImportParameters = ProjectHelper.hasAnyTasks(project, [ "exportDefaultFairfaxImportParameters" ])
@@ -61,11 +62,11 @@ project.ext {
         defaultExportFilename = "fairfax-export-parameters.csv"
         fairfaxSpreadsheetImportFilenameValue = project.hasProperty('fairfaxSpreadsheetImportFilename') ?
                 project.fairfaxSpreadsheetImportFilename :
-                "core/src/main/resources/nz/govt/natlib/tools/sip/generation/fairfax/default-fairfax-import-parameters.json"
+                "${coreResourcePath}default-fairfax-import-parameters.json"
     }
     fairfaxSpreadsheetExportFilenameValue = project.hasProperty('fairfaxSpreadsheetExportFilename') ?
             project.fairfaxSpreadsheetExportFilename :
-            "core/src/main/resources/nz/govt/natlib/tools/sip/generation/" + defaultExportFilename
+            "${coreResourcePath}${defaultExportFilename}"
 }
 
 apply plugin: 'groovy'
@@ -140,15 +141,15 @@ task updateDefaultFairfaxImportParameters() {
     File spreadsheetImportFile
     if (project.doUpdateDefaultFairfaxImportParameters) {
         if (project.fairfaxSpreadsheetImportFilenameValue == null) {
-            throw new BuildException("fairfaxSpreadsheetImportFilename=${project.fairfaxSpreadsheetImportFilenameValue} must be set when calling task 'updateDefaultFairfaxImportParameters'.")
+            throw new BuildException("fairfaxSpreadsheetImportFilename=${project.fairfaxSpreadsheetImportFilenameValue} must be set when calling task 'updateDefaultFairfaxImportParameters'.".toString())
         } else {
             spreadsheetImportFile = new File((String) project.fairfaxSpreadsheetImportFilenameValue)
         }
         if (!spreadsheetImportFile.exists()) {
-            throw new BuildException("File=${spreadsheetImportFile.getCanonicalPath()} must exist.")
+            throw new BuildException("File=${spreadsheetImportFile.getCanonicalPath()} must exist.".toString())
         }
         if (!spreadsheetImportFile.isFile()) {
-            throw new BuildException("File=${spreadsheetImportFile.getCanonicalPath()} must be a file.")
+            throw new BuildException("File=${spreadsheetImportFile.getCanonicalPath()} must be a file.".toString())
         }
     }
     doLast {
@@ -180,15 +181,15 @@ task exportDefaultFairfaxImportParameters() {
     File spreadsheetImportFile
     if (project.doExportDefaultFairfaxImportParameters) {
         if (project.fairfaxSpreadsheetImportFilenameValue == null) {
-            throw new BuildException("fairfaxSpreadsheetImportFilename=${project.fairfaxSpreadsheetImportFilenameValue} must be set when calling task 'exportDefaultFairfaxImportParameters'.")
+            throw new BuildException("fairfaxSpreadsheetImportFilename=${project.fairfaxSpreadsheetImportFilenameValue} must be set when calling task 'exportDefaultFairfaxImportParameters'.".toString())
         } else {
             spreadsheetImportFile = new File((String) project.fairfaxSpreadsheetImportFilenameValue)
         }
         if (!spreadsheetImportFile.exists()) {
-            throw new BuildException("File=${spreadsheetImportFile.getCanonicalPath()} must exist.")
+            throw new BuildException("File=${spreadsheetImportFile.getCanonicalPath()} must exist.".toString())
         }
         if (!spreadsheetImportFile.isFile()) {
-            throw new BuildException("File=${spreadsheetImportFile.getCanonicalPath()} must be a file.")
+            throw new BuildException("File=${spreadsheetImportFile.getCanonicalPath()} must be a file.".toString())
         }
     }
     doLast {

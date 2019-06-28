@@ -19,6 +19,7 @@ import nz.govt.natlib.tools.sip.state.SipProcessingExceptionReasonType
 import nz.govt.natlib.tools.sip.state.SipProcessingState
 import nz.govt.natlib.tools.sip.utils.FileUtils
 import nz.govt.natlib.tools.sip.utils.GeneralUtils
+import org.apache.commons.io.FilenameUtils
 
 import java.nio.charset.StandardCharsets
 import java.time.LocalDate
@@ -115,11 +116,14 @@ class ReadyForIngestionProcessor {
             sipAndFilesFolder = new File(forReviewFolder,
                     "${sipProcessingState.failureReasonSummary}${File.separator}${typeFolderNamePath}")
         }
-        File contentStreamsFolder = new File(sipAndFilesFolder, "content/streams")
+        File contentStreamsFolder = new File(sipAndFilesFolder, FilenameUtils.separatorsToSystem("content/streams"))
         // Note that unrecognized only gets moved/copied if ProcessingRule.HandleUnrecognised
-        File invalidFilesFolder = new File(forReviewFolder, "INVALID/${dateString}/${processingParameters.titleCode}")
-        File ignoredFilesFolder = new File(forReviewFolder, "IGNORED/${dateString}/${processingParameters.titleCode}")
-        File unrecognizedFilesFolder = new File(forReviewFolder, "UNRECOGNIZED/${dateString}/${processingParameters.titleCode}")
+        String invalidPath = FilenameUtils.separatorsToSystem("INVALID/${dateString}/${processingParameters.titleCode}")
+        File invalidFilesFolder = new File(forReviewFolder, invalidPath)
+        String ignoredPath = FilenameUtils.separatorsToSystem("IGNORED/${dateString}/${processingParameters.titleCode}")
+        File ignoredFilesFolder = new File(forReviewFolder, ignoredPath)
+        String unrecognizedPath = FilenameUtils.separatorsToSystem("UNRECOGNIZED/${dateString}/${processingParameters.titleCode}")
+        File unrecognizedFilesFolder = new File(forReviewFolder, unrecognizedPath)
 
         boolean hasSipAndFilesFolder
         boolean hasInvalidFilesFolder
@@ -186,7 +190,7 @@ class ReadyForIngestionProcessor {
         // Write out the SIP file
         String sipAsXml = processingParameters.sipProcessingState.sipAsXml
         if (processingParameters.valid && !sipAsXml.isEmpty()) {
-            File sipFile = new File(sipAndFilesFolder, "content/mets.xml")
+            File sipFile = new File(sipAndFilesFolder, FilenameUtils.separatorsToSystem("content/mets.xml"))
             sipFile.withWriter(StandardCharsets.UTF_8.name()) { Writer writer ->
                 writer.write(sipAsXml)
             }
