@@ -1,5 +1,7 @@
 package nz.govt.natlib.tools.sip.generation.fairfax.processor
 
+import org.apache.commons.io.FilenameUtils
+
 import static org.hamcrest.core.Is.is
 import static org.junit.Assert.assertThat
 import static org.junit.Assert.assertTrue
@@ -8,17 +10,17 @@ import org.junit.Test
 
 class ProcessorUtilsTest {
     static final File ZERO_SEGMENT_FILE = new File("")
-    static final File ZERO_SEGMENT_FILE_SLASH = new File("/")
-    static final File ONE_SEGMENT_FILE = new File("filename.txt")
-    static final File ONE_SEGMENT_FILE_SLASH = new File("/filename.txt")
-    static final File TWO_SEGMENT_FILE = new File("parent1/filename.txt")
-    static final File TWO_SEGMENT_FILE_SLASH = new File("/parent1/filename.txt")
-    static final File THREE_SEGMENT_FILE = new File("parent2/parent1/filename.txt")
-    static final File THREE_SEGMENT_FILE_SLASH = new File("/parent2/parent1/filename.txt")
-    static final File FOUR_SEGMENT_FILE = new File("parent3/parent2/parent1/filename.txt")
-    static final File FOUR_SEGMENT_FILE_SLASH = new File("/parent3/parent2/parent1/filename.txt")
-    static final File FIVE_SEGMENT_FILE = new File("parent4/parent3/parent2/parent1/filename.txt")
-    static final File FIVE_SEGMENT_FILE_SLASH = new File("/parent4/parent3/parent2/parent1/filename.txt")
+    static final File ZERO_SEGMENT_FILE_SLASH = new File(FilenameUtils.separatorsToSystem("/"))
+    static final File ONE_SEGMENT_FILE = new File(FilenameUtils.separatorsToSystem("filename.txt"))
+    static final File ONE_SEGMENT_FILE_SLASH = new File(FilenameUtils.separatorsToSystem("/filename.txt"))
+    static final File TWO_SEGMENT_FILE = new File(FilenameUtils.separatorsToSystem("parent1/filename.txt"))
+    static final File TWO_SEGMENT_FILE_SLASH = new File(FilenameUtils.separatorsToSystem("/parent1/filename.txt"))
+    static final File THREE_SEGMENT_FILE = new File(FilenameUtils.separatorsToSystem("parent2/parent1/filename.txt"))
+    static final File THREE_SEGMENT_FILE_SLASH = new File(FilenameUtils.separatorsToSystem("/parent2/parent1/filename.txt"))
+    static final File FOUR_SEGMENT_FILE = new File(FilenameUtils.separatorsToSystem("parent3/parent2/parent1/filename.txt"))
+    static final File FOUR_SEGMENT_FILE_SLASH = new File(FilenameUtils.separatorsToSystem("/parent3/parent2/parent1/filename.txt"))
+    static final File FIVE_SEGMENT_FILE = new File(FilenameUtils.separatorsToSystem("parent4/parent3/parent2/parent1/filename.txt"))
+    static final File FIVE_SEGMENT_FILE_SLASH = new File(FilenameUtils.separatorsToSystem("/parent4/parent3/parent2/parent1/filename.txt"))
 
     @Test
     void verifyThatFilePathAsSafeStringWorksForDirectoryOnly() {

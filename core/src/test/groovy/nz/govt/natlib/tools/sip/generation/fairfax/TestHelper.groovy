@@ -11,6 +11,7 @@ import nz.govt.natlib.tools.sip.state.SipProcessingException
 import nz.govt.natlib.tools.sip.state.SipProcessingExceptionReason
 import nz.govt.natlib.tools.sip.state.SipProcessingExceptionReasonType
 import nz.govt.natlib.tools.sip.state.SipProcessingState
+import org.apache.commons.io.FilenameUtils
 
 import java.nio.file.Files
 import java.nio.file.Path
@@ -57,7 +58,10 @@ class TestHelper {
         if (forLocalFilesystem) {
             testMethodState.localPath = "src/test/resources/${testMethodState.resourcesFolder}"
 
-            File spreadsheetFile = new File("${testMethodState.localPath}/${testMethodState.importParametersFilename}")
+            String unconvertedPath = "${testMethodState.localPath}/${testMethodState.importParametersFilename}"
+            String convertedPath = FilenameUtils.separatorsToSystem(unconvertedPath)
+            File spreadsheetFile = new File(convertedPath)
+
             Spreadsheet spreadsheet = Spreadsheet.fromJson(testMethodState.idColumnName, spreadsheetFile.text, true, true)
             testMethodState.fairfaxSpreadsheet = new FairfaxSpreadsheet(spreadsheet)
         } else {
