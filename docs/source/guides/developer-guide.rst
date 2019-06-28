@@ -219,3 +219,13 @@ navigations in a REST API instead of strict API versioning. Some discussion of H
 
 -   An Intro to Spring HATEOAS (https://www.baeldung.com/spring-hateoas-tutorial )
 -   Spring HATEOAS (https://spring.io/projects/spring-hateoas )
+
+Integrating with a workflow
+---------------------------
+A monolithic user interface may not be the best approach. The process of moving Fairfax files through different stages
+might fit better into some kind of workflow software. In that case you may still want a server, but the REST endpoints
+provided by the engine would be integrated with some kind of workflow process. There might be UI snippets for specific
+part of that process.
+
+For example, the AWS Simple Workflow Service (SWF) (https://aws.amazon.com/swf/ ) is one way of integrating the
+Fairfax ingestion workflow into other systems, including human systems.
