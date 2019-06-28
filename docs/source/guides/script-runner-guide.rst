@@ -395,6 +395,9 @@ Spreadsheet conversion to JSON
 Build script tasks exist to conver a ``.csv`` spreadsheet to a ``.json`` file. See the section
 `Converting the spreadsheet to JSON and vice-versa`_ for an explanation on how that conversion is done.
 
+The ready-for-ingestion processing operates on the JSON version of the spreadsheet information. For this reason, any
+changes to the csv spreadsheet **must** be converted to JSON for the processing to use those changes.
+
 Spreadsheet structure
 ~~~~~~~~~~~~~~~~~~~~~
 The structure of the spreadsheet is discussed in the :doc:`librarian-guide`.
@@ -729,14 +732,14 @@ processing the title code ``DPT``, this default option is overridden by ``alpha_
 for ``parent_grouping``. Finally, it is possible to specify a processing option ``numeric_before_alpha`` on the
 command line, which would mean that all processing sorts the ordering of PDFs as ``numeric_before_alpha``.
 
-File processed indicator: *Ready-for-ingestion-COMPLETED* file
---------------------------------------------------------------
+File processed indicator: *ready-for-ingestion-FOLDER-COMPLETED* file
+---------------------------------------------------------------------
 Currently the ready-for-ingestion processing runs each separate title code folder on its own individual thread. When
 an exception occurs that halts processing for a specific thread, other threads will continue processing. It is possible
 for processing for many folders to be incomplete while at the same time others have completed. For example, the
 processing may lose its connection to the source and target folders in the middle of processing. To help determine which
 processing has successfully completed, the ready-for-ingestion processor will write an empty file
-``Ready-for-ingestion-COMPLETED`` in the target folder to indicate that all processing stages were successfully
+``ready-for-ingestion-FOLDER-COMPLETED`` in the target folder to indicate that all processing stages were successfully
 completed. If this file is not present it means that the processing for that folder was interrupted for some reason and
 will need to be re-run.
 
@@ -777,6 +780,33 @@ The following snippet illustrates a ready-for-ingestion processing command::
         --forIngestionProcessingTypes="${forIngestionProcessingTypes}" \
         --forIngestionProcessingRules="${forIngestionProcessingRules}" \
         --forIngestionProcessingOptions="${forIngestionProcessingOptions}"
+
+Terminating or stopping ready-for-ingestion processing with *ready-for-ingestion-STOP* file
+-------------------------------------------------------------------------------------------
+Sometimes it may be necessary to terminate the ready-for-ingestion processing prematurely, before it has completed
+processing all of its folders. There is some code in the processor that attempts to trap a ``^C`` or kill signal and
+attempt a graceful shutdown, but that code does not seem functional at the moment.
+
+The other approach is to create a file in the ``targetForIngestionFolder`` with the name
+``ready-for-ingestion-STOP``. When this file appears all existing processing will complete and all subsequent
+processing will be skipped. At the end of all processing the log will provide a list of skipped folders.
+
+Note that it's quite possible to delete the ``ReadyForIngestionProcessor_STOP`` file, in which case processing will
+continue. However, there is no attempt to run any skipped processing.
+
+Managing errors in processing
+-----------------------------
+Sometimes processing for a specific folder may fail for some reason. For example, if the source and/or target folders
+are NFS shares, the connection to the source or target may be interrupted, throwing some kind of IO exception. This
+exception will halt the processing for that particular source folder. However, if the problem is intermittent (in other
+words, the connection is lost but then comes back), then other processing may work fine.
+
+At the end of a processing run the list of failed folders will be provided with the reason for that folder's processing
+failing. The suggestion is to copy those failed folders to a separate location and process them again.
+
+Note as well that if there is an failure in processing a folder, the ``ready-for-ingestion-FOLDER-COMPLETED`` file will
+not be present in the target location. The folders that do not have the ``ready-for-ingestion-FOLDER-COMPLETED`` will
+need to be deleted so that they are not ingested into Rosetta by mistake.
 
 For-review
 ----------

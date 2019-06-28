@@ -23,19 +23,28 @@ import org.apache.commons.io.FilenameUtils
 
 import java.nio.charset.StandardCharsets
 import java.time.LocalDate
+import java.util.concurrent.atomic.AtomicBoolean
 
 /**
  * For calling from gradle build scripts.
  */
 @Log4j2
 class ReadyForIngestionProcessor {
-    static final String READY_FOR_INGESTION_COMPLETED_FILENAME = "Ready-for-ingestion-COMPLETED"
+    static final String READY_FOR_INGESTION_COMPLETED_FILENAME = "ready-for-ingestion-FOLDER-COMPLETED"
+    // TODO This might be better configurable or as a general option in ProcessorRunner.
+    static final String KILL_FILE_NAME = "ready-for-ingestion-STOP"
 
     FairfaxSpreadsheet fairfaxSpreadsheet
     ProcessorConfiguration processorConfiguration
     List<ProcessingType> processingTypes
     List<ProcessingRule> overrideProcessingRules = [ ]
     List<ProcessingOption> overrideProcessingOptions = [ ]
+
+    List<Tuple2<File, String>> failureFolderAndReasons = Collections.synchronizedList([ ])
+    List<Tuple2<File, String>> skippedFolderAndReasons = Collections.synchronizedList([ ])
+
+    AtomicBoolean killInitiationLogged = new AtomicBoolean(false)
+    AtomicBoolean shutdownInitiated = new AtomicBoolean(false)
 
     ReadyForIngestionProcessor(ProcessorConfiguration processorConfiguration) {
         this.processorConfiguration = processorConfiguration
@@ -244,6 +253,8 @@ class ReadyForIngestionProcessor {
         log.info("    sourceFolder=${processorConfiguration.sourceFolder.getCanonicalPath()}")
         log.info("    targetForIngestionFolder=${processorConfiguration.targetForIngestionFolder.getCanonicalPath()}")
         log.info("    forReviewFolder=${processorConfiguration.forReviewFolder.getCanonicalPath()}")
+        log.info("${System.lineSeparator()}To initiate a graceful shutdown, use ^C or create a file=${getKillFile().canonicalPath}")
+
         processorConfiguration.timekeeper.logElapsed()
         Timekeeper processingTimekeeper = new DefaultTimekeeper()
 
@@ -289,6 +300,8 @@ class ReadyForIngestionProcessor {
                 true, true, true, false, true, true, true)
 
         List<File> invalidFolders = Collections.synchronizedList([ ])
+
+        setupShutdownHook()
         // Process the collected directories across multiple threads
         // Note for debugging: GParsExecutorPool and GParsPool will collect any exceptions thrown in the block and then
         // list them after all the threads have finished processing everything in the block. This can make it difficult
@@ -300,36 +313,46 @@ class ReadyForIngestionProcessor {
                 String dateString = titleCodeFolderAndDateString.second
                 String titleCodeFolderMessage = "titleCode=${titleCode}, date=${dateString}, folder=${titleCodeFolder.canonicalPath}"
                 try {
-                    JvmPerformanceLogger.logState("ReadyForIngestionProcessor Current thread state at start of ${titleCodeFolderMessage}",
-                            false, true, true, false, true, false, true)
-                    // we want to process this directory, which should be a <titleCode>
-                    LocalDate processingDate = LocalDate.parse(dateString, FairfaxFile.LOCAL_DATE_TIME_FORMATTER)
+                    if (continueProcessing) {
+                        JvmPerformanceLogger.logState("ReadyForIngestionProcessor Current thread state at start of ${titleCodeFolderMessage}",
+                                false, true, true, false, true, false, true)
+                        // we want to process this directory, which should be a <titleCode>
+                        LocalDate processingDate = LocalDate.parse(dateString, FairfaxFile.LOCAL_DATE_TIME_FORMATTER)
 
-                    // Avoid issue when multiple threads iterating through this list.
-                    List<ProcessingType> perThreadProcessingTypes = (List<ProcessingType>) this.processingTypes.clone()
-                    List<ProcessingRule> perThreadOverrideRules = (List<ProcessingRule>) this.overrideProcessingRules.clone()
-                    List<ProcessingOption> perThreadOverrideOptions = (List<ProcessingOption>) this.overrideProcessingOptions.clone()
+                        // Avoid issue when multiple threads iterating through this list.
+                        List<ProcessingType> perThreadProcessingTypes = (List<ProcessingType>) this.processingTypes.clone()
+                        List<ProcessingRule> perThreadOverrideRules = (List<ProcessingRule>) this.overrideProcessingRules.clone()
+                        List<ProcessingOption> perThreadOverrideOptions = (List<ProcessingOption>) this.overrideProcessingOptions.clone()
 
-                    List<FairfaxProcessingParameters> parametersList = FairfaxProcessingParameters.build(titleCode,
-                            perThreadProcessingTypes, titleCodeFolder, processingDate, fairfaxSpreadsheet,
-                            perThreadOverrideRules, perThreadOverrideOptions)
+                        List<FairfaxProcessingParameters> parametersList = FairfaxProcessingParameters.build(titleCode,
+                                perThreadProcessingTypes, titleCodeFolder, processingDate, fairfaxSpreadsheet,
+                                perThreadOverrideRules, perThreadOverrideOptions)
 
-                    parametersList.each { FairfaxProcessingParameters processingParameters ->
-                        if (!processingParameters.valid) {
-                            invalidFolders.add(titleCodeFolder)
+                        parametersList.each { FairfaxProcessingParameters processingParameters ->
+                            if (!processingParameters.valid) {
+                                invalidFolders.add(titleCodeFolder)
+                            }
+                            processTitleCodeFolder(processingParameters, processorConfiguration.targetForIngestionFolder,
+                                    processorConfiguration.forReviewFolder, dateString)
                         }
-                        processTitleCodeFolder(processingParameters, processorConfiguration.targetForIngestionFolder,
-                                processorConfiguration.forReviewFolder, dateString)
+                        JvmPerformanceLogger.logState("ReadyForIngestionProcessor Current thread state at end of ${titleCodeFolderMessage}",
+                                false, true, true, false, true, false, true)
+                    } else {
+                        log.warn("Processing terminating, skipping processing of ${titleCodeFolderMessage}")
+                        Tuple2<File, String> folderAndReason = new Tuple2(titleCodeFolder, "Processing terminating, skipping processing.")
+                        skippedFolderAndReasons.add(folderAndReason)
                     }
-                    JvmPerformanceLogger.logState("ReadyForIngestionProcessor Current thread state at end of ${titleCodeFolderMessage}",
-                            false, true, true, false, true, false, true)
                 } catch (Exception e) {
                     log.error("Exception processing ${titleCodeFolderMessage}, note that Processing WILL continue", e)
+                    Tuple2<File, String> fileAndReason = new Tuple2(titleCodeFolder, e.toString())
+                    failureFolderAndReasons.add(fileAndReason)
                 } catch (OutOfMemoryError e) {
                     log.error("Exception processing ${titleCodeFolderMessage}, note that Processing WILL continue", e)
                     log.error("Number of threads currently generating thumbnails queue length=${ThreadedThumbnailGenerator.numberThreadsGeneratingThumbnails()}")
                     JvmPerformanceLogger.logState("ReadyForIngestionProcessor Current thread state at end of ${titleCodeFolderMessage}",
                             false, true, true, false, true, true, true)
+                    Tuple2<File, String> fileAndReason = new Tuple2(titleCodeFolder, e.toString())
+                    failureFolderAndReasons.add(fileAndReason)
                 }
             }
         }
@@ -340,7 +363,9 @@ class ReadyForIngestionProcessor {
                 log.warn("    titleCode=${titleCode}, invalid folder=${folder.getCanonicalPath()}")
             }
         }
-        log.info("END ready-for-ingestion with parameters:")
+        JvmPerformanceLogger.logState("ReadyForIngestionProcessor Current thread state at end of ALL processing",
+                true, true, true, false, true, true, true)
+        log.info("${System.lineSeparator()}END ready-for-ingestion with parameters:")
         log.info("    startindDate=${processorConfiguration.startingDate}")
         log.info("    endingDate=${processorConfiguration.endingDate}")
         log.info("    sourceFolder=${processorConfiguration.sourceFolder.getCanonicalPath()}")
@@ -354,7 +379,63 @@ class ReadyForIngestionProcessor {
         processingTimekeeper.logElapsed(false, titleCodeFoldersAndDates.size(), true)
         log.info("${System.lineSeparator()}Total elapsed:")
         processorConfiguration.timekeeper.logElapsed()
-        JvmPerformanceLogger.logState("ReadyForIngestionProcessor Current thread state at end of ALL processing",
-                true, true, true, false, true, true, true)
+
+        if (skippedFolderAndReasons.size() > 0) {
+            log.info("${System.lineSeparator()}Folder processing skipped total=${skippedFolderAndReasons.size()}")
+            skippedFolderAndReasons.each { Tuple2<File, String> folderAndReason ->
+                log.info("    Skipped folder=${folderAndReason.first.canonicalPath}, reason=${folderAndReason.second}")
+            }
+        }
+
+        if (failureFolderAndReasons.size() > 0) {
+            log.info("${System.lineSeparator()}Folder processing failures total=${failureFolderAndReasons.size()}")
+            failureFolderAndReasons.each { Tuple2<File, String> folderAndReason ->
+                log.info("    Failure folder=${folderAndReason.first.canonicalPath}, reason=${folderAndReason.second}")
+            }
+        }
+    }
+
+    // TODO This does not seem to be working properly, even a kill <pid> still terminates immediately, same with ^C
+    void setupShutdownHook() {
+        Runtime.getRuntime().addShutdownHook(new Thread("${this.class.name}-Shutdown-hook") {
+            void run() {
+                try {
+                    log.warn("Shutdown hook called, attempting graceful shutdown by running existing processes until they finish.")
+                    shutdownInitiated.set(true)
+                } catch (InterruptedException e) {
+                    log.error("Unexpected exception in shutdown hook, exception=", e)
+                }
+            }
+        })
+        log.info("Shutdown hook setup.")
+    }
+
+    boolean isContinueProcessing() {
+        if (shutdownInitiated.get()) {
+            return false
+        }
+
+        // Note that this value may switch back and forth while the processor is shutting down if the kill file is
+        // repeatedly deleted/added. That's not necessarily a prohibited action.
+        boolean killFileExists = getKillFile().exists()
+        boolean doContinue = !killFileExists
+        if (doContinue) {
+            if (killInitiationLogged.get()) {
+                // We had already initiated a shutdown, but now we are continuing...
+                killInitiationLogged.compareAndExchange(true, false)
+                log.warn("Processing will CONTINUE as killFile=${killFile.canonicalPath} has disappeared. Skipped processing up to this point will NOT be done.")
+            }
+        } else {
+            if (!killInitiationLogged.get()) {
+                killInitiationLogged.compareAndExchange(false, true)
+                log.warn("Processing will STOP as killFile=${killFile.canonicalPath} exists. All threads must complete their current processing before termination.")
+            }
+        }
+
+        return doContinue
+    }
+
+    File getKillFile() {
+        return new File(processorConfiguration.targetForIngestionFolder, KILL_FILE_NAME)
     }
 }
