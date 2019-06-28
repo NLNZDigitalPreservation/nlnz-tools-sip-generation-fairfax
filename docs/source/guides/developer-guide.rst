@@ -114,11 +114,17 @@ projects and those projects need to be built before this project can compile and
 in order:
 
 -   *nlnz-m11n-tools-gradle*. The nlnz-m11-tools project can be found at
-    https://github.com/NLNZDigitalPreservation/nlnz-m11n-tools-gradle .
+    https://github.com/NLNZDigitalPreservation/nlnz-m11n-tools-gradle . Follow the instruction to build this project
+    and install the artifacts to a your maven repository.
 -   *nlnz-m11n-tools-automation*. The nlnz-m11n-tools-automation project can be found at
-    https://github.com/NLNZDigitalPreservation/nlnz-m11n-tools-automation .
+    https://github.com/NLNZDigitalPreservation/nlnz-m11n-tools-automation . Follow the instruction to build this project
+    and install the artifacts to a your maven repository.
+-   *rosetta-dps-sdk-projects-maven-lib*. This project provides a pre-built jar and ``pom.xml``. This project can be
+    found at https://github.com/NLNZDigitalPreservation/rosetta-dps-sdk-projects-maven-lib . Follow the instructions to
+    install the necessary artifacts to your maven repository.
 -   *nlnz-tools-sip-generation*. The nlnz-tools-sip-generation project can be found at
-    https://github.com/NLNZDigitalPreservation/nlnz-tools-sip-generation .
+    https://github.com/NLNZDigitalPreservation/nlnz-tools-sip-generation . Follow the instruction to build this project
+    and install the artifacts to a your maven repository.
 
 Development platforms
 ~~~~~~~~~~~~~~~~~~~~~
