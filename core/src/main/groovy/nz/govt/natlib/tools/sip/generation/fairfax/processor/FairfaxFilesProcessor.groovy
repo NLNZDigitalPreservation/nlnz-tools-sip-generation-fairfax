@@ -278,7 +278,7 @@ class FairfaxFilesProcessor {
             sip.dayOfMonth = sipDate.dayOfMonth
             sip.updateFromDateFields()
 
-            if (processingParameters.hasCurrentEdition()) {
+            if (processingParameters.includeCurrentEditionForDcCoverage) {
                 sip.dcCoverage = "${sipDate.dayOfMonth} [${processingParameters.currentEdition}]"
             }
             processingParameters.sipProcessingState.ieEntityType = sip.ieEntityType
