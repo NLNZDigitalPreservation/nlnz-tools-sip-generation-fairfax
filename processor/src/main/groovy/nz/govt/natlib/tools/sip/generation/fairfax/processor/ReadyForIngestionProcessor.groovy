@@ -23,7 +23,10 @@ import org.apache.commons.io.FilenameUtils
 
 import java.nio.charset.StandardCharsets
 import java.time.LocalDate
+import java.time.format.DateTimeParseException
 import java.util.concurrent.atomic.AtomicBoolean
+import java.util.concurrent.atomic.AtomicInteger
+import java.util.regex.Pattern
 
 /**
  * For calling from gradle build scripts.
@@ -45,6 +48,39 @@ class ReadyForIngestionProcessor {
 
     AtomicBoolean killInitiationLogged = new AtomicBoolean(false)
     AtomicBoolean shutdownInitiated = new AtomicBoolean(false)
+
+    AtomicInteger processingCount = new AtomicInteger(0)
+
+    // Since the ReadyForIngestionProcessor creates this name, it can also parse it for other consumers.
+    static Tuple2<String, LocalDate> parseFolderNameForTitleCodeAndDate(String folderName) {
+        List<String> folderNameComponents = folderName.split(Pattern.quote("_"))
+        LocalDate date = null
+        String titleCode = null
+        if (folderNameComponents.size() > 0) {
+            String dateString = folderNameComponents.get(0)
+            try {
+                date = LocalDate.parse(dateString, FairfaxFile.LOCAL_DATE_TIME_FORMATTER)
+            } catch (DateTimeParseException e) {
+                log.warn("Unable to parse dateString=${dateString} to LocalDate. Using null.")
+            }
+        }
+        if (folderNameComponents.size() > 1) {
+            titleCode = folderNameComponents.get(1)
+        }
+
+        Tuple2<String, LocalDate> titleCodeAndDate = new Tuple2(titleCode, date)
+
+        return titleCodeAndDate
+    }
+
+    static String assembleSipAndFilesFolderName(String dateString, String titleCode, String type, String identifier) {
+        String folderName = "${dateString}_${titleCode}_${type}"
+        if (identifier != null) {
+            folderName = "${folderName}_${identifier}"
+        }
+
+        return folderName
+    }
 
     ReadyForIngestionProcessor(ProcessorConfiguration processorConfiguration) {
         this.processorConfiguration = processorConfiguration
@@ -114,10 +150,8 @@ class ReadyForIngestionProcessor {
         File sipAndFilesFolder
         SipProcessingState sipProcessingState = processingParameters.sipProcessingState
 
-        String folderName = "${dateString}_${processingParameters.titleCode}_${processingParameters.type.getFieldValue()}"
-        if (sipProcessingState.identifier != null) {
-            folderName = "${folderName}_${sipProcessingState.identifier}"
-        }
+        String folderName = assembleSipAndFilesFolderName(dateString, processingParameters.titleCode,
+                processingParameters.type.getFieldValue(), sipProcessingState.identifier)
         String typeFolderNamePath = "${sipProcessingState.ieEntityType.getDisplayName()}${File.separator}${folderName}"
         if (sipProcessingState.complete && sipProcessingState.successful) {
             sipAndFilesFolder = new File(destinationFolder, typeFolderNamePath)
@@ -354,6 +388,10 @@ class ReadyForIngestionProcessor {
                     Tuple2<File, String> fileAndReason = new Tuple2(titleCodeFolder, e.toString())
                     failureFolderAndReasons.add(fileAndReason)
                 }
+                int currentProcessingCount = processingCount.addAndGet(1)
+                if (currentProcessingCount % 100) {
+                    log.info("Processing titleCode folders, processing count=${currentProcessingCount}/${titleCodeFoldersAndDates.size()} folders")
+                }
             }
         }
         if (invalidFolders.size() > 0) {
@@ -373,7 +411,7 @@ class ReadyForIngestionProcessor {
         log.info("    forReviewFolder=${processorConfiguration.forReviewFolder.getCanonicalPath()}")
         log.info("${System.lineSeparator()}${System.lineSeparator()}Summary:")
         log.info("    Total folders processed=${GeneralUtils.TOTAL_FORMAT.format(titleCodeFoldersAndDates.size())}")
-        log.info("    Processed with over numberOfThreads=${GeneralUtils.TOTAL_FORMAT.format(numberOfThreads)}")
+        log.info("    Processed with numberOfThreads=${GeneralUtils.TOTAL_FORMAT.format(numberOfThreads)}")
         log.info("    Maximum number of threads processing thumbnails=${GeneralUtils.TOTAL_FORMAT.format(processorConfiguration.maximumThumbnailPageThreads)}")
         processingTimekeeper.stop()
         processingTimekeeper.logElapsed(false, titleCodeFoldersAndDates.size(), true)

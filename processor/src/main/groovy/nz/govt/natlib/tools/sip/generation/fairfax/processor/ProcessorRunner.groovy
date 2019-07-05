@@ -416,8 +416,8 @@ For processing exceptions, depending on processor.""")
                 throw new ProcessorException(message)
             }
             displayProcessingLegend()
-            MiscellaneousProcessor miscellaneousProcessor = new MiscellaneousProcessor(this)
-            miscellaneousProcessor.copyIngestedLoadsToIngestedFolder()
+            PostIngestionProcessor postIngestionProcessor = new PostIngestionProcessor(this)
+            postIngestionProcessor.process()
             commandExecuted = true
         }
     }
