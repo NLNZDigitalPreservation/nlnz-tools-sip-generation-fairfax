@@ -817,27 +817,31 @@ exceptions to processing.
 Copying ingested loads to ingested folder
 =========================================
 
-Once files have been ingested into Rosetta, a file with the name of ``done`` is placed in the root folder (in this case,
-that folder is ``<magazine|newspaper>/<date-in-yyyyMMdd>_<tile_code>_<processing_type>_<optional-edition>__<full-name-of-publication>``.
-This means that folder can be moved to the ``post-processed`` folder.
+Once files have been ingested into Rosetta, a file with the name of ``done`` is placed in the root folder. The path of
+the root folder is of the format::
+
+    <magazine|newspaper>/<date-in-yyyyMMdd>_<title_code>_<processing_type>_<optional-edition>__<full-name-of-publication>
+
+After the folder has been ingested into Rosetta the folder can be moved to the ``post-processed`` folder.
 
 post-processed folder structure
 -------------------------------
 The folder structure for the ingested (post-processed) stage is as follows::
 
-    <targetFolder>/<magazines|newspapers>/<TitleCode>/<yyyy>/<date-in-yyyyMMdd-format>
+    <targetFolder>/<magazines|newspapers>/<title_code>/<yyyy>/<folder-containing-done-file>
 
-In this dated folder, the file structure matches the same structure that was ingested into Rosetta, namely::
+The naming of the folder containing of the done file is determined by the processing rules for the ready-for-ingestion
+processor. See `Ready-for-ingestion stage`_ for more details. In this folder, the file structure matches the same
+structure that was ingested into Rosetta, namely::
 
-    <date-in-yyyyMMdd-format>
+    <folder-specific-naming>
        |- done
        |- content/
                |- mets.xml
                |- streams/
                        |- <pdf-files>
 
-Note that the ``mets.xml`` file is placed in the `content` folder. The ``done`` files is in the root ``yyyyMMdd``
-folder.
+Note that the ``mets.xml`` file is placed in the `content` folder. The ``done`` files is in the root folder.
 
 Example processing command
 --------------------------
@@ -863,7 +867,7 @@ The following snippet illustrates a ``--copyIngestedLoadsToIngestedFolder`` proc
         --startingDate="${startingDate}" \
         --endingDate="${endingDate}" \
         --sourceFolder="${sourceFolder}" \
-        --targetPostProcessedFolder="${targetForIngestionFolder}" \
+        --targetPostProcessedFolder="${targetPostProcessedFolder}" \
         --forReviewFolder="${forReviewFolder}" \
         --createDestination \
         --parallelizeProcessing \
@@ -871,7 +875,9 @@ The following snippet illustrates a ``--copyIngestedLoadsToIngestedFolder`` proc
 
 Important notes
 ---------------
-The ``--moveFiles`` option is not included in the example.
+The ``--moveFiles`` option is not included in the example, but in general you would be moving the files to the
+post-processed location.
+
 The the ``done`` file must exist or the files will not be copied/moved. If files must be copied regardless of the
 existence of the ``done`` file, use the option ``--moveOrCopyEvenIfNoRosettaDoneFile``.
 
@@ -881,10 +887,12 @@ If a file or set of files is unable to be processed for some reason, it will be 
 is no processor that operates on the *For-review* stage. Processors that output to the *For-review* folder use the
 parameter ``forReviewFolder`` to set the location of the *For-review* folder.
 
-If the files come from the *Ready-for-ingestion* stage but are not ingested into Rosetta properly, then they're placed in the
-following structure (TODO verify this output for copyIngestedLoadsToIngestedFolder)::
+If the files come from the *Ready-for-ingestion* stage but are not ingested into Rosetta properly, then there is no
+``done`` file placed in the root folder. There's no other way to tell that the ingestion has failed. For this reason,
+the ``copyIngestedLoadsToIngestedFolder`` processing usually only moves/copies the folders that contain a ``done`` file.
 
-    <forReviewFolder>/<date-in-yyyyMMdd>/<TitleCode><SectionCode>_<full-name-of-publication>/content/streams/{files for that titleCode/sectionCode}
+After an ingestion takes place the ingested folders (those containing the ``done`` file) can be moved to the
+``targetPostProcessedFolder``. The folders that remain can be reviewed to determine the reason for failure.
 
 
 Additional tools
