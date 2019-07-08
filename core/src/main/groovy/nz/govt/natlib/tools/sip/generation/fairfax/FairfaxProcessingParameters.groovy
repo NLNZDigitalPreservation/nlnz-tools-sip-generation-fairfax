@@ -13,6 +13,7 @@ import nz.govt.natlib.tools.sip.state.SipProcessingExceptionReasonType
 import nz.govt.natlib.tools.sip.state.SipProcessingState
 import org.apache.commons.lang3.StringUtils
 
+import java.nio.file.Path
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
@@ -30,7 +31,7 @@ class FairfaxProcessingParameters {
     boolean valid = true
     boolean skip = false
     String titleCode
-    File sourceFolder
+    Path sourceFolder
     ProcessingType type
     List<ProcessingRule> rules = [ ]
     List<ProcessingOption> options = [ ]
@@ -41,10 +42,10 @@ class FairfaxProcessingParameters {
     boolean isMagazine = false
     String currentEdition
     SipProcessingState sipProcessingState = new SipProcessingState()
-    File thumbnailPageFile
+    Path thumbnailPageFile
     String thumbnailPageFileFinalName
 
-    static List<FairfaxProcessingParameters> build(String titleCode, List<ProcessingType> processingTypes, File sourceFolder,
+    static List<FairfaxProcessingParameters> build(String titleCode, List<ProcessingType> processingTypes, Path sourceFolder,
                                                    LocalDate processingDate, FairfaxSpreadsheet spreadsheet,
                                                    List<ProcessingRule> overrideRules = [],
                                                    List<ProcessingOption> overrideOptions = [],
@@ -141,8 +142,8 @@ class FairfaxProcessingParameters {
     }
 
     static FairfaxProcessingParameters buildForRows(String titleCode, ProcessingType processingType,
-                                                          File sourceFolder, LocalDate processingDate,
-                                                          List<Map<String, String>> matchingRows) {
+                                                    Path sourceFolder, LocalDate processingDate,
+                                                    List<Map<String, String>> matchingRows) {
         if (matchingRows.size() > 1) {
             String message = "Multiple spreadsheet rows for processingType=${processingType.fieldValue} and titleCode=${titleCode}. Unable to generate parameters".toString()
             SipProcessingExceptionReason exceptionReason = new SipProcessingExceptionReason(
@@ -196,7 +197,7 @@ class FairfaxProcessingParameters {
         }
     }
 
-    static List<Map<String, String>> matchingRowsFor(String titleCode, ProcessingType processingType, File sourceFolder,
+    static List<Map<String, String>> matchingRowsFor(String titleCode, ProcessingType processingType, Path sourceFolder,
                                                      LocalDate processingDate, FairfaxSpreadsheet spreadsheet,
                                                      String fileFindPattern = FairfaxFile.PDF_FILE_WITH_TITLE_SECTION_DATE_SEQUENCE_PATTERN) {
         List<Map<String, String>> matchingRows = spreadsheet.matchingProcessingTypeParameterMaps(
@@ -362,6 +363,6 @@ class FairfaxProcessingParameters {
     }
 
     String sourceFolderPath() {
-        return sourceFolder == null ? "null" : sourceFolder.getCanonicalPath()
+        return sourceFolder == null ? "null" : sourceFolder.normalize().toString()
     }
 }

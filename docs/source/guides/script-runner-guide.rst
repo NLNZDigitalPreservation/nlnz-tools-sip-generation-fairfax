@@ -309,7 +309,7 @@ This file structure prepares the files for ready-for-ingestion processing.
 
 Example processing command
 --------------------------
-The ``sip-generation-fairfax-fat-all`` jar as shown in the following example::
+The ``sip-generation-fairfax-fat-all`` jar is executed with arguments as shown in the following example::
 
     sourceFolder="/path/to/ftp/folder"
     targetBaseFolder="/path/to/LD_Sched/fairfax-processing"

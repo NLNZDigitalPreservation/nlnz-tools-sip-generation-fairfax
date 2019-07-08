@@ -1,11 +1,13 @@
 package nz.govt.natlib.tools.sip.generation.fairfax.processor
 
 import groovy.util.logging.Log4j2
-import nz.govt.natlib.tools.sip.utils.FileUtils
+import nz.govt.natlib.tools.sip.utils.PathUtils
+
+import java.nio.file.Path
 
 @Log4j2
 class ProcessorUtils {
-    static String filePathAsSafeString(File filePath, List<ProcessorOption> options = [ ]) {
+    static String filePathAsSafeString(Path filePath, List<ProcessorOption> options = [ ]) {
         ProcessorOption option = ProcessorOption.showDirectoryOption(options, ProcessorOption.ShowFullPath)
         int totalSegements
         switch (option) {
@@ -26,7 +28,7 @@ class ProcessorUtils {
                 totalSegements = -1
                 break
         }
-        return FileUtils.filePathAsSafeString(filePath, totalSegements)
+        return PathUtils.filePathAsSafeString(filePath, totalSegements)
     }
 
 }

@@ -18,6 +18,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.junit.MockitoJUnitRunner
 
+import java.nio.file.Files
 import java.nio.file.Path
 import java.time.LocalDate
 
@@ -73,7 +74,7 @@ class AllSectionCodesRequiredTest {
         boolean isRegexNotGlob = true
         boolean matchFilenameOnly = true
         boolean sortFiles = true
-        List<File> filesForProcessing = TestHelper.getFilesForProcessingFromFileSystem(isRegexNotGlob, matchFilenameOnly,
+        List<Path> filesForProcessing = TestHelper.getFilesForProcessingFromFileSystem(isRegexNotGlob, matchFilenameOnly,
                 sortFiles, testMethodState.localPath, ".*?\\.[pP]{1}[dD]{1}[fF]{1}")
 
         processFiles(filesForProcessing)
@@ -88,17 +89,17 @@ class AllSectionCodesRequiredTest {
         boolean isRegexNotGlob = true
         boolean matchFilenameOnly = true
         boolean sortFiles = true
-        List<File> filesForProcessing = TestHelper.getFilesForProcessingFromResource(isRegexNotGlob, matchFilenameOnly,
+        List<Path> filesForProcessing = TestHelper.getFilesForProcessingFromResource(isRegexNotGlob, matchFilenameOnly,
                 sortFiles, testMethodState.resourcePath, testMethodState.localPath, ".*?\\.[pP]{1}[dD]{1}[fF]{1}")
 
         processFiles(filesForProcessing)
     }
 
-    void processFiles(List<File> filesForProcessing) {
+    void processFiles(List<Path> filesForProcessing) {
         String dateString = "20181123"
         LocalDate processingDate = LocalDate.parse(dateString, FairfaxFile.LOCAL_DATE_TIME_FORMATTER)
 
-        File sourceFolder = new File(testMethodState.localPath)
+        Path sourceFolder = Path.of(testMethodState.localPath)
         List<FairfaxProcessingParameters> parametersList = FairfaxProcessingParameters.build("TST",
                 [ ProcessingType.ParentGrouping ], sourceFolder, processingDate, testMethodState.fairfaxSpreadsheet,
                 [ ProcessingRule.AllSectionsInSipRequired ], [ ])
@@ -132,11 +133,11 @@ class AllSectionCodesRequiredTest {
 
         // If a thumbnail page will be generated, then it will always generate because not all section codes is a processing exception.
         if (processingParameters.options.contains(ProcessingOption.GenerateProcessedPdfThumbnailsPage)) {
-            assertTrue("Thumbnail page exists, file=${processingParameters.thumbnailPageFile.getCanonicalPath()}",
-                    processingParameters.thumbnailPageFile.exists())
+            assertTrue("Thumbnail page exists, file=${processingParameters.thumbnailPageFile.normalize()}",
+                    Files.exists(processingParameters.thumbnailPageFile))
             // We delete the file because we don't want it sticking around after the test
             // Comment out the following line if you want to view the file
-            processingParameters.thumbnailPageFile.delete()
+            Files.deleteIfExists(processingParameters.thumbnailPageFile)
         } else {
             assertNull("Thumbnail page DOES NOT exist, file=${processingParameters.thumbnailPageFile}",
                     processingParameters.thumbnailPageFile)

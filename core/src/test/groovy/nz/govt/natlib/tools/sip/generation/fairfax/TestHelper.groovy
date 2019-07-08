@@ -4,7 +4,7 @@ import groovy.util.logging.Log4j2
 import groovy.util.slurpersupport.GPathResult
 import nz.govt.natlib.tools.sip.IEEntityType
 import nz.govt.natlib.tools.sip.extraction.SipXmlExtractor
-import nz.govt.natlib.tools.sip.files.FilesFinder
+import nz.govt.natlib.tools.sip.utils.FilesFinder
 import nz.govt.natlib.tools.sip.generation.parameters.Spreadsheet
 import nz.govt.natlib.tools.sip.processing.ProcessOutputInterceptor
 import nz.govt.natlib.tools.sip.state.SipProcessingException
@@ -135,36 +135,36 @@ class TestHelper {
      * @param folderResourcePath
      * @return
      */
-    static List<File> getResourceFiles(String folderResourcePath, boolean isRegexNotGlob, boolean matchFilenameOnly,
+    static List<Path> getResourceFiles(String folderResourcePath, boolean isRegexNotGlob, boolean matchFilenameOnly,
                                         String pattern) {
         ClassLoader loader = Thread.currentThread().getContextClassLoader()
         URL url = loader.getResource(folderResourcePath)
         String path = url.getPath()
 
-        List<File> files = Arrays.asList(new File(path).listFiles())
+        List<Path> files = new File(path).listFiles().collect { File file -> file.toPath() }
         log.info("All files:")
-        files.each { file ->
-            log.info("folderResourcePath=${folderResourcePath} found file=${file.getCanonicalPath()}")
+        files.each { Path file ->
+            log.info("folderResourcePath=${folderResourcePath} found file=${file.normalize().toString()}")
         }
         if (!isRegexNotGlob) {
             throw new RuntimeException("Globbing not supported for finding resource files, use a regex pattern instead")
         }
-        List<File> filteredFiles
+        List<Path> filteredFiles
         if (matchFilenameOnly) {
-            filteredFiles = files.findAll { File  file ->
-                file.getName() ==~ /${pattern}/
+            filteredFiles = files.findAll { Path file ->
+                file.fileName.toString() ==~ /${pattern}/
             }
         } else {
-            filteredFiles = files.findAll { File file ->
-                file.getCanonicalPath() ==~ /${pattern}/
+            filteredFiles = files.findAll { Path file ->
+                file.normalize().toString() ==~ /${pattern}/
             }
         }
         return filteredFiles
     }
 
-    static List<File> getFilesForProcessingFromFileSystem(boolean isRegexNotGlob, boolean matchFilenameOnly, boolean sortFiles,
+    static List<Path> getFilesForProcessingFromFileSystem(boolean isRegexNotGlob, boolean matchFilenameOnly, boolean sortFiles,
                                                    String localPath, String pattern) {
-        List<File> filesForProcessing = [ ]
+        List<Path> filesForProcessing = [ ]
         Path filesPath = Paths.get(localPath)
         if (!Files.exists(filesPath) || !Files.isDirectory(filesPath)) {
             log.warn("Path '${filesPath}' does not exist is not a directory. Returning empty file list.")
@@ -174,29 +174,29 @@ class TestHelper {
         }
 
         log.info("Collected ${filesForProcessing.size()} files for processing")
-        filesForProcessing.each { File file ->
-            log.info("File for processing=${file.getCanonicalPath()}")
+        filesForProcessing.each { Path file ->
+            log.info("File for processing=${file.normalize()}")
         }
 
         return filesForProcessing
     }
 
-    static List<File> getFilesForProcessingFromResource(boolean isRegexNotGlob, boolean matchFilenameOnly, boolean sortFiles,
+    static List<Path> getFilesForProcessingFromResource(boolean isRegexNotGlob, boolean matchFilenameOnly, boolean sortFiles,
                                                         String resourcePath, String localPath, String pattern) {
-        List<File> filesForProcessing = findFiles(resourcePath, localPath, isRegexNotGlob, matchFilenameOnly,
+        List<Path> filesForProcessing = findFiles(resourcePath, localPath, isRegexNotGlob, matchFilenameOnly,
                 sortFiles, pattern)
 
         log.info("Collected ${filesForProcessing.size()} files for processing")
-        filesForProcessing.each { File file ->
-            log.info("File for processing=${file.getCanonicalPath()}")
+        filesForProcessing.each { Path file ->
+            log.info("File for processing=${file.normalize()}")
         }
 
         return filesForProcessing
     }
 
-    static List<File> getMatchingFiles(Collection<File> files, String pattern) {
-        return files.findAll { file ->
-            file.getCanonicalPath() ==~ /${pattern}/
+    static List<Path> getMatchingFiles(Collection<Path> files, String pattern) {
+        return files.findAll { Path file ->
+            file.normalize().toString() ==~ /${pattern}/
         }
     }
 
@@ -215,9 +215,9 @@ class TestHelper {
     }
 
     // TODO Could handle more than one pattern (see https://www.javacodegeeks.com/2012/11/java-7-file-filtering-using-nio-2-part-2.html)
-    static List<File> findFiles(String resourcePath, String localPath, boolean isRegexNotGlob, boolean matchFilenameOnly,
+    static List<Path> findFiles(String resourcePath, String localPath, boolean isRegexNotGlob, boolean matchFilenameOnly,
                                 boolean sortFiles, String pattern) {
-        List<File> filesList = [ ]
+        List<Path> filesList = [ ]
         // We check if we're using a resource stream to load the files, otherwise we are loading from the file system
         InputStream doWeChooseAResourceStream = TestHelper.getResourceAsStream(resourcePath)
         if (doWeChooseAResourceStream == null) {
@@ -230,7 +230,7 @@ class TestHelper {
             filesList = FilesFinder.getMatchingFiles(filesPath, isRegexNotGlob, matchFilenameOnly, sortFiles, pattern)
             return filesList
         } else {
-            List<File> files = getResourceFiles(resourcePath, isRegexNotGlob, matchFilenameOnly, pattern)
+            List<Path> files = getResourceFiles(resourcePath, isRegexNotGlob, matchFilenameOnly, pattern)
             filesList = getMatchingFiles(files, pattern)
 
             return filesList

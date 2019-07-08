@@ -6,8 +6,8 @@ import nz.govt.natlib.tools.sip.logging.DefaultTimekeeper
 import nz.govt.natlib.tools.sip.logging.JvmPerformanceLogger
 import nz.govt.natlib.tools.sip.logging.Timekeeper
 import nz.govt.natlib.tools.sip.processing.PerThreadLogFileAppender
-import nz.govt.natlib.tools.sip.utils.FileUtils
 import nz.govt.natlib.tools.sip.utils.GeneralUtils
+import nz.govt.natlib.tools.sip.utils.PathUtils
 
 import java.nio.file.Files
 import java.nio.file.Path
@@ -52,17 +52,17 @@ class PostIngestionProcessor {
         String magazineOrNewspaper = magazineOrNewspaperFromPath(doneFolder)
         String appendPath = magazineOrNewspaper + File.separator + titleCode + File.separator + folderDate.year +
                 File.separator + doneFolder.fileName
-        Path targetFolder = processorConfiguration.targetPostProcessedFolder.toPath().resolve(appendPath)
+        Path targetFolder = processorConfiguration.targetPostProcessedFolder.resolve(appendPath)
 
         UUID appenderId = UUID.randomUUID()
-        File processLoggingFile = PerThreadLogFileAppender.startWithGeneratedFilename(processorConfiguration.sourceFolder,
+        Path processLoggingFile = PerThreadLogFileAppender.startWithGeneratedFilename(processorConfiguration.sourceFolder,
                 "${doneFolder.fileName}_post-ingestion-processing-log", appenderId)
 
         try {
             log.info("START Processing doneFolder=${doneFolder}")
             processorConfiguration.timekeeper.logElapsed()
 
-            FileUtils.atomicMoveOrCopyDirectory(processorConfiguration.moveFiles, doneFolder.toFile(), targetFolder.toFile(),
+            PathUtils.atomicMoveOrCopyDirectory(processorConfiguration.moveFiles, doneFolder, targetFolder,
                     true, false, null)
 
             log.info("END Processing doneFolder=${doneFolder}")
@@ -75,23 +75,23 @@ class PostIngestionProcessor {
         } finally {
             PerThreadLogFileAppender.stopAndRemove(appenderId)
             if (targetFolder != null) {
-                if (processLoggingFile != null && processLoggingFile.exists()) {
-                    FileUtils.copyOrMoveFiles(true, [ processLoggingFile ], targetFolder.toFile())
+                if (processLoggingFile != null && Files.exists(processLoggingFile)) {
+                    PathUtils.copyOrMoveFiles(true, [ processLoggingFile ], targetFolder)
                 }
             }
         }
     }
 
     String magazineOrNewspaperFromPath(Path path) {
-        List<String> segments = FileUtils.asSegments(path)
+        List<String> segments = PathUtils.asSegments(path)
         return segments.contains("magazine") ? "magazine" : "newspaper"
     }
 
     List<Path> collectDoneFolders() {
         List<Path> allFolders
         if (processorConfiguration.moveOrCopyEvenIfNoRosettaDoneFile) {
-            log.info("moveOrCopyEvenIfNoRosettaDoneFile has been set, collecting all folders in ${processorConfiguration.sourceFolder.canonicalPath}")
-            allFolders = processorConfiguration.sourceFolder.listFiles().collect { File file ->
+            log.info("moveOrCopyEvenIfNoRosettaDoneFile has been set, collecting all folders in ${processorConfiguration.sourceFolder.normalize().toString()}")
+            allFolders = processorConfiguration.sourceFolder.toFile().listFiles().collect { File file ->
                 file.toPath()
             }
         } else {
@@ -99,12 +99,12 @@ class PostIngestionProcessor {
             boolean matchFilenameOnly = true
             boolean sortFiles = true
 
-            log.info("Processing for pattern=${DONE_FILE_PATTERN}, sourceFolder=${processorConfiguration.sourceFolder.canonicalPath}")
+            log.info("Processing for pattern=${DONE_FILE_PATTERN}, sourceFolder=${processorConfiguration.sourceFolder.normalize().toString()}")
 
-            List<File> doneFiles = FileUtils.findFiles(processorConfiguration.sourceFolder.absolutePath, isRegexNotGlob,
+            List<Path> doneFiles = PathUtils.findFiles(processorConfiguration.sourceFolder.normalize().toString(), isRegexNotGlob,
                     matchFilenameOnly, sortFiles, DONE_FILE_PATTERN, processorConfiguration.timekeeper)
-            allFolders = doneFiles.collect { File doneFile ->
-                doneFile.parentFile.toPath()
+            allFolders = doneFiles.collect { Path doneFile ->
+                doneFile.parent
             }
         }
         return allFolders
@@ -115,17 +115,17 @@ class PostIngestionProcessor {
         log.info("START post-ingestion processor with parameters:")
         log.info("    startindDate=${processorConfiguration.startingDate}")
         log.info("    endingDate=${processorConfiguration.endingDate}")
-        log.info("    sourceFolder=${processorConfiguration.sourceFolder.getCanonicalPath()}")
-        log.info("    targetPostProcessedFolder=${processorConfiguration.targetPostProcessedFolder.getCanonicalPath()}")
-        log.info("    forReviewFolder=${processorConfiguration.forReviewFolder.getCanonicalPath()}")
-        log.info("${System.lineSeparator()}To initiate a graceful shutdown, use ^C or create a file=${getKillFile().canonicalPath}")
+        log.info("    sourceFolder=${processorConfiguration.sourceFolder.normalize().toString()}")
+        log.info("    targetPostProcessedFolder=${processorConfiguration.targetPostProcessedFolder.normalize().toString()}")
+        log.info("    forReviewFolder=${processorConfiguration.forReviewFolder.normalize().toString()}")
+        log.info("${System.lineSeparator()}To initiate a graceful shutdown, use ^C or create a file=${getKillFile().normalize().toString()}")
 
         processorConfiguration.timekeeper.logElapsed()
         Timekeeper processingTimekeeper = new DefaultTimekeeper()
 
         if (processorConfiguration.createDestination) {
-            processorConfiguration.targetPostProcessedFolder.mkdirs()
-            processorConfiguration.forReviewFolder.mkdirs()
+            Files.createDirectories(processorConfiguration.targetPostProcessedFolder)
+            Files.createDirectories(processorConfiguration.forReviewFolder)
         }
         List<Path> doneFolders = collectDoneFolders()
 
@@ -183,9 +183,9 @@ class PostIngestionProcessor {
         log.info("${System.lineSeparator()}END ready-for-ingestion with parameters:")
         log.info("    startindDate=${processorConfiguration.startingDate}")
         log.info("    endingDate=${processorConfiguration.endingDate}")
-        log.info("    sourceFolder=${processorConfiguration.sourceFolder.getCanonicalPath()}")
-        log.info("    targetPostProcessedFolder=${processorConfiguration.targetPostProcessedFolder.getCanonicalPath()}")
-        log.info("    forReviewFolder=${processorConfiguration.forReviewFolder.getCanonicalPath()}")
+        log.info("    sourceFolder=${processorConfiguration.sourceFolder.normalize().toString()}")
+        log.info("    targetPostProcessedFolder=${processorConfiguration.targetPostProcessedFolder.normalize().toString()}")
+        log.info("    forReviewFolder=${processorConfiguration.forReviewFolder.normalize().toString()}")
         log.info("${System.lineSeparator()}${System.lineSeparator()}Summary:")
         log.info("    Total done files processed=${GeneralUtils.TOTAL_FORMAT.format(doneFolders.size())}")
         log.info("    Processed with numberOfThreads=${GeneralUtils.TOTAL_FORMAT.format(numberOfThreads)}")
@@ -231,25 +231,25 @@ class PostIngestionProcessor {
 
         // Note that this value may switch back and forth while the processor is shutting down if the kill file is
         // repeatedly deleted/added. That's not necessarily a prohibited action.
-        boolean killFileExists = getKillFile().exists()
+        boolean killFileExists = Files.exists(getKillFile())
         boolean doContinue = !killFileExists
         if (doContinue) {
             if (killInitiationLogged.get()) {
                 // We had already initiated a shutdown, but now we are continuing...
                 killInitiationLogged.compareAndExchange(true, false)
-                log.warn("Processing will CONTINUE as killFile=${killFile.canonicalPath} has disappeared. Skipped processing up to this point will NOT be done.")
+                log.warn("Processing will CONTINUE as killFile=${killFile.normalize().toString()} has disappeared. Skipped processing up to this point will NOT be done.")
             }
         } else {
             if (!killInitiationLogged.get()) {
                 killInitiationLogged.compareAndExchange(false, true)
-                log.warn("Processing will STOP as killFile=${killFile.canonicalPath} exists. All threads must complete their current processing before termination.")
+                log.warn("Processing will STOP as killFile=${killFile.normalize().toString()} exists. All threads must complete their current processing before termination.")
             }
         }
 
         return doContinue
     }
 
-    File getKillFile() {
-        return new File(processorConfiguration.targetPostProcessedFolder, KILL_FILE_NAME)
+    Path getKillFile() {
+        return processorConfiguration.targetPostProcessedFolder.resolve(KILL_FILE_NAME)
     }
 }

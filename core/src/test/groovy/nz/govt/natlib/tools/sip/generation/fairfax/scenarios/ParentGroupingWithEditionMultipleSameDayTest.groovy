@@ -18,6 +18,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.junit.MockitoJUnitRunner
 
+import java.nio.file.Files
 import java.nio.file.Path
 import java.time.LocalDate
 
@@ -71,7 +72,7 @@ class ParentGroupingWithEditionMultipleSameDayTest {
         boolean isRegexNotGlob = true
         boolean matchFilenameOnly = true
         boolean sortFiles = true
-        List<File> filesForProcessing = TestHelper.getFilesForProcessingFromFileSystem(isRegexNotGlob, matchFilenameOnly,
+        List<Path> filesForProcessing = TestHelper.getFilesForProcessingFromFileSystem(isRegexNotGlob, matchFilenameOnly,
                 sortFiles, testMethodState.localPath, ".*?\\.[pP]{1}[dD]{1}[fF]{1}")
 
         processFiles(filesForProcessing)
@@ -86,17 +87,17 @@ class ParentGroupingWithEditionMultipleSameDayTest {
         boolean isRegexNotGlob = true
         boolean matchFilenameOnly = true
         boolean sortFiles = true
-        List<File> filesForProcessing = TestHelper.getFilesForProcessingFromResource(isRegexNotGlob, matchFilenameOnly,
+        List<Path> filesForProcessing = TestHelper.getFilesForProcessingFromResource(isRegexNotGlob, matchFilenameOnly,
                 sortFiles, testMethodState.resourcePath, testMethodState.localPath, ".*?\\.[pP]{1}[dD]{1}[fF]{1}")
 
         processFiles(filesForProcessing)
     }
 
-    void processFiles(List<File> filesForProcessing) {
+    void processFiles(List<Path> filesForProcessing) {
         String dateString = "20181123"
         LocalDate processingDate = LocalDate.parse(dateString, FairfaxFile.LOCAL_DATE_TIME_FORMATTER)
 
-        File sourceFolder = new File(testMethodState.localPath)
+        Path sourceFolder = Path.of(testMethodState.localPath)
         List<FairfaxProcessingParameters> parametersList = FairfaxProcessingParameters.build("TST",
                 [ ProcessingType.ParentGroupingWithEdition, ProcessingType.ParentGrouping, ProcessingType.CreateSipForFolder ],
                 sourceFolder, processingDate, testMethodState.fairfaxSpreadsheet)
@@ -182,11 +183,11 @@ class ParentGroupingWithEditionMultipleSameDayTest {
 
             if (currentProcessingParameters.options.contains(ProcessingOption.GenerateProcessedPdfThumbnailsPage)) {
                 if (expectedThumbnailFile) {
-                    assertTrue("Thumbnail page exists, file=${currentProcessingParameters.thumbnailPageFile.getCanonicalPath()}",
-                            currentProcessingParameters.thumbnailPageFile.exists())
+                    assertTrue("Thumbnail page exists, file=${currentProcessingParameters.thumbnailPageFile.normalize()}",
+                            Files.exists(currentProcessingParameters.thumbnailPageFile))
                     // We delete the file because we don't want it sticking around after the test
                     // Comment out the following line if you want to view the file
-                    currentProcessingParameters.thumbnailPageFile.delete()
+                    Files.deleteIfExists(currentProcessingParameters.thumbnailPageFile)
                 } else {
                     assertNull("Thumbnail page DOES NOT exist, file=${currentProcessingParameters.thumbnailPageFile}",
                             currentProcessingParameters.thumbnailPageFile)

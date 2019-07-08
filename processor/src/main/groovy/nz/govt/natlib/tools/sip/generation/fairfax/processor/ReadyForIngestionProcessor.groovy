@@ -17,11 +17,13 @@ import nz.govt.natlib.tools.sip.state.SipProcessingException
 import nz.govt.natlib.tools.sip.state.SipProcessingExceptionReason
 import nz.govt.natlib.tools.sip.state.SipProcessingExceptionReasonType
 import nz.govt.natlib.tools.sip.state.SipProcessingState
-import nz.govt.natlib.tools.sip.utils.FileUtils
 import nz.govt.natlib.tools.sip.utils.GeneralUtils
+import nz.govt.natlib.tools.sip.utils.PathUtils
 import org.apache.commons.io.FilenameUtils
 
 import java.nio.charset.StandardCharsets
+import java.nio.file.Files
+import java.nio.file.Path
 import java.time.LocalDate
 import java.time.format.DateTimeParseException
 import java.util.concurrent.atomic.AtomicBoolean
@@ -43,8 +45,8 @@ class ReadyForIngestionProcessor {
     List<ProcessingRule> overrideProcessingRules = [ ]
     List<ProcessingOption> overrideProcessingOptions = [ ]
 
-    List<Tuple2<File, String>> failureFolderAndReasons = Collections.synchronizedList([ ])
-    List<Tuple2<File, String>> skippedFolderAndReasons = Collections.synchronizedList([ ])
+    List<Tuple2<Path, String>> failureFolderAndReasons = Collections.synchronizedList([ ])
+    List<Tuple2<Path, String>> skippedFolderAndReasons = Collections.synchronizedList([ ])
 
     AtomicBoolean killInitiationLogged = new AtomicBoolean(false)
     AtomicBoolean shutdownInitiated = new AtomicBoolean(false)
@@ -97,15 +99,15 @@ class ReadyForIngestionProcessor {
                 ",", [ ], true)
     }
 
-    SipProcessingState processTitleCodeFolder(FairfaxProcessingParameters processingParameters, File destinationFolder,
-                                              File forReviewFolder, String dateString) {
+    SipProcessingState processTitleCodeFolder(FairfaxProcessingParameters processingParameters, Path destinationFolder,
+                                              Path forReviewFolder, String dateString) {
         // Process the files in the titleCode folder
 
         UUID appenderId = UUID.randomUUID()
-        File processLoggingFile = PerThreadLogFileAppender.startWithGeneratedFilename(processingParameters.sourceFolder,
+        Path processLoggingFile = PerThreadLogFileAppender.startWithGeneratedFilename(processingParameters.sourceFolder,
                 "${processingParameters.processingDifferentiator()}_processing-log", appenderId)
 
-        File sipAndFilesFolder
+        Path sipAndFilesFolder
 
         try {
             log.info("START Processing sourceFolder=${processingParameters.sourceFolderPath()}")
@@ -128,15 +130,15 @@ class ReadyForIngestionProcessor {
 
             processorConfiguration.timekeeper.logElapsed()
 
-            if (sipAndFilesFolder != null && sipAndFilesFolder.exists()) {
-                File completedFile = new File(sipAndFilesFolder, READY_FOR_INGESTION_COMPLETED_FILENAME)
-                completedFile.createNewFile()
+            if (sipAndFilesFolder != null && Files.exists(sipAndFilesFolder)) {
+                Path completedFile = sipAndFilesFolder.resolve(READY_FOR_INGESTION_COMPLETED_FILENAME)
+                Files.createFile(completedFile)
             }
         } finally {
             PerThreadLogFileAppender.stopAndRemove(appenderId)
             if (sipAndFilesFolder != null) {
-                if (processLoggingFile != null && processLoggingFile.exists()) {
-                    FileUtils.copyOrMoveFiles(false, [processLoggingFile], sipAndFilesFolder)
+                if (processLoggingFile != null && Files.exists(processLoggingFile)) {
+                    PathUtils.copyOrMoveFiles(false, [ processLoggingFile ], sipAndFilesFolder)
                 }
             }
         }
@@ -144,29 +146,27 @@ class ReadyForIngestionProcessor {
         return processingParameters.sipProcessingState
     }
 
-    File postProcess(FairfaxProcessingParameters processingParameters, File destinationFolder, File forReviewFolder,
+    Path postProcess(FairfaxProcessingParameters processingParameters, Path destinationFolder, Path forReviewFolder,
                      String dateString) {
-        File sourceFolder = processingParameters.sourceFolder
-        File sipAndFilesFolder
+        Path sipAndFilesFolder
         SipProcessingState sipProcessingState = processingParameters.sipProcessingState
 
         String folderName = assembleSipAndFilesFolderName(dateString, processingParameters.titleCode,
                 processingParameters.type.getFieldValue(), sipProcessingState.identifier)
         String typeFolderNamePath = "${sipProcessingState.ieEntityType.getDisplayName()}${File.separator}${folderName}"
         if (sipProcessingState.complete && sipProcessingState.successful) {
-            sipAndFilesFolder = new File(destinationFolder, typeFolderNamePath)
+            sipAndFilesFolder = destinationFolder.resolve(typeFolderNamePath)
         } else {
-            sipAndFilesFolder = new File(forReviewFolder,
-                    "${sipProcessingState.failureReasonSummary}${File.separator}${typeFolderNamePath}")
+            sipAndFilesFolder = forReviewFolder.resolve("${sipProcessingState.failureReasonSummary}${File.separator}${typeFolderNamePath}")
         }
-        File contentStreamsFolder = new File(sipAndFilesFolder, FilenameUtils.separatorsToSystem("content/streams"))
+        Path contentStreamsFolder = sipAndFilesFolder.resolve(FilenameUtils.separatorsToSystem("content/streams"))
         // Note that unrecognized only gets moved/copied if ProcessingRule.HandleUnrecognised
         String invalidPath = FilenameUtils.separatorsToSystem("INVALID/${dateString}/${processingParameters.titleCode}")
-        File invalidFilesFolder = new File(forReviewFolder, invalidPath)
+        Path invalidFilesFolder = forReviewFolder.resolve(invalidPath)
         String ignoredPath = FilenameUtils.separatorsToSystem("IGNORED/${dateString}/${processingParameters.titleCode}")
-        File ignoredFilesFolder = new File(forReviewFolder, ignoredPath)
+        Path ignoredFilesFolder = forReviewFolder.resolve(ignoredPath)
         String unrecognizedPath = FilenameUtils.separatorsToSystem("UNRECOGNIZED/${dateString}/${processingParameters.titleCode}")
-        File unrecognizedFilesFolder = new File(forReviewFolder, unrecognizedPath)
+        Path unrecognizedFilesFolder = forReviewFolder.resolve(unrecognizedPath)
 
         boolean hasSipAndFilesFolder
         boolean hasInvalidFilesFolder
@@ -174,66 +174,66 @@ class ReadyForIngestionProcessor {
         boolean hasUnrecognizedFilesFolder
         // Move or copy the processed files to the destination folder
         if ((sipProcessingState.validFiles.size() > 0 || sipProcessingState.invalidFiles.size() > 0)) {
-            hasSipAndFilesFolder = sipAndFilesFolder.exists()
+            hasSipAndFilesFolder = Files.exists(sipAndFilesFolder)
             if (!hasSipAndFilesFolder && processorConfiguration.createDestination) {
-                sipAndFilesFolder.mkdirs()
+                Files.createDirectories(sipAndFilesFolder)
                 hasSipAndFilesFolder = true
-                contentStreamsFolder.mkdirs()
+                Files.createDirectories(contentStreamsFolder)
             }
         } else {
-            hasSipAndFilesFolder = sipAndFilesFolder.exists()
+            hasSipAndFilesFolder = Files.exists(sipAndFilesFolder)
             if (!hasSipAndFilesFolder && processorConfiguration.createDestination) {
-                sipAndFilesFolder.mkdirs()
+                Files.createDirectories(sipAndFilesFolder)
                 hasSipAndFilesFolder = true
             }
         }
-        FileUtils.copyOrMoveFiles(processorConfiguration.moveFiles, sipProcessingState.sipFiles, contentStreamsFolder)
+        PathUtils.copyOrMoveFiles(processorConfiguration.moveFiles, sipProcessingState.sipFiles, contentStreamsFolder)
         if (processingParameters.rules.contains(ProcessingRule.HandleInvalid)) {
             // If the files are invalid, then dump the files in an exception folder.
             if (sipProcessingState.invalidFiles.size() > 0) {
-                hasInvalidFilesFolder = invalidFilesFolder.exists()
+                hasInvalidFilesFolder = Files.exists(invalidFilesFolder)
                 if (!hasInvalidFilesFolder && processorConfiguration.createDestination) {
-                    invalidFilesFolder.mkdirs()
+                    Files.createDirectories(invalidFilesFolder)
                     hasInvalidFilesFolder = true
                 }
             }
             if (hasInvalidFilesFolder) {
-                FileUtils.copyOrMoveFiles(processorConfiguration.moveFiles, sipProcessingState.invalidFiles, invalidFilesFolder)
+                PathUtils.copyOrMoveFiles(processorConfiguration.moveFiles, sipProcessingState.invalidFiles, invalidFilesFolder)
             }
         }
 
         if (processingParameters.rules.contains(ProcessingRule.HandleIgnored)) {
             // If the files are ignored, then dump the files in an exception folder.
             if (sipProcessingState.ignoredFiles.size() > 0) {
-                hasIgnoredFilesFolder = ignoredFilesFolder.exists()
+                hasIgnoredFilesFolder = Files.exists(ignoredFilesFolder)
                 if (!hasIgnoredFilesFolder && processorConfiguration.createDestination) {
-                    ignoredFilesFolder.mkdirs()
+                    Files.createDirectories(ignoredFilesFolder)
                     hasIgnoredFilesFolder = true
                 }
             }
             if (hasIgnoredFilesFolder) {
-                FileUtils.copyOrMoveFiles(processorConfiguration.moveFiles, sipProcessingState.ignoredFiles, ignoredFilesFolder)
+                PathUtils.copyOrMoveFiles(processorConfiguration.moveFiles, sipProcessingState.ignoredFiles, ignoredFilesFolder)
             }
         }
 
         if (processingParameters.rules.contains(ProcessingRule.HandleUnrecognised)) {
             // If the files aren't recognized, then dump the files in an exception folder.
             if (sipProcessingState.unrecognizedFiles.size() > 0) {
-                hasUnrecognizedFilesFolder = unrecognizedFilesFolder.exists()
+                hasUnrecognizedFilesFolder = Files.exists(unrecognizedFilesFolder)
                 if (!hasUnrecognizedFilesFolder && processorConfiguration.createDestination) {
-                    unrecognizedFilesFolder.mkdirs()
+                    Files.createDirectories(unrecognizedFilesFolder)
                     hasUnrecognizedFilesFolder = true
                 }
             }
             if (hasUnrecognizedFilesFolder) {
-                FileUtils.copyOrMoveFiles(processorConfiguration.moveFiles, sipProcessingState.unrecognizedFiles, unrecognizedFilesFolder)
+                PathUtils.copyOrMoveFiles(processorConfiguration.moveFiles, sipProcessingState.unrecognizedFiles, unrecognizedFilesFolder)
             }
         }
 
         // Write out the SIP file
         String sipAsXml = processingParameters.sipProcessingState.sipAsXml
         if (processingParameters.valid && !sipAsXml.isEmpty()) {
-            File sipFile = new File(sipAndFilesFolder, FilenameUtils.separatorsToSystem("content/mets.xml"))
+            Path sipFile = sipAndFilesFolder.resolve(FilenameUtils.separatorsToSystem("content/mets.xml"))
             sipFile.withWriter(StandardCharsets.UTF_8.name()) { Writer writer ->
                 writer.write(sipAsXml)
             }
@@ -242,21 +242,21 @@ class ReadyForIngestionProcessor {
         // Write out the FairfaxProcessingParameters and SipProcessingState
         Date now = new Date()
         // We will assume that millisecond timestamps ensures that the filename will be unique
-        File processingStateFile = new File(sourceFolder,
-                "${processingParameters.processingDifferentiator()}_parameters-and-state_${FileUtils.FILE_TIMESTAMP_FORMATTER.format(now)}.txt")
+        Path processingStateFile = processingParameters.sourceFolder.resolve(
+                "${processingParameters.processingDifferentiator()}_parameters-and-state_${PathUtils.FILE_TIMESTAMP_FORMATTER.format(now)}.txt")
         processingStateFile.withWriter(StandardCharsets.UTF_8.name()) { Writer writer ->
             writer.write(processingParameters.detailedDisplay(0, true))
         }
-        if (sipAndFilesFolder.exists()) {
-            FileUtils.copyOrMoveFiles(false, [processingStateFile], sipAndFilesFolder)
+        if (Files.exists(sipAndFilesFolder)) {
+            PathUtils.copyOrMoveFiles(false, [ processingStateFile ], sipAndFilesFolder)
         }
 
         // Move the thumbnail page file to the sipAndFilesFolder
-        if (processingParameters.thumbnailPageFile != null && processingParameters.thumbnailPageFile.exists()) {
-            File thumbnailPageFileNewFile = new File(processingParameters.thumbnailPageFile.parentFile,
+        if (processingParameters.thumbnailPageFile != null && Files.exists(processingParameters.thumbnailPageFile)) {
+            Path thumbnailPageFileNewFile = processingParameters.thumbnailPageFile.parent.resolve(
                     processingParameters.thumbnailPageFileFinalName)
-            processingParameters.thumbnailPageFile.renameTo(thumbnailPageFileNewFile)
-            FileUtils.copyOrMoveFiles(true, [thumbnailPageFileNewFile], sipAndFilesFolder)
+            Files.move(processingParameters.thumbnailPageFile, thumbnailPageFileNewFile)
+            PathUtils.copyOrMoveFiles(true, [ thumbnailPageFileNewFile ], sipAndFilesFolder)
         }
         sipAndFilesFolder
     }
@@ -268,9 +268,9 @@ class ReadyForIngestionProcessor {
         // Only process PDF files
         String pattern = FairfaxFile.PDF_FILE_WITH_TITLE_SECTION_DATE_SEQUENCE_PATTERN
 
-        log.info("Processing for pattern=${pattern}, titleCodeFolder=${processingParameters.sourceFolderPath()}")
+        log.info("Processing for pattern=${pattern}, titleCodeFolder=${processingParameters.sourceFolder.normalize()}")
 
-        List<File> allFiles = FileUtils.findFiles(processingParameters.sourceFolder.getAbsolutePath(),
+        List<Path> allFiles = PathUtils.findFiles(processingParameters.sourceFolder.normalize().toString(),
                 isRegexNotGlob, matchFilenameOnly, sortFiles, pattern, processorConfiguration.timekeeper)
 
         // Process the folder as a single collection of files
@@ -284,34 +284,34 @@ class ReadyForIngestionProcessor {
         log.info("START ready-for-ingestion with parameters:")
         log.info("    startindDate=${processorConfiguration.startingDate}")
         log.info("    endingDate=${processorConfiguration.endingDate}")
-        log.info("    sourceFolder=${processorConfiguration.sourceFolder.getCanonicalPath()}")
-        log.info("    targetForIngestionFolder=${processorConfiguration.targetForIngestionFolder.getCanonicalPath()}")
-        log.info("    forReviewFolder=${processorConfiguration.forReviewFolder.getCanonicalPath()}")
-        log.info("${System.lineSeparator()}To initiate a graceful shutdown, use ^C or create a file=${getKillFile().canonicalPath}")
+        log.info("    sourceFolder=${processorConfiguration.sourceFolder.normalize().toString()}")
+        log.info("    targetForIngestionFolder=${processorConfiguration.targetForIngestionFolder.normalize().toString()}")
+        log.info("    forReviewFolder=${processorConfiguration.forReviewFolder.normalize().toString()}")
+        log.info("${System.lineSeparator()}To initiate a graceful shutdown, use ^C or create a file=${getKillFile().normalize().toString()}")
 
         processorConfiguration.timekeeper.logElapsed()
         Timekeeper processingTimekeeper = new DefaultTimekeeper()
 
         if (processorConfiguration.createDestination) {
-            processorConfiguration.targetForIngestionFolder.mkdirs()
-            processorConfiguration.forReviewFolder.mkdirs()
+            Files.createDirectories(processorConfiguration.targetForIngestionFolder)
+            Files.createDirectories(processorConfiguration.forReviewFolder)
         }
 
         this.fairfaxSpreadsheet = FairfaxSpreadsheet.defaultInstance()
 
         // First, collect all the directories to process
-        List<Tuple2<File, String>> titleCodeFoldersAndDates = [ ]
+        List<Tuple2<Path, String>> titleCodeFoldersAndDates = [ ]
 
         // Loop through the dates in sequence, finding all the folders to process
         List<LocalDate> datesInRange = GeneralUtils.datesInRange(processorConfiguration.startingDate,
                 processorConfiguration.endingDate)
         datesInRange.each { LocalDate currentDate ->
             String currentDateString = FairfaxFile.LOCAL_DATE_TIME_FORMATTER.format(currentDate)
-            File dateFolder = new File(processorConfiguration.sourceFolder, currentDateString)
-            if (dateFolder.exists() && dateFolder.isDirectory()) {
-                dateFolder.listFiles().each { File subFile ->
+            Path dateFolder = processorConfiguration.sourceFolder.resolve(currentDateString)
+            if (Files.exists(dateFolder) && Files.isDirectory(dateFolder)) {
+                dateFolder.toFile().listFiles().each { File subFile ->
                     if (subFile.isDirectory()) {
-                        Tuple2<File, String> titleCodeFolderAndDate = new Tuple2<>(subFile, currentDateString)
+                        Tuple2<Path, String> titleCodeFolderAndDate = new Tuple2<>(subFile.toPath(), currentDateString)
                         titleCodeFoldersAndDates.add(titleCodeFolderAndDate)
                         log.info("Adding ${subFile.getCanonicalPath()} to list of titleCodeFolderAndDate")
                     } else {
@@ -319,7 +319,7 @@ class ReadyForIngestionProcessor {
                     }
                 }
             } else {
-                log.info("Skipping ${dateFolder.getCanonicalPath()} as exists=${dateFolder.exists()}, directory=${dateFolder.isDirectory()}")
+                log.info("Skipping ${dateFolder.normalize()} as exists=${Files.exists(dateFolder)}, directory=${Files.isDirectory(dateFolder)}")
             }
         }
 
@@ -333,7 +333,7 @@ class ReadyForIngestionProcessor {
         JvmPerformanceLogger.logState("ReadyForIngestionProcessor Current thread state at start of ALL processing",
                 true, true, true, false, true, true, true)
 
-        List<File> invalidFolders = Collections.synchronizedList([ ])
+        List<Path> invalidFolders = Collections.synchronizedList([ ])
 
         setupShutdownHook()
         // Process the collected directories across multiple threads
@@ -341,11 +341,11 @@ class ReadyForIngestionProcessor {
         // list them after all the threads have finished processing everything in the block. This can make it difficult
         // to debug.
         GParsExecutorsPool.withPool(numberOfThreads) {
-            titleCodeFoldersAndDates.eachParallel { Tuple2<File, String> titleCodeFolderAndDateString ->
-                File titleCodeFolder = titleCodeFolderAndDateString.first
-                String titleCode = titleCodeFolder.getName()
+            titleCodeFoldersAndDates.eachParallel { Tuple2<Path, String> titleCodeFolderAndDateString ->
+                Path titleCodeFolder = titleCodeFolderAndDateString.first
+                String titleCode = titleCodeFolder.fileName.toString()
                 String dateString = titleCodeFolderAndDateString.second
-                String titleCodeFolderMessage = "titleCode=${titleCode}, date=${dateString}, folder=${titleCodeFolder.canonicalPath}"
+                String titleCodeFolderMessage = "titleCode=${titleCode}, date=${dateString}, folder=${titleCodeFolder.normalize()}"
                 try {
                     if (continueProcessing) {
                         JvmPerformanceLogger.logState("ReadyForIngestionProcessor Current thread state at start of ${titleCodeFolderMessage}",
@@ -373,19 +373,19 @@ class ReadyForIngestionProcessor {
                                 false, true, true, false, true, false, true)
                     } else {
                         log.warn("Processing terminating, skipping processing of ${titleCodeFolderMessage}")
-                        Tuple2<File, String> folderAndReason = new Tuple2(titleCodeFolder, "Processing terminating, skipping processing.")
+                        Tuple2<Path, String> folderAndReason = new Tuple2(titleCodeFolder, "Processing terminating, skipping processing.")
                         skippedFolderAndReasons.add(folderAndReason)
                     }
                 } catch (Exception e) {
                     log.error("Exception processing ${titleCodeFolderMessage}, note that Processing WILL continue", e)
-                    Tuple2<File, String> fileAndReason = new Tuple2(titleCodeFolder, e.toString())
+                    Tuple2<Path, String> fileAndReason = new Tuple2(titleCodeFolder, e.toString())
                     failureFolderAndReasons.add(fileAndReason)
                 } catch (OutOfMemoryError e) {
                     log.error("Exception processing ${titleCodeFolderMessage}, note that Processing WILL continue", e)
                     log.error("Number of threads currently generating thumbnails queue length=${ThreadedThumbnailGenerator.numberThreadsGeneratingThumbnails()}")
                     JvmPerformanceLogger.logState("ReadyForIngestionProcessor Current thread state at end of ${titleCodeFolderMessage}",
                             false, true, true, false, true, true, true)
-                    Tuple2<File, String> fileAndReason = new Tuple2(titleCodeFolder, e.toString())
+                    Tuple2<Path, String> fileAndReason = new Tuple2(titleCodeFolder, e.toString())
                     failureFolderAndReasons.add(fileAndReason)
                 }
                 int currentProcessingCount = processingCount.addAndGet(1)
@@ -396,9 +396,9 @@ class ReadyForIngestionProcessor {
         }
         if (invalidFolders.size() > 0) {
             log.warn("Summary of invalid folders:")
-            invalidFolders.each { File folder ->
-                String titleCode = folder.getName()
-                log.warn("    titleCode=${titleCode}, invalid folder=${folder.getCanonicalPath()}")
+            invalidFolders.each { Path folder ->
+                String titleCode = folder.fileName.toString()
+                log.warn("    titleCode=${titleCode}, invalid folder=${folder.normalize()}")
             }
         }
         JvmPerformanceLogger.logState("ReadyForIngestionProcessor Current thread state at end of ALL processing",
@@ -406,9 +406,9 @@ class ReadyForIngestionProcessor {
         log.info("${System.lineSeparator()}END ready-for-ingestion with parameters:")
         log.info("    startindDate=${processorConfiguration.startingDate}")
         log.info("    endingDate=${processorConfiguration.endingDate}")
-        log.info("    sourceFolder=${processorConfiguration.sourceFolder.getCanonicalPath()}")
-        log.info("    targetForIngestionFolder=${processorConfiguration.targetForIngestionFolder.getCanonicalPath()}")
-        log.info("    forReviewFolder=${processorConfiguration.forReviewFolder.getCanonicalPath()}")
+        log.info("    sourceFolder=${processorConfiguration.sourceFolder.normalize().toString()}")
+        log.info("    targetForIngestionFolder=${processorConfiguration.targetForIngestionFolder.normalize().toString()}")
+        log.info("    forReviewFolder=${processorConfiguration.forReviewFolder.normalize().toString()}")
         log.info("${System.lineSeparator()}${System.lineSeparator()}Summary:")
         log.info("    Total folders processed=${GeneralUtils.TOTAL_FORMAT.format(titleCodeFoldersAndDates.size())}")
         log.info("    Processed with numberOfThreads=${GeneralUtils.TOTAL_FORMAT.format(numberOfThreads)}")
@@ -420,15 +420,15 @@ class ReadyForIngestionProcessor {
 
         if (skippedFolderAndReasons.size() > 0) {
             log.info("${System.lineSeparator()}Folder processing skipped total=${skippedFolderAndReasons.size()}")
-            skippedFolderAndReasons.each { Tuple2<File, String> folderAndReason ->
-                log.info("    Skipped folder=${folderAndReason.first.canonicalPath}, reason=${folderAndReason.second}")
+            skippedFolderAndReasons.each { Tuple2<Path, String> folderAndReason ->
+                log.info("    Skipped folder=${folderAndReason.first.normalize().toString()}, reason=${folderAndReason.second}")
             }
         }
 
         if (failureFolderAndReasons.size() > 0) {
             log.info("${System.lineSeparator()}Folder processing failures total=${failureFolderAndReasons.size()}")
-            failureFolderAndReasons.each { Tuple2<File, String> folderAndReason ->
-                log.info("    Failure folder=${folderAndReason.first.canonicalPath}, reason=${folderAndReason.second}")
+            failureFolderAndReasons.each { Tuple2<Path, String> folderAndReason ->
+                log.info("    Failure folder=${folderAndReason.first.normalize().toString()}, reason=${folderAndReason.second}")
             }
         }
     }
@@ -455,25 +455,25 @@ class ReadyForIngestionProcessor {
 
         // Note that this value may switch back and forth while the processor is shutting down if the kill file is
         // repeatedly deleted/added. That's not necessarily a prohibited action.
-        boolean killFileExists = getKillFile().exists()
+        boolean killFileExists = Files.exists(getKillFile())
         boolean doContinue = !killFileExists
         if (doContinue) {
             if (killInitiationLogged.get()) {
                 // We had already initiated a shutdown, but now we are continuing...
                 killInitiationLogged.compareAndExchange(true, false)
-                log.warn("Processing will CONTINUE as killFile=${killFile.canonicalPath} has disappeared. Skipped processing up to this point will NOT be done.")
+                log.warn("Processing will CONTINUE as killFile=${killFile.normalize()} has disappeared. Skipped processing up to this point will NOT be done.")
             }
         } else {
             if (!killInitiationLogged.get()) {
                 killInitiationLogged.compareAndExchange(false, true)
-                log.warn("Processing will STOP as killFile=${killFile.canonicalPath} exists. All threads must complete their current processing before termination.")
+                log.warn("Processing will STOP as killFile=${killFile.normalize()} exists. All threads must complete their current processing before termination.")
             }
         }
 
         return doContinue
     }
 
-    File getKillFile() {
-        return new File(processorConfiguration.targetForIngestionFolder, KILL_FILE_NAME)
+    Path getKillFile() {
+        return processorConfiguration.targetForIngestionFolder.resolve(KILL_FILE_NAME)
     }
 }

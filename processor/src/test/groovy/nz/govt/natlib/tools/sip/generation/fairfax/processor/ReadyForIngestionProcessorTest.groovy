@@ -28,8 +28,8 @@ class ReadyForIngestionProcessorTest {
 
     @Test
     void correctlyParsesSipAndFilesFolderNameForTitleCodeAndDate() {
-        validateParsingSipAndFilesFolderName("20190524_ABC_this-type", "ABC", new LocalDate(2019, 5, 24))
-        validateParsingSipAndFilesFolderName("20190524_ABC_this-type_my-identifier", "ABC", new LocalDate(2019, 5, 24))
+        validateParsingSipAndFilesFolderName("20190524_ABC_this-type", "ABC", LocalDate.of(2019, 5, 24))
+        validateParsingSipAndFilesFolderName("20190524_ABC_this-type_my-identifier", "ABC", LocalDate.of(2019, 5, 24))
         validateParsingSipAndFilesFolderName("BAD-DATE_JUNK", "JUNK", null)
         validateParsingSipAndFilesFolderName("2019-05-24_SOME_WHERE", "SOME", null)
         validateParsingSipAndFilesFolderName("JUNK", null, null)
