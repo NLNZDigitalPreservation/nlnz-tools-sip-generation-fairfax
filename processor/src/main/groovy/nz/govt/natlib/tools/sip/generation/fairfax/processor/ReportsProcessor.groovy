@@ -6,8 +6,9 @@ import nz.govt.natlib.tools.sip.generation.fairfax.FairfaxFileTitleEditionKey
 import nz.govt.natlib.tools.sip.generation.fairfax.FairfaxSpreadsheet
 import nz.govt.natlib.tools.sip.generation.fairfax.processor.support.TitleCodeByDateSummary
 import nz.govt.natlib.tools.sip.pdf.PdfInformationExtractor
-import nz.govt.natlib.tools.sip.utils.FileUtils
+import nz.govt.natlib.tools.sip.utils.PathUtils
 
+import java.nio.file.Path
 import java.time.LocalDate
 import java.time.Period
 
@@ -29,7 +30,7 @@ class ReportsProcessor {
         unrecognizedTitleCodes = []
         Set<FairfaxFileTitleEditionKey> recognizedTitleCodeSectionCodes = []
         Set<FairfaxFileTitleEditionKey> unrecognizedTitleCodeSectionCodes = []
-        Set<File> invalidFiles = []
+        Set<Path> invalidFiles = []
 
         log.info("sourceFolder=${processorConfiguration.sourceFolder}")
 
@@ -41,9 +42,9 @@ class ReportsProcessor {
         boolean matchFilenameOnly = true
         boolean sortFiles = true
         String pattern = ".*?\\.[pP]{1}[dD]{1}[fF]{1}"
-        List<File> foundFiles = FileUtils.findFiles(processorConfiguration.sourceFolder.getAbsolutePath(),
+        List<Path> foundFiles = PathUtils.findFiles(processorConfiguration.sourceFolder.normalize().toString(),
                 isRegexNotGlob, matchFilenameOnly, sortFiles, pattern, processorConfiguration.timekeeper)
-        List<FairfaxFile> fairfaxFiles = foundFiles.collect { File file ->
+        List<FairfaxFile> fairfaxFiles = foundFiles.collect { Path file ->
             new FairfaxFile(file)
         }
 
@@ -116,8 +117,8 @@ class ReportsProcessor {
         }
         log.info("* * * *")
         log.info("INVALID files:")
-        invalidFiles.each { File file ->
-            log.info("    ${file.getCanonicalPath()}")
+        invalidFiles.each { Path file ->
+            log.info("    ${file.normalize().toString()}")
         }
         log.info("* * * *")
 
@@ -134,7 +135,7 @@ class ReportsProcessor {
         unrecognizedTitleCodes = []
         Set<FairfaxFileTitleEditionKey> recognizedTitleCodeSectionCodes = []
         Set<FairfaxFileTitleEditionKey> unrecognizedTitleCodeSectionCodes = []
-        Set<File> invalidFiles = []
+        Set<Path> invalidFiles = []
         List<Tuple2<LocalDate, Integer>> totalsByDateList = [ ]
 
         log.info("sourceFolder=${processorConfiguration.sourceFolder}")
@@ -147,10 +148,10 @@ class ReportsProcessor {
         boolean matchFilenameOnly = true
         boolean sortFiles = true
         String pattern = ".*?\\.[pP]{1}[dD]{1}[fF]{1}"
-        List<File> foundFiles = FileUtils.findFiles(processorConfiguration.sourceFolder.getAbsolutePath(),
+        List<Path> foundFiles = PathUtils.findFiles(processorConfiguration.sourceFolder.normalize().toString(),
                 isRegexNotGlob, matchFilenameOnly, sortFiles, pattern, processorConfiguration.timekeeper)
         Map<LocalDate, Map<String, TitleCodeByDateSummary>> dateToTitleCodeMap = [ : ]
-        foundFiles.each { File file ->
+        foundFiles.each { Path file ->
             FairfaxFile fairfaxFile = new FairfaxFile(file)
             if (fairfaxFile.isValidName()) {
                 if (allNameKeys.contains(fairfaxFile.titleCode)) {
@@ -224,12 +225,12 @@ class ReportsProcessor {
         }
         log.info("* * * *")
         logAndAppend(summaryTextBuilder, "INVALID files:")
-        invalidFiles.each { File file ->
-            logAndAppend(summaryTextBuilder, "${file.getCanonicalPath()}")
+        invalidFiles.each { Path file ->
+            logAndAppend(summaryTextBuilder, "${file.normalize().toString()}")
         }
         log.info("* * * *")
 
-        println("Processing detail for sourceFolder=${processorConfiguration.sourceFolder.getCanonicalPath()}:")
+        println("Processing detail for sourceFolder=${processorConfiguration.sourceFolder.normalize().toString()}:")
         println()
         println("date|total_files|title_code|out-of-sequence-files|duplicate-files")
         String spreadsheetSeparator = "|"
@@ -277,12 +278,12 @@ class ReportsProcessor {
         }
 
         println()
-        println("Processing exceptions summary for sourceFolder=${processorConfiguration.sourceFolder.getCanonicalPath()}:")
+        println("Processing exceptions summary for sourceFolder=${processorConfiguration.sourceFolder.normalize()}:")
         println()
         println(summaryTextBuilder.toString())
         println()
 
-        println("Date totals summary for sourceFolder=${processorConfiguration.sourceFolder.getCanonicalPath()}:")
+        println("Date totals summary for sourceFolder=${processorConfiguration.sourceFolder.normalize()}:")
         println("Date|Total for date")
         totalsByDateList.each { Tuple2<LocalDate, Integer> dateTotalTuple ->
             println("${dateTotalTuple.first}|${dateTotalTuple.second}")
@@ -306,20 +307,20 @@ class ReportsProcessor {
         boolean sortFiles = true
         boolean includeSubdirectories = true
         String pattern = ".*?\\.[pP]{1}[dD]{1}[fF]{1}"
-        List<File> pdfFiles = FileUtils.findFiles(processorConfiguration.sourceFolder.getAbsolutePath(),
+        List<Path> pdfFiles = PathUtils.findFiles(processorConfiguration.sourceFolder.normalize().toString(),
                 isRegexNotGlob, matchFilenameOnly, sortFiles, pattern, processorConfiguration.timekeeper,
                 includeSubdirectories)
 
-        pdfFiles.each { File pdfFile ->
+        pdfFiles.each { Path pdfFile ->
             log.info("* * * * *")
-            log.info("${pdfFile.getCanonicalPath()} METADATA:")
+            log.info("${pdfFile.normalize().toString()} METADATA:")
             Map<String, String> pdfMetadata = PdfInformationExtractor.extractMetadata(pdfFile)
             pdfMetadata.each { String key, String value ->
                 log.info("    key=${key}, value=${value}")
             }
             log.info("* * * * *")
             log.info("* * * * *")
-            log.info("${pdfFile.getCanonicalPath()} TEXT:")
+            log.info("${pdfFile.normalize().toString()} TEXT:")
             String text = PdfInformationExtractor.extractText(pdfFile)
             log.info("${text}")
             log.info("* * * * *")

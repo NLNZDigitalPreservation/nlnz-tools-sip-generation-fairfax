@@ -7,6 +7,8 @@ import picocli.CommandLine.Option
 import groovy.util.logging.Log4j2
 import nz.govt.natlib.tools.sip.logging.Timekeeper
 
+import java.nio.file.Files
+import java.nio.file.Path
 import java.time.LocalDate
 import java.util.concurrent.Callable
 
@@ -124,28 +126,28 @@ Default is today. Files after this date are ignored.""")
     @Option(names = ["-s", "--sourceFolder"], paramLabel = "SOURCE_FOLDER",
             description = """Source folder in the format /path/to/folder.
 This folder must exist and must be a directory.""")
-    File sourceFolder
+    Path sourceFolder
 
     @Option(names = ["--targetFolder"], paramLabel = "TARGET_FOLDER",
             description = """Target folder in the format /path/to/folder.
 This is the destination folder used when no other destination folders are specified.
 Use --createDestination to force its creation.""")
-    File targetFolder
+    Path targetFolder
 
     @Option(names = ["--targetPreProcessingFolder"], paramLabel = "TARGET_PRE_PROCESS_FOLDER",
             description = """Target pre-processing folder in the format /path/to/folder.
 Use --createDestination to force its creation.""")
-    File targetPreProcessingFolder
+    Path targetPreProcessingFolder
 
     @Option(names = ["--targetForIngestionFolder"], paramLabel = "TARGET_FOR_INGESTION_FOLDER",
             description = """Target for-ingestion folder in the format /path/to/folder.
 Use --createDestination to force its creation.""")
-    File targetForIngestionFolder
+    Path targetForIngestionFolder
 
     @Option(names = ["--targetPostProcessedFolder"], paramLabel = "TARGET_POST_PROCESSED_FOLDER",
             description = """Target post-processed folder in the format /path/to/folder.
 Use --createDestination to force its creation.""")
-    File targetPostProcessedFolder
+    Path targetPostProcessedFolder
 
     @Option(names = ["--forIngestionProcessingTypes"], paramLabel = "PROCESSING_TYPES",
             description = """Comma-separated list of for-ingestion processing types.
@@ -176,7 +178,7 @@ See the class ProcessorOption for a list of what those options are.""")
     @Option(names = ["-r", "--forReviewFolder"], paramLabel = "FOR_REVIEW_FOLDER",
             description = """For-review folder in the format /path/to/folder.
 For processing exceptions, depending on processor.""")
-    File forReviewFolder
+    Path forReviewFolder
 
     static void main(String[] args) {
         ProcessorRunner processorRunner = new ProcessorRunner()
@@ -278,8 +280,8 @@ For processing exceptions, depending on processor.""")
             log.error(message)
             throw new ProcessorException(message)
         }
-        if (sourceFolder != null && (!sourceFolder.exists() || !sourceFolder.isDirectory())) {
-            String message = "sourceFolder=${sourceFolder.getCanonicalPath()} must exist=${sourceFolder.exists()} and must be directory=${sourceFolder.isDirectory()}"
+        if (sourceFolder != null && (!Files.exists(sourceFolder) || !Files.isDirectory(sourceFolder))) {
+            String message = "sourceFolder=${sourceFolder.normalize()} must exist=${Files.exists(sourceFolder)} and must be directory=${Files.isDirectory(sourceFolder)}"
             log.error(message)
             throw new ProcessorException(message)
         }

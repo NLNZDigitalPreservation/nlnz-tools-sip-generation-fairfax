@@ -70,12 +70,22 @@ that functionality even as the ExLibris API changes. NLNZ regularly updates thei
 mean that any Python software duplicating that API would need to have extra overhead to keep up and ensure compatibility
 with the ExLibris functionality.
 
+Advantages of groovy
+--------------------
 Groovy, as a JVM language, was chosen for a few significant reasons:
 
 - It is a scripting language, with many language features designed for scripting.
 - It has code features that minimise boilerplate code (and thus make the code easier to read and quicker to write)
 - It can take advantage of all the Java code libraries that exist.
 - The codebase at DIA and their developers are often Java-based, especially in the Knowledge Services area.
+
+Disadvantages of groovy
+-----------------------
+- New features in Java 9, 10 and 11 (such as Lambdas) provide similar functionality to that of Groovy, which removes
+  some of the ease of programming advantages of Groovy.
+- Some features in newer versions of Java are not supported under Groovy. For example, the try-with-resources construct
+  is not supported under Groovy -- although there are alternatives that provide the same functionality.
+- Some Java developers may not be comfortable coding in a language that doesn't quite look like Java.
 
 
 Basic packages and classes

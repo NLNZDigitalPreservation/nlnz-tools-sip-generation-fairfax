@@ -2,14 +2,15 @@ package nz.govt.natlib.tools.sip.generation.fairfax.processor
 
 import groovy.util.logging.Log4j2
 import groovyx.gpars.GParsExecutorsPool
-import nz.govt.natlib.tools.sip.files.FilesFinder
+import nz.govt.natlib.tools.sip.utils.FilesFinder
 import nz.govt.natlib.tools.sip.generation.fairfax.FairfaxFile
 import nz.govt.natlib.tools.sip.logging.ThreadedTimekeeper
 import nz.govt.natlib.tools.sip.logging.Timekeeper
 import nz.govt.natlib.tools.sip.pdf.thumbnail.ThreadedThumbnailGenerator
 import nz.govt.natlib.tools.sip.pdf.thumbnail.ThumbnailParameters
-import nz.govt.natlib.tools.sip.utils.FileUtils
 import nz.govt.natlib.tools.sip.utils.GeneralUtils
+import nz.govt.natlib.tools.sip.utils.PathUtils
+import org.apache.commons.io.FilenameUtils
 
 import java.nio.file.Files
 import java.nio.file.Path
@@ -26,8 +27,8 @@ class MiscellaneousProcessor {
         this.processorConfiguration = processorConfiguration
     }
 
-    List<File> findProdLoadDirectoriesBetweenDates(String localPath, LocalDate startingDate, LocalDate endingDate) {
-        List<File> directoriesList = []
+    List<Path> findProdLoadDirectoriesBetweenDates(String localPath, LocalDate startingDate, LocalDate endingDate) {
+        List<Path> directoriesList = []
         Path filesPath = Paths.get(localPath)
         if (!Files.exists(filesPath) || !Files.isDirectory(filesPath)) {
             log.warn("Path '${filesPath}' does not exist is not a directory. Returning empty file list.")
@@ -44,17 +45,17 @@ class MiscellaneousProcessor {
         // Generally it's: TODO
         // TODO: Incorrect: Load directories have the structure <titleCode>_<yyyyMMdd> (and possibly <titleCode><sectionCode>_<yyyyMMdd>
         String pattern = '\\w{3,6}_\\d{8}'
-        log.info("Finding directories for path=${filesPath.toFile().getCanonicalPath()} and pattern=${pattern}")
+        log.info("Finding directories for path=${filesPath.normalize()} and pattern=${pattern}")
         processorConfiguration.timekeeper.logElapsed()
         directoriesList = FilesFinder.getMatchingFilesFull(filesPath, isRegexNotGlob, matchFilenameOnly, sortFiles,
                 includeSubdirectories, directoryOnly, pattern)
-        log.info("Found total directories=${directoriesList.size()} for path=${filesPath.toFile().getCanonicalPath()}")
+        log.info("Found total directories=${directoriesList.size()} for path=${filesPath.normalize()}")
         processorConfiguration.timekeeper.logElapsed()
 
-        List<File> filteredDirectoriesList = []
+        List<Path> filteredDirectoriesList = []
         String regexPattern = '(?<titleCode>\\w{3,7})_(?<date>\\d{8})'
-        directoriesList.each { File directory ->
-            Matcher matcher = directory.getName() =~ /${regexPattern}/
+        directoriesList.each { Path directory ->
+            Matcher matcher = directory.fileName.toString() =~ /${regexPattern}/
             if (matcher.matches()) {
                 String dateString = matcher.group('date')
                 LocalDate directoryDate = GeneralUtils.parseDate(dateString)
@@ -65,17 +66,6 @@ class MiscellaneousProcessor {
             }
         }
         return filteredDirectoriesList
-    }
-
-    // See the README.md (Ingested stage) for a description of the file structures.
-    void copyIngestedLoadsToIngestedFolder() {
-        // Look for folders called 'content'. Does it have a 'mets.xml'?
-        // Does the parent have a 'done' file (and done is needed)
-        // Load the mets.xml to get the publication titleCode and date
-        // If moving and parent of content folder has no other subfolders after moving, then delete it, and so on
-        log.info("copyIngestedLoadsToIngestedFolder: Currently this work is being done by the python script:")
-        log.info("    fairfax-pre-and-post-process-grouper.py")
-        log.info("    See the github repository: https://github.com/NLNZDigitalPreservation/nlnz-tools-scripts-ingestion")
     }
 
     // Split
@@ -103,8 +93,8 @@ class MiscellaneousProcessor {
         // The source files are going to be in a subdirectory with the directory structure being:
         // <titleCode>_yyyyMMdd/content/streams/{files} with the mets.xml in the content directory.
         // Find the source directories that are between the starting date and the ending date
-        List<File> filteredDirectoriesList = findProdLoadDirectoriesBetweenDates(
-                processorConfiguration.sourceFolder.getCanonicalPath(),
+        List<Path> filteredDirectoriesList = findProdLoadDirectoriesBetweenDates(
+                processorConfiguration.sourceFolder.normalize().toString(),
                 processorConfiguration.startingDate, processorConfiguration.endingDate)
 
         // We need to copy the files to the preProcess structure AND the readyForIngestion structure.
@@ -116,10 +106,10 @@ class MiscellaneousProcessor {
 
         log.info("Processing filteredDirectories total=${filteredDirectoriesList.size()}")
         int filteredDirectoriesCount = 1
-        filteredDirectoriesList.each { File sourceDirectory ->
+        filteredDirectoriesList.each { Path sourceDirectory ->
             log.info("Processing ${filteredDirectoriesCount}/${filteredDirectoriesList.size()}, " +
-                    "current=${processorConfiguration.sourceFolder.getCanonicalPath()}")
-            Matcher matcher = sourceDirectory.getName() =~ /${directoryPattern}/
+                    "current=${processorConfiguration.sourceFolder.normalize().toString()}")
+            Matcher matcher = sourceDirectory.fileName.toString() =~ /${directoryPattern}/
             String dateString
             String titleCodeString
             if (matcher.matches()) {
@@ -129,95 +119,94 @@ class MiscellaneousProcessor {
                 dateString = "UNKNOWN-DATE"
                 titleCodeString = "UNKNOWN-TITLE-CODE"
             }
-            List<File> sourceFiles = []
-            File contentFolder = new File(sourceDirectory, "content")
-            if (contentFolder.exists()) {
-                File metsFile = new File(contentFolder, "mets.xml")
-                if (metsFile.exists()) {
+            List<Path> sourceFiles = []
+            Path contentFolder = sourceDirectory.resolve("content")
+            if (Files.exists(contentFolder)) {
+                Path metsFile = contentFolder.resolve("mets.xml")
+                if (Files.exists(metsFile)) {
                     sourceFiles.add(metsFile)
                 } else {
-                    log.info("metsFile=${metsFile.getCanonicalPath()} does not exist -- SKIPPING")
+                    log.info("metsFile=${metsFile.normalize()} does not exist -- SKIPPING")
                 }
-                File streamsFolder = new File(contentFolder, "streams")
-                if (streamsFolder.exists()) {
-                    List<File> pdfFiles = FileUtils.findFiles(streamsFolder.getAbsolutePath(), isRegexNotGlob,
+                Path streamsFolder = contentFolder.resolve("streams")
+                if (Files.exists(streamsFolder)) {
+                    List<Path> pdfFiles = PathUtils.findFiles(streamsFolder.normalize().toString(), isRegexNotGlob,
                             matchFilenameOnly, sortFiles, pattern, processorConfiguration.timekeeper)
                     sourceFiles.addAll(pdfFiles)
                 } else {
-                    log.info("streamsFolder=${streamsFolder.getCanonicalPath()} does not exist -- SKIPPING")
+                    log.info("streamsFolder=${streamsFolder.normalize()} does not exist -- SKIPPING")
                 }
             } else {
-                log.info("contentFolder=${contentFolder.getCanonicalPath()} does not exist -- SKIPPING")
+                log.info("contentFolder=${contentFolder.normalize()} does not exist -- SKIPPING")
             }
 
             // Copy to the preProcess structure
-            File groupByDateAndNameDestinationFolder = new File(processorConfiguration.targetFolder,
-                    "groupByDateAndName/${dateString}/${titleCodeString}")
+            Path groupByDateAndNameDestinationFolder = processorConfiguration.targetFolder.resolve(
+                    FilenameUtils.separatorsToSystem("groupByDateAndName/${dateString}/${titleCodeString}"))
             if (processorConfiguration.createDestination) {
-                groupByDateAndNameDestinationFolder.mkdirs()
+                Files.createDirectories(groupByDateAndNameDestinationFolder)
             }
-            groupByDateAndNameDestinationFolder.mkdirs()
-            sourceFiles.each { File sourceFile ->
-                File destinationFile = new File(groupByDateAndNameDestinationFolder, sourceFile.getName())
-                if (!destinationFile.exists()) {
-                    Files.copy(sourceFile.toPath(), destinationFile.toPath(), StandardCopyOption.COPY_ATTRIBUTES)
+            sourceFiles.each { Path sourceFile ->
+                Path destinationFile = groupByDateAndNameDestinationFolder.resolve(sourceFile.fileName.toString())
+                if (!Files.exists(destinationFile)) {
+                    Files.copy(sourceFile, destinationFile, StandardCopyOption.COPY_ATTRIBUTES)
                 }
             }
 
             /// Copy to the readyForIngestion structure
-            File rosettaIngestFolder = new File(processorConfiguration.targetFolder,
-                    "rosettaIngest/${dateString}/${titleCodeString}_${dateString}")
-            rosettaIngestFolder.mkdirs()
-            sourceFiles.each { File sourceFile ->
-                File destinationFile = new File(rosettaIngestFolder, sourceFile.getName())
-                if (!destinationFile.exists()) {
-                    Files.copy(sourceFile.toPath(), destinationFile.toPath(), StandardCopyOption.COPY_ATTRIBUTES)
+            Path rosettaIngestFolder = processorConfiguration.targetFolder.resolve(
+                    FilenameUtils.separatorsToSystem("rosettaIngest/${dateString}/${titleCodeString}_${dateString}"))
+            Files.createDirectories(rosettaIngestFolder)
+            sourceFiles.each { Path sourceFile ->
+                Path destinationFile = rosettaIngestFolder.resolve(sourceFile.fileName.toString())
+                if (!Files.exists(destinationFile)) {
+                    Files.copy(sourceFile, destinationFile, StandardCopyOption.COPY_ATTRIBUTES)
                 }
             }
             filteredDirectoriesCount += 1
         }
     }
 
-    List<File> findPdfFiles(File sourceFolder, boolean includeSubdirectories = false) {
+    List<Path> findPdfFiles(Path sourceFolder, boolean includeSubdirectories = false) {
         boolean isRegexNotGlob = true
         boolean matchFilenameOnly = true
         boolean sortFiles = true
         // Any pdf will do
         String pattern = '.*?\\.[pP]{1}[dD]{1}[fF]{1}'
-        List<File> pdfFiles = FileUtils.findFiles(sourceFolder.getAbsolutePath(),
+        List<Path> pdfFiles = PathUtils.findFiles(sourceFolder.normalize().toString(),
                 isRegexNotGlob, matchFilenameOnly, sortFiles, pattern, processorConfiguration.timekeeper,
                 includeSubdirectories)
 
         return pdfFiles
     }
 
-    void generateThumbnailPageFromPdfs(File sourceFolder,
+    void generateThumbnailPageFromPdfs(Path sourceFolder,
                                        ProcessorOption showDirectoryOption = ProcessorOption.ShowDirectoryAndTwoParents) {
         // TODO This could be a processor option (but make it clear it's different from 'SearchSubdirectories')
         boolean includeSubdirectories = false
-        List<File> pdfFiles = findPdfFiles(sourceFolder, includeSubdirectories)
+        List<Path> pdfFiles = findPdfFiles(sourceFolder, includeSubdirectories)
         if (pdfFiles.isEmpty()) {
-            log.info("No PDF files found in folder=${sourceFolder.getCanonicalPath()}")
+            log.info("No PDF files found in folder=${sourceFolder.normalize()}")
         } else {
             String convertedFilepath = ProcessorUtils.filePathAsSafeString(sourceFolder, [ showDirectoryOption ])
-            File thumbnailPageFile
+            Path thumbnailPageFile
             if (processorConfiguration.processorOptions.contains(ProcessorOption.UseSourceSubdirectoryAsTarget)) {
-                thumbnailPageFile = new File(sourceFolder, "${convertedFilepath}_thumbnail_page.jpeg")
+                thumbnailPageFile = sourceFolder.resolve("${convertedFilepath}_thumbnail_page.jpeg")
             } else {
-                thumbnailPageFile = new File(processorConfiguration.targetFolder, "${convertedFilepath}_thumbnail_page.jpeg")
+                thumbnailPageFile = processorConfiguration.targetFolder.resolve("${convertedFilepath}_thumbnail_page.jpeg")
             }
 
-            String thumbnailPageTitle = "PDF files in ${sourceFolder.getCanonicalPath()}"
+            String thumbnailPageTitle = "PDF files in ${sourceFolder.normalize().toString()}"
             ThumbnailParameters thumbnailParameters = new ThumbnailParameters(thumbnailHeight: 240,
                     useAffineTransformation: false, textJustification: ThumbnailParameters.TextJustification.RIGHT,
                     maximumPageWidth: 1200, pageTitleText: thumbnailPageTitle,
                     pageTitleFontJustification: ThumbnailParameters.TextJustification.RIGHT)
 
-            log.info("START Generating thumbnail page from pdfs in sourceFolder=${sourceFolder.getCanonicalPath()}, thumbnailPage=${thumbnailPageFile.getCanonicalPath()}")
+            log.info("START Generating thumbnail page from pdfs in sourceFolder=${sourceFolder.normalize()}, thumbnailPage=${thumbnailPageFile.normalize()}")
             Timekeeper singlePageTimekeeper = ThreadedTimekeeper.forCurrentThread()
             singlePageTimekeeper.start()
             ThreadedThumbnailGenerator.writeThumbnailPage(pdfFiles, thumbnailParameters, thumbnailPageFile)
-            log.info("END Generated thumbnail page from pdfs in sourceFolder=${sourceFolder.getCanonicalPath()}, thumbnailPage=${thumbnailPageFile.getCanonicalPath()}")
+            log.info("END Generated thumbnail page from pdfs in sourceFolder=${sourceFolder.normalize()}, thumbnailPage=${thumbnailPageFile.normalize()}")
             singlePageTimekeeper.logElapsed()
         }
     }
@@ -228,13 +217,13 @@ class MiscellaneousProcessor {
         boolean generateForSubfolders = processorConfiguration.processorOptions.contains(ProcessorOption.SearchSubdirectories)
         if (generateForSubfolders) {
             generateThumbnailPageFromPdfs(processorConfiguration.sourceFolder)
-            List<File> allSubdirectories = [ ]
+            List<Path> allSubdirectories = [ ]
             if (processorConfiguration.startingDate != null && processorConfiguration.endingDate != null) {
-                allSubdirectories = FileUtils.allSubdirectoriesInDateRange(processorConfiguration.sourceFolder,
+                allSubdirectories = PathUtils.allSubdirectoriesInDateRange(processorConfiguration.sourceFolder,
                         processorConfiguration.startingDate, processorConfiguration.endingDate,
                         GeneralUtils.DATE_YYYYMMDD_FORMATTER, true)
             } else {
-                allSubdirectories = FileUtils.allSubdirectories(processorConfiguration.sourceFolder, true)
+                allSubdirectories = PathUtils.allSubdirectories(processorConfiguration.sourceFolder, true)
             }
             int numberOfThreads = processorConfiguration.parallelizeProcessing ? processorConfiguration.numberOfThreads : 1
             log.info("Processing over numberOfThreads=${numberOfThreads}")
@@ -244,11 +233,11 @@ class MiscellaneousProcessor {
 
             log.info("Starting processing total subdirectories=${allSubdirectories.size()}")
             GParsExecutorsPool.withPool(numberOfThreads) {
-                allSubdirectories.eachParallel { File subdirectory ->
+                allSubdirectories.eachParallel { Path subdirectory ->
                     try {
                         generateThumbnailPageFromPdfs(subdirectory, showDirectoryOption)
                     } catch (Exception e) {
-                        log.error("Exception processing subdirectory=${subdirectory.canonicalPath}", e)
+                        log.error("Exception processing subdirectory=${subdirectory.normalize().toString()}", e)
                     }
                 }
             }

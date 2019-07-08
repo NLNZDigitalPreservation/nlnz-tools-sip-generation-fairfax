@@ -28,6 +28,8 @@ import nz.govt.natlib.tools.sip.state.SipProcessingExceptionReason
 import nz.govt.natlib.tools.sip.state.SipProcessingExceptionReasonType
 import nz.govt.natlib.tools.sip.state.SipProcessingState
 
+import java.nio.file.Files
+import java.nio.file.Path
 import java.time.LocalDate
 
 /**
@@ -37,7 +39,7 @@ import java.time.LocalDate
 @Log4j2
 class FairfaxFilesProcessor {
     FairfaxProcessingParameters processingParameters
-    List<File> filesForProcessing
+    List<Path> filesForProcessing
 
     Map<FairfaxFile, FairfaxFile> processedFairfaxFiles
 
@@ -53,11 +55,11 @@ class FairfaxFilesProcessor {
     }
 
     static void processCollectedFiles(FairfaxProcessingParameters processingParameters,
-                                        List<File> filesForProcessing) {
+                                      List<Path> filesForProcessing) {
         FairfaxFilesProcessor fairfaxFilesProcessor = new FairfaxFilesProcessor(processingParameters,
                 filesForProcessing)
         if (processingParameters.rules.contains(ProcessingRule.ForceSkip)) {
-            log.info("Skipping processing sourceFolder=${processingParameters.sourceFolder.canonicalPath} as processing rules include=${ProcessingRule.ForceSkip.fieldValue}")
+            log.info("Skipping processing sourceFolder=${processingParameters.sourceFolder.normalize()} as processing rules include=${ProcessingRule.ForceSkip.fieldValue}")
             processingParameters.skip = true
             processingParameters.sipProcessingState.sipAsXml = SipProcessingState.EMPTY_SIP_AS_XML
             return
@@ -65,7 +67,7 @@ class FairfaxFilesProcessor {
         fairfaxFilesProcessor.process()
     }
 
-    FairfaxFilesProcessor(FairfaxProcessingParameters processingParameters, List<File> filesForProcessing) {
+    FairfaxFilesProcessor(FairfaxProcessingParameters processingParameters, List<Path> filesForProcessing) {
         this.processingParameters = processingParameters
         this.filesForProcessing = filesForProcessing
     }
@@ -77,7 +79,7 @@ class FairfaxFilesProcessor {
         processedFairfaxFiles = [ : ]
 
         if (this.processingParameters.valid) {
-            List<FairfaxFile> fairfaxFilesForProcessing = filesForProcessing.collect { File rawFile ->
+            List<FairfaxFile> fairfaxFilesForProcessing = filesForProcessing.collect { Path rawFile ->
                 new FairfaxFile(rawFile)
             }
             List<FairfaxFile> validNamedFiles = extractValidNamedFiles(fairfaxFilesForProcessing)
@@ -97,7 +99,7 @@ class FairfaxFilesProcessor {
                     sortedFilesForProcessing = SipForFolderProcessor.selectAndSort(processingParameters, validNamedFiles)
                     if (processingParameters.spreadsheetRow == FairfaxSpreadsheet.BLANK_ROW) {
                         String detailedReason = "No matching spreadsheet row for titleCode=${processingParameters.titleCode}, " +
-                                "date=${processingParameters.date}, folder=${processingParameters.sourceFolder.canonicalPath}."
+                                "date=${processingParameters.date}, folder=${processingParameters.sourceFolder.normalize()}."
                         SipProcessingExceptionReason exceptionReason = new SipProcessingExceptionReason(
                                 SipProcessingExceptionReasonType.NO_MATCHING_SIP_DEFINITION, null,
                                 detailedReason)
@@ -139,7 +141,7 @@ class FairfaxFilesProcessor {
                 processingParameters.rules.contains(ProcessingRule.AllSectionsInSipRequired)) {
             // Strip the ignored of any editionDiscriminator files
             List<FairfaxFile> withoutEditionFiles = processingParameters.sipProcessingState.ignoredFiles.findAll {
-                File file ->
+                Path file ->
                     FairfaxFile fairfaxFile = new FairfaxFile(file)
                     !processingParameters.editionDiscriminators.contains(fairfaxFile.sectionCode)
             }
@@ -167,7 +169,7 @@ class FairfaxFilesProcessor {
         // a wrapper so that it can be processed through implementation-specific processing.
         // For the moment we do the conversion. This is something to consider when refactoring/redesigning this
         // application.
-        List<FairfaxFile> sipFiles = processingParameters.sipProcessingState.sipFiles.collect { File file ->
+        List<FairfaxFile> sipFiles = processingParameters.sipProcessingState.sipFiles.collect { Path file ->
             new FairfaxFile(file)
         }
         checkForMissingSequenceFiles(sipFiles)
@@ -175,7 +177,7 @@ class FairfaxFilesProcessor {
         checkForManualProcessing()
 
         // See the note above about converting back and forth.
-        List<FairfaxFile> thumbnailPageFiles = processingParameters.sipProcessingState.thumbnailPageFiles.collect { File file ->
+        List<FairfaxFile> thumbnailPageFiles = processingParameters.sipProcessingState.thumbnailPageFiles.collect { Path file ->
             new FairfaxFile(file)
         }
         generateThumbnailPage(thumbnailPageFiles)
@@ -192,7 +194,7 @@ class FairfaxFilesProcessor {
             } else {
                 SipProcessingExceptionReason exceptionReason = new SipProcessingExceptionReason(
                         SipProcessingExceptionReasonType.INVALID_PAGE_FILENAME, null,
-                        fairfaxFile.file.getCanonicalPath())
+                        fairfaxFile.file.normalize().toString())
                 SipProcessingException sipProcessingException = SipProcessingException.createWithReason(exceptionReason)
                 processingParameters.sipProcessingState.addException(sipProcessingException)
                 log.warn(sipProcessingException.toString())
@@ -215,18 +217,18 @@ class FairfaxFilesProcessor {
             FairfaxFile firstVersion = processedFairfaxFiles.get(fairfaxFile)
             SipProcessingExceptionReason exceptionReason = new SipProcessingExceptionReason(
                     SipProcessingExceptionReasonType.DUPLICATE_FILE, null,
-                    firstVersion.file.getCanonicalPath(), fairfaxFile.file.getCanonicalPath())
+                    firstVersion.file.normalize().toString(), fairfaxFile.file.normalize().toString())
             sipProcessingState.addException(SipProcessingException.createWithReason(exceptionReason))
             includeFileInSip = false
         } else {
             processedFairfaxFiles.put(fairfaxFile, fairfaxFile)
-            if (fairfaxFile.file.length() == 0) {
+            if (Files.size(fairfaxFile.file) == 0) {
                 SipProcessingExceptionReason exceptionReason = new SipProcessingExceptionReason(
                         SipProcessingExceptionReasonType.FILE_OF_LENGTH_ZERO, null,
-                        fairfaxFile.file.getCanonicalPath())
+                        fairfaxFile.file.normalize().toString())
                 fairfaxFile.zeroLengthFile = true
                 if (processingParameters.rules.contains(ProcessingRule.ZeroLengthPdfReplacedWithPageUnavailablePdf)) {
-                    File replacementFile = PageUnavailableWriter.writeToToTemporaryDirectory(fairfaxFile.file.name)
+                    Path replacementFile = PageUnavailableWriter.writeToToTemporaryDirectory(fairfaxFile.file.fileName.toString())
                     fairfaxFile.originalFile = fairfaxFile.file
                     fairfaxFile.file = replacementFile
                 }
@@ -235,7 +237,7 @@ class FairfaxFilesProcessor {
                 // We use the Jhove validator as it is the same type used by Rosetta.
                 // There is also a PDF/A validator using the PdfValidatorType.PDF_BOX_VALIDATOR
                 PdfValidator pdfValidator = PdfValidatorFactory.getValidator(PdfValidatorType.JHOVE_VALIDATOR)
-                SipProcessingException sipProcessingException = pdfValidator.validatePdf(fairfaxFile.file.toPath())
+                SipProcessingException sipProcessingException = pdfValidator.validatePdf(fairfaxFile.file)
                 if (sipProcessingException != null) {
                     processingParameters.sipProcessingState.addException(sipProcessingException)
                 } else {
@@ -284,7 +286,7 @@ class FairfaxFilesProcessor {
             processingParameters.sipProcessingState.ieEntityType = sip.ieEntityType
             processingParameters.sipProcessingState.identifier = formatSipProcessingStateIdentifier()
 
-            List<File> filesForSip = sortedFairfaxFiles.collect() { FairfaxFile fairfaxFile ->
+            List<Path> filesForSip = sortedFairfaxFiles.collect() { FairfaxFile fairfaxFile ->
                 fairfaxFile.file
             }
             Sip testSip = sip.clone()
@@ -299,8 +301,8 @@ class FairfaxFilesProcessor {
         return sipAsXml
     }
 
-    String generateSipAsXml(Sip sip, List<File> files) {
-        List<Sip.FileWrapper> fileWrappers = files.collect() { File file ->
+    String generateSipAsXml(Sip sip, List<Path> files) {
+        List<Sip.FileWrapper> fileWrappers = files.collect() { Path file ->
             SipFileWrapperFactory.generate(file, true, true)
         }
         int sequenceNumber = 1
@@ -421,12 +423,12 @@ class FairfaxFilesProcessor {
                 boolean useCommandLine = processingParameters.options.contains(ProcessingOption.UseCommandLinePdfToThumbnailGeneration)
                 thumbnailParameters.generateWithPdftoppm = useCommandLine
 
-                List<File> pdfFiles = fairfaxPdfFiles.collect { FairfaxFile sortedFile ->
+                List<Path> pdfFiles = fairfaxPdfFiles.collect { FairfaxFile sortedFile ->
                     sortedFile.file
                 }
-                processingParameters.thumbnailPageFile = thumbnailPageFile
+                processingParameters.thumbnailPageFile = thumbnailPageFile.toPath()
                 log.info("Generating thumbnail page file=${thumbnailPageTitle} (created as temp file=${thumbnailPageFile.getCanonicalPath()})   ")
-                ThreadedThumbnailGenerator.writeThumbnailPage(pdfFiles, thumbnailParameters, thumbnailPageFile)
+                ThreadedThumbnailGenerator.writeThumbnailPage(pdfFiles, thumbnailParameters, thumbnailPageFile.toPath())
             }
         }
     }

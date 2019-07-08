@@ -3,6 +3,7 @@ package nz.govt.natlib.tools.sip.generation.fairfax.processor
 import groovy.util.logging.Log4j2
 import nz.govt.natlib.tools.sip.logging.Timekeeper
 
+import java.nio.file.Path
 import java.time.LocalDate
 
 @Log4j2
@@ -40,12 +41,12 @@ trait ProcessorConfiguration {
     LocalDate startingDate = DEFAULT_STARTING_DATE
     LocalDate endingDate = DEFAULT_ENDING_DATE
 
-    File sourceFolder
-    File targetFolder
-    File targetPreProcessingFolder
-    File targetForIngestionFolder
-    File targetPostProcessedFolder
-    File forReviewFolder
+    Path sourceFolder
+    Path targetFolder
+    Path targetPreProcessingFolder
+    Path targetForIngestionFolder
+    Path targetPostProcessedFolder
+    Path forReviewFolder
 
     String forIngestionProcessingTypes
     String forIngestionProcessingRules

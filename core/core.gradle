@@ -6,6 +6,7 @@ import nz.govt.natlib.m11n.tools.gradle.BuildException
 import nz.govt.natlib.m11n.tools.gradle.ProjectHelper
 
 import java.nio.charset.StandardCharsets
+import java.nio.file.Files
 
 buildscript {
     repositories {
@@ -138,23 +139,23 @@ task jarSources(type: Jar, dependsOn: classes) {
 }
 
 task updateDefaultFairfaxImportParameters() {
-    File spreadsheetImportFile
+    java.nio.file.Path spreadsheetImportFile
     if (project.doUpdateDefaultFairfaxImportParameters) {
         if (project.fairfaxSpreadsheetImportFilenameValue == null) {
             throw new BuildException("fairfaxSpreadsheetImportFilename=${project.fairfaxSpreadsheetImportFilenameValue} must be set when calling task 'updateDefaultFairfaxImportParameters'.".toString())
         } else {
-            spreadsheetImportFile = new File((String) project.fairfaxSpreadsheetImportFilenameValue)
+            spreadsheetImportFile = java.nio.file.Path.of((String) project.fairfaxSpreadsheetImportFilenameValue)
         }
-        if (!spreadsheetImportFile.exists()) {
-            throw new BuildException("File=${spreadsheetImportFile.getCanonicalPath()} must exist.".toString())
+        if (!Files.exists(spreadsheetImportFile)) {
+            throw new BuildException("File=${spreadsheetImportFile.normalize().toString()} must exist.".toString())
         }
-        if (!spreadsheetImportFile.isFile()) {
-            throw new BuildException("File=${spreadsheetImportFile.getCanonicalPath()} must be a file.".toString())
+        if (!Files.isRegularFile(spreadsheetImportFile)) {
+            throw new BuildException("File=${spreadsheetImportFile.normalize().toString()} must be a file.".toString())
         }
     }
     doLast {
-        File spreadsheetExportFile = new File(project.fairfaxSpreadsheetExportFilenameValue)
-        logger.info("Writing spreadsheet-import-file=${spreadsheetImportFile.getCanonicalPath()} to spreadsheet-export-file=${spreadsheetExportFile.getCanonicalPath()}")
+        java.nio.file.Path spreadsheetExportFile = java.nio.file.Path.of((String) project.fairfaxSpreadsheetExportFilenameValue)
+        logger.info("Writing spreadsheet-import-file=${spreadsheetImportFile.normalize().toString()} to spreadsheet-export-file=${spreadsheetExportFile.normalize().toString()}")
         boolean allowDuplicateIds = true
         boolean allowRowsWithoutIds = true
         // TODO Make the separator configurable
@@ -168,7 +169,6 @@ task updateDefaultFairfaxImportParameters() {
             }
             logger.info(line.toString())
         }
-        JsonBuilder jsonBuilder = new JsonBuilder()
 
         spreadsheetExportFile.withWriter(StandardCharsets.UTF_8.name()) { Writer writer ->
             writer.write(JsonOutput.prettyPrint(spreadsheet.asJsonString()))
@@ -178,23 +178,23 @@ task updateDefaultFairfaxImportParameters() {
 
 // Export the fairfax import parameters JSON as a CSV spreadsheet
 task exportDefaultFairfaxImportParameters() {
-    File spreadsheetImportFile
+    java.nio.file.Path spreadsheetImportFile
     if (project.doExportDefaultFairfaxImportParameters) {
         if (project.fairfaxSpreadsheetImportFilenameValue == null) {
             throw new BuildException("fairfaxSpreadsheetImportFilename=${project.fairfaxSpreadsheetImportFilenameValue} must be set when calling task 'exportDefaultFairfaxImportParameters'.".toString())
         } else {
-            spreadsheetImportFile = new File((String) project.fairfaxSpreadsheetImportFilenameValue)
+            spreadsheetImportFile = java.nio.file.Path.of((String) project.fairfaxSpreadsheetImportFilenameValue)
         }
-        if (!spreadsheetImportFile.exists()) {
-            throw new BuildException("File=${spreadsheetImportFile.getCanonicalPath()} must exist.".toString())
+        if (!Files.exists(spreadsheetImportFile)) {
+            throw new BuildException("File=${spreadsheetImportFile.normalize().toString()} must exist.".toString())
         }
-        if (!spreadsheetImportFile.isFile()) {
-            throw new BuildException("File=${spreadsheetImportFile.getCanonicalPath()} must be a file.".toString())
+        if (!Files.isRegularFile(spreadsheetImportFile)) {
+            throw new BuildException("File=${spreadsheetImportFile.normalize().toString()} must be a file.".toString())
         }
     }
     doLast {
-        File spreadsheetExportFile = new File(project.fairfaxSpreadsheetExportFilenameValue)
-        logger.info("Writing spreadsheet-import-file=${spreadsheetImportFile.getCanonicalPath()} to spreadsheet-export-file=${spreadsheetExportFile.getCanonicalPath()}")
+        java.nio.file.Path spreadsheetExportFile = java.nio.file.Path.of((String) project.fairfaxSpreadsheetExportFilenameValue)
+        logger.info("Writing spreadsheet-import-file=${spreadsheetImportFile.normalize().toString()} to spreadsheet-export-file=${spreadsheetExportFile.normalize().toString()}")
         boolean allowDuplicateIds = true
         boolean allowRowsWithoutIds = true
         // TODO Make the separator configurable

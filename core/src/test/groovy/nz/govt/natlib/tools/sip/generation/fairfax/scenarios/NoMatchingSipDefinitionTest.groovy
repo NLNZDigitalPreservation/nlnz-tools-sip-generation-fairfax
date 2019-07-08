@@ -69,7 +69,7 @@ class NoMatchingSipDefinitionTest {
         boolean isRegexNotGlob = true
         boolean matchFilenameOnly = true
         boolean sortFiles = true
-        List<File> filesForProcessing = TestHelper.getFilesForProcessingFromFileSystem(isRegexNotGlob, matchFilenameOnly,
+        List<Path> filesForProcessing = TestHelper.getFilesForProcessingFromFileSystem(isRegexNotGlob, matchFilenameOnly,
                 sortFiles, testMethodState.localPath, ".*?\\.[pP]{1}[dD]{1}[fF]{1}")
 
         processFiles(filesForProcessing)
@@ -84,17 +84,17 @@ class NoMatchingSipDefinitionTest {
         boolean isRegexNotGlob = true
         boolean matchFilenameOnly = true
         boolean sortFiles = true
-        List<File> filesForProcessing = TestHelper.getFilesForProcessingFromResource(isRegexNotGlob, matchFilenameOnly,
+        List<Path> filesForProcessing = TestHelper.getFilesForProcessingFromResource(isRegexNotGlob, matchFilenameOnly,
                 sortFiles, testMethodState.resourcePath, testMethodState.localPath, ".*?\\.[pP]{1}[dD]{1}[fF]{1}")
 
         processFiles(filesForProcessing)
     }
 
-    void processFiles(List<File> filesForProcessing) {
+    void processFiles(List<Path> filesForProcessing) {
         String dateString = "20181123"
         LocalDate processingDate = LocalDate.parse(dateString, FairfaxFile.LOCAL_DATE_TIME_FORMATTER)
 
-        File sourceFolder = new File(testMethodState.localPath)
+        Path sourceFolder = Path.of(testMethodState.localPath)
         List<FairfaxProcessingParameters> parametersList = FairfaxProcessingParameters.build("TST",
                 [ ProcessingType.ParentGrouping ], sourceFolder, processingDate, testMethodState.fairfaxSpreadsheet)
 
@@ -125,7 +125,7 @@ class NoMatchingSipDefinitionTest {
         assertThat("${expectedNumberOfIgnoredFiles} ignored files should have been processed",
                 testMethodState.sipProcessingState.ignoredFiles.size(), is(expectedNumberOfIgnoredFiles))
         assertThat("Ignored file is 'TSTPBX-20181123-001.pdf'",
-                testMethodState.sipProcessingState.ignoredFiles.first().getName(), is("TSTPBX-20181123-001.pdf"))
+                testMethodState.sipProcessingState.ignoredFiles.first().fileName.toString(), is("TSTPBX-20181123-001.pdf"))
 
         if (processingParameters.options.contains(ProcessingOption.GenerateProcessedPdfThumbnailsPage)) {
             assertNull("Thumbnail page DOES NOT exist, file=${processingParameters.thumbnailPageFile}",

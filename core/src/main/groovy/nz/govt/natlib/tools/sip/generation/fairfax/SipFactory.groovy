@@ -4,6 +4,8 @@ import nz.govt.natlib.tools.sip.IEEntityType
 import nz.govt.natlib.tools.sip.Sip
 import nz.govt.natlib.tools.sip.SipFileWrapperFactory
 
+import java.nio.file.Path
+
 /**
  * Generates a {@link Sip} based on the given parameters.
  */
@@ -48,7 +50,7 @@ class SipFactory {
         sip.digitalOriginal = DEFAULT_DIGITAL_ORIGINAL
 
         sip.fileWrappers = [ ]
-        files.each { File file ->
+        files.each { Path file ->
             Sip.FileWrapper fileWrapper = SipFileWrapperFactory.generate(file, useFilenameOnly, generateMD5Hash)
             sip.fileWrappers.add(fileWrapper)
         }

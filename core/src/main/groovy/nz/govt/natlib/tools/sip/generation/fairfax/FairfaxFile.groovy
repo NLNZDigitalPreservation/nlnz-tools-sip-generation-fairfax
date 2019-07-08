@@ -10,11 +10,12 @@ import nz.govt.natlib.tools.sip.SipFileWrapperFactory
 import nz.govt.natlib.tools.sip.generation.fairfax.parameters.ProcessingOption
 import nz.govt.natlib.tools.sip.generation.fairfax.parameters.ProcessingRule
 import nz.govt.natlib.tools.sip.pdf.PdfDimensionFinder
-import nz.govt.natlib.tools.sip.utils.FileUtils
+import nz.govt.natlib.tools.sip.utils.PathUtils
 import org.apache.commons.collections4.CollectionUtils
 
 import java.awt.Point
 import java.awt.geom.Point2D
+import java.nio.file.Path
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.regex.Matcher
@@ -40,9 +41,9 @@ class FairfaxFile {
     static final DateTimeFormatter LOCAL_DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyyMMdd")
     static final Point UNDIMENSIONED = new Point(-1, -1)
 
-    File file
+    Path file
     // This is for when the file gets replaced, such as when a zero-length pdf is replaced by another file.
-    File originalFile
+    Path originalFile
     String filename
     String titleCode
     String sectionCode
@@ -275,19 +276,19 @@ class FairfaxFile {
         return sorted
     }
 
-    static List<FairfaxFile> fromSourceFolder(File sourceFolder,
+    static List<FairfaxFile> fromSourceFolder(Path sourceFolder,
                                               String pattern = PDF_FILE_WITH_TITLE_SECTION_DATE_SEQUENCE_PATTERN) {
         boolean isRegexNotGlob = true
         boolean matchFilenameOnly = true
         boolean sortFiles = true
 
-        log.info("Processing for pattern=${pattern}, sourceFolder=${sourceFolder.getCanonicalPath()}")
+        log.info("Processing for pattern=${pattern}, sourceFolder=${sourceFolder.normalize()}")
 
         // Note that we only want the current directory and we don't want info messages
-        List<File> allFiles = FileUtils.findFiles(sourceFolder.getCanonicalPath(),
+        List<Path> allFiles = PathUtils.findFiles(sourceFolder.normalize().toString(),
                 isRegexNotGlob, matchFilenameOnly, sortFiles, pattern, null, false, true)
         List<FairfaxFile> onlyFairfaxFiles = [ ]
-        allFiles.each { File file ->
+        allFiles.each { Path file ->
             FairfaxFile fairfaxFile = new FairfaxFile(file)
             // TODO We have no checks here for FairfaxFile validity -- the pattern supposedly selects only validly named ones.
             onlyFairfaxFiles.add(fairfaxFile)
@@ -305,11 +306,11 @@ class FairfaxFile {
 
     static List<String> asFilenames(List<FairfaxFile> files) {
         return files.collect { FairfaxFile fairfaxFile ->
-            fairfaxFile.file.getName()
+            fairfaxFile.file.fileName.toString()
         }
     }
 
-    FairfaxFile(File file) {
+    FairfaxFile(Path file) {
         this.file = file
         populate()
     }
@@ -319,7 +320,7 @@ class FairfaxFile {
     }
 
     private populate() {
-        this.filename = file.getName()
+        this.filename = file.fileName.toString()
         // TODO Maybe the pattern comes from a resource or properties file?
         Matcher matcher = filename =~ /${PDF_FILE_WITH_TITLE_SECTION_DATE_SEQUENCE_GROUPING_PATTERN}/
         if (matcher.matches()) {
@@ -415,7 +416,7 @@ class FairfaxFile {
         Point2D.Double ratio = PdfDimensionFinder.getDimensionalRatio(this.dimensionsInPoints, otherFile.dimensionsInPoints)
         boolean isSameHeightDoubleWidth = PdfDimensionFinder.isSameHeightDoubleWidth(ratio, 0.1)
         if (!isSameHeightDoubleWidth) {
-            log.info("Not same height/double width dimensions1=${this.dimensionsInPoints}, dimensions2=${otherFile.dimensionsInPoints} file1=${this.file.canonicalPath}, file2=${otherFile.file.canonicalPath}")
+            log.info("Not same height/double width dimensions1=${this.dimensionsInPoints}, dimensions2=${otherFile.dimensionsInPoints} file1=${this.file.normalize()}, file2=${otherFile.file.normalize()}")
         }
         return isSameHeightDoubleWidth
     }
@@ -427,12 +428,12 @@ class FairfaxFile {
         Point2D.Double ratio = PdfDimensionFinder.getDimensionalRatio(this.dimensionsInPoints, otherFile.dimensionsInPoints)
         boolean isSameHeightHalfWidth = PdfDimensionFinder.isSameHeightHalfWidth(ratio, 0.1)
         if (!isSameHeightHalfWidth) {
-            log.info("Not same height/half width dimensions1=${this.dimensionsInPoints}, dimensions2=${otherFile.dimensionsInPoints} file1=${this.file.canonicalPath}, file2=${otherFile.file.canonicalPath}")
+            log.info("Not same height/half width dimensions1=${this.dimensionsInPoints}, dimensions2=${otherFile.dimensionsInPoints} file1=${this.file.normalize()}, file2=${otherFile.file.normalize()}")
         }
         return isSameHeightHalfWidth
     }
 
-    File getOriginalFileOrFile() {
+    Path getOriginalFileOrFile() {
         return originalFile == null ? file : originalFile
     }
 
