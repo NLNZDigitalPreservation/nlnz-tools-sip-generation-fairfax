@@ -244,19 +244,19 @@ class MultipleSupplementGroupingTest {
                 "PRESERVATION_MASTER", "VIEW", true, 1)
 
         TestHelper.assertExpectedSipFileValues(sipForValidation, 1, "TSTSUP-20181123-001.pdf", "TSTSUP-20181123-001.pdf",
-                739L, "MD5", "b5808604069f9f61d94e0660409616ba", "0001", "application/pdf")
+                636L, "MD5", "7273a4d61a8dab92be4393e2923ad2d2", "0001", "application/pdf")
 
         TestHelper.assertExpectedSipFileValues(sipForValidation, 2, "TSTSUP-20181123-002.pdf", "TSTSUP-20181123-002.pdf",
-                739L, "MD5", "b5808604069f9f61d94e0660409616ba", "0002", "application/pdf")
+                636L, "MD5", "7273a4d61a8dab92be4393e2923ad2d2", "0002", "application/pdf")
 
         TestHelper.assertExpectedSipFileValues(sipForValidation, 3, "TSTSUP-20181123-003.pdf", "TSTSUP-20181123-003.pdf",
-                739L, "MD5", "b5808604069f9f61d94e0660409616ba", "0003", "application/pdf")
+                636L, "MD5", "7273a4d61a8dab92be4393e2923ad2d2", "0003", "application/pdf")
 
         TestHelper.assertExpectedSipFileValues(sipForValidation, 4, "TSTBEE-20181123-001.pdf", "TSTBEE-20181123-001.pdf",
-                739L, "MD5", "b5808604069f9f61d94e0660409616ba", "0004", "application/pdf")
+                636L, "MD5", "7273a4d61a8dab92be4393e2923ad2d2", "0004", "application/pdf")
 
         TestHelper.assertExpectedSipFileValues(sipForValidation, 5, "TSTBEE-20181123-002.pdf", "TSTBEE-20181123-002.pdf",
-                739L, "MD5", "b5808604069f9f61d94e0660409616ba", "0005", "application/pdf")
+                636L, "MD5", "7273a4d61a8dab92be4393e2923ad2d2", "0005", "application/pdf")
     }
 
     void sipConstructedCorrectlySUP(String sipXml) {
@@ -272,13 +272,13 @@ class MultipleSupplementGroupingTest {
                 "PRESERVATION_MASTER", "VIEW", true, 1)
 
         TestHelper.assertExpectedSipFileValues(sipForValidation, 1, "TSTSUP-20181123-001.pdf", "TSTSUP-20181123-001.pdf",
-                739L, "MD5", "b5808604069f9f61d94e0660409616ba", "0001", "application/pdf")
+                636L, "MD5", "7273a4d61a8dab92be4393e2923ad2d2", "0001", "application/pdf")
 
         TestHelper.assertExpectedSipFileValues(sipForValidation, 2, "TSTSUP-20181123-002.pdf", "TSTSUP-20181123-002.pdf",
-                739L, "MD5", "b5808604069f9f61d94e0660409616ba", "0002", "application/pdf")
+                636L, "MD5", "7273a4d61a8dab92be4393e2923ad2d2", "0002", "application/pdf")
 
         TestHelper.assertExpectedSipFileValues(sipForValidation, 3, "TSTSUP-20181123-003.pdf", "TSTSUP-20181123-003.pdf",
-                739L, "MD5", "b5808604069f9f61d94e0660409616ba", "0003", "application/pdf")
+                636L, "MD5", "7273a4d61a8dab92be4393e2923ad2d2", "0003", "application/pdf")
     }
 
 }

@@ -169,34 +169,34 @@ class InvalidPdfTest {
                 "PRESERVATION_MASTER", "VIEW", true, 1)
 
         TestHelper.assertExpectedSipFileValues(sipForValidation, 1, "TSTPB1-20181123-001.pdf", "TSTPB1-20181123-001.pdf",
-                11438L, "MD5", "b8b673eeaa076ff19501318a27f85e9c", "0001", "application/pdf")
+                636L, "MD5", "7273a4d61a8dab92be4393e2923ad2d2", "0001", "application/pdf")
 
         TestHelper.assertExpectedSipFileValues(sipForValidation, 2, "TSTPB1-20181123-002.pdf", "TSTPB1-20181123-002.pdf",
-                11437L, "MD5", "df39cff17991188d9994ff94bddf3985", "0002", "application/pdf")
+                636L, "MD5", "7273a4d61a8dab92be4393e2923ad2d2", "0002", "application/pdf")
 
         TestHelper.assertExpectedSipFileValues(sipForValidation, 3, "TSTPB1-20181123-003.pdf", "TSTPB1-20181123-003.pdf",
                 636L, "MD5", "01b66094b1e9e942269c7c816e912672", "0003", "application/pdf")
 
         TestHelper.assertExpectedSipFileValues(sipForValidation, 4, "TSTPB1-20181123-004.pdf", "TSTPB1-20181123-004.pdf",
-                11554L, "MD5", "857326c06870577255acd4b21e1a64d7", "0004", "application/pdf")
+                636L, "MD5", "7273a4d61a8dab92be4393e2923ad2d2", "0004", "application/pdf")
 
         TestHelper.assertExpectedSipFileValues(sipForValidation, 5, "TSTPB1-20181123-005.pdf", "TSTPB1-20181123-005.pdf",
-                11605L, "MD5", "02e254147945f60a6a2be1c35ae0689e", "0005", "application/pdf")
+                636L, "MD5", "7273a4d61a8dab92be4393e2923ad2d2", "0005", "application/pdf")
 
         TestHelper.assertExpectedSipFileValues(sipForValidation, 6, "TSTPB1-20181123-006.pdf", "TSTPB1-20181123-006.pdf",
                 634L, "MD5", "edaeadde4a4800425e1d392451f17467", "0006", "application/pdf")
 
         TestHelper.assertExpectedSipFileValues(sipForValidation, 7, "TSTPB1-20181123-007.pdf", "TSTPB1-20181123-007.pdf",
-                11543L, "MD5", "a7ceb9001aab17e78cfaf1559f130071", "0007", "application/pdf")
+                636L, "MD5", "7273a4d61a8dab92be4393e2923ad2d2", "0007", "application/pdf")
 
         TestHelper.assertExpectedSipFileValues(sipForValidation, 8, "TSTPB1-20181123-008.pdf", "TSTPB1-20181123-008.pdf",
-                11436L, "MD5", "449dc86bd38979d10c8fb6c3b375a467", "0008", "application/pdf")
+                636L, "MD5", "7273a4d61a8dab92be4393e2923ad2d2", "0008", "application/pdf")
 
         TestHelper.assertExpectedSipFileValues(sipForValidation, 9, "TSTPB1-20181123-009.pdf", "TSTPB1-20181123-009.pdf",
                 634L, "MD5", "3a6b097736755399bfa9dccb9fef2323", "0009", "application/pdf")
 
         TestHelper.assertExpectedSipFileValues(sipForValidation, 10, "TSTPB1-20181123-010.pdf", "TSTPB1-20181123-010.pdf",
-                11440L, "MD5", "f621c3081711e895d8fa3d2dd5e49ffa", "0010", "application/pdf")
+                636L, "MD5", "7273a4d61a8dab92be4393e2923ad2d2", "0010", "application/pdf")
     }
 
 }
