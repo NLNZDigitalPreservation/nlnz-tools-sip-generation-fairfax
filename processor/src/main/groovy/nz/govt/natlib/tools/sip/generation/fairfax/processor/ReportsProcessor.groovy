@@ -56,6 +56,24 @@ class ReportsProcessor {
                         recognizedTitleCodes.add(fairfaxFile.titleCode)
                         log.info("listFiles adding recognizedTitleCode=${fairfaxFile.titleCode}")
                     }
+                } else if (fairfaxFile.titleCode.matches("^FP[DPW]")) {
+                    parentTitleCode = ""
+                    log.info("listFiles found Forever Project publication=${fairfaxFile.titleCode}")
+                    switch(targetFile.titleCode) {
+                        case "FPD":
+                            parentTitleCode = "DOM"
+                            break
+                        case "FPP":
+                            parentTitleCode = "PRS"
+                            break
+                        case "FPW":
+                            parentTitleCode = "WAT"
+                            break
+                    }
+                    if (!recognizedTitleCodes.contains(parentTitleCode)) {
+                        recognizedTitleCodes.add(parentTitleCode)
+                        log.info("listFiles adding recognizedTitleCode=${parentTitleCode} for pulbication ${fairfaxFile.titleCode}")
+                    }
                 } else {
                     if (!unrecognizedTitleCodes.contains(fairfaxFile.titleCode)) {
                         unrecognizedTitleCodes.add(fairfaxFile.titleCode)

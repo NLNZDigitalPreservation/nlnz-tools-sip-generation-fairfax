@@ -10,6 +10,7 @@ import nz.govt.natlib.tools.sip.utils.PathUtils
 
 import java.nio.file.Files
 import java.nio.file.Path
+import java.nio.file.Paths
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.concurrent.ConcurrentHashMap
@@ -82,6 +83,39 @@ class PreProcessProcessor {
         }
     }
 
+    // Copy missing Forever Project files for other publications
+    void copyForeverProjectFile(List<String> fpTitles, List<String> folders, FairfaxFile targetFile, String folderPath) {
+        String targetTitle = targetFile.titleCode
+        for (String title : fpTitles) {
+            // Check if the file has already been processed for other publications
+            for (String folder : folders) {
+                if (Files.exists(Paths.get(folderPath.substring(folderPath.lastIndexOf("/")) + folder +
+                        targetFile.getFilename().replace(targetTitle, "FP" + folder[1])))) {
+                    log.info("copyOrMoveFileToPreProcessingDestination ${targetFile.getFilename()} already copied and processed")
+                    continue
+                }
+                // Check if an FP file for other publications already exists in the source directory
+                Path copyPath = Paths.get(targetFile.getFile().getParent().toString() + "/" +
+                        targetFile.getFilename().replace(targetTitle, title))
+                if (Files.exists(copyPath)) {
+                    log.info("copyOrMoveFileToPreProcessingDestination Forever project file ${copyPath.toString()} exists")
+                    continue
+                }
+                // Copy the file for other publications to destination folder
+                Path destinationPath = Paths.get(folderPath.substring(0,folderPath.lastIndexOf("/")) + folder +
+                        targetFile.getFilename().replace(targetTitle, "FP" + folder[1]))
+                if (Files.notExists(destinationPath.getParent())) {
+                    makeDirs(destinationPath.getParent())
+                }
+                if (Files.notExists(destinationPath)) {
+                    log.info("copyOrMoveFileToPreProcessingDestination Copying Forever Project file from ${targetFile.getFilename()} to " +
+                            "${destinationPath.toString()} for use in ${folder.substring(1,-1)}")
+                    Files.copy(targetFile.file, destinationPath)
+                }
+            }
+        }
+    }
+
     boolean copyOrMoveFileToPreProcessingDestination(Path destinationFolder, Path forReviewFolder, FairfaxFile targetFile,
                                                   String dateFolderName, boolean moveFile) {
         String titleCodeFolderName = targetFile.titleCode
@@ -97,6 +131,38 @@ class PreProcessProcessor {
                 log.info("copyOrMoveFileToPreProcessingDestination adding titleCode=${targetFile.titleCode}")
             }
             folderPath = "${destinationFolder.normalize().toString()}${File.separator}${dateFolderName}${File.separator}${titleCodeFolderName}"
+        // Look for Forever Project and add to DOM, PRS, or WAT
+        } else if (targetFile.titleCode.matches("^FP[DPW]")) {
+            GeneralUtils.printAndFlush("\n")
+            log.info("copyOrMoveFileToPreProcessingDestination found Forever Project publication=${targetFile.titleCode}")
+            List<String> fpDirs = []
+            List<String> pubDirs = []
+            switch(targetFile.titleCode) {
+                case "FPD":
+                    titleCodeFolderName = "DOM"
+                    fpDirs = ["FPP", "FPW"]
+                    pubDirs = ["/PRS/","/WAT/"]
+                    break
+                case "FPP":
+                    titleCodeFolderName = "PRS"
+                    fpDirs = ["FPD", "FPW"]
+                    pubDirs = ["/DOM/","/WAT/"]
+                    break
+                case "FPW":
+                    titleCodeFolderName = "WAT"
+                    fpDirs = ["FPD", "FPP"]
+                    pubDirs = ["/DOM/","/PRS/"]
+                    break
+            }
+            log.info("copyOrMoveFileToPreProcessingDestination adding ${targetFile.file.fileName} to ${titleCodeFolderName}")
+            if (!recognizedTitleCodes.contains(titleCodeFolderName)) {
+                recognizedTitleCodes.add(titleCodeFolderName)
+                GeneralUtils.printAndFlush("\n")
+                log.info("copyOrMoveFileToPreProcessingDestination adding titleCode=${titleCodeFolderName}")
+            }
+            folderPath = "${destinationFolder.normalize().toString()}${File.separator}${dateFolderName}${File.separator}${titleCodeFolderName}"
+            copyForeverProjectFile(fpDirs, pubDirs, targetFile, folderPath)
+
         } else {
             // There is no entry in the spreadsheet for this titleCode
             // Goes to 'UNKNOWN-TITLE-CODE/<date>/<file>'
@@ -107,8 +173,12 @@ class PreProcessProcessor {
             }
             folderPath = "${forReviewFolder.normalize().toString()}${File.separator}UNKNOWN-TITLE-CODE${File.separator}${dateFolderName}"
         }
+
         Path destination = Path.of(folderPath)
-        makeDirs(destination)
+
+        if (Files.notExists(destination)) {
+            makeDirs(destination)
+        }
 
         Path destinationFile = destination.resolve(targetFile.file.fileName)
         addInProcessDestinationFile(destinationFile)
