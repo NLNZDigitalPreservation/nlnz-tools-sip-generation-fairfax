@@ -116,6 +116,31 @@ class FairfaxFilesProcessor {
                     break
             }
 
+            // Determine if fairfaxFiles contains any files that starts with FP
+            // If so, process the files as a single collection with FP files at the end
+            boolean isFP = false
+            for (FairfaxFile file : sortedFilesForProcessing) {
+                if (file.getTitleCode().startsWith("FP")) {
+                    isFP = true
+                    break
+                }
+            }
+            if (isFP) {
+                List<FairfaxFile> fpFiles = []
+                List<FairfaxFile> sortedFiles = []
+                for (FairfaxFile fairfaxFile : sortedFilesForProcessing) {
+                    if (fairfaxFile.getTitleCode().startsWith("FP")) {
+                        fpFiles.add(fairfaxFile)
+                    } else {
+                        sortedFiles.add(fairfaxFile)
+                    }
+                }
+                for (FairfaxFile ff : fpFiles) {
+                    sortedFiles.add(ff)
+                }
+                sortedFilesForProcessing = sortedFiles
+            }
+
             if (processingParameters.skip) {
                 log.info("Skipping processing for processingParameters=${processingParameters}")
             } else {
