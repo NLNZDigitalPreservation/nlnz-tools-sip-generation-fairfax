@@ -109,7 +109,7 @@ class PreProcessProcessor {
                 }
                 if (Files.notExists(destinationPath)) {
                     log.info("copyOrMoveFileToPreProcessingDestination Copying Forever Project file from ${targetFile.getFilename()} to " +
-                            "${destinationPath.toString()} for use in ${folder.substring(1,-1)}")
+                            "${destinationPath.toString()} for use in ${folder.substring(1, folder.length() - 1)}")
                     Files.copy(targetFile.file, destinationPath)
                 }
             }
