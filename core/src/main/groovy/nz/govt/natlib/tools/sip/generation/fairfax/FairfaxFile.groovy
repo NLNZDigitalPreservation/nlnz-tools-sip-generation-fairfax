@@ -177,8 +177,11 @@ class FairfaxFile {
         List<String> otherSectionCodes = allSectionCodes.findAll { String sectionCode ->
             sectionCode != sourceSectionCode && sectionCode != replacementSectionCode
         }
+        // Do not substitute Forever Project files unless the file has a substitute
         possibleFiles.each { FairfaxFile fairfaxFile ->
-            if (!otherSectionCodes.contains(fairfaxFile.sectionCode)) {
+            if (fairfaxFile.filename.startsWith("FP") && fairfaxFile.sectionCode == replacementSectionCode) {
+                substituted.add(fairfaxFile)
+            } else if (!otherSectionCodes.contains(fairfaxFile.sectionCode) ) {
                 FairfaxFile replacementFile = substituteFor(sourceSectionCode, replacementSectionCode, fairfaxFile,
                         possibleFiles)
                 if (replacementFile != null) {
