@@ -132,26 +132,57 @@ class PreProcessProcessor {
             }
             folderPath = "${destinationFolder.normalize().toString()}${File.separator}${dateFolderName}${File.separator}${titleCodeFolderName}"
         // Look for Forever Project and add to DOM, PRS, or WAT
-        } else if (targetFile.titleCode.matches("^FP[DPW]")) {
+        } else if (targetFile.titleCode.matches("^FP[DPWS]")) {
             GeneralUtils.printAndFlush("\n")
             log.info("copyOrMoveFileToPreProcessingDestination found Forever Project publication=${targetFile.titleCode}")
-            List<String> fpDirs = []
+            List<String> fpTitleCodes = []
             List<String> pubDirs = []
             switch(targetFile.titleCode) {
                 case "FPD":
                     titleCodeFolderName = "DOM"
-                    fpDirs = ["FPP", "FPW"]
-                    pubDirs = ["/PRS/","/WAT/"]
+                    fpTitleCodes = ["FPP", "FPW"]
+                    pubDirs = ["${File.separator}PRS${File.separator}","${File.separator}WAT${File.separator}"]
+//                    // The Sunday Star Times will sometimes contain FP files as well.
+//                    // Copy to Sunday Star Times
+//                    if (targetFile.getDate().dayOfWeek == DayOfWeek.SUNDAY) {
+//                        fpTitleCodes.add("FPS")
+//                        pubDirs.add("${File.separator}SUS${File.separator}")
+//                    }
+//                    if (targetFile.getDate().dayOfWeek != DayOfWeek.SUNDAY)
+//                    break
+//                    // Check the source and ingestion destination directories for FP files
+//                    // Filter files based on filename
+//                    List<Path> pathsToCheck = [Paths.get(destinationFolder.getParent().normalize().toString() + File.separator + dateFolderName + File.separator + "SUS"),
+//                        getProcessorConfiguration().sourceFolder.normalize()]
+//                    for (Path path : pathsToCheck) {
+//                        if (path.toFile().listFiles({ dir, name -> name.startsWith("FPS") && name.toLowerCase().endsWith(".pdf") }).length() > 0) {
+//                           fpTitleCodes.add("FPS")
+//                           pubDirs.add("${File.separator}SUS${File.separator}")
+//                           break
+//                        }
+//                     }
+//                    if (fpTitleCodes.contains("FPS")) break
+
+//                    // Check the review directories for FP files
+//                    File susDir = FileUtils.listFiles(forReviewFolder, new RegexFileFilter("^${dateFolderName}_SUS"), DirectoryFileFilter.DIRECTORY)[0]
+//                    if (susDir != null && susDir.listFiles({ dir, name -> name.startsWith("FPS" && name.toLowerCase().endsWith(".pdf"))}).length > 0) {
+//                            fpTitleCodes.add("FPS")
+//                            pubDirs.add("${File.separator}SUS${File.separator}")
+//                        }
+//                    }
                     break
                 case "FPP":
                     titleCodeFolderName = "PRS"
-                    fpDirs = ["FPD", "FPW"]
-                    pubDirs = ["/DOM/","/WAT/"]
+                    //fpDirs = ["FPD", "FPW"]
+                    //pubDirs = ["/DOM/","/WAT/"]
                     break
                 case "FPW":
                     titleCodeFolderName = "WAT"
-                    fpDirs = ["FPD", "FPP"]
-                    pubDirs = ["/DOM/","/PRS/"]
+                    //fpDirs = ["FPD", "FPP"]
+                    //pubDirs = ["/DOM/","/PRS/"]
+                    break
+                case "FPS":
+                    titleCodeFolderName = "SUS"
                     break
             }
             log.info("copyOrMoveFileToPreProcessingDestination adding ${targetFile.file.fileName} to ${titleCodeFolderName}")
@@ -161,7 +192,7 @@ class PreProcessProcessor {
                 log.info("copyOrMoveFileToPreProcessingDestination adding titleCode=${titleCodeFolderName}")
             }
             folderPath = "${destinationFolder.normalize().toString()}${File.separator}${dateFolderName}${File.separator}${titleCodeFolderName}"
-            copyForeverProjectFile(fpDirs, pubDirs, targetFile, folderPath)
+            copyForeverProjectFile(fpTitleCodes, pubDirs, targetFile, folderPath)
 
         } else {
             // There is no entry in the spreadsheet for this titleCode
