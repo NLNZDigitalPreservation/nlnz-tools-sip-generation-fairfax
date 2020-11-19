@@ -15,6 +15,7 @@
             "title_code",
             "edition_discriminators",
             "section_codes",
+            "sequence_letters",
             "Access",
             "Magazine",
             "ingest_status",
@@ -55,6 +56,7 @@
             "title_code": "AGT",
             "edition_discriminators": "",
             "section_codes": "ED1+QFS",
+            "sequence_letters": "",
             "Access": "200",
             "Magazine": "1",
             "ingest_status": "STA",
@@ -86,6 +88,47 @@
     },
     {
         "row-0002": {
+            "MMSID": "9917982813502836",
+            "title_parent": "Ag Trader",
+            "processing_type": "supplement_grouping",
+            "processing_rules": "",
+            "processing_options": "alpha_before_numeric",
+            "publication_key": "",
+            "title_code": "AGT",
+            "edition_discriminators": "",
+            "section_codes": "SHP+SPC",
+            "sequence_letters": "",
+            "Access": "200",
+            "Magazine": "1",
+            "ingest_status": "TEC",
+            "Frequency": "Annual",
+            "entity_type": "SS",
+            "title_mets": "Shop",
+            "ISSN online": "",
+            "Bib ID": "1798281",
+            "Access condition": "100-P",
+            "Date catalogued": "30/06/2016",
+            "Collector_folder": "Ag_Trader",
+            "Cataloguer": "Denise",
+            "Notes": "Serial supplement with different editions",
+            "first_issue_starting_page": "",
+            "last_issue_starting_page": "",
+            "has_volume_md": "0",
+            "has_issue_md": "0",
+            "has_number_md": "0",
+            "previous_volume": "",
+            "previous_volume_date": "",
+            "previous_volume_frequency": "",
+            "previous_issue": "",
+            "previous_issue_date": "",
+            "previous_issue_frequency": "",
+            "previous_number": "",
+            "previous_number_date": "",
+            "previous_number_frequency": ""
+        }
+    },
+    {
+        "row-0003": {
             "MMSID": "9917952983502836",
             "title_parent": "The Bay Chronicle",
             "processing_type": "parent_grouping",
@@ -95,6 +138,7 @@
             "title_code": "BAC",
             "edition_discriminators": "",
             "section_codes": "ED1",
+            "sequence_letters": "",
             "Access": "200",
             "Magazine": "0",
             "ingest_status": "STA",
@@ -125,7 +169,7 @@
         }
     },
     {
-        "row-0003": {
+        "row-0004": {
             "MMSID": "9917979753502836",
             "title_parent": "Cambridge Edition",
             "processing_type": "parent_grouping",
@@ -135,6 +179,7 @@
             "title_code": "CAE",
             "edition_discriminators": "",
             "section_codes": "ED1+QFS",
+            "sequence_letters": "",
             "Access": "200",
             "Magazine": "0",
             "ingest_status": "STA",
@@ -165,7 +210,7 @@
         }
     },
     {
-        "row-0004": {
+        "row-0005": {
             "MMSID": "9917960423502836",
             "title_parent": "Central Leader",
             "processing_type": "parent_grouping",
@@ -175,6 +220,7 @@
             "title_code": "CEL",
             "edition_discriminators": "",
             "section_codes": "ED1",
+            "sequence_letters": "",
             "Access": "200",
             "Magazine": "0",
             "ingest_status": "STA",
@@ -205,7 +251,7 @@
         }
     },
     {
-        "row-0005": {
+        "row-0006": {
             "MMSID": "9915205583502836",
             "title_parent": "The Press",
             "processing_type": "parent_grouping",
@@ -215,6 +261,7 @@
             "title_code": "CHP",
             "edition_discriminators": "ED1+ED2+ED3",
             "section_codes": "ED1+TAB+YWE+QFS",
+            "sequence_letters": "",
             "Access": "200",
             "Magazine": "0",
             "ingest_status": "STC",
@@ -245,16 +292,17 @@
         }
     },
     {
-        "row-0006": {
+        "row-0007": {
             "MMSID": "9917905293502836",
             "title_parent": "The Press",
             "processing_type": "supplement_grouping",
             "processing_rules": "",
             "processing_options": "alpha_before_numeric",
             "publication_key": "",
-            "title_code": "CHP",
+            "title_code": "PRS",
             "edition_discriminators": "",
             "section_codes": "ED1",
+            "sequence_letters": "E",
             "Access": "200",
             "Magazine": "0",
             "ingest_status": "SUP",
@@ -285,16 +333,17 @@
         }
     },
     {
-        "row-0007": {
+        "row-0008": {
             "MMSID": "9917905663502836",
             "title_parent": "The Press",
             "processing_type": "supplement_grouping",
             "processing_rules": "",
             "processing_options": "alpha_before_numeric",
             "publication_key": "",
-            "title_code": "CHP",
+            "title_code": "PRS",
             "edition_discriminators": "",
             "section_codes": "ED1",
+            "sequence_letters": "T",
             "Access": "200",
             "Magazine": "0",
             "ingest_status": "SUP",
@@ -325,16 +374,17 @@
         }
     },
     {
-        "row-0008": {
+        "row-0009": {
             "MMSID": "9917905773502836",
             "title_parent": "The Press",
             "processing_type": "supplement_grouping",
             "processing_rules": "",
             "processing_options": "alpha_before_numeric",
             "publication_key": "",
-            "title_code": "CHP",
+            "title_code": "PRS",
             "edition_discriminators": "",
             "section_codes": "ED1",
+            "sequence_letters": "L",
             "Access": "200",
             "Magazine": "0",
             "ingest_status": "SUP",
@@ -365,7 +415,7 @@
         }
     },
     {
-        "row-0009": {
+        "row-0010": {
             "MMSID": "9917906003502836",
             "title_parent": "The Press",
             "processing_type": "supplement_grouping",
@@ -375,6 +425,7 @@
             "title_code": "CHP",
             "edition_discriminators": "",
             "section_codes": "YWE",
+            "sequence_letters": "",
             "Access": "200",
             "Magazine": "0",
             "ingest_status": "SUP",
@@ -405,7 +456,7 @@
         }
     },
     {
-        "row-0010": {
+        "row-0011": {
             "MMSID": "9917906103502836",
             "title_parent": "The Press",
             "processing_type": "supplement_grouping",
@@ -415,6 +466,7 @@
             "title_code": "CHP",
             "edition_discriminators": "",
             "section_codes": "TAB",
+            "sequence_letters": "",
             "Access": "200",
             "Magazine": "0",
             "ingest_status": "SUP",
@@ -445,7 +497,7 @@
         }
     },
     {
-        "row-0011": {
+        "row-0012": {
             "MMSID": "9918150268002836",
             "title_parent": "Country Living",
             "processing_type": "parent_grouping",
@@ -455,6 +507,7 @@
             "title_code": "CL4",
             "edition_discriminators": "",
             "section_codes": "ED1",
+            "sequence_letters": "",
             "Access": "200",
             "Magazine": "1",
             "ingest_status": "STA",
@@ -485,7 +538,7 @@
         }
     },
     {
-        "row-0012": {
+        "row-0013": {
             "MMSID": "9914702963502836",
             "title_parent": "Clutha Leader",
             "processing_type": "parent_grouping",
@@ -495,6 +548,7 @@
             "title_code": "CLL",
             "edition_discriminators": "",
             "section_codes": "ED1",
+            "sequence_letters": "",
             "Access": "200",
             "Magazine": "0",
             "ingest_status": "STA",
@@ -525,7 +579,7 @@
         }
     },
     {
-        "row-0013": {
+        "row-0014": {
             "MMSID": "9918148153202836",
             "title_parent": "The Dominion Post",
             "processing_type": "supplement_grouping",
@@ -535,6 +589,7 @@
             "title_code": "DOM",
             "edition_discriminators": "",
             "section_codes": "TAB",
+            "sequence_letters": "",
             "Access": "200",
             "Magazine": "0",
             "ingest_status": "TEC",
@@ -565,7 +620,7 @@
         }
     },
     {
-        "row-0014": {
+        "row-0015": {
             "MMSID": "9917963903502836",
             "title_parent": "The Dominion Post",
             "processing_type": "supplement_grouping",
@@ -575,6 +630,7 @@
             "title_code": "DOM",
             "edition_discriminators": "",
             "section_codes": "YWE",
+            "sequence_letters": "",
             "Access": "200",
             "Magazine": "0",
             "ingest_status": "SUP",
@@ -605,7 +661,7 @@
         }
     },
     {
-        "row-0015": {
+        "row-0016": {
             "MMSID": "9917963133502836",
             "title_parent": "The Dominion Post",
             "processing_type": "parent_grouping",
@@ -615,6 +671,7 @@
             "title_code": "DOM",
             "edition_discriminators": "ED1+ED2+ED3",
             "section_codes": "ED1+TAB+YWE+QFS",
+            "sequence_letters": "",
             "Access": "200",
             "Magazine": "0",
             "ingest_status": "TEC",
@@ -645,7 +702,7 @@
         }
     },
     {
-        "row-0016": {
+        "row-0017": {
             "MMSID": "9917963483502836",
             "title_parent": "The Dominion Post",
             "processing_type": "supplement_grouping",
@@ -655,6 +712,7 @@
             "title_code": "DPT",
             "edition_discriminators": "",
             "section_codes": "ED1",
+            "sequence_letters": "L",
             "Access": "200",
             "Magazine": "0",
             "ingest_status": "SUP",
@@ -685,7 +743,7 @@
         }
     },
     {
-        "row-0017": {
+        "row-0018": {
             "MMSID": "9917963903502836",
             "title_parent": "The Dominion Post",
             "processing_type": "supplement_grouping",
@@ -695,6 +753,7 @@
             "title_code": "DPT",
             "edition_discriminators": "",
             "section_codes": "YWE",
+            "sequence_letters": "",
             "Access": "200",
             "Magazine": "0",
             "ingest_status": "SUP",
@@ -725,16 +784,17 @@
         }
     },
     {
-        "row-0018": {
+        "row-0019": {
             "MMSID": "9917964493502836",
             "title_parent": "The Dominion Post",
             "processing_type": "supplement_grouping",
             "processing_rules": "",
             "processing_options": "alpha_before_numeric",
             "publication_key": "",
-            "title_code": "DPT",
+            "title_code": "DOM",
             "edition_discriminators": "",
             "section_codes": "ED1",
+            "sequence_letters": "T",
             "Access": "200",
             "Magazine": "0",
             "ingest_status": "SUP",
@@ -765,7 +825,7 @@
         }
     },
     {
-        "row-0019": {
+        "row-0020": {
             "MMSID": "9917963133502836",
             "title_parent": "The Dominion Post",
             "processing_type": "parent_grouping",
@@ -775,6 +835,7 @@
             "title_code": "DPT",
             "edition_discriminators": "ED1+ED2+ED3",
             "section_codes": "ED1+TAB+YWE+SPC+SPE",
+            "sequence_letters": "",
             "Access": "200",
             "Magazine": "0",
             "ingest_status": "TEC",
@@ -805,7 +866,7 @@
         }
     },
     {
-        "row-0020": {
+        "row-0021": {
             "MMSID": "9917930793502836",
             "title_parent": "East & Bays Courier",
             "processing_type": "parent_grouping",
@@ -815,6 +876,7 @@
             "title_code": "EAB",
             "edition_discriminators": "",
             "section_codes": "ED1",
+            "sequence_letters": "",
             "Access": "200",
             "Magazine": "0",
             "ingest_status": "STA",
@@ -845,7 +907,7 @@
         }
     },
     {
-        "row-0021": {
+        "row-0022": {
             "MMSID": "9917951973502836",
             "title_parent": "Eastern Courier",
             "processing_type": "parent_grouping",
@@ -855,6 +917,7 @@
             "title_code": "EAC",
             "edition_discriminators": "",
             "section_codes": "ED1",
+            "sequence_letters": "",
             "Access": "200",
             "Magazine": "0",
             "ingest_status": "PIL",
@@ -885,7 +948,7 @@
         }
     },
     {
-        "row-0022": {
+        "row-0023": {
             "MMSID": "9917905833502836",
             "title_parent": "Franklin County News",
             "processing_type": "parent_grouping",
@@ -895,6 +958,7 @@
             "title_code": "FRC",
             "edition_discriminators": "",
             "section_codes": "ED1+SPC+QFS",
+            "sequence_letters": "",
             "Access": "200",
             "Magazine": "0",
             "ingest_status": "STA",
@@ -925,7 +989,7 @@
         }
     },
     {
-        "row-0023": {
+        "row-0024": {
             "MMSID": "9918150264102836",
             "title_parent": "Fieldays Focus",
             "processing_type": "parent_grouping",
@@ -935,6 +999,7 @@
             "title_code": "FDF",
             "edition_discriminators": "",
             "section_codes": "ED1+STH",
+            "sequence_letters": "",
             "Access": "200",
             "Magazine": "1",
             "ingest_status": "STA",
@@ -965,7 +1030,7 @@
         }
     },
     {
-        "row-0024": {
+        "row-0025": {
             "MMSID": "9917921803502836",
             "title_parent": "Feilding-Rangitikei Herald",
             "processing_type": "parent_grouping",
@@ -975,6 +1040,7 @@
             "title_code": "FER",
             "edition_discriminators": "",
             "section_codes": "ED1",
+            "sequence_letters": "",
             "Access": "200",
             "Magazine": "0",
             "ingest_status": "STA",
@@ -1005,7 +1071,7 @@
         }
     },
     {
-        "row-0025": {
+        "row-0026": {
             "MMSID": "MUST-BE-MANUALLY-SET-9918150138102836-or-9918150266802836",
             "title_parent": "SET-NAME-of-Field Days-type-publication",
             "processing_type": "parent_grouping",
@@ -1015,6 +1081,7 @@
             "title_code": "FDP",
             "edition_discriminators": "",
             "section_codes": "ED1",
+            "sequence_letters": "",
             "Access": "200",
             "Magazine": "1",
             "ingest_status": "STC",
@@ -1045,7 +1112,7 @@
         }
     },
     {
-        "row-0026": {
+        "row-0027": {
             "MMSID": "9917926363502836",
             "title_parent": "Far North Real Estate",
             "processing_type": "parent_grouping",
@@ -1055,6 +1122,7 @@
             "title_code": "FRE",
             "edition_discriminators": "",
             "section_codes": "ED1",
+            "sequence_letters": "",
             "Access": "200",
             "Magazine": "0",
             "ingest_status": "PIL",
@@ -1085,7 +1153,7 @@
         }
     },
     {
-        "row-0027": {
+        "row-0028": {
             "MMSID": "9915719963502836",
             "title_parent": "Get Growing",
             "processing_type": "parent_grouping",
@@ -1095,6 +1163,7 @@
             "title_code": "GTG",
             "edition_discriminators": "",
             "section_codes": "ED1",
+            "sequence_letters": "",
             "Access": "200",
             "Magazine": "1",
             "ingest_status": "STA",
@@ -1125,7 +1194,7 @@
         }
     },
     {
-        "row-0028": {
+        "row-0029": {
             "MMSID": "9917905443502836",
             "title_parent": "Hamilton Press",
             "processing_type": "parent_grouping",
@@ -1135,6 +1204,7 @@
             "title_code": "HAP",
             "edition_discriminators": "",
             "section_codes": "ED1",
+            "sequence_letters": "",
             "Access": "200",
             "Magazine": "0",
             "ingest_status": "STA",
@@ -1165,7 +1235,7 @@
         }
     },
     {
-        "row-0029": {
+        "row-0030": {
             "MMSID": "9917905183502836",
             "title_parent": "Hauraki Herald",
             "processing_type": "parent_grouping",
@@ -1175,6 +1245,7 @@
             "title_code": "HAH",
             "edition_discriminators": "",
             "section_codes": "ED1+SPC+QFS",
+            "sequence_letters": "",
             "Access": "200",
             "Magazine": "0",
             "ingest_status": "STA",
@@ -1205,7 +1276,7 @@
         }
     },
     {
-        "row-0030": {
+        "row-0031": {
             "MMSID": "9917667743502836",
             "title_parent": "The Horowhenua Mail",
             "processing_type": "parent_grouping",
@@ -1215,6 +1286,7 @@
             "title_code": "HOM",
             "edition_discriminators": "",
             "section_codes": "ED1",
+            "sequence_letters": "",
             "Access": "200",
             "Magazine": "0",
             "ingest_status": "STA",
@@ -1245,7 +1317,7 @@
         }
     },
     {
-        "row-0031": {
+        "row-0032": {
             "MMSID": "9917905973502836",
             "title_parent": "NZ House and Garden",
             "processing_type": "parent_grouping",
@@ -1255,6 +1327,7 @@
             "title_code": "HSG",
             "edition_discriminators": "",
             "section_codes": "ED1",
+            "sequence_letters": "",
             "Access": "200",
             "Magazine": "1",
             "ingest_status": "STA",
@@ -1285,7 +1358,7 @@
         }
     },
     {
-        "row-0032": {
+        "row-0033": {
             "MMSID": "9914842803502836",
             "title_parent": "The Hutt News",
             "processing_type": "parent_grouping",
@@ -1295,6 +1368,7 @@
             "title_code": "HUN",
             "edition_discriminators": "",
             "section_codes": "ED1",
+            "sequence_letters": "",
             "Access": "200",
             "Magazine": "0",
             "ingest_status": "TEC",
@@ -1325,7 +1399,7 @@
         }
     },
     {
-        "row-0033": {
+        "row-0034": {
             "MMSID": "9917913663502836",
             "title_parent": "Kapi-Mana News",
             "processing_type": "parent_grouping",
@@ -1335,6 +1409,7 @@
             "title_code": "KAN",
             "edition_discriminators": "",
             "section_codes": "ED1",
+            "sequence_letters": "",
             "Access": "200",
             "Magazine": "0",
             "ingest_status": "STA",
@@ -1365,7 +1440,7 @@
         }
     },
     {
-        "row-0034": {
+        "row-0035": {
             "MMSID": "9917913883502836",
             "title_parent": "Kapiti Observer",
             "processing_type": "parent_grouping",
@@ -1375,6 +1450,7 @@
             "title_code": "KAO",
             "edition_discriminators": "",
             "section_codes": "ED1",
+            "sequence_letters": "",
             "Access": "200",
             "Magazine": "0",
             "ingest_status": "STA",
@@ -1405,7 +1481,7 @@
         }
     },
     {
-        "row-0035": {
+        "row-0036": {
             "MMSID": "9917913773502836",
             "title_parent": "Kaikoura Star",
             "processing_type": "parent_grouping",
@@ -1415,6 +1491,7 @@
             "title_code": "KAS",
             "edition_discriminators": "",
             "section_codes": "ED1",
+            "sequence_letters": "",
             "Access": "200",
             "Magazine": "0",
             "ingest_status": "",
@@ -1445,7 +1522,7 @@
         }
     },
     {
-        "row-0036": {
+        "row-0037": {
             "MMSID": "9917975883502836",
             "title_parent": "The Nelson Leader",
             "processing_type": "parent_grouping",
@@ -1455,6 +1532,7 @@
             "title_code": "LEN",
             "edition_discriminators": "",
             "section_codes": "ED1",
+            "sequence_letters": "",
             "Access": "200",
             "Magazine": "0",
             "ingest_status": "STA",
@@ -1485,7 +1563,7 @@
         }
     },
     {
-        "row-0037": {
+        "row-0038": {
             "MMSID": "9917962463502836",
             "title_parent": "The Tasman Leader",
             "processing_type": "parent_grouping",
@@ -1495,6 +1573,7 @@
             "title_code": "LET",
             "edition_discriminators": "",
             "section_codes": "ED1",
+            "sequence_letters": "",
             "Access": "200",
             "Magazine": "0",
             "ingest_status": "STA",
@@ -1525,7 +1604,7 @@
         }
     },
     {
-        "row-0038": {
+        "row-0039": {
             "MMSID": "9917976523502836",
             "title_parent": "Manukau Courier",
             "processing_type": "parent_grouping",
@@ -1535,6 +1614,7 @@
             "title_code": "MAC",
             "edition_discriminators": "",
             "section_codes": "ED1",
+            "sequence_letters": "",
             "Access": "200",
             "Magazine": "0",
             "ingest_status": "STA",
@@ -1565,7 +1645,7 @@
         }
     },
     {
-        "row-0039": {
+        "row-0040": {
             "MMSID": "9914705253502836",
             "title_parent": "Marlborough Express",
             "processing_type": "parent_grouping",
@@ -1575,6 +1655,7 @@
             "title_code": "MAE",
             "edition_discriminators": "",
             "section_codes": "ED1",
+            "sequence_letters": "",
             "Access": "200",
             "Magazine": "0",
             "ingest_status": "TEC",
@@ -1605,7 +1686,7 @@
         }
     },
     {
-        "row-0040": {
+        "row-0041": {
             "MMSID": "9917961213502836",
             "title_parent": "Marlborough Midweek",
             "processing_type": "parent_grouping",
@@ -1615,6 +1696,7 @@
             "title_code": "MAM",
             "edition_discriminators": "",
             "section_codes": "ED1",
+            "sequence_letters": "",
             "Access": "200",
             "Magazine": "0",
             "ingest_status": "STA",
@@ -1645,7 +1727,7 @@
         }
     },
     {
-        "row-0041": {
+        "row-0042": {
             "MMSID": "9917914353502836",
             "title_parent": "Manawatu Standard",
             "processing_type": "parent_grouping",
@@ -1655,6 +1737,7 @@
             "title_code": "MAN",
             "edition_discriminators": "",
             "section_codes": "ED1+TAB+SPC+QF",
+            "sequence_letters": "",
             "Access": "200",
             "Magazine": "0",
             "ingest_status": "STC",
@@ -1685,7 +1768,7 @@
         }
     },
     {
-        "row-0042": {
+        "row-0043": {
             "MMSID": "9917914353502836",
             "title_parent": "Manawatu Standard",
             "processing_type": "parent_grouping",
@@ -1695,6 +1778,7 @@
             "title_code": "MAS",
             "edition_discriminators": "",
             "section_codes": "ED1+TAB+QF+QFS",
+            "sequence_letters": "",
             "Access": "200",
             "Magazine": "0",
             "ingest_status": "STC",
@@ -1725,7 +1809,7 @@
         }
     },
     {
-        "row-0043": {
+        "row-0044": {
             "MMSID": "9918148070202836",
             "title_parent": "Admire Marlborough",
             "processing_type": "parent_grouping_with_edition",
@@ -1735,6 +1819,7 @@
             "title_code": "MEX",
             "edition_discriminators": "TAB",
             "section_codes": "TAB",
+            "sequence_letters": "",
             "Access": "200",
             "Magazine": "0",
             "ingest_status": "STA",
@@ -1765,7 +1850,7 @@
         }
     },
     {
-        "row-0044": {
+        "row-0045": {
             "MMSID": "9917967003502836",
             "title_parent": "Mid Canterbury Herald",
             "processing_type": "parent_grouping",
@@ -1775,6 +1860,7 @@
             "title_code": "MHD",
             "edition_discriminators": "",
             "section_codes": "ED1",
+            "sequence_letters": "",
             "Access": "200",
             "Magazine": "0",
             "ingest_status": "STA",
@@ -1805,7 +1891,7 @@
         }
     },
     {
-        "row-0045": {
+        "row-0046": {
             "MMSID": "9917975663502836",
             "title_parent": "Matamata Chronicle",
             "processing_type": "parent_grouping",
@@ -1815,6 +1901,7 @@
             "title_code": "MMC",
             "edition_discriminators": "",
             "section_codes": "ED1",
+            "sequence_letters": "",
             "Access": "200",
             "Magazine": "0",
             "ingest_status": "STA",
@@ -1845,7 +1932,7 @@
         }
     },
     {
-        "row-0046": {
+        "row-0047": {
             "MMSID": "9917961213502836",
             "title_parent": "Marlborough Midweek",
             "processing_type": "parent_grouping",
@@ -1855,6 +1942,7 @@
             "title_code": "MMW",
             "edition_discriminators": "",
             "section_codes": "ED1+TAB",
+            "sequence_letters": "",
             "Access": "200",
             "Magazine": "0",
             "ingest_status": "STA",
@@ -1885,7 +1973,7 @@
         }
     },
     {
-        "row-0047": {
+        "row-0048": {
             "MMSID": "9917982213502836",
             "title_parent": "Waikato Times",
             "processing_type": "parent_grouping",
@@ -1895,6 +1983,7 @@
             "title_code": "MOW",
             "edition_discriminators": "",
             "section_codes": "ED1",
+            "sequence_letters": "",
             "Access": "200",
             "Magazine": "0",
             "ingest_status": "STA",
@@ -1925,7 +2014,7 @@
         }
     },
     {
-        "row-0048": {
+        "row-0049": {
             "MMSID": "9917975853502836",
             "title_parent": "The Napier Mail",
             "processing_type": "parent_grouping",
@@ -1935,6 +2024,7 @@
             "title_code": "NAM",
             "edition_discriminators": "",
             "section_codes": "ED1+TAB",
+            "sequence_letters": "",
             "Access": "200",
             "Magazine": "0",
             "ingest_status": "STA",
@@ -1965,7 +2055,7 @@
         }
     },
     {
-        "row-0049": {
+        "row-0050": {
             "MMSID": "9917975983502836",
             "title_parent": "The Nelson Mail",
             "processing_type": "supplement_grouping",
@@ -1975,6 +2065,7 @@
             "title_code": "NEL",
             "edition_discriminators": "",
             "section_codes": "TAB",
+            "sequence_letters": "",
             "Access": "200",
             "Magazine": "0",
             "ingest_status": "SUP",
@@ -2005,7 +2096,7 @@
         }
     },
     {
-        "row-0050": {
+        "row-0051": {
             "MMSID": "9917975923502836",
             "title_parent": "The Nelson Mail",
             "processing_type": "parent_grouping",
@@ -2015,6 +2106,7 @@
             "title_code": "NEL",
             "edition_discriminators": "",
             "section_codes": "ED1+TAB+SPC+SUM",
+            "sequence_letters": "",
             "Access": "200",
             "Magazine": "0",
             "ingest_status": "STC",
@@ -2045,7 +2137,7 @@
         }
     },
     {
-        "row-0051": {
+        "row-0052": {
             "MMSID": "9917975923502836",
             "title_parent": "The Nelson Mail",
             "processing_type": "parent_grouping",
@@ -2055,6 +2147,7 @@
             "title_code": "NEM",
             "edition_discriminators": "",
             "section_codes": "ED1+TAB+SUM",
+            "sequence_letters": "",
             "Access": "200",
             "Magazine": "0",
             "ingest_status": "STC",
@@ -2085,7 +2178,7 @@
         }
     },
     {
-        "row-0052": {
+        "row-0053": {
             "MMSID": "9917921493502836",
             "title_parent": "North Harbour News",
             "processing_type": "parent_grouping",
@@ -2095,6 +2188,7 @@
             "title_code": "NOH",
             "edition_discriminators": "",
             "section_codes": "ED1",
+            "sequence_letters": "",
             "Access": "200",
             "Magazine": "0",
             "ingest_status": "STA",
@@ -2125,7 +2219,7 @@
         }
     },
     {
-        "row-0053": {
+        "row-0054": {
             "MMSID": "9917961933502836",
             "title_parent": "Northern News",
             "processing_type": "parent_grouping",
@@ -2135,6 +2229,7 @@
             "title_code": "NON",
             "edition_discriminators": "",
             "section_codes": "ED1",
+            "sequence_letters": "",
             "Access": "200",
             "Magazine": "0",
             "ingest_status": "STA",
@@ -2165,7 +2260,7 @@
         }
     },
     {
-        "row-0054": {
+        "row-0055": {
             "MMSID": "9918190442202836",
             "title_parent": "Northern Outlook",
             "processing_type": "parent_grouping",
@@ -2175,6 +2270,7 @@
             "title_code": "NOO",
             "edition_discriminators": "",
             "section_codes": "ED1+QFS",
+            "sequence_letters": "",
             "Access": "200",
             "Magazine": "0",
             "ingest_status": "STA",
@@ -2205,7 +2301,7 @@
         }
     },
     {
-        "row-0055": {
+        "row-0056": {
             "MMSID": "9917923443502836",
             "title_parent": "North Taranaki Midweek",
             "processing_type": "parent_grouping",
@@ -2215,6 +2311,7 @@
             "title_code": "NOT",
             "edition_discriminators": "",
             "section_codes": "ED1",
+            "sequence_letters": "",
             "Access": "200",
             "Magazine": "0",
             "ingest_status": "STA",
@@ -2245,7 +2342,7 @@
         }
     },
     {
-        "row-0056": {
+        "row-0057": {
             "MMSID": "9917922613502836",
             "title_parent": "North Shore Times",
             "processing_type": "parent_grouping",
@@ -2255,6 +2352,7 @@
             "title_code": "NST",
             "edition_discriminators": "",
             "section_codes": "ED1+TAB+QFS",
+            "sequence_letters": "",
             "Access": "200",
             "Magazine": "0",
             "ingest_status": "STA",
@@ -2285,7 +2383,7 @@
         }
     },
     {
-        "row-0057": {
+        "row-0058": {
             "MMSID": "9917922613502836",
             "title_parent": "North Shore Times",
             "processing_type": "parent_grouping",
@@ -2295,6 +2393,7 @@
             "title_code": "NOS",
             "edition_discriminators": "",
             "section_codes": "ED1+QFS",
+            "sequence_letters": "",
             "Access": "200",
             "Magazine": "0",
             "ingest_status": "STA",
@@ -2325,7 +2424,7 @@
         }
     },
     {
-        "row-0058": {
+        "row-0059": {
             "MMSID": "9917962043502836",
             "title_parent": "Nor-West News",
             "processing_type": "parent_grouping",
@@ -2335,6 +2434,7 @@
             "title_code": "NWT",
             "edition_discriminators": "",
             "section_codes": "ED1",
+            "sequence_letters": "",
             "Access": "200",
             "Magazine": "0",
             "ingest_status": "STA",
@@ -2365,7 +2465,7 @@
         }
     },
     {
-        "row-0059": {
+        "row-0060": {
             "MMSID": "9917905613502836",
             "title_parent": "New Zealand Gardener",
             "processing_type": "parent_grouping",
@@ -2375,6 +2475,7 @@
             "title_code": "NZG",
             "edition_discriminators": "",
             "section_codes": "ED1",
+            "sequence_letters": "",
             "Access": "200",
             "Magazine": "1",
             "ingest_status": "TEC",
@@ -2405,7 +2506,7 @@
         }
     },
     {
-        "row-0060": {
+        "row-0061": {
             "MMSID": "9918150572002836",
             "title_parent": "Style of Life",
             "processing_type": "parent_grouping",
@@ -2415,46 +2516,7 @@
             "title_code": "ONL",
             "edition_discriminators": "",
             "section_codes": "SPC",
-            "Access": "200",
-            "Magazine": "1",
-            "ingest_status": "TEC",
-            "Frequency": "",
-            "entity_type": "PER",
-            "title_mets": "Style of life",
-            "ISSN online": "",
-            "Bib ID": "",
-            "Access condition": "",
-            "Date catalogued": "12/06/2017",
-            "Collector_folder": "Style_of_Life",
-            "Cataloguer": "Christina",
-            "Notes": "Two title name codes",
-            "first_issue_starting_page": "",
-            "last_issue_starting_page": "",
-            "has_volume_md": "0",
-            "has_issue_md": "0",
-            "has_number_md": "0",
-            "previous_volume": "",
-            "previous_volume_date": "",
-            "previous_volume_frequency": "",
-            "previous_issue": "",
-            "previous_issue_date": "",
-            "previous_issue_frequency": "",
-            "previous_number": "",
-            "previous_number_date": "",
-            "previous_number_frequency": ""
-        }
-    },
-    {
-        "row-0061": {
-            "MMSID": "9918150572002836",
-            "title_parent": "Style of Life",
-            "processing_type": "parent_grouping",
-            "processing_rules": "",
-            "processing_options": "alpha_before_numeric",
-            "publication_key": "title_code",
-            "title_code": "SNA",
-            "edition_discriminators": "",
-            "section_codes": "SPC",
+            "sequence_letters": "",
             "Access": "200",
             "Magazine": "1",
             "ingest_status": "TEC",
@@ -2486,6 +2548,47 @@
     },
     {
         "row-0062": {
+            "MMSID": "9918150572002836",
+            "title_parent": "Style of Life",
+            "processing_type": "parent_grouping",
+            "processing_rules": "",
+            "processing_options": "alpha_before_numeric",
+            "publication_key": "title_code",
+            "title_code": "SNA",
+            "edition_discriminators": "",
+            "section_codes": "SPC",
+            "sequence_letters": "",
+            "Access": "200",
+            "Magazine": "1",
+            "ingest_status": "TEC",
+            "Frequency": "",
+            "entity_type": "PER",
+            "title_mets": "Style of life",
+            "ISSN online": "",
+            "Bib ID": "",
+            "Access condition": "",
+            "Date catalogued": "12/06/2017",
+            "Collector_folder": "Style_of_Life",
+            "Cataloguer": "Christina",
+            "Notes": "Two title name codes",
+            "first_issue_starting_page": "",
+            "last_issue_starting_page": "",
+            "has_volume_md": "0",
+            "has_issue_md": "0",
+            "has_number_md": "0",
+            "previous_volume": "",
+            "previous_volume_date": "",
+            "previous_volume_frequency": "",
+            "previous_issue": "",
+            "previous_issue_date": "",
+            "previous_issue_frequency": "",
+            "previous_number": "",
+            "previous_number_date": "",
+            "previous_number_frequency": ""
+        }
+    },
+    {
+        "row-0063": {
             "MMSID": "9917974563502836",
             "title_parent": "Outlook Real Estate",
             "processing_type": "parent_grouping",
@@ -2495,6 +2598,7 @@
             "title_code": "ORE",
             "edition_discriminators": "",
             "section_codes": "ED1",
+            "sequence_letters": "",
             "Access": "200",
             "Magazine": "0",
             "ingest_status": "TEC",
@@ -2525,7 +2629,7 @@
         }
     },
     {
-        "row-0063": {
+        "row-0064": {
             "MMSID": "9917966453502836",
             "title_parent": "Papakura Courier",
             "processing_type": "parent_grouping",
@@ -2535,6 +2639,7 @@
             "title_code": "PAC",
             "edition_discriminators": "",
             "section_codes": "ED1",
+            "sequence_letters": "",
             "Access": "200",
             "Magazine": "0",
             "ingest_status": "STA",
@@ -2565,7 +2670,7 @@
         }
     },
     {
-        "row-0064": {
+        "row-0065": {
             "MMSID": "9917966443502836",
             "title_parent": "Piako Post",
             "processing_type": "parent_grouping",
@@ -2575,6 +2680,7 @@
             "title_code": "PIP",
             "edition_discriminators": "",
             "section_codes": "ED1",
+            "sequence_letters": "",
             "Access": "200",
             "Magazine": "0",
             "ingest_status": "STA",
@@ -2605,7 +2711,7 @@
         }
     },
     {
-        "row-0065": {
+        "row-0066": {
             "MMSID": "9915205583502836",
             "title_parent": "The Press",
             "processing_type": "parent_grouping",
@@ -2615,46 +2721,7 @@
             "title_code": "PRE",
             "edition_discriminators": "",
             "section_codes": "ED1+TAB+YWE+QFS",
-            "Access": "200",
-            "Magazine": "0",
-            "ingest_status": "STC",
-            "Frequency": "",
-            "entity_type": "PER",
-            "title_mets": "Press (Christchurch)",
-            "ISSN online": "",
-            "Bib ID": "",
-            "Access condition": "",
-            "Date catalogued": "",
-            "Collector_folder": "The_Press",
-            "Cataloguer": "",
-            "Notes": "Fairfax updated title code",
-            "first_issue_starting_page": "",
-            "last_issue_starting_page": "",
-            "has_volume_md": "0",
-            "has_issue_md": "0",
-            "has_number_md": "0",
-            "previous_volume": "",
-            "previous_volume_date": "",
-            "previous_volume_frequency": "",
-            "previous_issue": "",
-            "previous_issue_date": "",
-            "previous_issue_frequency": "",
-            "previous_number": "",
-            "previous_number_date": "",
-            "previous_number_frequency": ""
-        }
-    },
-    {
-        "row-0066": {
-            "MMSID": "9915205583502836",
-            "title_parent": "The Press",
-            "processing_type": "parent_grouping",
-            "processing_rules": "",
-            "processing_options": "numeric_before_alpha",
-            "publication_key": "title_code",
-            "title_code": "PRS",
-            "edition_discriminators": "",
-            "section_codes": "ED1+TAB+YWE+QFS",
+            "sequence_letters": "",
             "Access": "200",
             "Magazine": "0",
             "ingest_status": "STC",
@@ -2686,6 +2753,47 @@
     },
     {
         "row-0067": {
+            "MMSID": "9915205583502836",
+            "title_parent": "The Press",
+            "processing_type": "parent_grouping",
+            "processing_rules": "",
+            "processing_options": "numeric_before_alpha",
+            "publication_key": "title_code",
+            "title_code": "PRS",
+            "edition_discriminators": "",
+            "section_codes": "ED1+TAB+YWE+QFS",
+            "sequence_letters": "",
+            "Access": "200",
+            "Magazine": "0",
+            "ingest_status": "STC",
+            "Frequency": "",
+            "entity_type": "PER",
+            "title_mets": "Press (Christchurch)",
+            "ISSN online": "",
+            "Bib ID": "",
+            "Access condition": "",
+            "Date catalogued": "",
+            "Collector_folder": "The_Press",
+            "Cataloguer": "",
+            "Notes": "Fairfax updated title code",
+            "first_issue_starting_page": "",
+            "last_issue_starting_page": "",
+            "has_volume_md": "0",
+            "has_issue_md": "0",
+            "has_number_md": "0",
+            "previous_volume": "",
+            "previous_volume_date": "",
+            "previous_volume_frequency": "",
+            "previous_issue": "",
+            "previous_issue_date": "",
+            "previous_issue_frequency": "",
+            "previous_number": "",
+            "previous_number_date": "",
+            "previous_number_frequency": ""
+        }
+    },
+    {
+        "row-0068": {
             "MMSID": "9917913203502836",
             "title_parent": "Marlborough Property Express",
             "processing_type": "parent_grouping",
@@ -2695,6 +2803,7 @@
             "title_code": "PRM",
             "edition_discriminators": "",
             "section_codes": "ED1",
+            "sequence_letters": "",
             "Access": "200",
             "Magazine": "0",
             "ingest_status": "SUP",
@@ -2725,7 +2834,7 @@
         }
     },
     {
-        "row-0068": {
+        "row-0069": {
             "MMSID": "9917906003502836",
             "title_parent": "The Press",
             "processing_type": "supplement_grouping",
@@ -2735,6 +2844,7 @@
             "title_code": "PRS",
             "edition_discriminators": "",
             "section_codes": "YWE",
+            "sequence_letters": "",
             "Access": "200",
             "Magazine": "0",
             "ingest_status": "SUP",
@@ -2765,7 +2875,7 @@
         }
     },
     {
-        "row-0069": {
+        "row-0070": {
             "MMSID": "9918647057402836",
             "title_parent": "The Press",
             "processing_type": "supplement_grouping",
@@ -2775,6 +2885,7 @@
             "title_code": "PRS",
             "edition_discriminators": "",
             "section_codes": "TAB",
+            "sequence_letters": "",
             "Access": "200",
             "Magazine": "0",
             "ingest_status": "TEC",
@@ -2805,7 +2916,7 @@
         }
     },
     {
-        "row-0070": {
+        "row-0071": {
             "MMSID": "9918647057502836",
             "title_parent": "Property weekly",
             "processing_type": "parent_grouping",
@@ -2815,6 +2926,7 @@
             "title_code": "PWM",
             "edition_discriminators": "",
             "section_codes": "ED1",
+            "sequence_letters": "",
             "Access": "200",
             "Magazine": "0",
             "ingest_status": "TEC",
@@ -2845,7 +2957,7 @@
         }
     },
     {
-        "row-0071": {
+        "row-0072": {
             "MMSID": "9918762570402836",
             "title_parent": "South Canterbury premium property weekly",
             "processing_type": "parent_grouping",
@@ -2855,6 +2967,7 @@
             "title_code": "PSC",
             "edition_discriminators": "",
             "section_codes": "ED1",
+            "sequence_letters": "",
             "Access": "200",
             "Magazine": "0",
             "ingest_status": "STA",
@@ -2885,7 +2998,7 @@
         }
     },
     {
-        "row-0072": {
+        "row-0073": {
             "MMSID": "9917975563502836",
             "title_parent": "Mirror",
             "processing_type": "parent_grouping_with_edition",
@@ -2895,6 +3008,7 @@
             "title_code": "QUM",
             "edition_discriminators": "ED1",
             "section_codes": "ED1",
+            "sequence_letters": "",
             "Access": "200",
             "Magazine": "0",
             "ingest_status": "STC",
@@ -2925,7 +3039,7 @@
         }
     },
     {
-        "row-0073": {
+        "row-0074": {
             "MMSID": "9917975673502836",
             "title_parent": "Mirror",
             "processing_type": "parent_grouping_with_edition",
@@ -2935,6 +3049,7 @@
             "title_code": "QUM",
             "edition_discriminators": "ED2",
             "section_codes": "ED1",
+            "sequence_letters": "",
             "Access": "200",
             "Magazine": "0",
             "ingest_status": "STC",
@@ -2965,7 +3080,7 @@
         }
     },
     {
-        "row-0074": {
+        "row-0075": {
             "MMSID": "9917975753502836",
             "title_parent": "Mirror",
             "processing_type": "parent_grouping_with_edition",
@@ -2975,6 +3090,7 @@
             "title_code": "QUM",
             "edition_discriminators": "ED3",
             "section_codes": "ED1",
+            "sequence_letters": "",
             "Access": "200",
             "Magazine": "0",
             "ingest_status": "STC",
@@ -3005,7 +3121,7 @@
         }
     },
     {
-        "row-0075": {
+        "row-0076": {
             "MMSID": "9917966493502836",
             "title_parent": "Rodney Times",
             "processing_type": "parent_grouping",
@@ -3015,6 +3131,7 @@
             "title_code": "RDT",
             "edition_discriminators": "",
             "section_codes": "ED1",
+            "sequence_letters": "",
             "Access": "200",
             "Magazine": "0",
             "ingest_status": "STA",
@@ -3045,7 +3162,7 @@
         }
     },
     {
-        "row-0076": {
+        "row-0077": {
             "MMSID": "9918150135402836",
             "title_parent": "Visitor handbook : Central Districts Field Days",
             "processing_type": "parent_grouping",
@@ -3055,6 +3172,7 @@
             "title_code": "RLP",
             "edition_discriminators": "",
             "section_codes": "FDH",
+            "sequence_letters": "",
             "Access": "200",
             "Magazine": "1",
             "ingest_status": "STA",
@@ -3085,7 +3203,7 @@
         }
     },
     {
-        "row-0077": {
+        "row-0078": {
             "MMSID": "9917966623502836",
             "title_parent": "Ruapehu Press",
             "processing_type": "parent_grouping",
@@ -3095,6 +3213,7 @@
             "title_code": "RUP",
             "edition_discriminators": "",
             "section_codes": "ED1",
+            "sequence_letters": "",
             "Access": "200",
             "Magazine": "0",
             "ingest_status": "STA",
@@ -3125,7 +3244,7 @@
         }
     },
     {
-        "row-0078": {
+        "row-0079": {
             "MMSID": "9917907173502836",
             "title_parent": "Saturday Express",
             "processing_type": "parent_grouping",
@@ -3135,6 +3254,7 @@
             "title_code": "SAE",
             "edition_discriminators": "",
             "section_codes": "ED1",
+            "sequence_letters": "",
             "Access": "200",
             "Magazine": "0",
             "ingest_status": "STA",
@@ -3165,7 +3285,7 @@
         }
     },
     {
-        "row-0079": {
+        "row-0080": {
             "MMSID": "9917984313502836",
             "title_parent": "Sunday News",
             "processing_type": "parent_grouping",
@@ -3175,6 +3295,7 @@
             "title_code": "SDN",
             "edition_discriminators": "",
             "section_codes": "ED1",
+            "sequence_letters": "",
             "Access": "200",
             "Magazine": "0",
             "ingest_status": "STA",
@@ -3205,7 +3326,7 @@
         }
     },
     {
-        "row-0080": {
+        "row-0081": {
             "MMSID": "9917982163502836",
             "title_parent": "Southern Homes",
             "processing_type": "parent_grouping",
@@ -3215,6 +3336,7 @@
             "title_code": "SHM",
             "edition_discriminators": "",
             "section_codes": "ED1",
+            "sequence_letters": "",
             "Access": "200",
             "Magazine": "0",
             "ingest_status": "STA",
@@ -3245,7 +3367,7 @@
         }
     },
     {
-        "row-0081": {
+        "row-0082": {
             "MMSID": "9918150569902836",
             "title_parent": "Southland Times",
             "processing_type": "supplement_grouping",
@@ -3255,6 +3377,7 @@
             "title_code": "SOT",
             "edition_discriminators": "",
             "section_codes": "TAB",
+            "sequence_letters": "",
             "Access": "200",
             "Magazine": "0",
             "ingest_status": "SUP",
@@ -3285,7 +3408,7 @@
         }
     },
     {
-        "row-0082": {
+        "row-0083": {
             "MMSID": "9917966833502836",
             "title_parent": "South Waikato News",
             "processing_type": "parent_grouping",
@@ -3295,6 +3418,7 @@
             "title_code": "SOW",
             "edition_discriminators": "",
             "section_codes": "ED1",
+            "sequence_letters": "",
             "Access": "200",
             "Magazine": "0",
             "ingest_status": "STA",
@@ -3325,7 +3449,7 @@
         }
     },
     {
-        "row-0083": {
+        "row-0084": {
             "MMSID": "9917976273502836",
             "title_parent": "Sunday Star Times",
             "processing_type": "supplement_grouping",
@@ -3335,6 +3459,7 @@
             "title_code": "SST",
             "edition_discriminators": "",
             "section_codes": "ED1",
+            "sequence_letters": "",
             "Access": "200",
             "Magazine": "0",
             "ingest_status": "TEC",
@@ -3365,7 +3490,7 @@
         }
     },
     {
-        "row-0084": {
+        "row-0085": {
             "MMSID": "9917976113502836",
             "title_parent": "Sunday Star Times",
             "processing_type": "parent_grouping",
@@ -3375,6 +3500,7 @@
             "title_code": "SST",
             "edition_discriminators": "ED1+ED2+NT1+NT2+ST1+ST2",
             "section_codes": "ED1+TAB+SPC+QFS",
+            "sequence_letters": "",
             "Access": "200",
             "Magazine": "0",
             "ingest_status": "TEC",
@@ -3405,7 +3531,7 @@
         }
     },
     {
-        "row-0085": {
+        "row-0086": {
             "MMSID": "9917976113502836",
             "title_parent": "Sunday Star Times",
             "processing_type": "parent_grouping",
@@ -3415,6 +3541,7 @@
             "title_code": "SUS",
             "edition_discriminators": "ED1+ED2+ED3+NT1+NT2+NT3+ST1+ST2+ST3",
             "section_codes": "ED1+TAB+SPC+QFS",
+            "sequence_letters": "",
             "Access": "200",
             "Magazine": "0",
             "ingest_status": "TEC",
@@ -3445,7 +3572,7 @@
         }
     },
     {
-        "row-0086": {
+        "row-0087": {
             "MMSID": "9917976283502836",
             "title_parent": "Sunday Star Times Sunday",
             "processing_type": "parent_grouping",
@@ -3455,6 +3582,7 @@
             "title_code": "SMG",
             "edition_discriminators": "ED1+ED2+ED3+NT1+NT2+NT3+ST1+ST2+ST3",
             "section_codes": "ED1+TAB+SPC+QFS",
+            "sequence_letters": "",
             "Access": "200",
             "Magazine": "1",
             "ingest_status": "TEC",
@@ -3485,7 +3613,7 @@
         }
     },
     {
-        "row-0087": {
+        "row-0088": {
             "MMSID": "9918150569902836",
             "title_parent": "Southland Times",
             "processing_type": "supplement_grouping",
@@ -3495,6 +3623,7 @@
             "title_code": "STL",
             "edition_discriminators": "",
             "section_codes": "TAB",
+            "sequence_letters": "",
             "Access": "200",
             "Magazine": "0",
             "ingest_status": "SUP",
@@ -3525,7 +3654,7 @@
         }
     },
     {
-        "row-0088": {
+        "row-0089": {
             "MMSID": "9914607593502836",
             "title_parent": "The Southland Times",
             "processing_type": "parent_grouping",
@@ -3535,6 +3664,7 @@
             "title_code": "STL",
             "edition_discriminators": "",
             "section_codes": "ED1+TAB+SPC+QFS",
+            "sequence_letters": "",
             "Access": "200",
             "Magazine": "0",
             "ingest_status": "TEC",
@@ -3565,7 +3695,7 @@
         }
     },
     {
-        "row-0089": {
+        "row-0090": {
             "MMSID": "9914607593502836",
             "title_parent": "The Southland Times",
             "processing_type": "parent_grouping",
@@ -3575,6 +3705,7 @@
             "title_code": "SOT",
             "edition_discriminators": "",
             "section_codes": "ED1+TAB+QFS",
+            "sequence_letters": "",
             "Access": "200",
             "Magazine": "0",
             "ingest_status": "TEC",
@@ -3605,7 +3736,7 @@
         }
     },
     {
-        "row-0090": {
+        "row-0091": {
             "MMSID": "9917984313502836",
             "title_parent": "Sunday News",
             "processing_type": "parent_grouping",
@@ -3615,6 +3746,7 @@
             "title_code": "SUN",
             "edition_discriminators": "ED1+ED2+NT1+ST1",
             "section_codes": "ED1",
+            "sequence_letters": "",
             "Access": "200",
             "Magazine": "0",
             "ingest_status": "TEC",
@@ -3645,7 +3777,7 @@
         }
     },
     {
-        "row-0091": {
+        "row-0092": {
             "MMSID": "9917966723502836",
             "title_parent": "South Taranaki Star",
             "processing_type": "parent_grouping",
@@ -3655,6 +3787,7 @@
             "title_code": "TAS",
             "edition_discriminators": "",
             "section_codes": "ED1",
+            "sequence_letters": "",
             "Access": "200",
             "Magazine": "0",
             "ingest_status": "STC",
@@ -3685,7 +3818,7 @@
         }
     },
     {
-        "row-0092": {
+        "row-0093": {
             "MMSID": "9917976003502836",
             "title_parent": "Taranaki Daily News",
             "processing_type": "parent_grouping",
@@ -3695,6 +3828,7 @@
             "title_code": "TAD",
             "edition_discriminators": "",
             "section_codes": "ED1+TAB+SPC+YPW+QFS+QF",
+            "sequence_letters": "",
             "Access": "200",
             "Magazine": "0",
             "ingest_status": "STC",
@@ -3725,7 +3859,7 @@
         }
     },
     {
-        "row-0093": {
+        "row-0094": {
             "MMSID": "9917976413502836",
             "title_parent": "Property Weekly",
             "processing_type": "parent_grouping",
@@ -3735,6 +3869,7 @@
             "title_code": "TDN",
             "edition_discriminators": "",
             "section_codes": "YPW",
+            "sequence_letters": "",
             "Access": "200",
             "Magazine": "0",
             "ingest_status": "TEC",
@@ -3765,7 +3900,7 @@
         }
     },
     {
-        "row-0094": {
+        "row-0095": {
             "MMSID": "9914609313502836",
             "title_parent": "The Timaru Herald",
             "processing_type": "parent_grouping",
@@ -3775,6 +3910,7 @@
             "title_code": "TIM",
             "edition_discriminators": "",
             "section_codes": "ED1+TAB+QF+QFS",
+            "sequence_letters": "",
             "Access": "200",
             "Magazine": "0",
             "ingest_status": "TEC",
@@ -3805,7 +3941,7 @@
         }
     },
     {
-        "row-0095": {
+        "row-0096": {
             "MMSID": "9914609313502836",
             "title_parent": "The Timaru Herald",
             "processing_type": "parent_grouping",
@@ -3815,6 +3951,7 @@
             "title_code": "TIH",
             "edition_discriminators": "",
             "section_codes": "ED1+TAB+QF+QFS",
+            "sequence_letters": "",
             "Access": "200",
             "Magazine": "0",
             "ingest_status": "TEC",
@@ -3845,7 +3982,7 @@
         }
     },
     {
-        "row-0096": {
+        "row-0097": {
             "MMSID": "9918148160502836",
             "title_parent": "The Timaru Herald",
             "processing_type": "supplement_grouping",
@@ -3855,6 +3992,7 @@
             "title_code": "TIM",
             "edition_discriminators": "",
             "section_codes": "TAB",
+            "sequence_letters": "",
             "Access": "200",
             "Magazine": "0",
             "ingest_status": "TEC",
@@ -3885,7 +4023,7 @@
         }
     },
     {
-        "row-0097": {
+        "row-0098": {
             "MMSID": "9918150139902836",
             "title_parent": "Timaru Herald",
             "processing_type": "supplement_grouping",
@@ -3895,6 +4033,7 @@
             "title_code": "TIM",
             "edition_discriminators": "",
             "section_codes": "TAB",
+            "sequence_letters": "",
             "Access": "200",
             "Magazine": "0",
             "ingest_status": "TEC",
@@ -3925,7 +4064,7 @@
         }
     },
     {
-        "row-0098": {
+        "row-0099": {
             "MMSID": "9917962373502836",
             "title_parent": "Taupo Times",
             "processing_type": "parent_grouping",
@@ -3935,6 +4074,7 @@
             "title_code": "TAT",
             "edition_discriminators": "",
             "section_codes": "ED1+TAB+QFS",
+            "sequence_letters": "",
             "Access": "200",
             "Magazine": "0",
             "ingest_status": "STA",
@@ -3965,7 +4105,7 @@
         }
     },
     {
-        "row-0099": {
+        "row-0100": {
             "MMSID": "9918647057402836",
             "title_parent": "Taupo Times",
             "processing_type": "supplement_grouping",
@@ -3975,6 +4115,7 @@
             "title_code": "TPO",
             "edition_discriminators": "",
             "section_codes": "TAB",
+            "sequence_letters": "",
             "Access": "200",
             "Magazine": "0",
             "ingest_status": "TEC",
@@ -4005,7 +4146,7 @@
         }
     },
     {
-        "row-0100": {
+        "row-0101": {
             "MMSID": "9917981683502836",
             "title_parent": "TV Guide",
             "processing_type": "parent_grouping",
@@ -4015,6 +4156,7 @@
             "title_code": "TVG",
             "edition_discriminators": "",
             "section_codes": "ED1",
+            "sequence_letters": "",
             "Access": "200",
             "Magazine": "1",
             "ingest_status": "STA",
@@ -4045,7 +4187,7 @@
         }
     },
     {
-        "row-0101": {
+        "row-0102": {
             "MMSID": "9917962273502836",
             "title_parent": "Upper Hutt Leader",
             "processing_type": "parent_grouping",
@@ -4055,6 +4197,7 @@
             "title_code": "UPH",
             "edition_discriminators": "",
             "section_codes": "ED1",
+            "sequence_letters": "",
             "Access": "200",
             "Magazine": "0",
             "ingest_status": "STA",
@@ -4085,7 +4228,7 @@
         }
     },
     {
-        "row-0102": {
+        "row-0103": {
             "MMSID": "9917971783502836",
             "title_parent": "Waikato Times",
             "processing_type": "supplement_grouping",
@@ -4095,6 +4238,7 @@
             "title_code": "WAT",
             "edition_discriminators": "",
             "section_codes": "YWE",
+            "sequence_letters": "",
             "Access": "200",
             "Magazine": "0",
             "ingest_status": "SUP",
@@ -4125,7 +4269,7 @@
         }
     },
     {
-        "row-0103": {
+        "row-0104": {
             "MMSID": "9917924353502836",
             "title_parent": "Waitaki Herald",
             "processing_type": "parent_grouping",
@@ -4135,6 +4279,7 @@
             "title_code": "WAH",
             "edition_discriminators": "",
             "section_codes": "ED1",
+            "sequence_letters": "",
             "Access": "200",
             "Magazine": "0",
             "ingest_status": "STA",
@@ -4165,7 +4310,7 @@
         }
     },
     {
-        "row-0104": {
+        "row-0105": {
             "MMSID": "9917925423502836",
             "title_parent": "Western Homes",
             "processing_type": "parent_grouping",
@@ -4175,6 +4320,7 @@
             "title_code": "WHM",
             "edition_discriminators": "",
             "section_codes": "ED1",
+            "sequence_letters": "",
             "Access": "200",
             "Magazine": "0",
             "ingest_status": "STA",
@@ -4205,7 +4351,7 @@
         }
     },
     {
-        "row-0105": {
+        "row-0106": {
             "MMSID": "9917982213502836",
             "title_parent": "Waikato Times",
             "processing_type": "parent_grouping",
@@ -4215,6 +4361,7 @@
             "title_code": "WKM",
             "edition_discriminators": "",
             "section_codes": "ED1",
+            "sequence_letters": "",
             "Access": "200",
             "Magazine": "0",
             "ingest_status": "STA",
@@ -4245,7 +4392,7 @@
         }
     },
     {
-        "row-0106": {
+        "row-0107": {
             "MMSID": "9917971643502836",
             "title_parent": "Waikato Times",
             "processing_type": "parent_grouping",
@@ -4255,6 +4402,7 @@
             "title_code": "WKT",
             "edition_discriminators": "",
             "section_codes": "ED1+TAB+HAR+LUG+LOD+RYW+CHF+BAL+KID+HME+AGC+YWE+SPC+QFS",
+            "sequence_letters": "",
             "Access": "200",
             "Magazine": "0",
             "ingest_status": "STC",
@@ -4285,7 +4433,7 @@
         }
     },
     {
-        "row-0107": {
+        "row-0108": {
             "MMSID": "9917971693502836",
             "title_parent": "Hamilton Gardens Arts Festival",
             "processing_type": "parent_grouping_with_edition",
@@ -4295,6 +4443,7 @@
             "title_code": "WKT",
             "edition_discriminators": "GDN",
             "section_codes": "GDN",
+            "sequence_letters": "",
             "Access": "200",
             "Magazine": "0",
             "ingest_status": "STA",
@@ -4325,7 +4474,7 @@
         }
     },
     {
-        "row-0108": {
+        "row-0109": {
             "MMSID": "9917971643502836",
             "title_parent": "Waikato Times",
             "processing_type": "parent_grouping",
@@ -4335,6 +4484,7 @@
             "title_code": "WAT",
             "edition_discriminators": "",
             "section_codes": "ED1+TAB+HAR+YWE+SPC+QFS",
+            "sequence_letters": "",
             "Access": "200",
             "Magazine": "0",
             "ingest_status": "STC",
@@ -4365,7 +4515,7 @@
         }
     },
     {
-        "row-0109": {
+        "row-0110": {
             "MMSID": "9917974683502836",
             "title_parent": "Waikato Times",
             "processing_type": "supplement_grouping",
@@ -4375,6 +4525,7 @@
             "title_code": "WKT",
             "edition_discriminators": "",
             "section_codes": "LOD",
+            "sequence_letters": "",
             "Access": "200",
             "Magazine": "0",
             "ingest_status": "SUP",
@@ -4405,7 +4556,7 @@
         }
     },
     {
-        "row-0110": {
+        "row-0111": {
             "MMSID": "9917975033502836",
             "title_parent": "Waikato Times",
             "processing_type": "supplement_grouping",
@@ -4415,6 +4566,7 @@
             "title_code": "WKT",
             "edition_discriminators": "",
             "section_codes": "LUG",
+            "sequence_letters": "",
             "Access": "200",
             "Magazine": "0",
             "ingest_status": "SUP",
@@ -4445,7 +4597,7 @@
         }
     },
     {
-        "row-0111": {
+        "row-0112": {
             "MMSID": "9917982033502836",
             "title_parent": "Waikato Times",
             "processing_type": "supplement_grouping",
@@ -4455,6 +4607,7 @@
             "title_code": "WKT",
             "edition_discriminators": "",
             "section_codes": "RYW",
+            "sequence_letters": "",
             "Access": "200",
             "Magazine": "0",
             "ingest_status": "SUP",
@@ -4485,7 +4638,7 @@
         }
     },
     {
-        "row-0112": {
+        "row-0113": {
             "MMSID": "9917971783502836",
             "title_parent": "Waikato Times",
             "processing_type": "supplement_grouping",
@@ -4495,6 +4648,7 @@
             "title_code": "WKT",
             "edition_discriminators": "",
             "section_codes": "YWE",
+            "sequence_letters": "",
             "Access": "200",
             "Magazine": "0",
             "ingest_status": "SUP",
@@ -4525,7 +4679,7 @@
         }
     },
     {
-        "row-0113": {
+        "row-0114": {
             "MMSID": "9917971993502836",
             "title_parent": "Waikato Times",
             "processing_type": "supplement_grouping",
@@ -4535,6 +4689,7 @@
             "title_code": "WKT",
             "edition_discriminators": "",
             "section_codes": "ED1",
+            "sequence_letters": "T",
             "Access": "200",
             "Magazine": "0",
             "ingest_status": "SUP",
@@ -4565,7 +4720,7 @@
         }
     },
     {
-        "row-0114": {
+        "row-0115": {
             "MMSID": "9917974553502836",
             "title_parent": "Waikato Times",
             "processing_type": "supplement_grouping",
@@ -4575,6 +4730,7 @@
             "title_code": "WKT",
             "edition_discriminators": "",
             "section_codes": "HAR",
+            "sequence_letters": "",
             "Access": "200",
             "Magazine": "0",
             "ingest_status": "TEC",
@@ -4605,7 +4761,7 @@
         }
     },
     {
-        "row-0115": {
+        "row-0116": {
             "MMSID": "9917923503502836",
             "title_parent": "Whangarei Leader",
             "processing_type": "parent_grouping",
@@ -4615,6 +4771,7 @@
             "title_code": "WLD",
             "edition_discriminators": "",
             "section_codes": "ED1",
+            "sequence_letters": "",
             "Access": "200",
             "Magazine": "0",
             "ingest_status": "STA",
@@ -4645,7 +4802,7 @@
         }
     },
     {
-        "row-0116": {
+        "row-0117": {
             "MMSID": "9917975423502836",
             "title_parent": "Waiheke Marketplace",
             "processing_type": "parent_grouping",
@@ -4655,6 +4812,7 @@
             "title_code": "WAM",
             "edition_discriminators": "",
             "section_codes": "ED1",
+            "sequence_letters": "",
             "Access": "200",
             "Magazine": "0",
             "ingest_status": "STA",
@@ -4685,7 +4843,7 @@
         }
     },
     {
-        "row-0117": {
+        "row-0118": {
             "MMSID": "9917975173502836",
             "title_parent": "Waikato Location Edition",
             "processing_type": "parent_grouping",
@@ -4695,6 +4853,7 @@
             "title_code": "WPG",
             "edition_discriminators": "",
             "section_codes": "ED1",
+            "sequence_letters": "",
             "Access": "200",
             "Magazine": "0",
             "ingest_status": "STA",
@@ -4725,7 +4884,7 @@
         }
     },
     {
-        "row-0118": {
+        "row-0119": {
             "MMSID": "9917923483502836",
             "title_parent": "Western Leader",
             "processing_type": "parent_grouping",
@@ -4735,6 +4894,7 @@
             "title_code": "WSL",
             "edition_discriminators": "",
             "section_codes": "ED1",
+            "sequence_letters": "",
             "Access": "200",
             "Magazine": "0",
             "ingest_status": "STA",
