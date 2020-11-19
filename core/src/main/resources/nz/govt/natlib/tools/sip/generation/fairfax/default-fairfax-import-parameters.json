@@ -46,28 +46,28 @@
     },
     {
         "row-0001": {
-            "MMSID": "9917982813502836",
+            "MMSID": "9917982733502836",
             "title_parent": "Ag Trader",
-            "processing_type": "supplement_grouping",
+            "processing_type": "parent_grouping",
             "processing_rules": "",
             "processing_options": "alpha_before_numeric",
-            "publication_key": "",
+            "publication_key": "title_code",
             "title_code": "AGT",
             "edition_discriminators": "",
-            "section_codes": "SHP+SPC",
+            "section_codes": "ED1+QFS",
             "Access": "200",
             "Magazine": "1",
-            "ingest_status": "TEC",
-            "Frequency": "Annual",
-            "entity_type": "SS",
-            "title_mets": "Shop",
+            "ingest_status": "STA",
+            "Frequency": "",
+            "entity_type": "PER",
+            "title_mets": "Ag Trader",
             "ISSN online": "",
-            "Bib ID": "1798281",
+            "Bib ID": "1798273",
             "Access condition": "100-P",
             "Date catalogued": "30/06/2016",
             "Collector_folder": "Ag_Trader",
             "Cataloguer": "Denise",
-            "Notes": "Serial supplement with different editions",
+            "Notes": "",
             "first_issue_starting_page": "",
             "last_issue_starting_page": "",
             "has_volume_md": "0",
@@ -3690,46 +3690,6 @@
             "title_parent": "Taranaki Daily News",
             "processing_type": "parent_grouping",
             "processing_rules": "",
-            "processing_options": "alpha_before_numeric",
-            "publication_key": "title_code",
-            "title_code": "TDN",
-            "edition_discriminators": "",
-            "section_codes": "ED1+TAB+SPC+YPW+QFS+QF",
-            "Access": "200",
-            "Magazine": "0",
-            "ingest_status": "STC",
-            "Frequency": "",
-            "entity_type": "PER",
-            "title_mets": "Taranaki Daily News",
-            "ISSN online": "",
-            "Bib ID": "1797600",
-            "Access condition": "200",
-            "Date catalogued": "24/06/2016",
-            "Collector_folder": "Taranaki_Daily_News",
-            "Cataloguer": "Denise",
-            "Notes": "",
-            "first_issue_starting_page": "",
-            "last_issue_starting_page": "",
-            "has_volume_md": "0",
-            "has_issue_md": "0",
-            "has_number_md": "0",
-            "previous_volume": "",
-            "previous_volume_date": "",
-            "previous_volume_frequency": "",
-            "previous_issue": "",
-            "previous_issue_date": "",
-            "previous_issue_frequency": "",
-            "previous_number": "",
-            "previous_number_date": "",
-            "previous_number_frequency": ""
-        }
-    },
-    {
-        "row-0093": {
-            "MMSID": "9917976003502836",
-            "title_parent": "Taranaki Daily News",
-            "processing_type": "parent_grouping",
-            "processing_rules": "",
             "processing_options": "numeric_before_alpha",
             "publication_key": "title_code",
             "title_code": "TAD",
@@ -3765,87 +3725,7 @@
         }
     },
     {
-        "row-0094": {
-            "MMSID": "9917982063502836",
-            "title_parent": "Taranaki Daily News",
-            "processing_type": "supplement_grouping",
-            "processing_rules": "",
-            "processing_options": "alpha_before_numeric",
-            "publication_key": "",
-            "title_code": "TDN",
-            "edition_discriminators": "",
-            "section_codes": "ED1",
-            "Access": "200",
-            "Magazine": "0",
-            "ingest_status": "SUP",
-            "Frequency": "Wednesday",
-            "entity_type": "SS",
-            "title_mets": "Motor",
-            "ISSN online": "",
-            "Bib ID": "1798206",
-            "Access condition": "100-P",
-            "Date catalogued": "30/06/2016",
-            "Collector_folder": "Taranaki_Daily_News",
-            "Cataloguer": "Denise",
-            "Notes": "",
-            "first_issue_starting_page": "TDNED1-20150701-T01",
-            "last_issue_starting_page": "",
-            "has_volume_md": "0",
-            "has_issue_md": "0",
-            "has_number_md": "0",
-            "previous_volume": "",
-            "previous_volume_date": "",
-            "previous_volume_frequency": "",
-            "previous_issue": "",
-            "previous_issue_date": "",
-            "previous_issue_frequency": "",
-            "previous_number": "",
-            "previous_number_date": "",
-            "previous_number_frequency": ""
-        }
-    },
-    {
-        "row-0095": {
-            "MMSID": "9917976413502836",
-            "title_parent": "Taranaki Daily News",
-            "processing_type": "supplement_grouping",
-            "processing_rules": "",
-            "processing_options": "alpha_before_numeric",
-            "publication_key": "",
-            "title_code": "TDN",
-            "edition_discriminators": "",
-            "section_codes": "ED1",
-            "Access": "200",
-            "Magazine": "0",
-            "ingest_status": "TEC",
-            "Frequency": "Saturday (weekly)",
-            "entity_type": "SS",
-            "title_mets": "Property weekly",
-            "ISSN online": "",
-            "Bib ID": "1797641",
-            "Access condition": "100",
-            "Date catalogued": "27/06/2016",
-            "Collector_folder": "Taranaki_Daily_News",
-            "Cataloguer": "Denise",
-            "Notes": "Edition changes within collector folder",
-            "first_issue_starting_page": "TDNED1-20150704-P01",
-            "last_issue_starting_page": "",
-            "has_volume_md": "0",
-            "has_issue_md": "0",
-            "has_number_md": "0",
-            "previous_volume": "",
-            "previous_volume_date": "",
-            "previous_volume_frequency": "",
-            "previous_issue": "",
-            "previous_issue_date": "",
-            "previous_issue_frequency": "",
-            "previous_number": "",
-            "previous_number_date": "",
-            "previous_number_frequency": ""
-        }
-    },
-    {
-        "row-0096": {
+        "row-0093": {
             "MMSID": "9917976413502836",
             "title_parent": "Property Weekly",
             "processing_type": "parent_grouping",
@@ -3885,7 +3765,7 @@
         }
     },
     {
-        "row-0097": {
+        "row-0094": {
             "MMSID": "9914609313502836",
             "title_parent": "The Timaru Herald",
             "processing_type": "parent_grouping",
@@ -3925,7 +3805,7 @@
         }
     },
     {
-        "row-0098": {
+        "row-0095": {
             "MMSID": "9914609313502836",
             "title_parent": "The Timaru Herald",
             "processing_type": "parent_grouping",
@@ -3965,7 +3845,7 @@
         }
     },
     {
-        "row-0099": {
+        "row-0096": {
             "MMSID": "9918148160502836",
             "title_parent": "The Timaru Herald",
             "processing_type": "supplement_grouping",
@@ -4005,7 +3885,7 @@
         }
     },
     {
-        "row-0100": {
+        "row-0097": {
             "MMSID": "9918150139902836",
             "title_parent": "Timaru Herald",
             "processing_type": "supplement_grouping",
@@ -4045,7 +3925,7 @@
         }
     },
     {
-        "row-0101": {
+        "row-0098": {
             "MMSID": "9917962373502836",
             "title_parent": "Taupo Times",
             "processing_type": "parent_grouping",
@@ -4085,7 +3965,7 @@
         }
     },
     {
-        "row-0102": {
+        "row-0099": {
             "MMSID": "9918647057402836",
             "title_parent": "Taupo Times",
             "processing_type": "supplement_grouping",
@@ -4125,7 +4005,7 @@
         }
     },
     {
-        "row-0103": {
+        "row-0100": {
             "MMSID": "9917981683502836",
             "title_parent": "TV Guide",
             "processing_type": "parent_grouping",
@@ -4165,7 +4045,7 @@
         }
     },
     {
-        "row-0104": {
+        "row-0101": {
             "MMSID": "9917962273502836",
             "title_parent": "Upper Hutt Leader",
             "processing_type": "parent_grouping",
@@ -4205,7 +4085,7 @@
         }
     },
     {
-        "row-0105": {
+        "row-0102": {
             "MMSID": "9917971783502836",
             "title_parent": "Waikato Times",
             "processing_type": "supplement_grouping",
@@ -4245,7 +4125,7 @@
         }
     },
     {
-        "row-0106": {
+        "row-0103": {
             "MMSID": "9917924353502836",
             "title_parent": "Waitaki Herald",
             "processing_type": "parent_grouping",
@@ -4285,7 +4165,7 @@
         }
     },
     {
-        "row-0107": {
+        "row-0104": {
             "MMSID": "9917925423502836",
             "title_parent": "Western Homes",
             "processing_type": "parent_grouping",
@@ -4325,7 +4205,7 @@
         }
     },
     {
-        "row-0108": {
+        "row-0105": {
             "MMSID": "9917982213502836",
             "title_parent": "Waikato Times",
             "processing_type": "parent_grouping",
@@ -4365,7 +4245,7 @@
         }
     },
     {
-        "row-0109": {
+        "row-0106": {
             "MMSID": "9917971643502836",
             "title_parent": "Waikato Times",
             "processing_type": "parent_grouping",
@@ -4405,7 +4285,7 @@
         }
     },
     {
-        "row-0110": {
+        "row-0107": {
             "MMSID": "9917971693502836",
             "title_parent": "Hamilton Gardens Arts Festival",
             "processing_type": "parent_grouping_with_edition",
@@ -4445,7 +4325,7 @@
         }
     },
     {
-        "row-0111": {
+        "row-0108": {
             "MMSID": "9917971643502836",
             "title_parent": "Waikato Times",
             "processing_type": "parent_grouping",
@@ -4485,7 +4365,7 @@
         }
     },
     {
-        "row-0112": {
+        "row-0109": {
             "MMSID": "9917974683502836",
             "title_parent": "Waikato Times",
             "processing_type": "supplement_grouping",
@@ -4525,7 +4405,7 @@
         }
     },
     {
-        "row-0113": {
+        "row-0110": {
             "MMSID": "9917975033502836",
             "title_parent": "Waikato Times",
             "processing_type": "supplement_grouping",
@@ -4565,7 +4445,7 @@
         }
     },
     {
-        "row-0114": {
+        "row-0111": {
             "MMSID": "9917982033502836",
             "title_parent": "Waikato Times",
             "processing_type": "supplement_grouping",
@@ -4605,7 +4485,7 @@
         }
     },
     {
-        "row-0115": {
+        "row-0112": {
             "MMSID": "9917971783502836",
             "title_parent": "Waikato Times",
             "processing_type": "supplement_grouping",
@@ -4645,7 +4525,7 @@
         }
     },
     {
-        "row-0116": {
+        "row-0113": {
             "MMSID": "9917971993502836",
             "title_parent": "Waikato Times",
             "processing_type": "supplement_grouping",
@@ -4685,7 +4565,7 @@
         }
     },
     {
-        "row-0117": {
+        "row-0114": {
             "MMSID": "9917974553502836",
             "title_parent": "Waikato Times",
             "processing_type": "supplement_grouping",
@@ -4725,7 +4605,7 @@
         }
     },
     {
-        "row-0118": {
+        "row-0115": {
             "MMSID": "9917923503502836",
             "title_parent": "Whangarei Leader",
             "processing_type": "parent_grouping",
@@ -4765,7 +4645,7 @@
         }
     },
     {
-        "row-0119": {
+        "row-0116": {
             "MMSID": "9917975423502836",
             "title_parent": "Waiheke Marketplace",
             "processing_type": "parent_grouping",
@@ -4805,7 +4685,7 @@
         }
     },
     {
-        "row-0120": {
+        "row-0117": {
             "MMSID": "9917975173502836",
             "title_parent": "Waikato Location Edition",
             "processing_type": "parent_grouping",
@@ -4845,7 +4725,7 @@
         }
     },
     {
-        "row-0121": {
+        "row-0118": {
             "MMSID": "9917923483502836",
             "title_parent": "Western Leader",
             "processing_type": "parent_grouping",
