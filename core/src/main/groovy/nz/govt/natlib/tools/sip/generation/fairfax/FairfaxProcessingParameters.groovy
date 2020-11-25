@@ -38,6 +38,7 @@ class FairfaxProcessingParameters {
     LocalDate date
     Map<String, String> spreadsheetRow = [ : ]
     List<String> sectionCodes = [ ]
+    List<String> sequenceLetters = [ ]
     List<String> editionDiscriminators = [ ]
     boolean isMagazine = false
     String currentEdition
@@ -192,6 +193,7 @@ class FairfaxProcessingParameters {
                     options: ProcessingOption.extract(options, ",", processingType.defaultOptions),
                     sourceFolder: sourceFolder, date: processingDate, spreadsheetRow: matchingRow,
                     sectionCodes: extractSeparatedValues(matchingRow, FairfaxSpreadsheet.SECTION_CODE_KEY),
+                    sequenceLetters: extractSeparatedValues(matchingRow, FairfaxSpreadsheet.SEQUENCE_LETTER_KEY),
                     editionDiscriminators: extractSeparatedValues(matchingRow, FairfaxSpreadsheet.EDITION_DISCRIMINATOR_KEY),
                     isMagazine: FairfaxSpreadsheet.extractBooleanValue(matchingRow, FairfaxSpreadsheet.IS_MAGAZINE_KEY))
         }
