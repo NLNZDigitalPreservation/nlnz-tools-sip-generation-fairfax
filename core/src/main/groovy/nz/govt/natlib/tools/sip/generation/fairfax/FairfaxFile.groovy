@@ -94,22 +94,36 @@ class FairfaxFile {
             List<FairfaxFile> sectionFiles = [ ]
             filesBySection.put(sectionCode, sectionFiles)
             files.each { FairfaxFile fairfaxFile ->
-                if (sectionCode == fairfaxFile.sectionCode ||
+                if (sectionCode.equals(fairfaxFile.sectionCode) ||
                         processingParameters.matchesCurrentSection(sectionCode, fairfaxFile.sectionCode)) {
                     sectionFiles.add(fairfaxFile)
                 }
             }
         }
+
+        // Create section for sequence letter
+        if (!processingParameters.sequenceLetters.isEmpty()) {
+            processingParameters.sequenceLetters.each { String sequenceLetter ->
+                List<FairfaxFile> sequenceLetterFiles = []
+                filesBySection.put(sequenceLetter, sequenceLetterFiles)
+                files.each { FairfaxFile fairfaxFile ->
+                    if (sequenceLetter == fairfaxFile.sequenceLetter) {
+                        sequenceLetterFiles.add(fairfaxFile)
+                    }
+                }
+            }
+        }
+
         // NEXT: Sort each sectionCode by numberAndAlpha
         boolean alphaBeforeNumeric = processingParameters.options.contains(ProcessingOption.AlphaBeforeNumericSequencing)
-        processingParameters.sectionCodes.each { String sectionCode ->
-            List<FairfaxFile> sectionFiles = filesBySection.get(sectionCode)
+        filesBySection.keySet().each { String key ->
+            List<FairfaxFile> sectionFiles = filesBySection.get(key)
             sectionFiles = sortNumericAndAlpha(sectionFiles, alphaBeforeNumeric)
-            filesBySection.put(sectionCode, sectionFiles)
+            filesBySection.put(key, sectionFiles)
         }
         List<FairfaxFile> sorted = [ ]
-        processingParameters.sectionCodes.each { String sectionCode ->
-            sorted.addAll(filesBySection.get(sectionCode))
+        filesBySection.keySet().each { String key ->
+            sorted.addAll(filesBySection.get(key))
         }
         if (sorted.size() != files.size()) {
             log.warn("Not all sorted files exist in final list, differences=${differences(sorted, files)}")
