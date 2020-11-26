@@ -94,8 +94,10 @@ class FairfaxFile {
             List<FairfaxFile> sectionFiles = [ ]
             filesBySection.put(sectionCode, sectionFiles)
             files.each { FairfaxFile fairfaxFile ->
-                if (sectionCode.equals(fairfaxFile.sectionCode) ||
-                        processingParameters.matchesCurrentSection(sectionCode, fairfaxFile.sectionCode)) {
+                if ((sectionCode.equals(fairfaxFile.sectionCode) ||
+                        processingParameters.matchesCurrentSection(sectionCode, fairfaxFile.sectionCode)) &&
+                        (processingParameters.sequenceLetters.isEmpty() ||
+                                !processingParameters.sequenceLetters.contains(fairfaxFile.sequenceLetter)) ) {
                     sectionFiles.add(fairfaxFile)
                 }
             }
