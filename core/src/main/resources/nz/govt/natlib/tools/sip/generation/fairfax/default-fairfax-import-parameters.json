@@ -2835,47 +2835,6 @@
     },
     {
         "row-0069": {
-            "MMSID": "9918647057402836",
-            "title_parent": "The Press",
-            "processing_type": "supplement_grouping",
-            "processing_rules": "",
-            "processing_options": "numeric_before_alpha",
-            "publication_key": "title_code",
-            "title_code": "PRS",
-            "edition_discriminators": "",
-            "section_codes": "TAB",
-            "sequence_letters": "",
-            "Access": "200",
-            "Magazine": "0",
-            "ingest_status": "TEC",
-            "Frequency": "",
-            "entity_type": "PER",
-            "title_mets": "Homed",
-            "ISSN online": "",
-            "Bib ID": "",
-            "Access condition": "",
-            "Date catalogued": "",
-            "Collector_folder": "TBD",
-            "Cataloguer": "",
-            "Notes": "New title. Need missing pages. May be a continuation of At home (The Press)",
-            "first_issue_starting_page": "",
-            "last_issue_starting_page": "",
-            "has_volume_md": "0",
-            "has_issue_md": "0",
-            "has_number_md": "0",
-            "previous_volume": "",
-            "previous_volume_date": "",
-            "previous_volume_frequency": "",
-            "previous_issue": "",
-            "previous_issue_date": "",
-            "previous_issue_frequency": "",
-            "previous_number": "",
-            "previous_number_date": "",
-            "previous_number_frequency": ""
-        }
-    },
-    {
-        "row-0070": {
             "MMSID": "9918647057502836",
             "title_parent": "Property weekly",
             "processing_type": "parent_grouping",
@@ -2916,7 +2875,7 @@
         }
     },
     {
-        "row-0071": {
+        "row-0070": {
             "MMSID": "9918762570402836",
             "title_parent": "South Canterbury premium property weekly",
             "processing_type": "parent_grouping",
@@ -2957,7 +2916,7 @@
         }
     },
     {
-        "row-0072": {
+        "row-0071": {
             "MMSID": "9917975563502836",
             "title_parent": "Mirror",
             "processing_type": "parent_grouping_with_edition",
@@ -2998,7 +2957,7 @@
         }
     },
     {
-        "row-0073": {
+        "row-0072": {
             "MMSID": "9917975673502836",
             "title_parent": "Mirror",
             "processing_type": "parent_grouping_with_edition",
@@ -3039,7 +2998,7 @@
         }
     },
     {
-        "row-0074": {
+        "row-0073": {
             "MMSID": "9917975753502836",
             "title_parent": "Mirror",
             "processing_type": "parent_grouping_with_edition",
@@ -3080,7 +3039,7 @@
         }
     },
     {
-        "row-0075": {
+        "row-0074": {
             "MMSID": "9917966493502836",
             "title_parent": "Rodney Times",
             "processing_type": "parent_grouping",
@@ -3121,7 +3080,7 @@
         }
     },
     {
-        "row-0076": {
+        "row-0075": {
             "MMSID": "9918150135402836",
             "title_parent": "Visitor handbook : Central Districts Field Days",
             "processing_type": "parent_grouping",
@@ -3162,7 +3121,7 @@
         }
     },
     {
-        "row-0077": {
+        "row-0076": {
             "MMSID": "9917966623502836",
             "title_parent": "Ruapehu Press",
             "processing_type": "parent_grouping",
@@ -3203,7 +3162,7 @@
         }
     },
     {
-        "row-0078": {
+        "row-0077": {
             "MMSID": "9917907173502836",
             "title_parent": "Saturday Express",
             "processing_type": "parent_grouping",
@@ -3244,7 +3203,7 @@
         }
     },
     {
-        "row-0079": {
+        "row-0078": {
             "MMSID": "9917984313502836",
             "title_parent": "Sunday News",
             "processing_type": "parent_grouping",
@@ -3285,7 +3244,7 @@
         }
     },
     {
-        "row-0080": {
+        "row-0079": {
             "MMSID": "9917982163502836",
             "title_parent": "Southern Homes",
             "processing_type": "parent_grouping",
@@ -3326,48 +3285,7 @@
         }
     },
     {
-        "row-0081": {
-            "MMSID": "9918150569902836",
-            "title_parent": "Southland Times",
-            "processing_type": "supplement_grouping",
-            "processing_rules": "",
-            "processing_options": "numeric_before_alpha",
-            "publication_key": "",
-            "title_code": "SOT",
-            "edition_discriminators": "",
-            "section_codes": "TAB",
-            "sequence_letters": "",
-            "Access": "200",
-            "Magazine": "0",
-            "ingest_status": "SUP",
-            "Frequency": "Thursday",
-            "entity_type": "SS",
-            "title_mets": "Southland Real Estate Ltd",
-            "ISSN online": "",
-            "Bib ID": "",
-            "Access condition": "",
-            "Date catalogued": "",
-            "Collector_folder": "The_Southland_Times",
-            "Cataloguer": "",
-            "Notes": "",
-            "first_issue_starting_page": "",
-            "last_issue_starting_page": "",
-            "has_volume_md": "0",
-            "has_issue_md": "0",
-            "has_number_md": "0",
-            "previous_volume": "",
-            "previous_volume_date": "",
-            "previous_volume_frequency": "",
-            "previous_issue": "",
-            "previous_issue_date": "",
-            "previous_issue_frequency": "",
-            "previous_number": "",
-            "previous_number_date": "",
-            "previous_number_frequency": ""
-        }
-    },
-    {
-        "row-0082": {
+        "row-0080": {
             "MMSID": "9917966833502836",
             "title_parent": "South Waikato News",
             "processing_type": "parent_grouping",
@@ -3408,7 +3326,7 @@
         }
     },
     {
-        "row-0083": {
+        "row-0081": {
             "MMSID": "9917976273502836",
             "title_parent": "Sunday Star Times",
             "processing_type": "supplement_grouping",
@@ -3449,7 +3367,7 @@
         }
     },
     {
-        "row-0084": {
+        "row-0082": {
             "MMSID": "9917976113502836",
             "title_parent": "Sunday Star Times",
             "processing_type": "parent_grouping",
@@ -3490,7 +3408,7 @@
         }
     },
     {
-        "row-0085": {
+        "row-0083": {
             "MMSID": "9917976113502836",
             "title_parent": "Sunday Star Times",
             "processing_type": "parent_grouping",
@@ -3531,7 +3449,7 @@
         }
     },
     {
-        "row-0086": {
+        "row-0084": {
             "MMSID": "9917976283502836",
             "title_parent": "Sunday Star Times Sunday",
             "processing_type": "parent_grouping",
@@ -3572,48 +3490,7 @@
         }
     },
     {
-        "row-0087": {
-            "MMSID": "9918150569902836",
-            "title_parent": "Southland Times",
-            "processing_type": "supplement_grouping",
-            "processing_rules": "",
-            "processing_options": "alpha_before_numeric",
-            "publication_key": "",
-            "title_code": "STL",
-            "edition_discriminators": "",
-            "section_codes": "TAB",
-            "sequence_letters": "",
-            "Access": "200",
-            "Magazine": "0",
-            "ingest_status": "SUP",
-            "Frequency": "Thursday",
-            "entity_type": "SS",
-            "title_mets": "Southland Real Estate Ltd",
-            "ISSN online": "",
-            "Bib ID": "",
-            "Access condition": "",
-            "Date catalogued": "12/06/2017",
-            "Collector_folder": "The_Southland_Times",
-            "Cataloguer": "Denise",
-            "Notes": "",
-            "first_issue_starting_page": "STLTAB-20160211-001",
-            "last_issue_starting_page": "",
-            "has_volume_md": "0",
-            "has_issue_md": "0",
-            "has_number_md": "0",
-            "previous_volume": "",
-            "previous_volume_date": "",
-            "previous_volume_frequency": "",
-            "previous_issue": "",
-            "previous_issue_date": "",
-            "previous_issue_frequency": "",
-            "previous_number": "",
-            "previous_number_date": "",
-            "previous_number_frequency": ""
-        }
-    },
-    {
-        "row-0088": {
+        "row-0085": {
             "MMSID": "9914607593502836",
             "title_parent": "The Southland Times",
             "processing_type": "parent_grouping",
@@ -3654,7 +3531,7 @@
         }
     },
     {
-        "row-0089": {
+        "row-0086": {
             "MMSID": "9914607593502836",
             "title_parent": "The Southland Times",
             "processing_type": "parent_grouping",
@@ -3695,7 +3572,7 @@
         }
     },
     {
-        "row-0090": {
+        "row-0087": {
             "MMSID": "9917984313502836",
             "title_parent": "Sunday News",
             "processing_type": "parent_grouping",
@@ -3736,7 +3613,7 @@
         }
     },
     {
-        "row-0091": {
+        "row-0088": {
             "MMSID": "9917966723502836",
             "title_parent": "South Taranaki Star",
             "processing_type": "parent_grouping",
@@ -3777,7 +3654,7 @@
         }
     },
     {
-        "row-0092": {
+        "row-0089": {
             "MMSID": "9917976003502836",
             "title_parent": "Taranaki Daily News",
             "processing_type": "parent_grouping",
@@ -3818,7 +3695,7 @@
         }
     },
     {
-        "row-0093": {
+        "row-0090": {
             "MMSID": "9917976413502836",
             "title_parent": "Property Weekly",
             "processing_type": "parent_grouping",
@@ -3859,7 +3736,7 @@
         }
     },
     {
-        "row-0094": {
+        "row-0091": {
             "MMSID": "9914609313502836",
             "title_parent": "The Timaru Herald",
             "processing_type": "parent_grouping",
@@ -3900,7 +3777,7 @@
         }
     },
     {
-        "row-0095": {
+        "row-0092": {
             "MMSID": "9914609313502836",
             "title_parent": "The Timaru Herald",
             "processing_type": "parent_grouping",
@@ -3941,7 +3818,7 @@
         }
     },
     {
-        "row-0096": {
+        "row-0093": {
             "MMSID": "9918148160502836",
             "title_parent": "The Timaru Herald",
             "processing_type": "supplement_grouping",
@@ -3982,7 +3859,7 @@
         }
     },
     {
-        "row-0097": {
+        "row-0094": {
             "MMSID": "9918150139902836",
             "title_parent": "Timaru Herald",
             "processing_type": "supplement_grouping",
@@ -4023,7 +3900,7 @@
         }
     },
     {
-        "row-0098": {
+        "row-0095": {
             "MMSID": "9917962373502836",
             "title_parent": "Taupo Times",
             "processing_type": "parent_grouping",
@@ -4064,7 +3941,7 @@
         }
     },
     {
-        "row-0099": {
+        "row-0096": {
             "MMSID": "9918647057402836",
             "title_parent": "Taupo Times",
             "processing_type": "supplement_grouping",
@@ -4105,7 +3982,7 @@
         }
     },
     {
-        "row-0100": {
+        "row-0097": {
             "MMSID": "9917981683502836",
             "title_parent": "TV Guide",
             "processing_type": "parent_grouping",
@@ -4146,7 +4023,7 @@
         }
     },
     {
-        "row-0101": {
+        "row-0098": {
             "MMSID": "9917962273502836",
             "title_parent": "Upper Hutt Leader",
             "processing_type": "parent_grouping",
@@ -4187,7 +4064,7 @@
         }
     },
     {
-        "row-0102": {
+        "row-0099": {
             "MMSID": "9917971783502836",
             "title_parent": "Waikato Times",
             "processing_type": "supplement_grouping",
@@ -4228,7 +4105,7 @@
         }
     },
     {
-        "row-0103": {
+        "row-0100": {
             "MMSID": "9917924353502836",
             "title_parent": "Waitaki Herald",
             "processing_type": "parent_grouping",
@@ -4269,7 +4146,7 @@
         }
     },
     {
-        "row-0104": {
+        "row-0101": {
             "MMSID": "9917925423502836",
             "title_parent": "Western Homes",
             "processing_type": "parent_grouping",
@@ -4310,7 +4187,7 @@
         }
     },
     {
-        "row-0105": {
+        "row-0102": {
             "MMSID": "9917982213502836",
             "title_parent": "Waikato Times",
             "processing_type": "parent_grouping",
@@ -4351,7 +4228,7 @@
         }
     },
     {
-        "row-0106": {
+        "row-0103": {
             "MMSID": "9917971643502836",
             "title_parent": "Waikato Times",
             "processing_type": "parent_grouping",
@@ -4392,7 +4269,7 @@
         }
     },
     {
-        "row-0107": {
+        "row-0104": {
             "MMSID": "9917971693502836",
             "title_parent": "Hamilton Gardens Arts Festival",
             "processing_type": "parent_grouping_with_edition",
@@ -4433,7 +4310,7 @@
         }
     },
     {
-        "row-0108": {
+        "row-0105": {
             "MMSID": "9917971643502836",
             "title_parent": "Waikato Times",
             "processing_type": "parent_grouping",
@@ -4474,7 +4351,7 @@
         }
     },
     {
-        "row-0109": {
+        "row-0106": {
             "MMSID": "9917974683502836",
             "title_parent": "Waikato Times",
             "processing_type": "supplement_grouping",
@@ -4515,7 +4392,7 @@
         }
     },
     {
-        "row-0110": {
+        "row-0107": {
             "MMSID": "9917975033502836",
             "title_parent": "Waikato Times",
             "processing_type": "supplement_grouping",
@@ -4556,7 +4433,7 @@
         }
     },
     {
-        "row-0111": {
+        "row-0108": {
             "MMSID": "9917982033502836",
             "title_parent": "Waikato Times",
             "processing_type": "supplement_grouping",
@@ -4597,7 +4474,7 @@
         }
     },
     {
-        "row-0112": {
+        "row-0109": {
             "MMSID": "9917971783502836",
             "title_parent": "Waikato Times",
             "processing_type": "supplement_grouping",
@@ -4638,7 +4515,7 @@
         }
     },
     {
-        "row-0113": {
+        "row-0110": {
             "MMSID": "9917971993502836",
             "title_parent": "Waikato Times",
             "processing_type": "supplement_grouping",
@@ -4679,7 +4556,7 @@
         }
     },
     {
-        "row-0114": {
+        "row-0111": {
             "MMSID": "9917974553502836",
             "title_parent": "Waikato Times",
             "processing_type": "supplement_grouping",
@@ -4720,7 +4597,7 @@
         }
     },
     {
-        "row-0115": {
+        "row-0112": {
             "MMSID": "9917923503502836",
             "title_parent": "Whangarei Leader",
             "processing_type": "parent_grouping",
@@ -4761,7 +4638,7 @@
         }
     },
     {
-        "row-0116": {
+        "row-0113": {
             "MMSID": "9917975423502836",
             "title_parent": "Waiheke Marketplace",
             "processing_type": "parent_grouping",
@@ -4802,7 +4679,7 @@
         }
     },
     {
-        "row-0117": {
+        "row-0114": {
             "MMSID": "9917975173502836",
             "title_parent": "Waikato Location Edition",
             "processing_type": "parent_grouping",
@@ -4843,7 +4720,7 @@
         }
     },
     {
-        "row-0118": {
+        "row-0115": {
             "MMSID": "9917923483502836",
             "title_parent": "Western Leader",
             "processing_type": "parent_grouping",
