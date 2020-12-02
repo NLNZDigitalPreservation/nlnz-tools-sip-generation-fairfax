@@ -1,7 +1,7 @@
 # Based on https://docs.cucumber.io/
 #
 @tag
-Feature: Processing fails when all section codes are required but not all are handled
+Feature: Processing fails when all section codes are required but not all are handled.  Must include Forever Project files.
 
    All section codes are checked when all are required.
 
@@ -10,5 +10,6 @@ Feature: Processing fails when all section codes are required but not all are ha
      And the section codes are different
      And not all section codes are in the section_code list
      And the processing rule is that all section codes are in the sip
+     It includes Forever Project files for both FPP and FPD
      When the publication issue is processed
      Then the processing fails with the exception showing the ignored files

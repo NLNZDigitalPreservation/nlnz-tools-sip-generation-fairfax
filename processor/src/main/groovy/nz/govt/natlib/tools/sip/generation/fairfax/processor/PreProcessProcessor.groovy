@@ -142,34 +142,6 @@ class PreProcessProcessor {
                     titleCodeFolderName = "DOM"
                     fpTitleCodes = ["FPP", "FPW"]
                     pubDirs = ["${File.separator}PRS${File.separator}","${File.separator}WAT${File.separator}"]
-//                    // The Sunday Star Times will sometimes contain FP files as well.
-//                    // Copy to Sunday Star Times
-//                    if (targetFile.getDate().dayOfWeek == DayOfWeek.SUNDAY) {
-//                        fpTitleCodes.add("FPS")
-//                        pubDirs.add("${File.separator}SUS${File.separator}")
-//                    }
-//                    if (targetFile.getDate().dayOfWeek != DayOfWeek.SUNDAY)
-//                    break
-//                    // Check the source and ingestion destination directories for FP files
-//                    // Filter files based on filename
-//                    List<Path> pathsToCheck = [Paths.get(destinationFolder.getParent().normalize().toString() + File.separator + dateFolderName + File.separator + "SUS"),
-//                        getProcessorConfiguration().sourceFolder.normalize()]
-//                    for (Path path : pathsToCheck) {
-//                        if (path.toFile().listFiles({ dir, name -> name.startsWith("FPS") && name.toLowerCase().endsWith(".pdf") }).length() > 0) {
-//                           fpTitleCodes.add("FPS")
-//                           pubDirs.add("${File.separator}SUS${File.separator}")
-//                           break
-//                        }
-//                     }
-//                    if (fpTitleCodes.contains("FPS")) break
-
-//                    // Check the review directories for FP files
-//                    File susDir = FileUtils.listFiles(forReviewFolder, new RegexFileFilter("^${dateFolderName}_SUS"), DirectoryFileFilter.DIRECTORY)[0]
-//                    if (susDir != null && susDir.listFiles({ dir, name -> name.startsWith("FPS" && name.toLowerCase().endsWith(".pdf"))}).length > 0) {
-//                            fpTitleCodes.add("FPS")
-//                            pubDirs.add("${File.separator}SUS${File.separator}")
-//                        }
-//                    }
                     break
                 case "FPP":
                     titleCodeFolderName = "PRS"
