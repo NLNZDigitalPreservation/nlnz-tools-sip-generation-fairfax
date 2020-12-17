@@ -26,7 +26,7 @@ import static org.hamcrest.core.Is.is
 import static org.junit.Assert.*
 
 /**
- * Tests the {@code all-sections-required-but-some-ignored} scenario.
+ * Tests the {@code forever-project} scenario.
  *
  * Note that this test is complicated by the files either being part of a directory structure or in a resource file (jar),
  * so the {@link TestHelper} class is used to handle both scenarios. In real-life processing the files would be on the
@@ -66,7 +66,7 @@ class ForeverProjectTest {
     @Ignore
     void correctlyAssembleSipFromFilesOnFilesystem() {
         boolean forLocalFilesystem = true
-        TestHelper.initializeTestMethod(testMethodState, "AllSectionCodesRequiredTest-", forLocalFilesystem)
+        TestHelper.initializeTestMethod(testMethodState, "ForeverProjectTest-", forLocalFilesystem)
 
         // TODO A more complicated pattern -- date and other masks?
         boolean isRegexNotGlob = true
@@ -81,7 +81,7 @@ class ForeverProjectTest {
     @Test
     void correctlyAssembleSipFromFiles() {
         boolean forLocalFilesystem = false
-        TestHelper.initializeTestMethod(testMethodState, "AllSectionCodesRequiredTest-", forLocalFilesystem)
+        TestHelper.initializeTestMethod(testMethodState, "ForeverProjectTest-", forLocalFilesystem)
 
         // TODO A more complicated pattern -- date and other masks?
         boolean isRegexNotGlob = true
@@ -107,8 +107,8 @@ class ForeverProjectTest {
 
         FairfaxProcessingParameters processingParameters = parametersList.first()
 
-        assertThat("Multiple section codes: 'PB1', 'BOO', 'ZOO', 'AAT'", processingParameters.sectionCodes,
-                is([ 'PB1', 'BOO', 'ZOO', 'AAT' ]))
+        assertThat("Multiple section codes: 'PB1', 'BOO', 'AAT'", processingParameters.sectionCodes,
+                is([ 'PB1', 'BOO', 'AAT' ]))
 
         processingParameters.sipProcessingState = testMethodState.sipProcessingState
         FairfaxFilesProcessor.processCollectedFiles(processingParameters, filesForProcessing)
@@ -123,23 +123,11 @@ class ForeverProjectTest {
         int expectedNumberOfThumbnailPageFiles = 15
         int expectedNumberOfValidFiles = 15
         int expectedNumberOfInvalidFiles = 0
-        int expectedNumberOfIgnoredFiles = 2
+        int expectedNumberOfIgnoredFiles = 0
         int expectedNumberOfUnrecognizedFiles = 0
         TestHelper.assertSipProcessingStateFileNumbers(expectedNumberOfFilesProcessed, expectedNumberOfSipFiles,
                 expectedNumberOfThumbnailPageFiles, expectedNumberOfValidFiles, expectedNumberOfInvalidFiles,
                 expectedNumberOfIgnoredFiles, expectedNumberOfUnrecognizedFiles, testMethodState.sipProcessingState)
-
-        // If a thumbnail page will be generated, then it will always generate because not all section codes is a processing exception.
-        if (processingParameters.options.contains(ProcessingOption.GenerateProcessedPdfThumbnailsPage)) {
-            assertTrue("Thumbnail page exists, file=${processingParameters.thumbnailPageFile.normalize()}",
-                    Files.exists(processingParameters.thumbnailPageFile))
-            // We delete the file because we don't want it sticking around after the test
-            // Comment out the following line if you want to view the file
-            Files.deleteIfExists(processingParameters.thumbnailPageFile)
-        } else {
-            assertNull("Thumbnail page DOES NOT exist, file=${processingParameters.thumbnailPageFile}",
-                    processingParameters.thumbnailPageFile)
-        }
 
         log.info("STARTING SIP validation")
         sipConstructedCorrectly(sipAsXml)
@@ -158,7 +146,6 @@ class ForeverProjectTest {
         assertTrue("SipXmlExtractor has content", sipForValidation.xml.length() > 0)
 
         assertTrue("SipProcessingState is complete", testMethodState.sipProcessingState.isComplete())
-        TestHelper.assertExpectedExceptionReason(testMethodState.sipProcessingState, SipProcessingExceptionReasonType.ALL_FILES_CANNOT_BE_PROCESSED)
 
         TestHelper.assertExpectedSipMetadataValues(sipForValidation, "Test Publication One", "2018", "11", "23",
                 IEEntityType.NewspaperIE, "ALMAMMS", "test-mms-id-one", "200",
