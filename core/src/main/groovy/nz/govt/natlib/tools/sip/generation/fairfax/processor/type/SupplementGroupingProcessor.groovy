@@ -25,24 +25,27 @@ class SupplementGroupingProcessor {
                     "processingParameters=${processingParameters}")
         }
 
+        // Return files if there are no sequence letters to process
+        if (processingParameters.sequenceLetters.size() == 0) {
+            return fairfaxFiles
+        }
+
         // Check if there are any files with sequence letter
         // If so, do not skip and only process sequence letter files
-        if (processingParameters.sequenceLetters.size() > 0) {
-            List<FairfaxFile> sequenceLetterFiles = [ ]
-            fairfaxFiles.each { FairfaxFile  fairfaxFile ->
-                if (processingParameters.sequenceLetters.contains(fairfaxFile.sequenceLetter)) {
-                    sequenceLetterFiles.add(fairfaxFile)
-                }
+        List<FairfaxFile> sequenceLetterFiles = [ ]
+        fairfaxFiles.each { FairfaxFile  fairfaxFile ->
+            if (processingParameters.sequenceLetters.contains(fairfaxFile.sequenceLetter)) {
+                sequenceLetterFiles.add(fairfaxFile)
             }
+        }
 
-            if (sequenceLetterFiles.size() > 0) {
-                fairfaxFiles = sequenceLetterFiles
-                processingParameters.skip = false
-            } else {
-                processingParameters.skip = true
-                log.info("no sequence letter ${processingParameters.sequenceLetters} files, " +
-                        "skipping processing for processingParameters=${processingParameters}")
-            }
+        if (sequenceLetterFiles.size() > 0) {
+            fairfaxFiles = sequenceLetterFiles
+            processingParameters.skip = false
+        } else {
+            processingParameters.skip = true
+            log.info("no sequence letter ${processingParameters.sequenceLetters} files, " +
+                    "skipping processing for processingParameters=${processingParameters}")
         }
 
         return fairfaxFiles

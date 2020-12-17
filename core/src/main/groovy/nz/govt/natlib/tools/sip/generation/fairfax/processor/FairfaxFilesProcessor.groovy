@@ -38,6 +38,8 @@ import java.time.LocalDate
  */
 @Log4j2
 class FairfaxFilesProcessor {
+    static final String FOREVER_PROJECT_PREFIX = "FP"
+
     FairfaxProcessingParameters processingParameters
     List<Path> filesForProcessing
 
@@ -120,7 +122,7 @@ class FairfaxFilesProcessor {
             // If so, process the files as a single collection with FP files at the end
             boolean isFP = false
             for (FairfaxFile file : sortedFilesForProcessing) {
-                if (file.getTitleCode().startsWith("FP")) {
+                if (file.getTitleCode().startsWith(FOREVER_PROJECT_PREFIX)) {
                     isFP = true
                     break
                 }
@@ -129,7 +131,7 @@ class FairfaxFilesProcessor {
                 List<FairfaxFile> fpFiles = []
                 List<FairfaxFile> sortedFiles = []
                 for (FairfaxFile fairfaxFile : sortedFilesForProcessing) {
-                    if (fairfaxFile.getTitleCode().startsWith("FP")) {
+                    if (fairfaxFile.getTitleCode().startsWith(FOREVER_PROJECT_PREFIX)) {
                         fpFiles.add(fairfaxFile)
                     } else {
                         sortedFiles.add(fairfaxFile)
