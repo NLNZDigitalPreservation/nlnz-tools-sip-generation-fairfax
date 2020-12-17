@@ -1,5 +1,6 @@
 package nz.govt.natlib.tools.sip.generation.fairfax.processor
 
+import com.google.common.collect.ImmutableMap
 import groovy.util.logging.Log4j2
 import nz.govt.natlib.tools.sip.generation.fairfax.FairfaxFile
 import nz.govt.natlib.tools.sip.generation.fairfax.FairfaxFileTitleEditionKey
@@ -14,6 +15,8 @@ import java.time.Period
 
 @Log4j2
 class ReportsProcessor {
+    static final String FOREVER_PROJECT_PREFIX = "FP"
+
     ProcessorConfiguration processorConfiguration
     Set<String> recognizedTitleCodes = []
     Set<String> unrecognizedTitleCodes = []
@@ -56,20 +59,17 @@ class ReportsProcessor {
                         recognizedTitleCodes.add(fairfaxFile.titleCode)
                         log.info("listFiles adding recognizedTitleCode=${fairfaxFile.titleCode}")
                     }
-                } else if (fairfaxFile.titleCode.matches("^FP[DPW]")) {
-                    parentTitleCode = ""
+                } else if (fairfaxFile.titleCode.matches("^" + FOREVER_PROJECT_PREFIX + "[DPWS]")) {
                     log.info("listFiles found Forever Project publication=${fairfaxFile.titleCode}")
-                    switch(targetFile.titleCode) {
-                        case "FPD":
-                            parentTitleCode = "DOM"
-                            break
-                        case "FPP":
-                            parentTitleCode = "PRS"
-                            break
-                        case "FPW":
-                            parentTitleCode = "WAT"
-                            break
-                    }
+
+                    final Map<String, String> foreverProjectTitles = ImmutableMap.of(
+                            FOREVER_PROJECT_PREFIX + "D", "DOM",
+                            FOREVER_PROJECT_PREFIX + "P", "PRS",
+                            FOREVER_PROJECT_PREFIX + "W", "WAT",
+                            FOREVER_PROJECT_PREFIX + "S", "SUS"
+                    )
+                    parentTitleCode = foreverProjectTitles.get(fairfaxFile.titleCode)
+
                     if (!recognizedTitleCodes.contains(parentTitleCode)) {
                         recognizedTitleCodes.add(parentTitleCode)
                         log.info("listFiles adding recognizedTitleCode=${parentTitleCode} for pulbication ${fairfaxFile.titleCode}")
