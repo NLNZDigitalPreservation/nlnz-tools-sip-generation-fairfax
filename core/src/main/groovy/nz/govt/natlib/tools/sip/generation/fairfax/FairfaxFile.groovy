@@ -40,6 +40,7 @@ class FairfaxFile {
     static final String PDF_FILE_WITH_TITLE_SECTION_DATE_PATTERN = '\\w{5,7}-\\d{8}-.*?\\.[pP]{1}[dD]{1}[fF]{1}'
     static final DateTimeFormatter LOCAL_DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyyMMdd")
     static final Point UNDIMENSIONED = new Point(-1, -1)
+    static final String FOREVER_PROJECT_PREFIX = "FP"
 
     Path file
     // This is for when the file gets replaced, such as when a zero-length pdf is replaced by another file.
@@ -81,6 +82,17 @@ class FairfaxFile {
         }
         return sectionCodes
     }
+    
+    static boolean currentSectionCodeFile(String key, FairfaxFile file, FairfaxProcessingParameters parameters) {
+		if (!key.equals(file.sectionCode) && !parameters.matchesCurrentSection(key, file.sectionCode)) {
+			return false
+		}
+		// Do not process sequence letter file as part of the section code files
+		if (!parameters.sequenceLetters.isEmpty() && parameters.sequenceLetters.contains(file.sequenceLetter)) {
+			return false
+		}
+		return true
+    }
 
     // The assumption here is that the list of files is only different in sectionCode, sequenceLetter, sequenceNumber
     // and qualifier.
@@ -94,22 +106,35 @@ class FairfaxFile {
             List<FairfaxFile> sectionFiles = [ ]
             filesBySection.put(sectionCode, sectionFiles)
             files.each { FairfaxFile fairfaxFile ->
-                if (sectionCode == fairfaxFile.sectionCode ||
-                        processingParameters.matchesCurrentSection(sectionCode, fairfaxFile.sectionCode)) {
+                if (currentSectionCodeFile(sectionCode, fairfaxFile, processingParameters)) {
                     sectionFiles.add(fairfaxFile)
                 }
             }
         }
+
+        // Create section for sequence letter
+        if (!processingParameters.sequenceLetters.isEmpty()) {
+            processingParameters.sequenceLetters.each { String sequenceLetter ->
+                List<FairfaxFile> sequenceLetterFiles = []
+                filesBySection.put(sequenceLetter, sequenceLetterFiles)
+                files.each { FairfaxFile fairfaxFile ->
+                    if (sequenceLetter == fairfaxFile.sequenceLetter) {
+                        sequenceLetterFiles.add(fairfaxFile)
+                    }
+                }
+            }
+        }
+
         // NEXT: Sort each sectionCode by numberAndAlpha
         boolean alphaBeforeNumeric = processingParameters.options.contains(ProcessingOption.AlphaBeforeNumericSequencing)
-        processingParameters.sectionCodes.each { String sectionCode ->
-            List<FairfaxFile> sectionFiles = filesBySection.get(sectionCode)
+        filesBySection.keySet().each { String key ->
+            List<FairfaxFile> sectionFiles = filesBySection.get(key)
             sectionFiles = sortNumericAndAlpha(sectionFiles, alphaBeforeNumeric)
-            filesBySection.put(sectionCode, sectionFiles)
+            filesBySection.put(key, sectionFiles)
         }
         List<FairfaxFile> sorted = [ ]
-        processingParameters.sectionCodes.each { String sectionCode ->
-            sorted.addAll(filesBySection.get(sectionCode))
+        filesBySection.keySet().each { String key ->
+            sorted.addAll(filesBySection.get(key))
         }
         if (sorted.size() != files.size()) {
             log.warn("Not all sorted files exist in final list, differences=${differences(sorted, files)}")
@@ -177,8 +202,11 @@ class FairfaxFile {
         List<String> otherSectionCodes = allSectionCodes.findAll { String sectionCode ->
             sectionCode != sourceSectionCode && sectionCode != replacementSectionCode
         }
+        // Do not substitute Forever Project files unless the file has a substitute
         possibleFiles.each { FairfaxFile fairfaxFile ->
-            if (!otherSectionCodes.contains(fairfaxFile.sectionCode)) {
+            if (fairfaxFile.filename.startsWith(FOREVER_PROJECT_PREFIX) && fairfaxFile.sectionCode == replacementSectionCode) {
+                substituted.add(fairfaxFile)
+            } else if (!otherSectionCodes.contains(fairfaxFile.sectionCode) ) {
                 FairfaxFile replacementFile = substituteFor(sourceSectionCode, replacementSectionCode, fairfaxFile,
                         possibleFiles)
                 if (replacementFile != null) {

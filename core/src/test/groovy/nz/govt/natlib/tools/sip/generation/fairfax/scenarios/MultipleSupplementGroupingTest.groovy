@@ -51,6 +51,7 @@ class MultipleSupplementGroupingTest {
     static final String MMSID_SUP_AND_BEE = "test-mms-id-one-SUP+BEE-CHILD"
     static final String MMSID_SUP = "test-mms-id-one-SUP-CHILD"
     static final String MMSID_BEE_AND_ZOP = "test-mms-id-one-BEE+ZOP-CHILD"
+    static final String MMSID_SEQL = "test-mms-id-one-SEQL-CHILD"
 
     TestMethodState testMethodState
 
@@ -108,7 +109,7 @@ class MultipleSupplementGroupingTest {
                 [ ProcessingType.SupplementGrouping ], sourceFolder, processingDate, testMethodState.fairfaxSpreadsheet)
 
         assertThat("FairfaxProcessingParameters matching each edition is returned, size=${parametersList.size()}",
-                parametersList.size(), is(3))
+                parametersList.size(), is(4))
 
         SipProcessingState originalSipProcessingState = testMethodState.sipProcessingState
 
@@ -126,6 +127,10 @@ class MultipleSupplementGroupingTest {
                 case MMSID_BEE_AND_ZOP:
                     assertThat("Matches section codes: 'BEE', 'ZOP'", processingParameters.sectionCodes,
                             is([ 'BEE', 'ZOP' ]))
+                    break
+                case MMSID_SEQL:
+                    assertThat("Matches sequence letters: 'S'", processingParameters.sequenceLetters,
+                    is(['S']))
                     break
                 default:
                     assertTrue("Unmatched parameters for mmsId=${mmsId}, processingParameters=${processingParameters}", false)
@@ -152,6 +157,11 @@ class MultipleSupplementGroupingTest {
                     expectedThumbnailFile = processingParameters.options.contains(ProcessingOption.AlwaysGenerateThumbnailPage)
                     assertFalse("For mmsId=${mmsId} skip=${processingParameters.skip} (expected false)", processingParameters.skip)
                     expectedSizingSUP()
+                    break
+                case MMSID_SEQL:
+                    expectedThumbnailFile = processingParameters.options.contains(ProcessingOption.AlwaysGenerateThumbnailPage)
+                    assertFalse("For mmsId=${mmsId} skip=${processingParameters.skip} (expected false)", processingParameters.skip)
+                    expectedSizingSEQL()
                     break
                 case MMSID_BEE_AND_ZOP:
                     expectedThumbnailFile = false
@@ -186,6 +196,9 @@ class MultipleSupplementGroupingTest {
                 case MMSID_SUP:
                     sipConstructedCorrectlySUP(sipAsXml)
                     break
+                case MMSID_SEQL:
+                    sipConstructedCorrectlySEQL(sipAsXml)
+                    break
                 case MMSID_BEE_AND_ZOP:
                     assertThat("No sipAsXML for skipped processing", sipAsXml, is(SipProcessingState.EMPTY_SIP_AS_XML))
                     break
@@ -205,10 +218,10 @@ class MultipleSupplementGroupingTest {
     }
 
     void expectedSizingSUPandBEE() {
-        int expectedNumberOfFilesProcessed = 5
-        int expectedNumberOfSipFiles = 5
-        int expectedNumberOfThumbnailPageFiles = 5
-        int expectedNumberOfValidFiles = 5
+        int expectedNumberOfFilesProcessed = 7
+        int expectedNumberOfSipFiles = 7
+        int expectedNumberOfThumbnailPageFiles = 7
+        int expectedNumberOfValidFiles = 7
         int expectedNumberOfInvalidFiles = 0
         int expectedNumberOfIgnoredFiles = 2
         int expectedNumberOfUnrecognizedFiles = 0
@@ -224,7 +237,20 @@ class MultipleSupplementGroupingTest {
         int expectedNumberOfThumbnailPageFiles = 3
         int expectedNumberOfValidFiles = 3
         int expectedNumberOfInvalidFiles = 0
-        int expectedNumberOfIgnoredFiles = 4
+        int expectedNumberOfIgnoredFiles = 6
+        int expectedNumberOfUnrecognizedFiles = 0
+        TestHelper.assertSipProcessingStateFileNumbers(expectedNumberOfFilesProcessed, expectedNumberOfSipFiles,
+                expectedNumberOfThumbnailPageFiles, expectedNumberOfValidFiles, expectedNumberOfInvalidFiles,
+                expectedNumberOfIgnoredFiles, expectedNumberOfUnrecognizedFiles, testMethodState.sipProcessingState)
+    }
+
+    void expectedSizingSEQL() {
+        int expectedNumberOfFilesProcessed = 2
+        int expectedNumberOfSipFiles = 2
+        int expectedNumberOfThumbnailPageFiles = 2
+        int expectedNumberOfValidFiles = 2
+        int expectedNumberOfInvalidFiles = 0
+        int expectedNumberOfIgnoredFiles = 7
         int expectedNumberOfUnrecognizedFiles = 0
         TestHelper.assertSipProcessingStateFileNumbers(expectedNumberOfFilesProcessed, expectedNumberOfSipFiles,
                 expectedNumberOfThumbnailPageFiles, expectedNumberOfValidFiles, expectedNumberOfInvalidFiles,
@@ -252,11 +278,17 @@ class MultipleSupplementGroupingTest {
         TestHelper.assertExpectedSipFileValues(sipForValidation, 3, "TSTSUP-20181123-003.pdf", "TSTSUP-20181123-003.pdf",
                 636L, "MD5", "7273a4d61a8dab92be4393e2923ad2d2", "0003", "application/pdf")
 
-        TestHelper.assertExpectedSipFileValues(sipForValidation, 4, "TSTBEE-20181123-001.pdf", "TSTBEE-20181123-001.pdf",
+        TestHelper.assertExpectedSipFileValues(sipForValidation, 4, "TSTBEE-20181123-S001.pdf", "TSTBEE-20181123-S001.pdf",
                 636L, "MD5", "7273a4d61a8dab92be4393e2923ad2d2", "0004", "application/pdf")
 
-        TestHelper.assertExpectedSipFileValues(sipForValidation, 5, "TSTBEE-20181123-002.pdf", "TSTBEE-20181123-002.pdf",
+        TestHelper.assertExpectedSipFileValues(sipForValidation, 5, "TSTBEE-20181123-S002.pdf", "TSTBEE-20181123-S002.pdf",
                 636L, "MD5", "7273a4d61a8dab92be4393e2923ad2d2", "0005", "application/pdf")
+
+        TestHelper.assertExpectedSipFileValues(sipForValidation, 6, "TSTBEE-20181123-001.pdf", "TSTBEE-20181123-001.pdf",
+                636L, "MD5", "7273a4d61a8dab92be4393e2923ad2d2", "0006", "application/pdf")
+
+        TestHelper.assertExpectedSipFileValues(sipForValidation, 7, "TSTBEE-20181123-002.pdf", "TSTBEE-20181123-002.pdf",
+                636L, "MD5", "7273a4d61a8dab92be4393e2923ad2d2", "0007", "application/pdf")
     }
 
     void sipConstructedCorrectlySUP(String sipXml) {
@@ -279,6 +311,25 @@ class MultipleSupplementGroupingTest {
 
         TestHelper.assertExpectedSipFileValues(sipForValidation, 3, "TSTSUP-20181123-003.pdf", "TSTSUP-20181123-003.pdf",
                 636L, "MD5", "7273a4d61a8dab92be4393e2923ad2d2", "0003", "application/pdf")
+    }
+
+    void sipConstructedCorrectlySEQL(String sipXml) {
+        SipXmlExtractor sipForValidation = new SipXmlExtractor(sipXml)
+
+        assertTrue("SipXmlExtractor has content", sipForValidation.xml.length() > 0)
+
+        assertTrue("SipProcessingState is complete", testMethodState.sipProcessingState.isComplete())
+        assertTrue("SipProcessingState is successful", testMethodState.sipProcessingState.isSuccessful())
+
+        TestHelper.assertExpectedSipMetadataValues(sipForValidation, "Test Publication One Sequence Letter S CHILD", "2018", "11", "23",
+                IEEntityType.NewspaperIE, "ALMAMMS", MMSID_SEQL, "200",
+                "PRESERVATION_MASTER", "VIEW", true, 1)
+
+        TestHelper.assertExpectedSipFileValues(sipForValidation, 1, "TSTBEE-20181123-S001.pdf", "TSTBEE-20181123-S001.pdf",
+                636L, "MD5", "7273a4d61a8dab92be4393e2923ad2d2", "0001", "application/pdf")
+
+        TestHelper.assertExpectedSipFileValues(sipForValidation, 2, "TSTBEE-20181123-S002.pdf", "TSTBEE-20181123-S002.pdf",
+                636L, "MD5", "7273a4d61a8dab92be4393e2923ad2d2", "0002", "application/pdf")
     }
 
 }
