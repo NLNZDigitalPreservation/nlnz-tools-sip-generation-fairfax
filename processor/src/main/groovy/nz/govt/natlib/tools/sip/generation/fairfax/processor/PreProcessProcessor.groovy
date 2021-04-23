@@ -21,6 +21,7 @@ import java.util.concurrent.locks.ReentrantLock
 class PreProcessProcessor {
     static final DateTimeFormatter LOCAL_DATE_FOLDER_FORMATTER = DateTimeFormatter.ofPattern("yyyyMMdd")
     static final String FOREVER_PROJECT_PREFIX = "FP"
+    static final String[] PROPERTY_TITLES = ["HON", "SOP", "HOC", "HOW", "HWE", "PRB"]
 
     ProcessorConfiguration processorConfiguration
     FairfaxSpreadsheet fairfaxSpreadsheet
@@ -90,12 +91,12 @@ class PreProcessProcessor {
         }
     }
 
-    // Copy missing Forever Project files for other publications
-    void copyForeverProjectFile(List<String> fpTitles, List<String> folders, FairfaxFile targetFile, Path folderPath) {
+    // Copy missing Forever Project and Property files for other publications
+    void copyAppendedTitleFile(List<String> appendedTitles, List<String> folders, FairfaxFile targetFile, Path folderPath) {
         String targetTitle = targetFile.titleCode
         String parentDirectory = folderPath.getParent().toString()
 
-        for (String title : fpTitles) {
+        for (String title : appendedTitles) {
             // Check if the file has already been processed for other publications
             for (String folder : folders) {
                 if (Files.exists(Paths.get(parentDirectory + folder +
@@ -108,7 +109,7 @@ class PreProcessProcessor {
                 Path copyPath = Paths.get(targetFile.getFile().getParent().toString() + File.separator +
                         targetFile.getFilename().replace(targetTitle, title))
                 if (Files.exists(copyPath)) {
-                    log.info("copyOrMoveFileToPreProcessingDestination Forever project file ${copyPath.toString()} exists")
+                    log.info("copyOrMoveFileToPreProcessingDestination Forever project or Property file ${copyPath.toString()} exists")
                     continue
                 }
                 // Copy the file for other publications to destination folder
@@ -118,7 +119,7 @@ class PreProcessProcessor {
                         log.error("copyOrMoveFileToPreProcessingDestination could not get directory " + destinationPath.getParent().toString())
                     }
                 if (Files.notExists(destinationPath)) {
-                    log.info("copyOrMoveFileToPreProcessingDestination Copying Forever Project file from ${targetFile.getFilename()} to " +
+                    log.info("copyOrMoveFileToPreProcessingDestination Copying Forever Project or Property file from ${targetFile.getFilename()} to " +
                             "${destinationPath.toString()} for use in ${folder.substring(1, folder.length() - 1)}")
                     Files.copy(targetFile.file, destinationPath)
                 }
@@ -141,23 +142,30 @@ class PreProcessProcessor {
                 log.info("copyOrMoveFileToPreProcessingDestination adding titleCode=${targetFile.titleCode}")
             }
             folderPath = "${destinationFolder.normalize().toString()}${File.separator}${dateFolderName}${File.separator}${titleCodeFolderName}"
-        // Look for Forever Project and add to DOM, PRS, WAT, or SUS
-        } else if (targetFile.titleCode.matches("^" + FOREVER_PROJECT_PREFIX + "[DPWS]")) {
+        // Look for Forever Project and Property titles to add to corresponding publications
+        } else if (targetFile.titleCode.matches("^" + FOREVER_PROJECT_PREFIX + "[DPWS]") ||
+                PROPERTY_TITLES.contains(targetFile.titleCode)) {
             GeneralUtils.printAndFlush("\n")
-            log.info("copyOrMoveFileToPreProcessingDestination found Forever Project publication=${targetFile.titleCode}")
-            List<String> fpTitleCodes = []
+            log.info("copyOrMoveFileToPreProcessingDestination found Forever Project or Property publication=${targetFile.titleCode}")
+            List<String> appendedTitleCodes = []
             List<String> pubDirs = []
 
-            final Map<String, String> foreverProjectTitles = ImmutableMap.of(
+            final Map<String, String> appendedTitlesMap = ImmutableMap.of(
                     FOREVER_PROJECT_PREFIX + "D", "DOM",
                     FOREVER_PROJECT_PREFIX + "P", "PRS",
                     FOREVER_PROJECT_PREFIX + "W", "WAT",
-                    FOREVER_PROJECT_PREFIX + "S", "SUS"
+                    FOREVER_PROJECT_PREFIX + "S", "SUS",
+                    "HON", "NOO",
+                    "SOP", "SOT",
+                    "HOC", "PRS",
+                    "HOW", "WAT",
+                    "HWE","DOM",
+                    "PRB","MAS"
             )
-            titleCodeFolderName = foreverProjectTitles.get(targetFile.titleCode)
+            titleCodeFolderName = appendedTitlesMap.get(targetFile.titleCode)
 
-            if (titleCodeFolderName.equals("DOM")) {
-                fpTitleCodes = ["FPP", "FPW"]
+            if (titleCodeFolderName.equals("DOM") && targetFile.titleCode.startsWith(FOREVER_PROJECT_PREFIX)) {
+                appendedTitleCodes = ["FPP", "FPW"]
                 pubDirs = ["${File.separator}PRS${File.separator}","${File.separator}WAT${File.separator}"]
             }
 
@@ -168,7 +176,7 @@ class PreProcessProcessor {
                 log.info("copyOrMoveFileToPreProcessingDestination adding titleCode=${titleCodeFolderName}")
             }
             folderPath = "${destinationFolder.normalize().toString()}${File.separator}${dateFolderName}${File.separator}${titleCodeFolderName}"
-            copyForeverProjectFile(fpTitleCodes, pubDirs, targetFile, Paths.get(folderPath))
+            copyAppendedTitleFile(appendedTitleCodes, pubDirs, targetFile, Paths.get(folderPath))
 
         } else {
             // There is no entry in the spreadsheet for this titleCode

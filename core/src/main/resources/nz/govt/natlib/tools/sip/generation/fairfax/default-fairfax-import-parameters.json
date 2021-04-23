@@ -668,7 +668,7 @@
             "processing_rules": "",
             "processing_options": "numeric_before_alpha",
             "publication_key": "title_code",
-            "title_code": "HAP",
+            "title_code": "HAP+QFS",
             "edition_discriminators": "",
             "section_codes": "ED1",
             "sequence_letters": "",
