@@ -22,7 +22,9 @@ Following this introduction, the Release Notes includes the following sections:
 
 -   **1.0.0-SNAPSHOT** - 1.0.0 development.
 
--   **1.0.1-SNAPSHOT** - Current 1.0.1 development.
+-   **1.0.1-SNAPSHOT** - 1.0.1 development.
+
+-   **1.0.2-SNAPSHOT** - Current 1.0.2 development.
 
 
 Changes since 1.0.0
@@ -48,3 +50,8 @@ TODO Keep track of ongoing development changes here.
 ==============
 
 The Forever Project includes files that are to be appended to the end of multiple titles.  As such the changes in 1.0.1-SNAPSHOT searches for Forever Project Files and appends them to the end of their respective titles to be processed.  In addition to this, sequence letter column was added to the spreadsheet and spreadsheet processor to handle supplement grouping files based on the use of sequence letters.
+
+1.0.2-SNAPSHOT
+==============
+
+Property title codes do not match up with their corresponding publications.  1.0.2-SNAPSHOT matches up property titles with their corresponding publications and adds them to the end of their respective titles to be processed.
