@@ -668,7 +668,7 @@
             "processing_rules": "",
             "processing_options": "numeric_before_alpha",
             "publication_key": "title_code",
-            "title_code": "HAP+QFS",
+            "title_code": "HAP",
             "edition_discriminators": "",
             "section_codes": "ED1",
             "sequence_letters": "",
@@ -703,6 +703,47 @@
     },
     {
         "row-0017": {
+            "MMSID": "9917905443502836",
+            "title_parent": "Hamilton Press",
+            "processing_type": "parent_grouping",
+            "processing_rules": "",
+            "processing_options": "numeric_before_alpha",
+            "publication_key": "title_code",
+            "title_code": "HAP+QFS",
+            "edition_discriminators": "",
+            "section_codes": "ED1",
+            "sequence_letters": "",
+            "Access": "200",
+            "Magazine": "0",
+            "ingest_status": "STA",
+            "Frequency": "",
+            "entity_type": "PER",
+            "title_mets": "Hamilton Press",
+            "ISSN online": "",
+            "Bib ID": "1790544",
+            "Access condition": "100-P",
+            "Date catalogued": "27/05/2016",
+            "Collector_folder": "Hamilton_Press",
+            "Cataloguer": "Denise",
+            "Notes": "Fairfax updated title code",
+            "first_issue_starting_page": "",
+            "last_issue_starting_page": "",
+            "has_volume_md": "0",
+            "has_issue_md": "0",
+            "has_number_md": "0",
+            "previous_volume": "",
+            "previous_volume_date": "",
+            "previous_volume_frequency": "",
+            "previous_issue": "",
+            "previous_issue_date": "",
+            "previous_issue_frequency": "",
+            "previous_number": "",
+            "previous_number_date": "",
+            "previous_number_frequency": ""
+        }
+    },
+    {
+        "row-0018": {
             "MMSID": "9917667743502836",
             "title_parent": "The Horowhenua Mail",
             "processing_type": "parent_grouping",
@@ -743,7 +784,7 @@
         }
     },
     {
-        "row-0018": {
+        "row-0019": {
             "MMSID": "9917905973502836",
             "title_parent": "NZ House and Garden",
             "processing_type": "parent_grouping",
@@ -784,7 +825,7 @@
         }
     },
     {
-        "row-0019": {
+        "row-0020": {
             "MMSID": "9914842803502836",
             "title_parent": "The Hutt News",
             "processing_type": "parent_grouping",
@@ -825,7 +866,7 @@
         }
     },
     {
-        "row-0020": {
+        "row-0021": {
             "MMSID": "9917913663502836",
             "title_parent": "Kapi-Mana News",
             "processing_type": "parent_grouping",
@@ -866,7 +907,7 @@
         }
     },
     {
-        "row-0021": {
+        "row-0022": {
             "MMSID": "9917913883502836",
             "title_parent": "Kapiti Observer",
             "processing_type": "parent_grouping",
@@ -907,7 +948,7 @@
         }
     },
     {
-        "row-0022": {
+        "row-0023": {
             "MMSID": "9917975883502836",
             "title_parent": "The Nelson Leader",
             "processing_type": "parent_grouping",
@@ -948,7 +989,7 @@
         }
     },
     {
-        "row-0023": {
+        "row-0024": {
             "MMSID": "9917962463502836",
             "title_parent": "The Tasman Leader",
             "processing_type": "parent_grouping",
@@ -989,7 +1030,7 @@
         }
     },
     {
-        "row-0024": {
+        "row-0025": {
             "MMSID": "9917976523502836",
             "title_parent": "Manukau Courier",
             "processing_type": "parent_grouping",
@@ -1030,7 +1071,7 @@
         }
     },
     {
-        "row-0025": {
+        "row-0026": {
             "MMSID": "9914705253502836",
             "title_parent": "Marlborough Express",
             "processing_type": "parent_grouping",
@@ -1071,7 +1112,7 @@
         }
     },
     {
-        "row-0026": {
+        "row-0027": {
             "MMSID": "9917961213502836",
             "title_parent": "Marlborough Midweek",
             "processing_type": "parent_grouping",
@@ -1112,7 +1153,7 @@
         }
     },
     {
-        "row-0027": {
+        "row-0028": {
             "MMSID": "9917914353502836",
             "title_parent": "Manawatu Standard",
             "processing_type": "parent_grouping",
@@ -1153,7 +1194,7 @@
         }
     },
     {
-        "row-0028": {
+        "row-0029": {
             "MMSID": "9917975663502836",
             "title_parent": "Matamata Chronicle",
             "processing_type": "parent_grouping",
@@ -1194,7 +1235,7 @@
         }
     },
     {
-        "row-0029": {
+        "row-0030": {
             "MMSID": "9917982213502836",
             "title_parent": "Waikato Times",
             "processing_type": "parent_grouping",
@@ -1235,7 +1276,7 @@
         }
     },
     {
-        "row-0030": {
+        "row-0031": {
             "MMSID": "9917975923502836",
             "title_parent": "The Nelson Mail",
             "processing_type": "parent_grouping",
@@ -1276,7 +1317,7 @@
         }
     },
     {
-        "row-0031": {
+        "row-0032": {
             "MMSID": "9917921493502836",
             "title_parent": "North Harbour News",
             "processing_type": "parent_grouping",
@@ -1317,7 +1358,7 @@
         }
     },
     {
-        "row-0032": {
+        "row-0033": {
             "MMSID": "9917961933502836",
             "title_parent": "Northern News",
             "processing_type": "parent_grouping",
@@ -1358,7 +1399,7 @@
         }
     },
     {
-        "row-0033": {
+        "row-0034": {
             "MMSID": "9918190442202836",
             "title_parent": "Northern Outlook",
             "processing_type": "parent_grouping",
@@ -1399,7 +1440,7 @@
         }
     },
     {
-        "row-0034": {
+        "row-0035": {
             "MMSID": "9917922613502836",
             "title_parent": "North Shore Times",
             "processing_type": "parent_grouping",
@@ -1440,7 +1481,7 @@
         }
     },
     {
-        "row-0035": {
+        "row-0036": {
             "MMSID": "9917923443502836",
             "title_parent": "North Taranaki Midweek",
             "processing_type": "parent_grouping",
@@ -1481,7 +1522,7 @@
         }
     },
     {
-        "row-0036": {
+        "row-0037": {
             "MMSID": "9917962043502836",
             "title_parent": "Nor-West News",
             "processing_type": "parent_grouping",
@@ -1522,7 +1563,7 @@
         }
     },
     {
-        "row-0037": {
+        "row-0038": {
             "MMSID": "9917905613502836",
             "title_parent": "New Zealand Gardener",
             "processing_type": "parent_grouping",
@@ -1563,7 +1604,7 @@
         }
     },
     {
-        "row-0038": {
+        "row-0039": {
             "MMSID": "9917974563502836",
             "title_parent": "Outlook Real Estate",
             "processing_type": "parent_grouping",
@@ -1604,7 +1645,7 @@
         }
     },
     {
-        "row-0039": {
+        "row-0040": {
             "MMSID": "9917966453502836",
             "title_parent": "Papakura Courier",
             "processing_type": "parent_grouping",
@@ -1645,7 +1686,7 @@
         }
     },
     {
-        "row-0040": {
+        "row-0041": {
             "MMSID": "9917966443502836",
             "title_parent": "Piako Post",
             "processing_type": "parent_grouping",
@@ -1686,7 +1727,7 @@
         }
     },
     {
-        "row-0041": {
+        "row-0042": {
             "MMSID": "9917913203502836",
             "title_parent": "Marlborough Property Express",
             "processing_type": "parent_grouping",
@@ -1727,7 +1768,7 @@
         }
     },
     {
-        "row-0042": {
+        "row-0043": {
             "MMSID": "9915205583502836",
             "title_parent": "The Press",
             "processing_type": "parent_grouping",
@@ -1768,7 +1809,7 @@
         }
     },
     {
-        "row-0043": {
+        "row-0044": {
             "MMSID": "9919016168802836",
             "title_parent": "The Press",
             "processing_type": "supplement_grouping",
@@ -1809,7 +1850,7 @@
         }
     },
     {
-        "row-0044": {
+        "row-0045": {
             "MMSID": "9919016168702836",
             "title_parent": "The Press",
             "processing_type": "supplement_grouping",
@@ -1850,7 +1891,7 @@
         }
     },
     {
-        "row-0045": {
+        "row-0046": {
             "MMSID": "9917906003502836",
             "title_parent": "The Press",
             "processing_type": "supplement_grouping",
@@ -1891,7 +1932,7 @@
         }
     },
     {
-        "row-0046": {
+        "row-0047": {
             "MMSID": "9918647057502836",
             "title_parent": "Property weekly",
             "processing_type": "parent_grouping",
@@ -1932,7 +1973,7 @@
         }
     },
     {
-        "row-0047": {
+        "row-0048": {
             "MMSID": "9917966493502836",
             "title_parent": "Rodney Times",
             "processing_type": "parent_grouping",
@@ -1973,7 +2014,7 @@
         }
     },
     {
-        "row-0048": {
+        "row-0049": {
             "MMSID": "9917907173502836",
             "title_parent": "Saturday Express",
             "processing_type": "parent_grouping",
@@ -2014,7 +2055,7 @@
         }
     },
     {
-        "row-0049": {
+        "row-0050": {
             "MMSID": "9917984313502836",
             "title_parent": "Sunday News",
             "processing_type": "parent_grouping",
@@ -2055,7 +2096,7 @@
         }
     },
     {
-        "row-0050": {
+        "row-0051": {
             "MMSID": "9917982163502836",
             "title_parent": "Southern Homes",
             "processing_type": "parent_grouping",
@@ -2096,7 +2137,7 @@
         }
     },
     {
-        "row-0051": {
+        "row-0052": {
             "MMSID": "9917976283502836",
             "title_parent": "Sunday Star Times Sunday",
             "processing_type": "parent_grouping",
@@ -2137,7 +2178,7 @@
         }
     },
     {
-        "row-0052": {
+        "row-0053": {
             "MMSID": "9914607593502836",
             "title_parent": "The Southland Times",
             "processing_type": "parent_grouping",
@@ -2178,7 +2219,7 @@
         }
     },
     {
-        "row-0053": {
+        "row-0054": {
             "MMSID": "9917966833502836",
             "title_parent": "South Waikato News",
             "processing_type": "parent_grouping",
@@ -2219,7 +2260,7 @@
         }
     },
     {
-        "row-0054": {
+        "row-0055": {
             "MMSID": "9917976113502836",
             "title_parent": "Sunday Star Times",
             "processing_type": "parent_grouping",
@@ -2260,7 +2301,7 @@
         }
     },
     {
-        "row-0055": {
+        "row-0056": {
             "MMSID": "9917976003502836",
             "title_parent": "Taranaki Daily News",
             "processing_type": "parent_grouping",
@@ -2301,7 +2342,7 @@
         }
     },
     {
-        "row-0056": {
+        "row-0057": {
             "MMSID": "9917966723502836",
             "title_parent": "South Taranaki Star",
             "processing_type": "parent_grouping",
@@ -2342,7 +2383,7 @@
         }
     },
     {
-        "row-0057": {
+        "row-0058": {
             "MMSID": "9917962373502836",
             "title_parent": "Taupo Times",
             "processing_type": "parent_grouping",
@@ -2383,7 +2424,7 @@
         }
     },
     {
-        "row-0058": {
+        "row-0059": {
             "MMSID": "9917976413502836",
             "title_parent": "Property weekly",
             "processing_type": "parent_grouping",
@@ -2424,7 +2465,7 @@
         }
     },
     {
-        "row-0059": {
+        "row-0060": {
             "MMSID": "9914609313502836",
             "title_parent": "The Timaru Herald",
             "processing_type": "parent_grouping",
@@ -2465,7 +2506,7 @@
         }
     },
     {
-        "row-0060": {
+        "row-0061": {
             "MMSID": "9917981683502836",
             "title_parent": "TV Guide",
             "processing_type": "parent_grouping",
@@ -2506,7 +2547,7 @@
         }
     },
     {
-        "row-0061": {
+        "row-0062": {
             "MMSID": "9917962273502836",
             "title_parent": "Upper Hutt Leader",
             "processing_type": "parent_grouping",
@@ -2547,7 +2588,7 @@
         }
     },
     {
-        "row-0062": {
+        "row-0063": {
             "MMSID": "9917971643502836",
             "title_parent": "Waikato Times",
             "processing_type": "parent_grouping",
@@ -2588,7 +2629,7 @@
         }
     },
     {
-        "row-0063": {
+        "row-0064": {
             "MMSID": "9917971783502836",
             "title_parent": "Waikato Times",
             "processing_type": "supplement_grouping",
@@ -2629,7 +2670,7 @@
         }
     },
     {
-        "row-0064": {
+        "row-0065": {
             "MMSID": "9917925423502836",
             "title_parent": "Western Homes",
             "processing_type": "parent_grouping",
@@ -2670,7 +2711,7 @@
         }
     },
     {
-        "row-0065": {
+        "row-0066": {
             "MMSID": "9917923503502836",
             "title_parent": "Whangarei Leader",
             "processing_type": "parent_grouping",
@@ -2711,7 +2752,7 @@
         }
     },
     {
-        "row-0066": {
+        "row-0067": {
             "MMSID": "9917975173502836",
             "title_parent": "Waikato Location Edition",
             "processing_type": "parent_grouping",
@@ -2752,7 +2793,7 @@
         }
     },
     {
-        "row-0067": {
+        "row-0068": {
             "MMSID": "9917923483502836",
             "title_parent": "Western Leader",
             "processing_type": "parent_grouping",
