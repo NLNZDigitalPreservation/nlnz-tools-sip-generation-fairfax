@@ -39,6 +39,7 @@ import java.time.LocalDate
 @Log4j2
 class FairfaxFilesProcessor {
     static final String FOREVER_PROJECT_PREFIX = "FP"
+    static final String[] PROPERTY_TITLES = ["HON", "SOP", "HOC", "HOW", "HWE", "PRB"]
 
     FairfaxProcessingParameters processingParameters
     List<Path> filesForProcessing
@@ -118,26 +119,35 @@ class FairfaxFilesProcessor {
                     break
             }
 
-            // Determine if fairfaxFiles contains any files that starts with FP
-            // If so, process the files as a single collection with FP files at the end
-            boolean isFP = false
+            // Determine if fairfaxFiles contains any files that starts with FP or is a Property title code
+            // If so, process the files as a single collection with FP/Property files at the end
+            boolean toAddAtEnd = false
             for (FairfaxFile file : sortedFilesForProcessing) {
-                if (file.getTitleCode().startsWith(FOREVER_PROJECT_PREFIX)) {
-                    isFP = true
+                if (file.getTitleCode().startsWith(FOREVER_PROJECT_PREFIX) ||
+                        PROPERTY_TITLES.contains(file.getTitleCode()) ) {
+                    toAddAtEnd = true
                     break
                 }
             }
-            if (isFP) {
-                List<FairfaxFile> fpFiles = []
+            // Property and Forever Project are to be added at the end of the publication
+            // Homes goes before Forever Project
+            if (toAddAtEnd) {
+                List<FairfaxFile> foreverProjectFiles = []
+                List<FairfaxFile> propertyFiles = []
                 List<FairfaxFile> sortedFiles = []
                 for (FairfaxFile fairfaxFile : sortedFilesForProcessing) {
                     if (fairfaxFile.getTitleCode().startsWith(FOREVER_PROJECT_PREFIX)) {
-                        fpFiles.add(fairfaxFile)
+                        foreverProjectFiles.add(fairfaxFile)
+                    } else if (PROPERTY_TITLES.contains(fairfaxFile.getTitleCode())) {
+                        propertyFiles.add(fairfaxFile)
                     } else {
                         sortedFiles.add(fairfaxFile)
                     }
                 }
-                for (FairfaxFile ff : fpFiles) {
+                for (FairfaxFile pf : propertyFiles) {
+                    sortedFiles.add(pf)
+                }
+                for (FairfaxFile ff : foreverProjectFiles) {
                     sortedFiles.add(ff)
                 }
                 sortedFilesForProcessing = sortedFiles

@@ -41,6 +41,7 @@ class FairfaxFile {
     static final DateTimeFormatter LOCAL_DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyyMMdd")
     static final Point UNDIMENSIONED = new Point(-1, -1)
     static final String FOREVER_PROJECT_PREFIX = "FP"
+    static final String[] PROPERTY_TITLES = ["HON", "SOP", "HOC", "HOW", "HWE", "PRB"]
 
     Path file
     // This is for when the file gets replaced, such as when a zero-length pdf is replaced by another file.
@@ -202,9 +203,10 @@ class FairfaxFile {
         List<String> otherSectionCodes = allSectionCodes.findAll { String sectionCode ->
             sectionCode != sourceSectionCode && sectionCode != replacementSectionCode
         }
-        // Do not substitute Forever Project files unless the file has a substitute
+        // Do not substitute Forever Project/Property files unless the file has a substitute
         possibleFiles.each { FairfaxFile fairfaxFile ->
-            if (fairfaxFile.filename.startsWith(FOREVER_PROJECT_PREFIX) && fairfaxFile.sectionCode == replacementSectionCode) {
+            if ( (fairfaxFile.filename.startsWith(FOREVER_PROJECT_PREFIX) || PROPERTY_TITLES.contains(fairfaxFile.filename.substring(0,3)) )
+                    && fairfaxFile.sectionCode == replacementSectionCode) {
                 substituted.add(fairfaxFile)
             } else if (!otherSectionCodes.contains(fairfaxFile.sectionCode) ) {
                 FairfaxFile replacementFile = substituteFor(sourceSectionCode, replacementSectionCode, fairfaxFile,
