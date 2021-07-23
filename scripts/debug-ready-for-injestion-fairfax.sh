@@ -2,7 +2,7 @@
 
 export sourceFolder="C:/Users/leefr/VM_SHARED/testdata/NDHA_submission_Rosetta/fairfax-processing/pre-processing_Jun_2021"
 export targetBaseFolder="C:/Users/leefr/VM_SHARED/testdata/NDHA_submission_Rosetta/fairfax-processing/latest-batch-ready-ingestion"
-export targetPreProcessingFolder="${targetBaseFolder}/for-ingestion"
+export targetForIngestionFolder="${targetBaseFolder}/for-ingestion"
 export forReviewFolder="${targetBaseFolder}/for-review"
 
 export startingDate="2021-06-01"
@@ -13,8 +13,8 @@ export forIngestionProcessingOptions="use_command_line_pdf_to_thumbnail_generati
 
 
 # Note that the number of threads increases processing speed due to ODS poor single-thread performance
-export numberOfThreads=4
-export maximumThumbnailPageThreads=2
+export numberOfThreads=1
+export maximumThumbnailPageThreads=1
 export minMemory="4G"
 export maxMemory="8G"
 

@@ -2,7 +2,7 @@
 
 export sourceFolder="Y:/ndha/pre-deposit_prod/NDHA_submission_Rosetta/fairfax-processing/pre-processing_Jun_2021"
 export targetBaseFolder="Y:/ndha/pre-deposit_prod/NDHA_submission_Rosetta/fairfax-processing/latest-batch-ready-ingestion"
-export targetPreProcessingFolder="${targetBaseFolder}/for-ingestion"
+export targetForIngestionFolder="${targetBaseFolder}/for-ingestion"
 export forReviewFolder="${targetBaseFolder}/for-review"
 
 export startingDate="2021-06-01"
