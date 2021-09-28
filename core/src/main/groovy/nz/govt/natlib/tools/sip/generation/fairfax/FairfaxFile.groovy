@@ -41,7 +41,8 @@ class FairfaxFile {
     static final DateTimeFormatter LOCAL_DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyyMMdd")
     static final Point UNDIMENSIONED = new Point(-1, -1)
     static final String FOREVER_PROJECT_PREFIX = "FP"
-    static final String[] PROPERTY_TITLES = ["HON", "SOP", "HOC", "HOW", "HWE", "PRB"]
+    static final String[] PROPERTY_TITLES = ["HON", "SOP", "HOC", "HOW", "HWE", "PRB", "CHM"]
+    static final String[] LIFE_SUPPLEMENTS = ["LID", "LIP"]
 
     Path file
     // This is for when the file gets replaced, such as when a zero-length pdf is replaced by another file.
@@ -197,15 +198,18 @@ class FairfaxFile {
         }
     }
 
-    static List<FairfaxFile> substituteAllFor(String sourceSectionCode, String replacementSectionCode,
+    static List<FairfaxFile> substituteAllFor(String sourceSectionCode, String replacementSectionCode, String titleCode,
                                               List<String> allSectionCodes, List<FairfaxFile> possibleFiles) {
         List<FairfaxFile> substituted = []
         List<String> otherSectionCodes = allSectionCodes.findAll { String sectionCode ->
             sectionCode != sourceSectionCode && sectionCode != replacementSectionCode
         }
-        // Do not substitute Forever Project/Property files unless the file has a substitute
+        // Do not substitute Forever Project/Property/Life files unless the file has a substitute
         possibleFiles.each { FairfaxFile fairfaxFile ->
-            if ( (fairfaxFile.filename.startsWith(FOREVER_PROJECT_PREFIX) || PROPERTY_TITLES.contains(fairfaxFile.filename.substring(0,3)) )
+            if ( (fairfaxFile.filename.startsWith(FOREVER_PROJECT_PREFIX) ||
+                    PROPERTY_TITLES.contains(fairfaxFile.filename.substring(0,3)) ||
+                    (LIFE_SUPPLEMENTS.contains(fairfaxFile.filename.substring(0,3)) &&
+                            fairfaxFile.filename.substring(0,3) != titleCode) )
                     && fairfaxFile.sectionCode == replacementSectionCode) {
                 substituted.add(fairfaxFile)
             } else if (!otherSectionCodes.contains(fairfaxFile.sectionCode) ) {
@@ -248,7 +252,8 @@ class FairfaxFile {
             boolean hasSubstitutions = hasSubstitutions(processingParameters.currentEdition, filtered)
             if (hasSubstitutions) {
                 List<FairfaxFile> substituted = substituteAllFor(firstDiscriminatorCode,
-                        processingParameters.currentEdition, processingParameters.editionDiscriminators, filtered)
+                        processingParameters.currentEdition, processingParameters.titleCode,
+                        processingParameters.editionDiscriminators, filtered)
                 // Then we sort so the ordering is correct
                 filteredSubstitutedAndSorted = sortWithSameTitleCodeAndDate(substituted, processingParameters)
             } else {

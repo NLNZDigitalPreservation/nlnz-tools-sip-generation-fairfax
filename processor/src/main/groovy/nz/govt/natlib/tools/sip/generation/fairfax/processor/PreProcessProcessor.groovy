@@ -21,7 +21,8 @@ import java.util.concurrent.locks.ReentrantLock
 class PreProcessProcessor {
     static final DateTimeFormatter LOCAL_DATE_FOLDER_FORMATTER = DateTimeFormatter.ofPattern("yyyyMMdd")
     static final String FOREVER_PROJECT_PREFIX = "FP"
-    static final String[] PROPERTY_TITLES = ["HON", "SOP", "HOC", "HOW", "HWE", "PRB"]
+    static final String[] PROPERTY_TITLES = ["HON", "SOP", "HOC", "HOW", "HWE", "PRB", "CHM"]
+    static final String[] LIFE_SUPPLEMENTS = ["LID", "LIP"]
 
     ProcessorConfiguration processorConfiguration
     FairfaxSpreadsheet fairfaxSpreadsheet
@@ -109,7 +110,7 @@ class PreProcessProcessor {
                 Path copyPath = Paths.get(targetFile.getFile().getParent().toString() + File.separator +
                         targetFile.getFilename().replace(targetTitle, title))
                 if (Files.exists(copyPath)) {
-                    log.info("copyOrMoveFileToPreProcessingDestination Forever project or Property file ${copyPath.toString()} exists")
+                    log.info("copyOrMoveFileToPreProcessingDestination Forever project, Property file or Life supplement ${copyPath.toString()} exists")
                     continue
                 }
                 // Copy the file for other publications to destination folder
@@ -119,7 +120,7 @@ class PreProcessProcessor {
                         log.error("copyOrMoveFileToPreProcessingDestination could not get directory " + destinationPath.getParent().toString())
                     }
                 if (Files.notExists(destinationPath)) {
-                    log.info("copyOrMoveFileToPreProcessingDestination Copying Forever Project or Property file from ${targetFile.getFilename()} to " +
+                    log.info("copyOrMoveFileToPreProcessingDestination Copying Forever Project, Property file of Life supplement from ${targetFile.getFilename()} to " +
                             "${destinationPath.toString()} for use in ${folder.substring(1, folder.length() - 1)}")
                     Files.copy(targetFile.file, destinationPath)
                 }
@@ -144,24 +145,26 @@ class PreProcessProcessor {
             folderPath = "${destinationFolder.normalize().toString()}${File.separator}${dateFolderName}${File.separator}${titleCodeFolderName}"
         // Look for Forever Project and Property titles to add to corresponding publications
         } else if (targetFile.titleCode.matches("^" + FOREVER_PROJECT_PREFIX + "[DPWS]") ||
-                PROPERTY_TITLES.contains(targetFile.titleCode)) {
+                PROPERTY_TITLES.contains(targetFile.titleCode) ) {
             GeneralUtils.printAndFlush("\n")
-            log.info("copyOrMoveFileToPreProcessingDestination found Forever Project or Property publication=${targetFile.titleCode}")
+            log.info("copyOrMoveFileToPreProcessingDestination found Forever Project, Property publication or Life supplement=${targetFile.titleCode}")
             List<String> appendedTitleCodes = []
             List<String> pubDirs = []
 
-            final Map<String, String> appendedTitlesMap = ImmutableMap.of(
-                    FOREVER_PROJECT_PREFIX + "D", "DOM",
-                    FOREVER_PROJECT_PREFIX + "P", "PRS",
-                    FOREVER_PROJECT_PREFIX + "W", "WAT",
-                    FOREVER_PROJECT_PREFIX + "S", "SUS",
-                    "HON", "NOO",
-                    "SOP", "SOT",
-                    "HOC", "PRS",
-                    "HOW", "WAT",
-                    "HWE","DOM",
-                    "PRB","MAS"
-            )
+            final Map<String, String> appendedTitlesMap = ImmutableMap.<String, String>builder()
+                .put(FOREVER_PROJECT_PREFIX + "D", "DOM")
+                .put(FOREVER_PROJECT_PREFIX + "P", "PRS")
+                .put(FOREVER_PROJECT_PREFIX + "W", "WAT")
+                .put(FOREVER_PROJECT_PREFIX + "S", "SUS")
+                .put("HON", "NOO")
+                .put("SOP", "SOT")
+                .put("HOC", "PRS")
+                .put("HOW", "WAT")
+                .put("HWE","DOM")
+                .put("PRB","MAS")
+                .put("CHM", "CEL")
+                .build()
+
             titleCodeFolderName = appendedTitlesMap.get(targetFile.titleCode)
 
             if (titleCodeFolderName.equals("DOM") && targetFile.titleCode.startsWith(FOREVER_PROJECT_PREFIX)) {
@@ -189,6 +192,38 @@ class PreProcessProcessor {
             folderPath = "${forReviewFolder.normalize().toString()}${File.separator}UNKNOWN-TITLE-CODE${File.separator}${dateFolderName}"
         }
 
+        // If file is a life supplement, move it to its parent (DOM or PRS) folder before processing again into its own folder
+        if (LIFE_SUPPLEMENTS.contains(targetFile.titleCode)) {
+            final Map<String, String> appendedTitlesMap = ImmutableMap.of(
+                    "LID", "DOM",
+                    "LIP", "PRS"
+            )
+            titleCodeFolderName = appendedTitlesMap.get(targetFile.titleCode)
+            String parentFolderPath = "${destinationFolder.normalize().toString()}${File.separator}${dateFolderName}${File.separator}${titleCodeFolderName}"
+
+            Path parentDestination = Path.of(parentFolderPath)
+
+            if (Files.notExists(parentDestination) && !makeDirs(parentDestination)) {
+                log.warn("copyOrMoveFileToPreProcessingDestination unable to get directory " + parentDestination.toString())
+                return false
+            }
+
+            log.info("copyOrMoveFileToPreProcessingDestination adding ${targetFile.file.fileName} to ${titleCodeFolderName}")
+            if (!recognizedTitleCodes.contains(titleCodeFolderName)) {
+                recognizedTitleCodes.add(titleCodeFolderName)
+                GeneralUtils.printAndFlush("\n")
+                log.info("copyOrMoveFileToPreProcessingDestination adding titleCode=${titleCodeFolderName}")
+            }
+
+            Path parentDestinationFile = parentDestination.resolve(targetFile.file.fileName)
+            addInProcessDestinationFile(parentDestinationFile)
+
+            boolean movedToParentDestination = moveFileToDestination(parentDestinationFile, targetFile, moveFile)
+            if (!movedToParentDestination) {
+                return false;
+            }
+        }
+
         Path destination = Path.of(folderPath)
 
         if (Files.notExists(destination) && !makeDirs(destination)) {
@@ -198,7 +233,14 @@ class PreProcessProcessor {
 
         Path destinationFile = destination.resolve(targetFile.file.fileName)
         addInProcessDestinationFile(destinationFile)
+
+        boolean moveToDestination = moveFileToDestination(destinationFile, targetFile, moveFile)
+        return moveToDestination
+    }
+
+    boolean moveFileToDestination(Path destinationFile, FairfaxFile targetFile, boolean moveFile) {
         boolean moveToDestination = true
+
         if (Files.exists(destinationFile)) {
             if (Files.exists(destinationFile) && Files.exists(targetFile.file) &&
                     Files.isSameFile(destinationFile, targetFile.file)) {

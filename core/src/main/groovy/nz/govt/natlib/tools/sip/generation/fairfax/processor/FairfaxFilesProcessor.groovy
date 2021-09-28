@@ -39,7 +39,8 @@ import java.time.LocalDate
 @Log4j2
 class FairfaxFilesProcessor {
     static final String FOREVER_PROJECT_PREFIX = "FP"
-    static final String[] PROPERTY_TITLES = ["HON", "SOP", "HOC", "HOW", "HWE", "PRB"]
+    static final String[] PROPERTY_TITLES = ["HON", "SOP", "HOC", "HOW", "HWE", "PRB", "CHM"]
+    static final String[] LIFE_SUPPLEMENTS = ["LID", "LIP"]
 
     FairfaxProcessingParameters processingParameters
     List<Path> filesForProcessing
@@ -119,30 +120,38 @@ class FairfaxFilesProcessor {
                     break
             }
 
-            // Determine if fairfaxFiles contains any files that starts with FP or is a Property title code
-            // If so, process the files as a single collection with FP/Property files at the end
+            // Determine if fairfaxFiles contains any files that starts with FP or is a Property or Life title code
+            // If so, process the files as a single collection with FP/Property/Life files at the end
             boolean toAddAtEnd = false
             for (FairfaxFile file : sortedFilesForProcessing) {
                 if (file.getTitleCode().startsWith(FOREVER_PROJECT_PREFIX) ||
-                        PROPERTY_TITLES.contains(file.getTitleCode()) ) {
+                        PROPERTY_TITLES.contains(file.getTitleCode()) ||
+                        (LIFE_SUPPLEMENTS.contains(file.getTitleCode()) &&
+                                processingParameters.titleCode != file.getTitleCode()) ) {
                     toAddAtEnd = true
                     break
                 }
             }
-            // Property and Forever Project are to be added at the end of the publication
-            // Homes goes before Forever Project
+            // Property, Forever Project and Life are to be added at the end of the publication
+            // Life goes before Homes which goes before Forever Project
             if (toAddAtEnd) {
                 List<FairfaxFile> foreverProjectFiles = []
                 List<FairfaxFile> propertyFiles = []
+                List<FairfaxFile> lifeFiles = []
                 List<FairfaxFile> sortedFiles = []
                 for (FairfaxFile fairfaxFile : sortedFilesForProcessing) {
-                    if (fairfaxFile.getTitleCode().startsWith(FOREVER_PROJECT_PREFIX)) {
+                     if (fairfaxFile.getTitleCode().startsWith(FOREVER_PROJECT_PREFIX)) {
                         foreverProjectFiles.add(fairfaxFile)
-                    } else if (PROPERTY_TITLES.contains(fairfaxFile.getTitleCode())) {
+                    } else if (LIFE_SUPPLEMENTS.contains(fairfaxFile.getTitleCode())) {
+                         lifeFiles.add(fairfaxFile)
+                     } else if (PROPERTY_TITLES.contains(fairfaxFile.getTitleCode())) {
                         propertyFiles.add(fairfaxFile)
                     } else {
                         sortedFiles.add(fairfaxFile)
                     }
+                }
+                for (FairfaxFile pf : lifeFiles) {
+                    sortedFiles.add(pf)
                 }
                 for (FairfaxFile pf : propertyFiles) {
                     sortedFiles.add(pf)

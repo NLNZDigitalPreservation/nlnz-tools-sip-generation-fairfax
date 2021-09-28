@@ -62,18 +62,21 @@ class ReportsProcessor {
                 } else if (fairfaxFile.titleCode.matches("^" + FOREVER_PROJECT_PREFIX + "[DPWS]")) {
                     log.info("listFiles found Forever Project publication=${fairfaxFile.titleCode}")
 
-                    final Map<String, String> appendedTitles = ImmutableMap.of(
-                            FOREVER_PROJECT_PREFIX + "D", "DOM",
-                            FOREVER_PROJECT_PREFIX + "P", "PRS",
-                            FOREVER_PROJECT_PREFIX + "W", "WAT",
-                            FOREVER_PROJECT_PREFIX + "S", "SUS",
-                            "HON", "NOO",
-                            "SOP", "SOT",
-                            "HOC", "PRS",
-                            "HOW", "WAT",
-                            "HWE","DOM",
-                            "PRB","MAS"
-                    )
+                    final Map<String, String> appendedTitlesMap = ImmutableMap.<String, String>builder()
+                            .put(FOREVER_PROJECT_PREFIX + "D", "DOM")
+                            .put(FOREVER_PROJECT_PREFIX + "P", "PRS")
+                            .put(FOREVER_PROJECT_PREFIX + "W", "WAT")
+                            .put(FOREVER_PROJECT_PREFIX + "S", "SUS")
+                            .put("HON", "NOO")
+                            .put("SOP", "SOT")
+                            .put("HOC", "PRS")
+                            .put("HOW", "WAT")
+                            .put("HWE","DOM")
+                            .put("PRB","MAS")
+                            .put("CHM", "CEL")
+                            .put("LID", "DOM")
+                            .put("LIP", "PRS")
+                            .build()
                     parentTitleCode = appendedTitles.get(fairfaxFile.titleCode)
 
                     if (!recognizedTitleCodes.contains(parentTitleCode)) {
