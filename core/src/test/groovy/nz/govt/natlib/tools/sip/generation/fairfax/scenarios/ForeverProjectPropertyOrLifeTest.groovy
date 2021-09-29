@@ -36,14 +36,14 @@ import static org.junit.Assert.*
  */
 @RunWith(MockitoJUnitRunner.class)
 @Log4j2
-class ForeverProjectTest {
+class ForeverProjectPropertyOrLifeTest {
     // TODO Make this processing simpler
     // - given a starting folder
     // - and a set of selection criteria
     // - create SIPs for the given files
     static String ID_COLUMN_NAME = "MMSID"
 
-    static final String RESOURCES_FOLDER = "ingestion-files-tests/scenario-forever-project"
+    static final String RESOURCES_FOLDER = "ingestion-files-tests/scenario-forever-project-property-or-life"
     static final String IMPORT_PARAMETERS_FILENAME = "test-fairfax-import-parameters.json"
 
     TestMethodState testMethodState
@@ -118,10 +118,10 @@ class ForeverProjectTest {
         log.info(processingParameters.detailedDisplay(0, true))
         log.info(System.lineSeparator())
 
-        int expectedNumberOfFilesProcessed = 18
-        int expectedNumberOfSipFiles = 18
-        int expectedNumberOfThumbnailPageFiles = 18
-        int expectedNumberOfValidFiles = 18
+        int expectedNumberOfFilesProcessed = 21
+        int expectedNumberOfSipFiles = 21
+        int expectedNumberOfThumbnailPageFiles = 21
+        int expectedNumberOfValidFiles = 21
         int expectedNumberOfInvalidFiles = 0
         int expectedNumberOfIgnoredFiles = 0
         int expectedNumberOfUnrecognizedFiles = 0
@@ -184,26 +184,36 @@ class ForeverProjectTest {
         TestHelper.assertExpectedSipFileValues(sipForValidation, 11, "PRSAAT-20181123-P02.pdf", "PRSAAT-20181123-P02.pdf",
                 636L, "MD5", "7273a4d61a8dab92be4393e2923ad2d2", "0011", "application/pdf")
 
-        TestHelper.assertExpectedSipFileValues(sipForValidation, 12, "HOCAAT-20181123-001.pdf", "HOCAAT-20181123-001.pdf",
+        TestHelper.assertExpectedSipFileValues(sipForValidation, 12, "LIPAAT-20181123-001.pdf", "LIPAAT-20181123-001.pdf",
                 636L, "MD5", "7273a4d61a8dab92be4393e2923ad2d2", "0012", "application/pdf")
 
-        TestHelper.assertExpectedSipFileValues(sipForValidation, 13, "HOCAAT-20181123-002.pdf", "HOCAAT-20181123-002.pdf",
+        TestHelper.assertExpectedSipFileValues(sipForValidation, 13, "LIPAAT-20181123-002.pdf", "LIPAAT-20181123-002.pdf",
                 636L, "MD5", "7273a4d61a8dab92be4393e2923ad2d2", "0013", "application/pdf")
 
-        TestHelper.assertExpectedSipFileValues(sipForValidation, 14, "HOCAAT-20181123-003.pdf", "HOCAAT-20181123-003.pdf",
+        TestHelper.assertExpectedSipFileValues(sipForValidation, 14, "LIPAAT-20181123-003.pdf", "LIPAAT-20181123-003.pdf",
                 636L, "MD5", "7273a4d61a8dab92be4393e2923ad2d2", "0014", "application/pdf")
 
-        TestHelper.assertExpectedSipFileValues(sipForValidation, 15, "FPPAAT-20181123-001.pdf", "FPPAAT-20181123-001.pdf",
+        TestHelper.assertExpectedSipFileValues(sipForValidation, 15, "HOCAAT-20181123-001.pdf", "HOCAAT-20181123-001.pdf",
                 636L, "MD5", "7273a4d61a8dab92be4393e2923ad2d2", "0015", "application/pdf")
 
-        TestHelper.assertExpectedSipFileValues(sipForValidation, 16, "FPDAAT-20181123-002.pdf", "FPDAAT-20181123-002.pdf",
+        TestHelper.assertExpectedSipFileValues(sipForValidation, 16, "HOCAAT-20181123-002.pdf", "HOCAAT-20181123-002.pdf",
                 636L, "MD5", "7273a4d61a8dab92be4393e2923ad2d2", "0016", "application/pdf")
 
-        TestHelper.assertExpectedSipFileValues(sipForValidation, 17, "FPDAAT-20181123-003.pdf", "FPDAAT-20181123-003.pdf",
+        TestHelper.assertExpectedSipFileValues(sipForValidation, 17, "HOCAAT-20181123-003.pdf", "HOCAAT-20181123-003.pdf",
                 636L, "MD5", "7273a4d61a8dab92be4393e2923ad2d2", "0017", "application/pdf")
 
-        TestHelper.assertExpectedSipFileValues(sipForValidation, 18, "FPPAAT-20181123-004.pdf", "FPPAAT-20181123-004.pdf",
+        TestHelper.assertExpectedSipFileValues(sipForValidation, 18, "FPPAAT-20181123-001.pdf", "FPPAAT-20181123-001.pdf",
                 636L, "MD5", "7273a4d61a8dab92be4393e2923ad2d2", "0018", "application/pdf")
+
+        TestHelper.assertExpectedSipFileValues(sipForValidation, 19, "FPDAAT-20181123-002.pdf", "FPDAAT-20181123-002.pdf",
+                636L, "MD5", "7273a4d61a8dab92be4393e2923ad2d2", "0019", "application/pdf")
+
+        TestHelper.assertExpectedSipFileValues(sipForValidation, 20, "FPDAAT-20181123-003.pdf", "FPDAAT-20181123-003.pdf",
+                636L, "MD5", "7273a4d61a8dab92be4393e2923ad2d2", "0020", "application/pdf")
+
+        TestHelper.assertExpectedSipFileValues(sipForValidation, 21, "FPPAAT-20181123-004.pdf", "FPPAAT-20181123-004.pdf",
+                636L, "MD5", "7273a4d61a8dab92be4393e2923ad2d2", "0021", "application/pdf")
+
     }
 
 }
