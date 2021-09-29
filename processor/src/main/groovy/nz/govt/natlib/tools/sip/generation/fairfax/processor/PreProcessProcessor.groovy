@@ -128,6 +128,63 @@ class PreProcessProcessor {
         }
     }
 
+    boolean moveFileToDestination(Path destinationFile, FairfaxFile targetFile, boolean moveFile) {
+        boolean moveToDestination = true
+
+        if (Files.exists(destinationFile)) {
+            if (Files.exists(destinationFile) && Files.exists(targetFile.file) &&
+                    Files.isSameFile(destinationFile, targetFile.file)) {
+                moveToDestination = false
+                log.warn("copyOrMoveFileToPreProcessingDestination: NO move/copy -- source and target are the same " +
+                        "PHYSICAL file!")
+                log.warn("    sourceFile=${targetFile.file.normalize().toString()}")
+                log.warn("    targetFile=${destinationFile.normalize()}")
+            } else if (PathUtils.isSameFile(targetFile.file, destinationFile)) {
+                moveToDestination = false
+                if (processorConfiguration.verbose) {
+                    log.info("Skipping moveFile=${moveFile} destinationFile=${destinationFile.normalize()} -- it already exists and is same file")
+                } else {
+                    GeneralUtils.printAndFlush("+")
+                }
+                if (moveFile) {
+                    Files.delete(targetFile.file)
+                    if (processorConfiguration.verbose) {
+                        log.info("Deleting moveFile=${moveFile} destinationFile=${destinationFile.normalize()}")
+                    } else {
+                        GeneralUtils.printAndFlush("-")
+                    }
+                }
+            } else {
+                boolean couldAlreadyExist = true
+                while (couldAlreadyExist) {
+                    Path nonDuplicateFile = PathUtils.nonDuplicateFile(destinationFile)
+                    GeneralUtils.printAndFlush("\n")
+                    log.info("moveFile=${moveFile} destinationFile=${destinationFile.normalize()} -- same name but different file")
+                    log.info("             moving to destinationFile=${nonDuplicateFile.normalize()}")
+                    Path oldDestinationFile = destinationFile
+                    destinationFile = nonDuplicateFile
+                    addInProcessDestinationFile(nonDuplicateFile)
+                    removeInProcessDestinationFile(oldDestinationFile)
+                    if (Files.exists(destinationFile)) {
+                        // another thread has already created this duplicate file
+                        couldAlreadyExist = true
+                    } else {
+                        couldAlreadyExist = false
+                    }
+                }
+            }
+        }
+        if (moveToDestination) {
+            boolean useAtomicOption = true
+            boolean moveOrCopyResult = PathUtils.atomicMoveOrCopy(moveFile, targetFile.file, destinationFile,
+                    useAtomicOption, processorConfiguration.includeDetailedTimings)
+            GeneralUtils.printAndFlush(moveOrCopyResult ? "." : "!")
+        }
+        removeInProcessDestinationFile(destinationFile)
+
+        return moveToDestination
+    }
+
     boolean copyOrMoveFileToPreProcessingDestination(Path destinationFolder, Path forReviewFolder, FairfaxFile targetFile,
                                                   String dateFolderName, boolean moveFile) {
         String titleCodeFolderName = targetFile.titleCode
@@ -235,63 +292,6 @@ class PreProcessProcessor {
         addInProcessDestinationFile(destinationFile)
 
         boolean moveToDestination = moveFileToDestination(destinationFile, targetFile, moveFile)
-        return moveToDestination
-    }
-
-    boolean moveFileToDestination(Path destinationFile, FairfaxFile targetFile, boolean moveFile) {
-        boolean moveToDestination = true
-
-        if (Files.exists(destinationFile)) {
-            if (Files.exists(destinationFile) && Files.exists(targetFile.file) &&
-                    Files.isSameFile(destinationFile, targetFile.file)) {
-                moveToDestination = false
-                log.warn("copyOrMoveFileToPreProcessingDestination: NO move/copy -- source and target are the same " +
-                        "PHYSICAL file!")
-                log.warn("    sourceFile=${targetFile.file.normalize().toString()}")
-                log.warn("    targetFile=${destinationFile.normalize()}")
-            } else if (PathUtils.isSameFile(targetFile.file, destinationFile)) {
-                moveToDestination = false
-                if (processorConfiguration.verbose) {
-                    log.info("Skipping moveFile=${moveFile} destinationFile=${destinationFile.normalize()} -- it already exists and is same file")
-                } else {
-                    GeneralUtils.printAndFlush("+")
-                }
-                if (moveFile) {
-                    Files.delete(targetFile.file)
-                    if (processorConfiguration.verbose) {
-                        log.info("Deleting moveFile=${moveFile} destinationFile=${destinationFile.normalize()}")
-                    } else {
-                        GeneralUtils.printAndFlush("-")
-                    }
-                }
-            } else {
-                boolean couldAlreadyExist = true
-                while (couldAlreadyExist) {
-                    Path nonDuplicateFile = PathUtils.nonDuplicateFile(destinationFile)
-                    GeneralUtils.printAndFlush("\n")
-                    log.info("moveFile=${moveFile} destinationFile=${destinationFile.normalize()} -- same name but different file")
-                    log.info("             moving to destinationFile=${nonDuplicateFile.normalize()}")
-                    Path oldDestinationFile = destinationFile
-                    destinationFile = nonDuplicateFile
-                    addInProcessDestinationFile(nonDuplicateFile)
-                    removeInProcessDestinationFile(oldDestinationFile)
-                    if (Files.exists(destinationFile)) {
-                        // another thread has already created this duplicate file
-                        couldAlreadyExist = true
-                    } else {
-                        couldAlreadyExist = false
-                    }
-                }
-            }
-        }
-        if (moveToDestination) {
-            boolean useAtomicOption = true
-            boolean moveOrCopyResult = PathUtils.atomicMoveOrCopy(moveFile, targetFile.file, destinationFile,
-                    useAtomicOption, processorConfiguration.includeDetailedTimings)
-            GeneralUtils.printAndFlush(moveOrCopyResult ? "." : "!")
-        }
-        removeInProcessDestinationFile(destinationFile)
-
         return moveToDestination
     }
 

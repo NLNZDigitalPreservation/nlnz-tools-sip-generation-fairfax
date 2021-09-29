@@ -1,12 +1,12 @@
 #!/bin/sh
 
-export sourceFolder="$HOME/workspace/testdata/fairfax-processing/pre-processing_Jun_2021"
+export sourceFolder="$HOME/workspace/testdata/fairfax-processing/pre-processing_Aug_2021"
 export targetBaseFolder="$HOME/workspace/testdata/fairfax-processing/latest-batch-ready-ingestion"
 export targetForIngestionFolder="${targetBaseFolder}/for-ingestion"
 export forReviewFolder="${targetBaseFolder}/for-review"
 
-export startingDate="2021-06-09"
-export endingDate="2021-06-09"
+export startingDate="2021-08-04"
+export endingDate="2021-08-12"
 
 export forIngestionProcessingTypes="parent_grouping,parent_grouping_with_edition,supplement_grouping,create_sip_for_folder"
 export forIngestionProcessingOptions="use_command_line_pdf_to_thumbnail_generation"
