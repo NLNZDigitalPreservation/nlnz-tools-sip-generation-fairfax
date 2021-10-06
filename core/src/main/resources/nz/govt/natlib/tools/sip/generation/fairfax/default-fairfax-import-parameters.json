@@ -1490,7 +1490,7 @@
             "publication_key": "title_code",
             "title_code": "NOT",
             "edition_discriminators": "",
-            "section_codes": "ED1",
+            "section_codes": "ED1+QFS",
             "sequence_letters": "",
             "Access": "200",
             "Magazine": "0",
