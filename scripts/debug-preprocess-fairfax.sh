@@ -2,11 +2,11 @@
 
 export sourceFolder="$HOME/workspace/testdata/fairfax"
 export targetBaseFolder="$HOME/workspace/testdata/fairfax-processing"
-export targetPreProcessingFolder="${targetBaseFolder}/pre-processing_Aug_2021"
-export forReviewFolder="${targetBaseFolder}/for-review_Aug_2021"
+export targetPreProcessingFolder="${targetBaseFolder}/pre-processing_Nov_2021"
+export forReviewFolder="${targetBaseFolder}/for-review_Nov_2021"
 
-export startingDate="2021-08-04"
-export endingDate="2021-08-12"
+export startingDate="2021-11-01"
+export endingDate="2021-11-12"
 
 # Note that the number of threads increases processing speed due to ODS poor single-thread performance
 export numberOfThreads=4

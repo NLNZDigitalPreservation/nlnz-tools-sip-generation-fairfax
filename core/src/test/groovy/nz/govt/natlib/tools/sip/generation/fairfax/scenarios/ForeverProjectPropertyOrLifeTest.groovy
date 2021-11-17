@@ -147,6 +147,10 @@ class ForeverProjectPropertyOrLifeTest {
 
         assertTrue("SipProcessingState is complete", testMethodState.sipProcessingState.isComplete())
 
+        // Test that no Missing Sequence exceptions are thrown due to the title_codes being different
+        assertTrue("SipProcessingState is successful", testMethodState.sipProcessingState.isSuccessful())
+        assertTrue("SipProcessingState has no exceptions", testMethodState.sipProcessingState.exceptions.size() == 0)
+
         TestHelper.assertExpectedSipMetadataValues(sipForValidation, "Test Publication One", "2018", "11", "23",
                 IEEntityType.NewspaperIE, "ALMAMMS", "test-mms-id-one", "200",
                 "PRESERVATION_MASTER", "VIEW", true, 1)

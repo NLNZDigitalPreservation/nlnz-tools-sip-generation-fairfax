@@ -157,6 +157,11 @@ class FairfaxFile {
                         // We don't consider this a skip in the sequence.
                         // Note that there's a small edge case where there are hundreds of pages, such as:
                         // 397, 398, 400, 401, ... -> this would be considered okay, even though there is a page missing.
+                    } else if (testFile.filename.startsWith(FOREVER_PROJECT_PREFIX) ||
+                            PROPERTY_TITLES.contains(testFile.filename.substring(0,3)) ||
+                            (LIFE_SUPPLEMENTS.contains(testFile.filename.substring(0,3)))) {
+                        // This not a skip in sequence, these files have a different a title code to their
+                        // parent_publication
                     } else {
                         postMissingFiles.add(testFile)
                     }
