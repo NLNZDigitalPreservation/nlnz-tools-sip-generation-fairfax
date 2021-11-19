@@ -42,7 +42,7 @@ class FairfaxFile {
     static final Point UNDIMENSIONED = new Point(-1, -1)
     static final String FOREVER_PROJECT_PREFIX = "FP"
     static final String[] PROPERTY_TITLES = ["HON", "SOP", "HOC", "HOW", "HWE", "PRB", "CHM"]
-    static final String[] LIFE_SUPPLEMENTS = ["LID", "LIP"]
+    static final String[] LIFE_SUPPLEMENTS = ["LID", "LIP", "LIW"]
 
     Path file
     // This is for when the file gets replaced, such as when a zero-length pdf is replaced by another file.

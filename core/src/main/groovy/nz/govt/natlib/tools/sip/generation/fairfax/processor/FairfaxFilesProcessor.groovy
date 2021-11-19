@@ -40,7 +40,7 @@ import java.time.LocalDate
 class FairfaxFilesProcessor {
     static final String FOREVER_PROJECT_PREFIX = "FP"
     static final String[] PROPERTY_TITLES = ["HON", "SOP", "HOC", "HOW", "HWE", "PRB", "CHM"]
-    static final String[] LIFE_SUPPLEMENTS = ["LID", "LIP"]
+    static final String[] LIFE_SUPPLEMENTS = ["LID", "LIP", "LIW"]
 
     FairfaxProcessingParameters processingParameters
     List<Path> filesForProcessing

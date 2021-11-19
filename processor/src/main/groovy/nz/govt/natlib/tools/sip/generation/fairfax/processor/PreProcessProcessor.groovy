@@ -22,7 +22,7 @@ class PreProcessProcessor {
     static final DateTimeFormatter LOCAL_DATE_FOLDER_FORMATTER = DateTimeFormatter.ofPattern("yyyyMMdd")
     static final String FOREVER_PROJECT_PREFIX = "FP"
     static final String[] PROPERTY_TITLES = ["HON", "SOP", "HOC", "HOW", "HWE", "PRB", "CHM"]
-    static final String[] LIFE_SUPPLEMENTS = ["LID", "LIP"]
+    static final String[] LIFE_SUPPLEMENTS = ["LID", "LIP", "LIW"]
 
     ProcessorConfiguration processorConfiguration
     FairfaxSpreadsheet fairfaxSpreadsheet
@@ -92,7 +92,7 @@ class PreProcessProcessor {
         }
     }
 
-    // Copy missing Forever Project and Property files for other publications
+    // Copy missing Forever Project for other publications
     void copyAppendedTitleFile(List<String> appendedTitles, List<String> folders, FairfaxFile targetFile, Path folderPath) {
         String targetTitle = targetFile.titleCode
         String parentDirectory = folderPath.getParent().toString()
@@ -110,7 +110,7 @@ class PreProcessProcessor {
                 Path copyPath = Paths.get(targetFile.getFile().getParent().toString() + File.separator +
                         targetFile.getFilename().replace(targetTitle, title))
                 if (Files.exists(copyPath)) {
-                    log.info("copyOrMoveFileToPreProcessingDestination Forever project, Property file or Life supplement ${copyPath.toString()} exists")
+                    log.info("copyOrMoveFileToPreProcessingDestination Forever project file ${copyPath.toString()} exists")
                     continue
                 }
                 // Copy the file for other publications to destination folder
@@ -120,7 +120,7 @@ class PreProcessProcessor {
                         log.error("copyOrMoveFileToPreProcessingDestination could not get directory " + destinationPath.getParent().toString())
                     }
                 if (Files.notExists(destinationPath)) {
-                    log.info("copyOrMoveFileToPreProcessingDestination Copying Forever Project, Property file of Life supplement from ${targetFile.getFilename()} to " +
+                    log.info("copyOrMoveFileToPreProcessingDestination Copying Forever Project file from ${targetFile.getFilename()} to " +
                             "${destinationPath.toString()} for use in ${folder.substring(1, folder.length() - 1)}")
                     Files.copy(targetFile.file, destinationPath)
                 }
@@ -249,11 +249,12 @@ class PreProcessProcessor {
             folderPath = "${forReviewFolder.normalize().toString()}${File.separator}UNKNOWN-TITLE-CODE${File.separator}${dateFolderName}"
         }
 
-        // If file is a life supplement, move it to its parent (DOM or PRS) folder before processing again into its own folder
+        // If file is a life supplement, move it to its parent (DOM, PRS, WAT) folder before processing again into its own folder
         if (LIFE_SUPPLEMENTS.contains(targetFile.titleCode)) {
             final Map<String, String> appendedTitlesMap = ImmutableMap.of(
                     "LID", "DOM",
-                    "LIP", "PRS"
+                    "LIP", "PRS",
+                    "LIW", "WAT"
             )
             titleCodeFolderName = appendedTitlesMap.get(targetFile.titleCode)
             String parentFolderPath = "${destinationFolder.normalize().toString()}${File.separator}${dateFolderName}${File.separator}${titleCodeFolderName}"

@@ -17,7 +17,7 @@ import java.time.Period
 class ReportsProcessor {
     static final String FOREVER_PROJECT_PREFIX = "FP"
     static final String[] PROPERTY_TITLES = ["HON", "SOP", "HOC", "HOW", "HWE", "PRB", "CHM"]
-    static final String[] LIFE_SUPPLEMENTS = ["LID", "LIP"]
+    static final String[] LIFE_SUPPLEMENTS = ["LID", "LIP", "LIW"]
 
     ProcessorConfiguration processorConfiguration
     Set<String> recognizedTitleCodes = []
