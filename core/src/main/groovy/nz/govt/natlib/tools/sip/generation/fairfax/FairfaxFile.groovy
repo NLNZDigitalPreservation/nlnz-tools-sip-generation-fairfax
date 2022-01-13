@@ -253,7 +253,6 @@ class FairfaxFile {
             // Then we do the substitutions
             // Substitutions happen if the FIRST editionDiscriminator has a substitution with the same date/sequenceLetter/sequenceNumber
             String firstDiscriminatorCode = processingParameters.editionDiscriminators.first()
-
             boolean hasSubstitutions = hasSubstitutions(processingParameters.currentEdition, filtered)
             if (hasSubstitutions) {
                 List<FairfaxFile> substituted = substituteAllFor(firstDiscriminatorCode,
@@ -435,7 +434,11 @@ class FairfaxFile {
 
     // Substitutions can happen if the file has the same date, sequence letter and sequence number
     boolean canSubstituteFor(FairfaxFile fairfaxFile) {
-        return this.date == fairfaxFile.date && this.sequenceLetter == fairfaxFile.sequenceLetter &&
+        boolean matchingTitleCode
+        if (fairfaxFile.filename.substring(0,3) == this.filename.substring(0,3) || fairfaxFile.titleCode == this.titleCode) {
+            matchingTitleCode = true
+        }
+        return matchingTitleCode && this.date == fairfaxFile.date && this.sequenceLetter == fairfaxFile.sequenceLetter &&
                 this.sequenceNumber == fairfaxFile.sequenceNumber
     }
 
