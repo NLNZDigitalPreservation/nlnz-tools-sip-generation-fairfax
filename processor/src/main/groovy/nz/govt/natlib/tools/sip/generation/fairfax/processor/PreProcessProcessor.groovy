@@ -21,7 +21,7 @@ import java.util.concurrent.locks.ReentrantLock
 class PreProcessProcessor {
     static final DateTimeFormatter LOCAL_DATE_FOLDER_FORMATTER = DateTimeFormatter.ofPattern("yyyyMMdd")
     static final String FOREVER_PROJECT_PREFIX = "FP"
-    static final String[] PROPERTY_TITLES = ["HON", "SOP", "HOC", "HOW", "HWE", "PRB", "CHM", "HOK"]
+    static final String[] PROPERTY_TITLES = ["HON", "SOP", "HOC", "HOW", "HWE", "PRB", "CHM", "HOK", "HHT"]
     static final String[] LIFE_SUPPLEMENTS = ["LID", "LIP", "LIW"]
 
     ProcessorConfiguration processorConfiguration
@@ -221,6 +221,7 @@ class PreProcessProcessor {
                 .put("PRB","MAS")
                 .put("CHM", "CEL")
                 .put("HOK", "KAO")
+                .put("HHT", "HUN")
                 .build()
 
             titleCodeFolderName = appendedTitlesMap.get(targetFile.titleCode)
