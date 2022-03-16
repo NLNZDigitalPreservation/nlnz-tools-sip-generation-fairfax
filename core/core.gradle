@@ -109,11 +109,11 @@ dependencies {
     compile "org.codehaus.gpars:gpars:1.2.1"
 
     // We're using Log4j2
-    compile 'org.apache.logging.log4j:log4j-api:2.11.2'
-    compile 'org.apache.logging.log4j:log4j-core:2.11.2'
+    compile 'org.apache.logging.log4j:log4j-api:2.17.0'
+    compile 'org.apache.logging.log4j:log4j-core:2.17.0'
     // Ensure that other logging APIs use log4j2
-    compile 'org.apache.logging.log4j:log4j-slf4j-impl:2.11.2'
-    compile 'org.apache.logging.log4j:log4j-jcl:2.11.2'
+    compile 'org.apache.logging.log4j:log4j-slf4j-impl:2.17.0'
+    compile 'org.apache.logging.log4j:log4j-jcl:2.17.0'
 
     compile 'nz.govt.natlib.tools:sip-generation-core:1.0.1-SNAPSHOT'
 
