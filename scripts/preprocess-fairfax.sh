@@ -15,7 +15,7 @@ export minMemory="4G"
 export maxMemory="8G"
 
 java -Xms${minMemory} -Xmx${maxMemory} \
-    -jar ../fat/build/libs/sip-generation-fairfax-fat-all-1.0.3-SNAPSHOT.jar \
+    -jar ../fat/build/libs/sip-generation-fairfax-fat-all-1.1.0-SNAPSHOT.jar \
     --preProcess \
     --startingDate="${startingDate}" \
     --endingDate="${endingDate}" \
