@@ -61,7 +61,31 @@ class CleanUpFTPProcessor {
 
             def confirm = System.in.newReader().readLine()
 
-            if (confirm == "confirm") {
+            LocalDate currentDate = LocalDate.now();
+            LocalDate currentDateMinus2Months = currentDate.minusMonths(2);
+            boolean safeDateRange = processorConfiguration.endingDate.isBefore(currentDateMinus2Months);
+
+            if (!safeDateRange) {
+                print("\n\n")
+                print("##################################################################################\n")
+                print("##                                                                              ##\n")
+                print("## Ending date ${processorConfiguration.endingDate} is less than 2 months ago                             ##\n")
+                print("## Proceeding is not advised                                                    ##\n")
+                print("## Are you sure you wish to continue?                                           ##\n")
+                print("##                                                                              ##\n")
+                print("##################################################################################\n")
+                print("\n\n")
+                print("Type 'confirm' to confirm and begin deleting\n")
+                print("Type 'exit' to cancel:\n")
+
+                def confirmEndingDate = System.in.newReader().readLine()
+
+                if (confirmEndingDate == "confirm") {
+                    safeDateRange = true;
+                }
+            }
+
+            if (confirm == "confirm" && safeDateRange) {
                 print("\n\n")
                 log.info("User has confirmed dates and source folder")
                 log.info("START process for startingDate=${processorConfiguration.startingDate}, " +
