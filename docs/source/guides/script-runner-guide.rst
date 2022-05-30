@@ -897,6 +897,19 @@ After an ingestion takes place the ingested folders (those containing the ``done
 
 Additional tools
 ================
+cleanUpFTP: delete files from the source folder
+-----------------------------------------------
+This process permanently deletes all matching files from the source FTP folder. It requires a date range. Because it
+permanently deletes all matching files, it should be run with caution. A one month buffer should be kept in the FTP
+folder at all times. So for example if the process is being run in March, the ending date for the
+process should be no later than January::
+
+    java -Xms${minMemory} -Xmx${maxMemory} \
+        -jar ../fat/build/libs/sip-generation-fairfax-fat-all-<VERSION>.jar \
+        --cleanUpFTP \
+        --startingDate="${startingDate}" \
+        --endingDate="${endingDate}" \
+        --sourceFolder="${sourceFolder}"
 
 listFiles: list files based on source folder
 --------------------------------------------
