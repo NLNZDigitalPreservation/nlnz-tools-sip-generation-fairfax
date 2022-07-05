@@ -39,7 +39,7 @@ import java.time.LocalDate
 @Log4j2
 class FairfaxFilesProcessor {
     static final String FOREVER_PROJECT_PREFIX = "FP"
-    static final String[] PROPERTY_TITLES = ["HON", "SOP", "HOC", "HOW", "HWE", "PRB", "CHM", "HOK", "HHT"]
+    static final String[] PROPERTY_TITLES = ["HON", "SOP", "HOC", "HOW", "HWE", "CHM", "HOK", "HHT"]
     static final String[] LIFE_SUPPLEMENTS = ["LID", "LIP", "LIW"]
 
     FairfaxProcessingParameters processingParameters
