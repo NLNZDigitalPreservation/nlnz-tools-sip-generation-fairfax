@@ -1449,7 +1449,7 @@
             "publication_key": "title_code",
             "title_code": "NEM",
             "edition_discriminators": "",
-            "section_codes": "ED1+TAB+SUM",
+            "section_codes": "ED1+TAB+SUM+QFS",
             "sequence_letters": "",
             "Access": "200",
             "Magazine": "0",
