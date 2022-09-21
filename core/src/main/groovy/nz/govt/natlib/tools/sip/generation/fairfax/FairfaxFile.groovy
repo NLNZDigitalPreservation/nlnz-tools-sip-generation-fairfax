@@ -41,7 +41,8 @@ class FairfaxFile {
     static final DateTimeFormatter LOCAL_DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyyMMdd")
     static final Point UNDIMENSIONED = new Point(-1, -1)
     static final String FOREVER_PROJECT_PREFIX = "FP"
-    static final String[] PROPERTY_TITLES = ["HON", "SOP", "HOC", "HOW", "HWE", "PRB"]
+    static final String[] PROPERTY_TITLES = ["HON", "SOP", "HOC", "HOW", "HWE", "CHM", "HOK", "HHT"]
+    static final String[] LIFE_SUPPLEMENTS = ["LID", "LIP", "LIW"]
 
     Path file
     // This is for when the file gets replaced, such as when a zero-length pdf is replaced by another file.
@@ -156,6 +157,11 @@ class FairfaxFile {
                         // We don't consider this a skip in the sequence.
                         // Note that there's a small edge case where there are hundreds of pages, such as:
                         // 397, 398, 400, 401, ... -> this would be considered okay, even though there is a page missing.
+                    } else if (testFile.filename.startsWith(FOREVER_PROJECT_PREFIX) ||
+                            PROPERTY_TITLES.contains(testFile.filename.substring(0,3)) ||
+                            (LIFE_SUPPLEMENTS.contains(testFile.filename.substring(0,3)))) {
+                        // This not a skip in sequence, these files have a different a title code to their
+                        // parent_publication
                     } else {
                         postMissingFiles.add(testFile)
                     }
@@ -197,15 +203,18 @@ class FairfaxFile {
         }
     }
 
-    static List<FairfaxFile> substituteAllFor(String sourceSectionCode, String replacementSectionCode,
+    static List<FairfaxFile> substituteAllFor(String sourceSectionCode, String replacementSectionCode, String titleCode,
                                               List<String> allSectionCodes, List<FairfaxFile> possibleFiles) {
         List<FairfaxFile> substituted = []
         List<String> otherSectionCodes = allSectionCodes.findAll { String sectionCode ->
             sectionCode != sourceSectionCode && sectionCode != replacementSectionCode
         }
-        // Do not substitute Forever Project/Property files unless the file has a substitute
+        // Do not substitute Forever Project/Property/Life files unless the file has a substitute
         possibleFiles.each { FairfaxFile fairfaxFile ->
-            if ( (fairfaxFile.filename.startsWith(FOREVER_PROJECT_PREFIX) || PROPERTY_TITLES.contains(fairfaxFile.filename.substring(0,3)) )
+            if ( (fairfaxFile.filename.startsWith(FOREVER_PROJECT_PREFIX) ||
+                    PROPERTY_TITLES.contains(fairfaxFile.filename.substring(0,3)) ||
+                    (LIFE_SUPPLEMENTS.contains(fairfaxFile.filename.substring(0,3)) &&
+                            fairfaxFile.filename.substring(0,3) != titleCode) )
                     && fairfaxFile.sectionCode == replacementSectionCode) {
                 substituted.add(fairfaxFile)
             } else if (!otherSectionCodes.contains(fairfaxFile.sectionCode) ) {
@@ -244,11 +253,11 @@ class FairfaxFile {
             // Then we do the substitutions
             // Substitutions happen if the FIRST editionDiscriminator has a substitution with the same date/sequenceLetter/sequenceNumber
             String firstDiscriminatorCode = processingParameters.editionDiscriminators.first()
-
             boolean hasSubstitutions = hasSubstitutions(processingParameters.currentEdition, filtered)
             if (hasSubstitutions) {
                 List<FairfaxFile> substituted = substituteAllFor(firstDiscriminatorCode,
-                        processingParameters.currentEdition, processingParameters.editionDiscriminators, filtered)
+                        processingParameters.currentEdition, processingParameters.titleCode,
+                        processingParameters.editionDiscriminators, filtered)
                 // Then we sort so the ordering is correct
                 filteredSubstitutedAndSorted = sortWithSameTitleCodeAndDate(substituted, processingParameters)
             } else {
@@ -425,7 +434,11 @@ class FairfaxFile {
 
     // Substitutions can happen if the file has the same date, sequence letter and sequence number
     boolean canSubstituteFor(FairfaxFile fairfaxFile) {
-        return this.date == fairfaxFile.date && this.sequenceLetter == fairfaxFile.sequenceLetter &&
+        boolean matchingTitleCode
+        if (fairfaxFile.filename.substring(0,3) == this.filename.substring(0,3) || fairfaxFile.titleCode == this.titleCode) {
+            matchingTitleCode = true
+        }
+        return matchingTitleCode && this.date == fairfaxFile.date && this.sequenceLetter == fairfaxFile.sequenceLetter &&
                 this.sequenceNumber == fairfaxFile.sequenceNumber
     }
 

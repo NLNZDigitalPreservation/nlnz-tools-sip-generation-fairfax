@@ -16,6 +16,8 @@ import java.time.Period
 @Log4j2
 class ReportsProcessor {
     static final String FOREVER_PROJECT_PREFIX = "FP"
+    static final String[] PROPERTY_TITLES = ["HON", "SOP", "HOC", "HOW", "HWE", "CHM", "HOK", "HHT"]
+    static final String[] LIFE_SUPPLEMENTS = ["LID", "LIP", "LIW"]
 
     ProcessorConfiguration processorConfiguration
     Set<String> recognizedTitleCodes = []
@@ -59,22 +61,26 @@ class ReportsProcessor {
                         recognizedTitleCodes.add(fairfaxFile.titleCode)
                         log.info("listFiles adding recognizedTitleCode=${fairfaxFile.titleCode}")
                     }
-                } else if (fairfaxFile.titleCode.matches("^" + FOREVER_PROJECT_PREFIX + "[DPWS]")) {
-                    log.info("listFiles found Forever Project publication=${fairfaxFile.titleCode}")
+                } else if (fairfaxFile.titleCode.matches("^" + FOREVER_PROJECT_PREFIX + "[DPWS]") ||
+                        PROPERTY_TITLES.contains(fairfaxFile.titleCode) ||
+                        LIFE_SUPPLEMENTS.contains(fairfaxFile.titleCode)) {
+                    log.info("listFiles found Forever Project, Property publication or Life supplement publication=${fairfaxFile.titleCode}")
 
-                    final Map<String, String> appendedTitles = ImmutableMap.of(
-                            FOREVER_PROJECT_PREFIX + "D", "DOM",
-                            FOREVER_PROJECT_PREFIX + "P", "PRS",
-                            FOREVER_PROJECT_PREFIX + "W", "WAT",
-                            FOREVER_PROJECT_PREFIX + "S", "SUS",
-                            "HON", "NOO",
-                            "SOP", "SOT",
-                            "HOC", "PRS",
-                            "HOW", "WAT",
-                            "HWE","DOM",
-                            "PRB","MAS"
-                    )
-                    parentTitleCode = appendedTitles.get(fairfaxFile.titleCode)
+                    final Map<String, String> appendedTitlesMap = ImmutableMap.<String, String>builder()
+                            .put(FOREVER_PROJECT_PREFIX + "D", "DOM")
+                            .put(FOREVER_PROJECT_PREFIX + "P", "PRS")
+                            .put(FOREVER_PROJECT_PREFIX + "W", "WAT")
+                            .put(FOREVER_PROJECT_PREFIX + "S", "SUS")
+                            .put("HON", "NOO")
+                            .put("SOP", "SOT")
+                            .put("HOC", "PRS")
+                            .put("HOW", "WAT")
+                            .put("HWE","DOM")
+                            .put("CHM", "CEL")
+                            .put("LID", "DOM")
+                            .put("LIP", "PRS")
+                            .build()
+                    String parentTitleCode = appendedTitlesMap.get(fairfaxFile.titleCode)
 
                     if (!recognizedTitleCodes.contains(parentTitleCode)) {
                         recognizedTitleCodes.add(parentTitleCode)

@@ -8,5 +8,9 @@ Feature: Processing fails when Forever Project files are  not included.
    Scenario: Fairfax will send us Forever Project PDF files for Dominion Post, The Press, and Waikato Times
      They will send all Dominion Post files, but only the differing files for The Press and Waikato Times
      It includes Forever Project files for both FPP and FPD
+
+     Property and Life supplements with different title codes to their parent publication need to be included with the
+     correct parent publication
+
      When the publication issue is processed
      Then the processing finishes successfully

@@ -35,7 +35,7 @@ jacoco {
 }
 
 // run the findBugs checks with 'gradle check' or 'gradle findBugsMain' or 'gradle findBugsTest'
-apply plugin: 'findbugs'
+//apply plugin: 'findbugs'
 
 // run the pmd source code analyzer with 'gradle check' or 'gradle pmdMain' or 'gradle pmdTest'
 apply plugin: 'pmd' // source code analyzer
@@ -59,16 +59,16 @@ task jarSources(type: Jar, dependsOn: classes) {
     from sourceSets.main.allSource
 }
 
-tasks.withType(FindBugs) {
-    // Unfortunately FindBugs will find a lot of problems with Groovy classes. We could filter out groovy source files,
-    // but since FindBugs operates on .class files, that filtering will be ineffective. Currently there are no java
-    // classes but that could change in the future.
-    // See https://stackoverflow.com/questions/22037499/using-excludes-config-in-findbugs-and-checkstyle-plugin-in-gradle
-    exclude '**/*.groovy'
-    classes = classes.filter {
-        !it.path.contains(new File("classes/groovy/main").path)
-    }
-}
+//tasks.withType(FindBugs) {
+//    // Unfortunately FindBugs will find a lot of problems with Groovy classes. We could filter out groovy source files,
+//    // but since FindBugs operates on .class files, that filtering will be ineffective. Currently there are no java
+//    // classes but that could change in the future.
+//    // See https://stackoverflow.com/questions/22037499/using-excludes-config-in-findbugs-and-checkstyle-plugin-in-gradle
+//    exclude '**/*.groovy'
+//    classes = classes.filter {
+//        !it.path.contains(new File("classes/groovy/main").path)
+//    }
+//}
 
 artifacts {
     publishableArtifacts jar, jarSources
